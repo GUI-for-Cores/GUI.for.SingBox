@@ -1,8 +1,8 @@
 <div align="center">
   <img src="build/appicon.png" alt="GUI.for.SingBox" width="200">
-  <h1>GUI.for.Clash</h1>
+  <h1>GUI.for.SingBox</h1>
   <p>A GUI program developed by vue3 + wails.</p>
-  <img src="https://img.shields.io/github/downloads/onejibang/GUI.for.CLASH/total?color=%239F7AEA&logo=github" />
+  <img src="https://img.shields.io/github/downloads/GUI-for-Cores/GUI.for.SingBox/total?color=%239F7AEA&logo=github" />
 </div>
 
 
@@ -30,4 +30,4 @@ wails build -m -trimpath
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/onejibang/GUI.for.Clash.svg)](https://starchart.cc/onejibang/GUI.for.Clash)
+[![Stargazers over time](https://starchart.cc/GUI-for-Cores/GUI.for.SingBox.svg)](https://starchart.cc/GUI-for-Cores/GUI.for.SingBox)

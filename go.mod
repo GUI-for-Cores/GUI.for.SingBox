@@ -1,4 +1,4 @@
-module guiforclash
+module guiforsingbox
 
 go 1.21
 

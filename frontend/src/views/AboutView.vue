@@ -59,31 +59,31 @@ const checkForUpdates = async (showTips = false) => {
 
   loading.value = true
 
-  // try {
-  //   const { json } = await HttpGetJSON(APP_VERSION_API, {
-  //     'User-Agent': appSettings.app.userAgent
-  //   })
-  //   const { os, arch } = await GetEnv()
+  try {
+    const { json } = await HttpGetJSON(APP_VERSION_API, {
+      'User-Agent': appSettings.app.userAgent
+    })
+    const { os, arch } = await GetEnv()
 
-  //   const { tag_name, assets, message: msg } = json
-  //   if (msg) throw msg
+    const { tag_name, assets, message: msg } = json
+    if (msg) throw msg
 
-  //   const suffix = { windows: '.exe', linux: '' }[os]
-  //   const assetName = `GUI.for.SingBox-${os}-${arch}${suffix}`
+    const suffix = { windows: '.exe', linux: '' }[os]
+    const assetName = `GUI.for.SingBox-${os}-${arch}${suffix}`
 
-  //   const asset = assets.find((v: any) => v.name === assetName)
-  //   if (!asset) throw 'Asset Not Found:' + assetName
+    const asset = assets.find((v: any) => v.name === assetName)
+    if (!asset) throw 'Asset Not Found:' + assetName
 
-  //   remoteVersion.value = tag_name
-  //   downloadUrl = asset.browser_download_url
+    remoteVersion.value = tag_name
+    downloadUrl = asset.browser_download_url
 
-  //   if (showTips) {
-  //     message.info(needUpdate.value ? 'about.newVersion' : 'about.latestVersion')
-  //   }
-  // } catch (error: any) {
-  //   console.error(error)
-  //   message.info(error)
-  // }
+    if (showTips) {
+      message.info(needUpdate.value ? 'about.newVersion' : 'about.latestVersion')
+    }
+  } catch (error: any) {
+    console.error(error)
+    message.info(error)
+  }
 
   loading.value = false
 }

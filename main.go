@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-	"guiforclash/bridge"
+	"guiforsingbox/bridge"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
