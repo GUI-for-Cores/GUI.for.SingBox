@@ -5,6 +5,9 @@
   <img src="https://img.shields.io/github/downloads/GUI-for-Cores/GUI.for.SingBox/total?color=%239F7AEA&logo=github" />
 </div>
 
+<div align="center">
+  <img src="docs/imgs/preview.png" width="600" height="380">
+</div>
 
 Build
 
