@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { generateConfigFile, ignoredError} from '@/utils'
+import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
 import { type ProfileType, useAppSettingsStore, useProfilesStore, useLogsStore } from '@/stores'
@@ -41,8 +41,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
   const getProfile = () => {
     const appSettingsStore = useAppSettingsStore()
-    const { profile: profileID} = appSettingsStore.app.kernel
-    if (profileID){
+    const { profile: profileID } = appSettingsStore.app.kernel
+    if (profileID) {
       const profilesStore = useProfilesStore()
       return profilesStore.getProfileById(profileID) as ProfileType
     }
@@ -53,7 +53,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   const isRestarting = ref<boolean>(false)
 
   const refreshCofig = async () => {
-    if(!currentProfile.value){
+    if (!currentProfile.value) {
       return
     }
     config.value.port = currentProfile.value.advancedConfig.port
@@ -68,41 +68,33 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       enable: currentProfile.value.tunConfig.enable,
       stack: currentProfile.value.tunConfig.stack,
       'auto-route': currentProfile.value.tunConfig['auto-route'],
-      device: currentProfile.value.tunConfig.interface_name}
+      device: currentProfile.value.tunConfig.interface_name
+    }
   }
 
   const updateConfig = async (name: string, value: any) => {
-    if(!currentProfile.value){
+    if (!currentProfile.value) {
       return
     }
-    if(name == 'tun'){
+    if (name == 'tun') {
       currentProfile.value.tunConfig.enable = value
-    }
-    else if(name == 'http-port'){
+    } else if (name == 'http-port') {
       currentProfile.value.advancedConfig.port = value
-    }
-    else if(name == 'socks-port'){
+    } else if (name == 'socks-port') {
       currentProfile.value.advancedConfig['socks-port'] = value
-    }
-    else if(name == 'mixed-port'){
+    } else if (name == 'mixed-port') {
       currentProfile.value.generalConfig['mixed-port'] = value
-    }    
-    else if(name == 'allow-lan'){
+    } else if (name == 'allow-lan') {
       currentProfile.value.generalConfig['allow-lan'] = value
-    }    
-    else if(name == 'tun-stack'){
+    } else if (name == 'tun-stack') {
       currentProfile.value.tunConfig.stack = value
-    }    
-    else if(name == 'tun-device'){
+    } else if (name == 'tun-device') {
       currentProfile.value.tunConfig.interface_name = value
-    }
-    else if(name == 'interface-name'){
+    } else if (name == 'interface-name') {
       currentProfile.value.generalConfig['interface-name'] = value
-    }
-    else if(name == 'mode'){
+    } else if (name == 'mode') {
       currentProfile.value.generalConfig.mode = value
-    }
-    else if(name == 'fakeip'){
+    } else if (name == 'fakeip') {
       currentProfile.value.dnsConfig.fakeip = value
     }
     await generateConfigFile(currentProfile.value)
@@ -160,11 +152,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     logsStore.clearKernelLog()
 
-    if(!isRestarting.value) {
+    if (!isRestarting.value) {
       await generateConfigFile(profile)
       currentProfile.value = deepClone(profile)
     }
-
 
     if (pid) {
       const running = await ignoredError(KernelRunning, pid)

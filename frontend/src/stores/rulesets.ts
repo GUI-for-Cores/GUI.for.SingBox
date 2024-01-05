@@ -72,11 +72,10 @@ export const useRulesetsStore = defineStore('rulesets', () => {
 
   const _doUpdateRuleset = async (r: RuleSetType) => {
     if (r.type === 'File') {
-      if(r.url && r.path != r.url) {
+      if (r.url && r.path != r.url) {
         Copyfile(r.url, r.path)
       }
-    }
-    else if (r.type === 'Http') {
+    } else if (r.type === 'Http') {
       await Download(r.url, r.path)
     }
     r.updateTime = new Date().toLocaleString()

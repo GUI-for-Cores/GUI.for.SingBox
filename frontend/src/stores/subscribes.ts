@@ -95,20 +95,19 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       const userAgent = s.userAgent || appSettings.app.userAgent
       let header: any = {}
 
-      if(s.convert) {
+      if (s.convert) {
         const converterUrl = 'https://sing-box-subscribe.vercel.app/config/' + s.url
         const { body: b } = await HttpGet(converterUrl, {
           'User-Agent': userAgent
         })
-  
-        const { header: h} = await HttpGet(s.url, {
+
+        const { header: h } = await HttpGet(s.url, {
           'User-Agent': userAgent
         })
         header = h
         body = b
-      }
-      else {
-        const { header: h, body: b} = await HttpGet(s.url, {
+      } else {
+        const { header: h, body: b } = await HttpGet(s.url, {
           'User-Agent': userAgent
         })
         header = h
@@ -140,7 +139,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
       worker.onmessage = ({ data: { node, done } }) => {
         if (node) {
-          if('server' in node && 'tag' in node) {
+          if ('server' in node && 'tag' in node) {
             const flag1 = s.include ? new RegExp(s.include).test(node.tag) : true
             const flag2 = s.exclude ? !new RegExp(s.exclude).test(node.tag) : true
             if (flag1 && flag2) proxies.push(node)
@@ -158,7 +157,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     } else {
       const outbounds = JSON.parse(body).outbounds ?? []
       proxies = outbounds.filter((v: any) => {
-        if('server' in v && 'tag' in v) {
+        if ('server' in v && 'tag' in v) {
           const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
           const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
           return flag1 && flag2
@@ -166,7 +165,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         return false
       })
     }
-
 
     if (s.proxyPrefix) {
       proxies = proxies.map((v) => ({ ...v, tag: s.proxyPrefix + v.tag }))

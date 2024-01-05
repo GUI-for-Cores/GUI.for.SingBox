@@ -28,7 +28,7 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     {{ t('kernel.mode') }}
     <Radio v-model="fields.mode" :options="ModeOptions" />
   </div>
-  <div class="form-item">
+  <div class="form-item" v-if="false">
     {{ t('kernel.log-level') }}
     <Radio v-model="fields['log-level']" :options="LogLevelOptions" />
   </div>

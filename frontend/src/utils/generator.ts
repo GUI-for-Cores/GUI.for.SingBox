@@ -58,7 +58,7 @@ const generateDnsConfig = async (profile: ProfileType) => {
   //   : profile.dnsConfig['remote-resolver-dns']
   // const remote_detour = ['rule', 'global'].includes(profile.generalConfig.mode) ? proxyTag : 'direct'
   // const direct_detour = ['rule', 'direct'].includes(profile.generalConfig.mode) ? 'direct' : proxyTag
-  
+
   const proxyTag = profile.proxyGroupsConfig[0].tag
   const remote_dns = profile.dnsConfig['remote-dns']
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
