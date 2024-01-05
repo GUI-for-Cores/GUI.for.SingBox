@@ -172,7 +172,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       proxies = proxies.map((v) => ({ ...v, tag: s.proxyPrefix + v.tag }))
     }
 
-    await Writefile(s.path, JSON.stringify(proxies, null, 4))
+    await Writefile(s.path, JSON.stringify(proxies, null, 2))
 
     const match = userInfo.match(pattern) || [0, 0, 0, 0, 0]
 

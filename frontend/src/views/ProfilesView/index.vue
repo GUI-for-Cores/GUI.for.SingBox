@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { stringify } from 'yaml'
 import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
@@ -48,7 +47,7 @@ const secondaryMenus: Menu[] = [
       if (!p) return
       try {
         const config = await generateConfig(p)
-        const str = JSON.stringify(config, null, 4)
+        const str = JSON.stringify(config, null, 2)
         const ok = await ClipboardSetText(str)
         if (!ok) throw 'ClipboardSetText Error'
         console.log(config)

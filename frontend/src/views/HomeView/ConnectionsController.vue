@@ -56,7 +56,7 @@ const menu: Menu[] = [
   {
     label: 'common.details',
     handler: (record: Record<string, any>) => {
-      details.value = JSON.stringify(record, null, 4)
+      details.value = JSON.stringify(record, null, 2)
       toggleDetails()
     }
   },

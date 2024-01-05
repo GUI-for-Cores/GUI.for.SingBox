@@ -7,6 +7,7 @@ import { KernelWorkDirectory, getKernelFileName } from '@/constant'
 import { type ProfileType, useAppSettingsStore, useProfilesStore, useLogsStore } from '@/stores'
 import { getProxies, getProviders } from '@/api/kernel'
 import { EventsOn, KernelRunning, KillProcess, StartKernel } from '@/utils/bridge'
+import { deepClone } from '@/utils/others'
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
   /** RESTful API */
@@ -161,7 +162,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     if(!isRestarting.value) {
       await generateConfigFile(profile)
-      currentProfile.value = JSON.parse(JSON.stringify(profile))
+      currentProfile.value = deepClone(profile)
     }
 
 

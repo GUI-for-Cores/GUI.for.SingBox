@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { useBool, useMessage } from '@/hooks'
 import { type SubscribeType, useSubscribesStore } from '@/stores'
 import { deepClone, sampleID, APP_TITLE, APP_VERSION } from '@/utils'
-import { vModelCheckbox } from 'vue'
 
 interface Props {
   id?: string

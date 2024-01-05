@@ -4,7 +4,6 @@ import { ProxyGroup, FinalDnsType } from '@/constant'
 
 export const GeneralConfigDefaults: ProfileType['generalConfig'] = {
   mode: 'rule',
-  // a meaningful port
   'mixed-port': 20112,
   'allow-lan': false,
   'log-level': 'panic',
@@ -28,8 +27,6 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
 })
 
 export const TunConfigDefaults: ProfileType['tunConfig'] = {
-  // System proxy is supported, which is simpler than tun mode
-  // Of course I prefer tun mode (*v*)
   enable: true,
   stack: 'System',
   'auto-route': true,

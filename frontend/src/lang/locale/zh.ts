@@ -30,7 +30,8 @@ export default {
     keywords: '关键词',
     success: '成功',
     copy: '复制',
-    copied: '已复制'
+    copied: '已复制',
+    auto: '自动'
   },
   kernel: {
     port: 'HTTP(s)代理端口',
@@ -239,7 +240,8 @@ export default {
     controller: {
       name: '控制器',
       autoClose: '自动断开连接',
-      unAvailable: '展示不可用节点'
+      unAvailable: '展示不可用节点',
+      cardMode: '卡片模式'
     },
     connections: {
       host: '主机',

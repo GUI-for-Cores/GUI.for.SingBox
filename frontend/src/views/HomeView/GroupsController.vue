@@ -24,7 +24,7 @@ const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
 const groups = computed(() => {
-  const { providers, proxies } = kernelApiStore
+  const { proxies } = kernelApiStore
   return Object.values(proxies)
     .filter((v) => v.all)
     .map((provider) => {
@@ -133,11 +133,11 @@ const locateGroup = (group: any, chain: string) => {
 }
 
 const delayColor = (delay = 0) => {
-  if (delay === 0) return '#f00'
-  if (delay < 100) return '#6ec96e'
-  if (delay < 200) return '#d98506'
-  if (delay < 500) return '#d4451a'
-  return '#bc1212'
+  if (delay === 0) return 'var(--level-0-color)'
+  if (delay < 100) return 'var(--level-1-color)'
+  if (delay < 200) return 'var(--level-2-color)'
+  if (delay < 500) return 'var(--level-3-color)'
+  return 'var(--level-4-color)'
 }
 </script>
 
@@ -149,6 +149,9 @@ const delayColor = (delay = 0) => {
       </Switch>
       <Switch v-model="appSettings.app.kernel.unAvailable" style="margin-left: 8px">
         {{ t('home.controller.unAvailable') }}
+      </Switch>
+      <Switch v-model="appSettings.app.kernel.cardMode" style="margin-left: 8px">
+        {{ t('home.controller.cardMode') }}
       </Switch>
       <Button
         @click="expandAll"
@@ -211,24 +214,36 @@ const delayColor = (delay = 0) => {
       </div>
     </div>
     <div v-show="isExpanded(group.name)" class="body">
-      <Card
-        v-for="proxy in group.all"
-        :title="proxy.name"
-        :selected="proxy.name === group.now"
-        :key="proxy.name"
-        @click="handleUseProxy(group, proxy)"
-        class="proxy"
-      >
-        <Button
-          @click.stop="handleProxyDelay(proxy.name)"
-          :style="{ color: delayColor(proxy.delay) }"
-          type="text"
-          class="delay"
+      <template v-if="appSettings.app.kernel.cardMode">
+        <Card
+          v-for="proxy in group.all"
+          :title="proxy.name"
+          :selected="proxy.name === group.now"
+          :key="proxy.name"
+          @click="handleUseProxy(group, proxy)"
+          class="proxy"
         >
-          {{ proxy.delay && proxy.delay + 'ms' }}
-        </Button>
-        <div class="type">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
-      </Card>
+        <Button
+            @click.stop="handleProxyDelay(proxy.name)"
+            :style="{ color: delayColor(proxy.delay) }"
+            type="text"
+            class="delay"
+          >
+            {{ proxy.delay && proxy.delay + 'ms' }}
+          </Button>
+          <div class="type">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
+        </Card>
+      </template>
+      <template v-else>
+        <div
+          v-for="proxy in group.all"
+          v-tips.fast="proxy.name"
+          :selected="proxy.name === group.now"
+          :key="proxy.name"
+          :style="{ background: delayColor(proxy.delay) }"
+          class="proxy-square"
+        ></div>
+      </template>
     </div>
   </div>
 </template>
@@ -289,6 +304,13 @@ const delayColor = (delay = 0) => {
       .delay {
         font-size: 12px;
       }
+    }
+
+    .proxy-square {
+      width: 12px;
+      height: 12px;
+      margin: 4px;
+      border-radius: 4px;
     }
   }
 }

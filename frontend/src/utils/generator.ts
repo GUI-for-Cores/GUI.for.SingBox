@@ -444,7 +444,7 @@ export const generateConfigFile = async (profile: ProfileType) => {
 
   const config = await generateConfig(profile)
 
-  await Writefile(KernelConfigFilePath, JSON.stringify(config, null, 4))
+  await Writefile(KernelConfigFilePath, JSON.stringify(config, null, 2))
 }
 
 export const addToRuleSet = async (ruleset: 'direct' | 'reject' | 'proxy', payload: string) => {
