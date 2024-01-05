@@ -1,0 +1,99 @@
+@import 'variables.less';
+
+:root {
+  body[theme-mode='light'] {
+    .set-theme(light);
+  }
+
+  body[theme-mode='dark'] {
+    .set-theme(dark);
+  }
+}
+
+.set-theme(@theme) {
+  --color: ~'var(--color-@{theme})';
+  --bg-color: ~'var(--bg-color-@{theme})';
+
+  // Scrollbar
+  --scrollbar-track-bg: ~'var(--scrollbar-track-bg-@{theme})';
+  --scrollbar-thumb-bg: ~'var(--scrollbar-thumb-bg-@{theme})';
+
+  // Button
+  --btn-normal-color: ~'var(--btn-normal-color-@{theme})';
+  --btn-normal-bg: ~'var(--btn-normal-bg-@{theme})';
+  --btn-normal-hover-color: ~'var(--btn-normal-hover-color-@{theme})';
+  --btn-normal-hover-border-color: ~'var(--btn-normal-hover-border-color-@{theme})';
+  --btn-normal-active-color: ~'var(--btn-normal-active-color-@{theme})';
+  --btn-normal-active-border-color: ~'var(--btn-normal-active-border-color-@{theme})';
+
+  --btn-primary-color: ~'var(--btn-primary-color-@{theme})';
+  --btn-primary-bg: ~'var(--btn-primary-bg-@{theme})';
+  --btn-primary-hover-bg: ~'var(--btn-primary-hover-bg-@{theme})';
+  --btn-primary-active-bg: ~'var(--btn-primary-active-bg-@{theme})';
+
+  --btn-link-color: ~'var(--btn-link-color-@{theme})';
+  --btn-link-bg: ~'var(--btn-link-bg-@{theme})';
+  --btn-link-hover-color: ~'var(--btn-link-hover-color-@{theme})';
+  --btn-link-active-color: ~'var(--btn-link-active-color-@{theme})';
+
+  --btn-text-color: ~'var(--btn-text-color-@{theme})';
+  --btn-text-bg: ~'var(--btn-text-bg-@{theme})';
+  --btn-text-hover-bg: ~'var(--btn-text-hover-bg-@{theme})';
+  --btn-text-active-bg: ~'var(--btn-text-active-bg-@{theme})';
+
+  // Radio
+  --radio-normal-color: ~'var(--radio-normal-color-@{theme})';
+  --radio-normal-bg: ~'var(--radio-normal-bg-@{theme})';
+  --radio-normal-hover-color: ~'var(--radio-normal-hover-color-@{theme})';
+  --radio-primary-color: ~'var(--radio-primary-color-@{theme})';
+  --radio-primary-bg: ~'var(--radio-primary-bg-@{theme})';
+  --radio-primary-hover-bg: ~'var(--radio-primary-hover-bg-@{theme})';
+  --radio-primary-active-bg: ~'var(--radio-primary-active-bg-@{theme})';
+
+  // Card
+  --card-color: ~'var(--card-color-@{theme})';
+  --card-bg: ~'var(--card-bg-@{theme})';
+  --card-hover-bg: ~'var(--card-hover-bg-@{theme})';
+  --card-active-bg: ~'var(--card-active-bg-@{theme})';
+
+  // Progress
+  --progress-bg: ~'var(--progress-bg-@{theme})';
+  --progress-inner-bg: ~'var(--progress-inner-bg-@{theme})';
+
+  // Dropdown
+  --dropdown-bg: ~'var(--dropdown-bg-@{theme})';
+
+  // Modal
+  --modal-bg: ~'var(--modal-bg-@{theme})';
+  --modal-mask-bg: ~'var(--modal-mask-bg-@{theme})';
+
+  // Switch
+  --switch-on-bg: ~'var(--switch-on-bg-@{theme})';
+  --switch-on-dot-bg: ~'var(--switch-on-dot-bg-@{theme})';
+  --switch-off-bg: ~'var(--switch-off-bg-@{theme})';
+  --switch-off-dot-bg: ~'var(--switch-off-dot-bg-@{theme})';
+
+  // Input
+  --input-color: ~'var(--input-color-@{theme})';
+  --input-bg: ~'var(--input-bg-@{theme})';
+
+  // Divider
+  --divider-color: ~'var(--divider-color-@{theme})';
+
+  // Select
+  --select-color: ~'var(--select-color-@{theme})';
+  --select-bg: ~'var(--select-bg-@{theme})';
+
+  // Toast
+  --toast-bg: ~'var(--toast-bg-@{theme})';
+
+  // Menu
+  --menu-bg: ~'var(--menu-bg-@{theme})';
+  --menu-item-hover: ~'var(--menu-item-hover-@{theme})';
+
+  // Table
+  --table-tr-odd-bg: ~'var(--table-tr-odd-bg-@{theme})';
+  --table-tr-even-bg: ~'var(--table-tr-even-bg-@{theme})';
+  --table-tr-odd-hover-bg: ~'var(--table-tr-odd-hover-bg-@{theme})';
+  --table-tr-even-hover-bg: ~'var(--table-tr-even-hover-bg-@{theme})';
+}

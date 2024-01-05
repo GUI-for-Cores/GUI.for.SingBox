@@ -1,0 +1,53 @@
+@import './theme.less';
+
+body {
+  margin: 0;
+  color: var(--color);
+  background-color: var(--bg-color);
+  user-select: none;
+}
+
+body,
+div {
+  transition: background-color 0.4s;
+}
+
+div,
+input {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color);
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-item {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-select {
+  user-select: text;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background: var(--scrollbar-track-bg);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: var(--scrollbar-thumb-bg);
+}
