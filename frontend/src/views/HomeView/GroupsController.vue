@@ -34,12 +34,15 @@ const groups = computed(() => {
     .map((provider) => {
       const all = provider.all
         .filter((v) => {
-          return (
+          if (
             appSettings.app.kernel.unAvailable ||
             ['direct', 'block'].includes(v) ||
-            proxies[v].all ||
-            proxies[v].alive
-          )
+            proxies[v].all
+          ) {
+            return true
+          }
+          const history = proxies[v].history || []
+          return history && history[history.length - 1]?.delay > 0
         })
         .map((v) => {
           const history = proxies[v].history || []
@@ -53,7 +56,7 @@ const groups = computed(() => {
         tmp.now && chains.push(tmp.now)
         tmp = proxies[tmp.now]
       }
-      if (provider.name == 'GLOBAL') {
+      if (['GLOBAL', 'Fallback'].includes(provider.name)) {
         provider.name = 'Fallback'
         fallback = idx
       }
