@@ -92,6 +92,7 @@ onUnmounted(() => document.removeEventListener('click', onClick))
     padding: 4px;
     margin: 4px 0;
     border-radius: 6px;
+    white-space: nowrap;
     &:hover {
       background: var(--menu-item-hover);
     }

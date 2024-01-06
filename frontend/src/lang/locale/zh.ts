@@ -312,7 +312,7 @@ export default {
   profiles: {
     shouldStop: '请先停止内核',
     empty: '配置列表为空，请先{action}配置。',
-    export: '导出配置',
+    copytoClipboard: '生成配置到剪切板',
     copy: '复制为模板',
     paste: '粘贴模板',
     clearClipboard: '清空模板'

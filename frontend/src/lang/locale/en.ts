@@ -312,7 +312,7 @@ export default {
   profiles: {
     shouldStop: 'Please stop the kernel first.',
     empty: 'The profiles list is empty, Please {action} a profile first.',
-    export: 'Export Config',
+    copytoClipboard: 'Generate config to clipboard',
     copy: 'Copy as template',
     paste: 'Paste template',
     clearClipboard: 'Clear template'

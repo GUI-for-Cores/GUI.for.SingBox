@@ -117,7 +117,7 @@ const handleProxyDelay = async (proxy: string) => {
 
 const handleRefresh = async () => {
   loading.value = true
-  await ignoredError(kernelApiStore.refreshCofig)
+  await ignoredError(kernelApiStore.refreshConfig)
   await ignoredError(kernelApiStore.refreshProviderProxies)
   await sleep(500)
   loading.value = false

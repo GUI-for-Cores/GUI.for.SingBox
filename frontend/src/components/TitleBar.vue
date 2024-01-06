@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { type Menu, useAppSettingsStore } from '@/stores'
 import { APP_TITLE, APP_VERSION, ignoredError } from '@/utils'
+import { type Menu, useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
   WindowFullscreen,
   WindowIsFullscreen,
@@ -21,6 +21,7 @@ const isPinned = ref(false)
 const isFullScreen = ref(false)
 
 const appSettingsStore = useAppSettingsStore()
+const kernelApiStore = useKernelApiStore()
 
 const toggleFullScreen = async () => {
   const isFull = await WindowIsFullscreen()
@@ -75,6 +76,7 @@ const menus: Menu[] = [
     >
       {{ APP_TITLE }} {{ APP_VERSION }}
     </div>
+    <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
     <div v-menu="menus" class="menus"></div>
     <div class="action" style="--wails-draggable: disabled">
       <Button @click.stop="pinWindow" type="text">
