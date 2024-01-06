@@ -6,7 +6,7 @@ export const GeneralConfigDefaults: ProfileType['generalConfig'] = {
   mode: 'rule',
   'mixed-port': 20112,
   'allow-lan': false,
-  'log-level': 'panic',
+  'log-level': 'info',
   'interface-name': 'Auto'
 }
 
