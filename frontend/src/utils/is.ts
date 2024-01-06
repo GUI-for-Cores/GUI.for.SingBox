@@ -20,6 +20,15 @@ export const isValidSubYAML = (str: string) => {
   }
 }
 
+export const isValidSubJson = (str: string) => {
+  try {
+    const { outbounds } = JSON.parse(str)
+    return outbounds
+  } catch (error) {
+    return false
+  }
+}
+
 export const isValidPaylodYAML = (str: string) => {
   try {
     const { payload } = parse(str)

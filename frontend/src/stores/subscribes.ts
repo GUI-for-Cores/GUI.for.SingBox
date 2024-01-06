@@ -5,7 +5,7 @@ import { stringify, parse } from 'yaml'
 import { useAppSettingsStore } from '@/stores'
 import { Readfile, Writefile, HttpGet } from '@/utils/bridge'
 import { SubscribesFilePath, NodeConverterFilePath } from '@/constant'
-import { deepClone, debounce, isValidBase64, isValidSubYAML, sampleID } from '@/utils'
+import { deepClone, debounce, isValidBase64, isValidSubJson, sampleID } from '@/utils'
 
 export type SubscribeType = {
   id: string
@@ -154,7 +154,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
 
       await promise
-    } else {
+    } else if(isValidSubJson(body)) {
       const outbounds = JSON.parse(body).outbounds ?? []
       proxies = outbounds.filter((v: any) => {
         if ('server' in v && 'tag' in v) {
@@ -164,6 +164,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         }
         return false
       })
+    } else {
+      throw 'Not a valid subscription data'
     }
 
     if (s.proxyPrefix) {
