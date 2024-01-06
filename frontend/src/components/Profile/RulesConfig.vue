@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 
+import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
 import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
 import { RulesTypeOptions, DraggableOptions } from '@/constant'
@@ -38,6 +39,7 @@ const proxyOptions = computed(() => [
 const supportPayload = computed(() => !['final', 'rule_set'].includes(fields.value.type))
 
 const { t } = useI18n()
+const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleAddRule = () => {
@@ -73,8 +75,15 @@ const handleUseRuleset = (ruleset: RuleSetType) => {
   fields.value.payload = ruleset.id
 }
 
+const hasLost = (r: ProfileType['rulesConfig'][0]) => {
+  if (['direct', 'block'].includes(r.proxy)) return false
+  return !props.profile.proxyGroupsConfig.find((v) => v.tag === r.proxy)
+}
+
+const showLost = () => message.info('kernel.rules.notFound')
+
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
-  const { type, payload, proxy} = rule
+  const { type, payload, proxy } = rule
   let ruleStr = type
   if (type !== 'final') {
     if (type === 'rule_set') {
@@ -99,6 +108,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div v-draggable="[rules, DraggableOptions]">
       <Card v-for="(r, index) in rules" :key="r.id" class="rules-item">
         <div class="name">
+          <span v-if="hasLost(r)" @click="showLost" class="warn"> [ ! ] </span>
           {{ generateRuleDesc(r) }}
         </div>
         <div class="action">
@@ -157,7 +167,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
   margin-bottom: 2px;
   .name {
     font-weight: bold;
-    .not-support {
+    .warn {
       color: rgb(200, 193, 11);
       cursor: pointer;
     }

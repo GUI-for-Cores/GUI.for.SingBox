@@ -238,9 +238,10 @@ const delayColor = (delay = 0) => {
         <div
           v-for="proxy in group.all"
           v-tips.fast="proxy.name"
-          :selected="proxy.name === group.now"
+          @click="handleUseProxy(group, proxy)"
           :key="proxy.name"
           :style="{ background: delayColor(proxy.delay) }"
+          :class="{ selected: proxy.name === group.now }"
           class="proxy-square"
         ></div>
       </template>
@@ -311,6 +312,12 @@ const delayColor = (delay = 0) => {
       height: 12px;
       margin: 4px;
       border-radius: 4px;
+    }
+
+    .selected {
+      border-radius: 12px;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 0 4px var(--secondary-color);
     }
   }
 }

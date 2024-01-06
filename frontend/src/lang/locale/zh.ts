@@ -151,6 +151,7 @@ export default {
       ruleset: '规则组',
       rulesets: '规则组列表',
       needGeodataMode: '请在高级设置中打开"GEO数据模式"',
+      notFound: '代理组不存在',
       type: {
         name: '类型',
         DOMAIN: '域名',

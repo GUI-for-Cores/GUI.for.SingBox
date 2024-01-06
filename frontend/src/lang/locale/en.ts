@@ -151,6 +151,7 @@ export default {
       ruleset: 'RuleSet',
       rulesets: 'RuleSets',
       needGeodataMode: 'Please enable the "geodata-mode" option in the advanced settings',
+      notFound: 'proxy group does not exist',
       type: {
         name: 'Type',
         DOMAIN: 'DOMAIN',

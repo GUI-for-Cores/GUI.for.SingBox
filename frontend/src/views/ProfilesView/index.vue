@@ -230,7 +230,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
         / rules:
         {{ p.rulesConfig.length }}
       </div>
-      <div v-if="p.tunConfig.enable || p.dnsConfig.enable">
+      <div>
         TUN:
         {{ p.tunConfig.enable ? t('common.enabled') : t('common.disabled') }}
         / DNS:
