@@ -25,7 +25,11 @@ const kernelApiStore = useKernelApiStore()
 
 const groups = computed(() => {
   const { proxies } = kernelApiStore
-  return Object.values(proxies)
+
+  let fallback = -1
+  let idx = 0
+
+  let result = Object.values(proxies)
     .filter((v) => v.all)
     .map((provider) => {
       const all = provider.all
@@ -49,8 +53,18 @@ const groups = computed(() => {
         tmp.now && chains.push(tmp.now)
         tmp = proxies[tmp.now]
       }
+      if (provider.name == 'GLOBAL') {
+        provider.name = 'Fallback'
+        fallback = idx
+      }
+      ++idx
       return { ...provider, all, chains }
     })
+  if (fallback >= 0) {
+    result.push(result[fallback])
+    result.splice(fallback, 1)
+  }
+  return result
 })
 
 const handleUseProxy = async (group: any, proxy: any) => {
@@ -223,7 +237,7 @@ const delayColor = (delay = 0) => {
           @click="handleUseProxy(group, proxy)"
           class="proxy"
         >
-        <Button
+          <Button
             @click.stop="handleProxyDelay(proxy.name)"
             :style="{ color: delayColor(proxy.delay) }"
             type="text"
