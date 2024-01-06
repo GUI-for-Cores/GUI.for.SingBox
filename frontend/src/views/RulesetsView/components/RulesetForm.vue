@@ -102,7 +102,11 @@ if (props.isUpdate) {
     <div class="name">* {{ t('ruleset.url') }}</div>
     <Input
       v-model="ruleset.url"
-      :placeholder="ruleset.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.srs'"
+      :placeholder="
+        ruleset.type === 'Http'
+          ? 'http(s)://'
+          : 'data/local/{filename}.' + (ruleset.format === 'binary' ? 'srs' : 'json')
+      "
       auto-size
       class="input"
     />
