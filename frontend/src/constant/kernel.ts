@@ -234,7 +234,11 @@ export const ProxyTypeOptions = [
   {
     label: 'wireguard',
     value: 'wireguard'
-  }
+  },
+  {
+    label: 'shadowsocks',
+    value: 'shadowsocks'
+  },
 ]
 
 export enum RulesetFormat {

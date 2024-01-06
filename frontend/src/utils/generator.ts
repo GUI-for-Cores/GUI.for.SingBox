@@ -1,5 +1,3 @@
-import { parse, stringify } from 'yaml'
-
 import { Readfile, Writefile } from '@/utils/bridge'
 import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'

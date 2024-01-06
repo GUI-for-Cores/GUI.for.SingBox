@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { parse, stringify } from 'yaml'
 import { ref, computed, inject } from 'vue'
 
 import { useBool, useMessage } from '@/hooks'
@@ -47,7 +46,7 @@ const menus: Menu[] = [
     handler: async (record: SubscribeType['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
-        details.value = stringify(proxy)
+        details.value = JSON.stringify(proxy, null, 2)
         toggleDetails()
       } catch (error: any) {
         message.info(error)
@@ -59,7 +58,7 @@ const menus: Menu[] = [
     handler: async (record: SubscribeType['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
-        await ClipboardSetText(stringify(proxy))
+        await ClipboardSetText(JSON.stringify(proxy, null, 2))
         message.info('common.copied')
       } catch (error: any) {
         message.info(error)
@@ -92,7 +91,7 @@ const handleSave = async () => {
     const filteredProxies = allFieldsProxies.value.filter((v: any) =>
       proxies.some((vv) => vv.tag === v.tag)
     )
-    await Writefile(path, stringify({ proxies: filteredProxies }))
+    await Writefile(path, JSON.stringify(filteredProxies, null, 2))
     await subscribeStore.editSubscribe(id, sub.value)
     handleSubmit()
   } catch (error: any) {
@@ -110,8 +109,7 @@ const resetForm = () => {
 const initAllFieldsProxies = async () => {
   if (allFieldsProxies.value) return
   const content = (await ignoredError(Readfile, sub.value!.path)) || '{}'
-  const { proxies: _proxies = [] } = parse(content)
-  allFieldsProxies.value = _proxies
+  allFieldsProxies.value = JSON.parse(content)
 }
 
 const getProxyByTag = async (tag: string) => {
