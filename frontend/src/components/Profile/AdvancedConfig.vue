@@ -72,8 +72,8 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     <Switch v-model="fields.profile['store-fake-ip']" />
   </div>
   <div class="form-item">
-    {{ t('kernel.tcp-concurrent') }}
-    <Switch v-model="fields['tcp-concurrent']" />
+    {{ t('kernel.tcp-multi-path') }}
+    <Switch v-model="fields['tcp-multi-path']" />
   </div>
 </template>
 

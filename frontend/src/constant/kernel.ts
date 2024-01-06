@@ -26,7 +26,7 @@ export const KernelWorkDirectory = 'data/sing-box'
 export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
 
 export const getKernelFileName = async (isLatest = false) => {
-  const { os, arch } = await GetEnv()
+  const { os } = await GetEnv()
   const fileSuffix = { windows: '.exe', linux: '' }[os]
   const latest = isLatest ? '-latest' : ''
   return `sing-box${latest}${fileSuffix}`

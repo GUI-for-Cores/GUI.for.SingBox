@@ -1,7 +1,7 @@
 import { parse, stringify } from 'yaml'
 
 import { Readfile, Writefile } from '@/utils/bridge'
-import { deepClone, ignoredError, APP_TITLE } from '@/utils'
+import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore } from '@/stores'
 
@@ -43,22 +43,6 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
 }
 
 const generateDnsConfig = async (profile: ProfileType) => {
-  // const proxyTag = profile.proxyGroupsConfig[0].tag
-  // const remote_dns = ['rule', 'global'].includes(profile.generalConfig.mode)
-  //   ? profile.dnsConfig['remote-dns']
-  //   : profile.dnsConfig['local-dns']
-  // const remote_resolver_dns = ['rule', 'global'].includes(profile.generalConfig.mode)
-  //   ? profile.dnsConfig['remote-resolver-dns']
-  //   : profile.dnsConfig['resolver-dns']
-  // const local_dns = ['rule', 'direct'].includes(profile.generalConfig.mode)
-  //   ? profile.dnsConfig['local-dns']
-  //   : profile.dnsConfig['remote-dns']
-  // const resolver_dns = ['rule', 'direct'].includes(profile.generalConfig.mode)
-  //   ? profile.dnsConfig['resolver-dns']
-  //   : profile.dnsConfig['remote-resolver-dns']
-  // const remote_detour = ['rule', 'global'].includes(profile.generalConfig.mode) ? proxyTag : 'direct'
-  // const direct_detour = ['rule', 'direct'].includes(profile.generalConfig.mode) ? 'direct' : proxyTag
-
   const proxyTag = profile.proxyGroupsConfig[0].tag
   const remote_dns = profile.dnsConfig['remote-dns']
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
@@ -145,6 +129,14 @@ const generateDnsConfig = async (profile: ProfileType) => {
       {
         rule_set: 'built-in-geosite-geolocation-!cn',
         server: 'remote-dns'
+      },
+      {
+        clash_mode: 'direct',
+        server: 'local-dns'
+      },
+      {
+        clash_mode: 'global',
+        server: 'remote-dns'
       }
     ]
   }
@@ -158,7 +150,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       type: 'mixed',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.generalConfig['mixed-port'],
-      tcp_multi_path: profile.advancedConfig['tcp-concurrent'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
       sniff: true
     })
   }
@@ -168,7 +160,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       type: 'http',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.advancedConfig.port,
-      tcp_multi_path: profile.advancedConfig['tcp-concurrent'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
       sniff: true
     })
   }
@@ -178,7 +170,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       type: 'socks',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.advancedConfig['socks-port'],
-      tcp_multi_path: profile.advancedConfig['tcp-concurrent'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
       sniff: true
     })
   }
@@ -332,6 +324,14 @@ const generateRouteConfig = async (profile: ProfileType) => {
         network: 'udp',
         port: 443,
         outbound: 'block'
+      },
+      {
+        clash_mode: 'direct',
+        outbound: 'direct'
+      },
+      {
+        clash_mode: 'global',
+        outbound: proxyTag
       }
     ]
   }
@@ -398,7 +398,8 @@ export const generateConfig = async (profile: ProfileType) => {
         external_controller: profile.advancedConfig['external-controller'],
         external_ui: profile.advancedConfig['external-ui'],
         secret: profile.advancedConfig.secret,
-        external_ui_download_url: profile.advancedConfig['external-ui-url']
+        external_ui_download_url: profile.advancedConfig['external-ui-url'],
+        default_mode: profile.generalConfig.mode
       },
       cache_file: {
         enabled: profile.advancedConfig.profile['store-cache'],

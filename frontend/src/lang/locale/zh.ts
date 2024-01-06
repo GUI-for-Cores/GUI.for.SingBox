@@ -63,7 +63,7 @@ export default {
     'external-ui-name': '外部用户界面',
     'external-ui-url': '自定义外部用户界面下载地址',
     'unified-delay': '统一延迟',
-    'tcp-concurrent': 'TCP并发',
+    'tcp-multi-path': '多路径TCP',
     authentication: 'Http/Socks 验证用户',
     'skip-auth-prefixes': '跳过验证的IP段',
     'store-cache': '持久化缓存',

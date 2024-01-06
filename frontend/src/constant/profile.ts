@@ -4,7 +4,7 @@ import { ProxyGroup, FinalDnsType } from '@/constant'
 
 export const GeneralConfigDefaults: ProfileType['generalConfig'] = {
   mode: 'rule',
-  'mixed-port': 20112,
+  'mixed-port': 20122,
   'allow-lan': false,
   'log-level': 'info',
   'interface-name': 'Auto'
@@ -14,10 +14,10 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   port: 0,
   'socks-port': 0,
   secret: sampleID(),
-  'external-controller': '127.0.0.1:20113',
+  'external-controller': '127.0.0.1:20123',
   'external-ui': '',
   'external-ui-url': '',
-  'tcp-concurrent': true,
+  'tcp-multi-path': true,
   profile: {
     'store-cache': true,
     'store-fake-ip': true
