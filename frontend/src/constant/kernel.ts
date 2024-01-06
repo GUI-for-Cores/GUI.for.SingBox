@@ -196,16 +196,8 @@ export const ProxyTypeOptions = [
     value: 'http'
   },
   {
-    label: 'socks5',
-    value: 'socks5'
-  },
-  {
-    label: 'ss',
-    value: 'ss'
-  },
-  {
-    label: 'ssr',
-    value: 'ssr'
+    label: 'socks',
+    value: 'socks'
   },
   {
     label: 'vmess',
@@ -239,6 +231,22 @@ export const ProxyTypeOptions = [
     label: 'shadowsocks',
     value: 'shadowsocks'
   },
+  {
+    label: 'shadowtls',
+    value: 'shadowtls'
+  },
+  {
+    label: 'tuic',
+    value: 'tuic'
+  },
+  {
+    label: 'tor',
+    value: 'tor'
+  },
+  {
+    label: 'ssh',
+    value: 'ssh'
+  }
 ]
 
 export enum RulesetFormat {
