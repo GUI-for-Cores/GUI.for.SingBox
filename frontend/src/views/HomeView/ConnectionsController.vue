@@ -18,11 +18,11 @@ const columns: Column[] = [
       return (value || record.metadata.destinationIP) + ':' + record.metadata.destinationPort
     }
   },
-  {
-    title: 'home.connections.inbound',
-    key: 'metadata.inboundName',
-    customRender: ({ value }) => value.replace('DEFAULT-', '')
-  },
+  // {
+  //   title: 'home.connections.inbound',
+  //   key: 'metadata.inboundName',
+  //   customRender: ({ value }) => value.replace('DEFAULT-', '')
+  // },
   {
     title: 'home.connections.rule',
     key: 'rule',
@@ -71,27 +71,27 @@ const menu: Menu[] = [
       }
     }
   },
-  ...[
-    ['home.connections.addToDirect', 'direct'],
-    ['home.connections.addToProxy', 'proxy'],
-    ['home.connections.addToReject', 'reject']
-  ].map(([label, ruleset]) => {
-    return {
-      label,
-      handler: async (record: Record<string, any>) => {
-        try {
-          const behavior = record.metadata.host ? 'DOMAIN' : 'IP-CIDR'
-          const payload = record.metadata.host || record.metadata.destinationIP + '/32'
-          await addToRuleSet(ruleset as any, behavior + ',' + payload)
-          await updateProvidersRules(ruleset)
-          message.info('success')
-        } catch (error: any) {
-          message.info(error)
-          console.log(error)
-        }
-      }
-    }
-  })
+  // ...[
+  //   ['home.connections.addToDirect', 'direct'],
+  //   ['home.connections.addToProxy', 'proxy'],
+  //   ['home.connections.addToReject', 'block']
+  // ].map(([label, ruleset]) => {
+  //   return {
+  //     label,
+  //     handler: async (record: Record<string, any>) => {
+  //       try {
+  //         const behavior = record.metadata.host ? 'domain' : 'ip_cidr'
+  //         const payload = record.metadata.host || record.metadata.destinationIP + '/32'
+  //         await addToRuleSet(ruleset as any, behavior + ',' + payload)
+  //         await updateProvidersRules(ruleset)
+  //         message.info('success')
+  //       } catch (error: any) {
+  //         message.info(error)
+  //         console.log(error)
+  //       }
+  //     }
+  //   }
+  // })
 ]
 
 const details = ref()
