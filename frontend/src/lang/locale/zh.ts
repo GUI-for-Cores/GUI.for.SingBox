@@ -67,7 +67,7 @@ export default {
     'tcp-multi-path': '多路径TCP',
     'udp-fragment': 'UDP分段',
     'sniff': '协议探测',
-    'sniff-override-destination': '嗅探域名覆盖目标地址',
+    'sniff-override-destination': '探测域名覆盖目标地址',
     authentication: 'Http/Socks 验证用户',
     'skip-auth-prefixes': '跳过验证的IP段',
     'store-cache': '持久化缓存',
