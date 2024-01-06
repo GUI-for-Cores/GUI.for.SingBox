@@ -25,11 +25,11 @@ export enum FinalDnsType {
 export const KernelWorkDirectory = 'data/sing-box'
 export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
 
-export const getKernelFileName = async (isAlpha = false) => {
+export const getKernelFileName = async (isLatest = false) => {
   const { os, arch } = await GetEnv()
   const fileSuffix = { windows: '.exe', linux: '' }[os]
-  const alpha = isAlpha ? '-alpha' : ''
-  return `sing-box${alpha}${fileSuffix}`
+  const latest = isLatest ? '-latest' : ''
+  return `sing-box${latest}${fileSuffix}`
 }
 
 export const ModeOptions = [

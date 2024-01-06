@@ -165,7 +165,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       }
     }
 
-    const fileName = await getKernelFileName(branch === 'alpha')
+    const fileName = await getKernelFileName(branch === 'latest')
 
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
 

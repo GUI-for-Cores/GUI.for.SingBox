@@ -23,7 +23,7 @@ type AppSettings = {
   userAgent: string
   startupDelay: number
   kernel: {
-    branch: 'main' | 'alpha'
+    branch: 'main' | 'latest'
     profile: string
     pid: number
     running: boolean
@@ -53,7 +53,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     userAgent: APP_TITLE + '/' + APP_VERSION,
     startupDelay: 30,
     kernel: {
-      branch: 'alpha',
+      branch: 'latest',
       profile: '',
       pid: -1,
       running: false,

@@ -378,7 +378,7 @@ export default {
     kernel: {
       branch: 'Branch',
       main: 'Main branch',
-      alpha: 'Alpha branch'
+      latest: 'Latest branch'
     },
     userAgent: {
       name: 'User-Agent',

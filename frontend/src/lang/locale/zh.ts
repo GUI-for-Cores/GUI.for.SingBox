@@ -378,7 +378,7 @@ export default {
     kernel: {
       branch: '分支',
       main: '主分支',
-      alpha: 'Alpha分支'
+      latest: '最新分支'
     },
     userAgent: {
       name: '用户代理(User-Agent)',

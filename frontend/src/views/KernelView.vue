@@ -19,7 +19,7 @@ import {
 } from '@/utils/bridge'
 
 const releaseUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
-const alphaUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases'
+const latestUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases'
 
 const downloadLoading = ref([false, false])
 const getLocalVersionLoading = ref([false, false])
@@ -35,7 +35,7 @@ const needRestarts = computed(() => {
 
   return [
     localVersion.value[0] && downloadSuccessful.value[0] && branch === 'main',
-    localVersion.value[1] && downloadSuccessful.value[1] && branch === 'alpha'
+    localVersion.value[1] && downloadSuccessful.value[1] && branch === 'latest'
   ]
 })
 
@@ -102,10 +102,10 @@ const downloadCore = async () => {
   updateLocalVersion()
 }
 
-const downloadAlphaCore = async () => {
+const downloadLatestCore = async () => {
   downloadLoading.value[1] = true
   try {
-    const { json } = await HttpGetJSON(alphaUrl, {
+    const { json } = await HttpGetJSON(latestUrl, {
       'User-Agent': appSettings.app.userAgent
     })
     const { os, arch } = await GetEnv()
@@ -119,27 +119,27 @@ const downloadAlphaCore = async () => {
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName
 
-    const tmp = `data/core-alpha${suffix}` // data/core-alpha.zip or data/core-alpha.gz
+    const tmp = `data/core-latest${suffix}` // data/core-latest.zip or data/core-latest.gz
 
     await Makedir('data/sing-box')
 
     await Download(asset.browser_download_url, tmp)
 
     const fileName = await getKernelFileName() // sing-box.exe
-    const alphaFileName = await getKernelFileName(true) // sing-box-alpha.exe
+    const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 
-    const alphaKernelFilePath = KernelWorkDirectory + '/' + alphaFileName
+    const latestKernelFilePath = KernelWorkDirectory + '/' + latestFileName
 
-    await ignoredError(Movefile, alphaKernelFilePath, alphaKernelFilePath + '.bak')
+    await ignoredError(Movefile, latestKernelFilePath, latestKernelFilePath + '.bak')
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
     } else {
       // TODO: unzip gz
     }
-    
+
     const tmp_path = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}`
-    await Movefile(tmp_path + '/' + fileName, alphaKernelFilePath)
+    await Movefile(tmp_path + '/' + fileName, latestKernelFilePath)
     await Removefile(tmp_path)
     await Removefile(tmp)
 
@@ -153,7 +153,7 @@ const downloadAlphaCore = async () => {
   }
   downloadLoading.value[1] = false
 
-  updateAlphaLocalVersion()
+  updateLatestLocalVersion()
 }
 
 const getLocalVersion = async () => {
@@ -163,7 +163,13 @@ const getLocalVersion = async () => {
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
     const res = await Exec(kernelFilePath, 'version')
     versionDetail.value[0] = res.trim()
-    return res.trim().match(/version \S+/)?.[0].trim().substring(8) || ''
+    return (
+      res
+        .trim()
+        .match(/version \S+/)?.[0]
+        .trim()
+        .substring(8) || ''
+    )
   } catch (error) {
     console.log(error)
   } finally {
@@ -172,14 +178,20 @@ const getLocalVersion = async () => {
   return ''
 }
 
-const getAlphaLocalVersion = async () => {
+const getLatestLocalVersion = async () => {
   getLocalVersionLoading.value[1] = true
   try {
     const fileName = await getKernelFileName(true)
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
     const res = await Exec(kernelFilePath, 'version')
     versionDetail.value[1] = res.trim()
-    return res.trim().match(/version \S+/)?.[0].trim().substring(8) || ''
+    return (
+      res
+        .trim()
+        .match(/version \S+/)?.[0]
+        .trim()
+        .substring(8) || ''
+    )
   } catch (error) {
     console.log(error)
   } finally {
@@ -205,10 +217,10 @@ const getRemoteVersion = async (showTips = false) => {
   return ''
 }
 
-const getAlphaRemoteVersion = async (showTips = false) => {
+const getLatestRemoteVersion = async (showTips = false) => {
   getRemoteVersionLoading.value[1] = true
   try {
-    const { json } = await HttpGetJSON(alphaUrl, {
+    const { json } = await HttpGetJSON(latestUrl, {
       'User-Agent': appSettings.app.userAgent
     })
     const { name } = json[0]
@@ -226,20 +238,20 @@ const updateLocalVersion = async () => {
   localVersion.value[0] = await getLocalVersion()
 }
 
-const updateAlphaLocalVersion = async () => {
-  localVersion.value[1] = await getAlphaLocalVersion()
+const updateLatestLocalVersion = async () => {
+  localVersion.value[1] = await getLatestLocalVersion()
 }
 
 const updateRemoteVersion = async (showTips = false) => {
   remoteVersion.value[0] = await getRemoteVersion(showTips)
 }
 
-const updateAlphaRemoteVersion = async (showTips = false) => {
-  remoteVersion.value[1] = await getAlphaRemoteVersion(showTips)
+const updateLatestRemoteVersion = async (showTips = false) => {
+  remoteVersion.value[1] = await getLatestRemoteVersion(showTips)
 }
 
 const initVersion = async () => {
-  Promise.all([getLocalVersion(), getAlphaLocalVersion()])
+  Promise.all([getLocalVersion(), getLatestLocalVersion()])
     .then((versions) => {
       localVersion.value = versions
     })
@@ -247,7 +259,7 @@ const initVersion = async () => {
       console.log(error)
     })
 
-  Promise.all([getRemoteVersion(), getAlphaRemoteVersion()])
+  Promise.all([getRemoteVersion(), getLatestRemoteVersion()])
     .then((versions) => {
       remoteVersion.value = versions
     })
@@ -289,7 +301,7 @@ initVersion()
 <template>
   <div class="kernel">
     <div class="item">
-      <h3>{{ t('kernel.name') }}</h3>
+      <h3>{{ t('settings.kernel.main') }}</h3>
       <Tag @click="updateLocalVersion" style="cursor: pointer">
         {{ t('kernel.local') }}
         :
@@ -322,20 +334,20 @@ initVersion()
     </div>
 
     <div class="item">
-      <h3>Alpha</h3>
-      <Tag @click="updateAlphaLocalVersion" style="cursor: pointer">
+      <h3>{{ t('settings.kernel.latest') }}</h3>
+      <Tag @click="updateLatestLocalVersion" style="cursor: pointer">
         {{ t('kernel.local') }}
         :
         {{ getLocalVersionLoading[1] ? 'Loading' : localVersion[1] || t('kernel.notFound') }}
       </Tag>
-      <Tag @click="updateAlphaRemoteVersion(true)" style="cursor: pointer">
+      <Tag @click="updateLatestRemoteVersion(true)" style="cursor: pointer">
         {{ t('kernel.remote') }}
         :
         {{ getRemoteVersionLoading[1] ? 'Loading' : remoteVersion[1] }}
       </Tag>
       <Button
         v-show="needUpdates[1]"
-        @click="downloadAlphaCore"
+        @click="downloadLatestCore"
         :loading="downloadLoading[1]"
         type="primary"
       >
@@ -366,12 +378,12 @@ initVersion()
           {{ t('settings.kernel.main') }}
         </Card>
         <Card
-          :selected="appSettings.app.kernel.branch === 'alpha'"
-          @click="handleUseBranch('alpha')"
-          title="Alpha"
+          :selected="appSettings.app.kernel.branch === 'latest'"
+          @click="handleUseBranch('latest')"
+          title="Latest"
           class="branch-item"
         >
-          {{ t('settings.kernel.alpha') }}
+          {{ t('settings.kernel.latest') }}
         </Card>
       </div>
     </div>
