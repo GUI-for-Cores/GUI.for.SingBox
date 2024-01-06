@@ -113,6 +113,14 @@ const generateDnsConfig = async (profile: ProfileType) => {
           ]
         : []),
       {
+        clash_mode: 'direct',
+        server: 'local-dns'
+      },
+      {
+        clash_mode: 'global',
+        server: 'remote-dns'
+      },
+      {
         type: 'logical',
         mode: 'and',
         rules: [
@@ -129,14 +137,6 @@ const generateDnsConfig = async (profile: ProfileType) => {
       {
         rule_set: 'built-in-geosite-geolocation-!cn',
         server: 'remote-dns'
-      },
-      {
-        clash_mode: 'direct',
-        server: 'local-dns'
-      },
-      {
-        clash_mode: 'global',
-        server: 'remote-dns'
       }
     ]
   }
@@ -145,23 +145,39 @@ const generateDnsConfig = async (profile: ProfileType) => {
 const generateInBoundsConfig = async (profile: ProfileType) => {
   const inbounds = []
 
+  let http_proxy_port = 0
+
+  const listenConfig = {
+    udp_fragment: profile.advancedConfig['udp-fragment'],
+    sniff: profile.advancedConfig.sniff,
+    sniff_override_destination: profile.advancedConfig['sniff-override-destination']
+  }
+
   if (profile.generalConfig['mixed-port'] > 0) {
+    http_proxy_port = profile.generalConfig['mixed-port']
+
     inbounds.push({
       type: 'mixed',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.generalConfig['mixed-port'],
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
-      sniff: true
+      ...listenConfig,
+      tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
     })
   }
 
   if (profile.advancedConfig.port > 0) {
+    if (http_proxy_port == 0) {
+      http_proxy_port = profile.advancedConfig.port
+    }
+
     inbounds.push({
       type: 'http',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.advancedConfig.port,
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
-      sniff: true
+      ...listenConfig,
+      tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
     })
   }
 
@@ -170,8 +186,9 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       type: 'socks',
       listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
       listen_port: profile.advancedConfig['socks-port'],
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
-      sniff: true
+      ...listenConfig,
+      tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
     })
   }
 
@@ -184,10 +201,16 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       mtu: profile.tunConfig.mtu,
       auto_route: profile.tunConfig['auto-route'],
       strict_route: profile.tunConfig['strict-route'],
-      sniff: true,
-      sniff_override_destination: false,
       endpoint_independent_nat: profile.tunConfig['endpoint-independent-nat'],
-      stack: profile.tunConfig.stack.toLowerCase()
+      stack: profile.tunConfig.stack.toLowerCase(),
+      platform: {
+        http_proxy: {
+          enabled: http_proxy_port > 0,
+          server: '127.0.0.1',
+          server_port: http_proxy_port
+        }
+      },
+      ...listenConfig,
     })
   }
   return inbounds

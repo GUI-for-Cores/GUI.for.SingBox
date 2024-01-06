@@ -17,13 +17,15 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   'external-controller': '127.0.0.1:20123',
   'external-ui': '',
   'external-ui-url': '',
-  'tcp-multi-path': true,
   profile: {
     'store-cache': true,
     'store-fake-ip': true
   },
-  'lan-allowed-ips': ['0.0.0.0/0', '::/0'],
-  'lan-disallowed-ips': []
+  'tcp-fast-open': false,
+  'tcp-multi-path': false,
+  'udp-fragment': false,
+  'sniff': true,
+  'sniff-override-destination': false
 })
 
 export const TunConfigDefaults: ProfileType['tunConfig'] = {
@@ -38,7 +40,7 @@ export const TunConfigDefaults: ProfileType['tunConfig'] = {
 
 export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
   enable: true,
-  fakeip: true,
+  fakeip: false,
   strategy: 'prefer_ipv4',
   'local-dns': 'https://223.5.5.5/dns-query',
   'remote-dns': 'tls://8.8.8.8',

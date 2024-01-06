@@ -39,22 +39,6 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     {{ t('kernel.secret') }}
     <Input v-model="fields.secret" editable />
   </div>
-  <div
-    v-show="props.profile.generalConfig['allow-lan']"
-    :class="{ 'flex-start': fields['lan-allowed-ips'].length !== 0 }"
-    class="form-item"
-  >
-    {{ t('kernel.lan-allowed-ips') }}
-    <InputList v-model="fields['lan-allowed-ips']" placeholder="127.0.0.1/8" />
-  </div>
-  <div
-    v-show="props.profile.generalConfig['allow-lan']"
-    :class="{ 'flex-start': fields['lan-disallowed-ips'].length !== 0 }"
-    class="form-item"
-  >
-    {{ t('kernel.lan-disallowed-ips') }}
-    <InputList v-model="fields['lan-disallowed-ips']" placeholder="192.168.0.3/32" />
-  </div>
   <div class="form-item">
     {{ t('kernel.external-ui') }}
     <Input v-model="fields['external-ui']" placeholder="ui" editable />
@@ -72,8 +56,24 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     <Switch v-model="fields.profile['store-fake-ip']" />
   </div>
   <div class="form-item">
+    {{ t('kernel.tcp-fast-open') }}
+    <Switch v-model="fields['tcp-fast-open']" />
+  </div>
+  <div class="form-item">
     {{ t('kernel.tcp-multi-path') }}
     <Switch v-model="fields['tcp-multi-path']" />
+  </div>
+  <div class="form-item">
+    {{ t('kernel.udp-fragment') }}
+    <Switch v-model="fields['udp-fragment']" />
+  </div>
+  <div class="form-item">
+    {{ t('kernel.sniff') }}
+    <Switch v-model="fields.sniff" />
+  </div>
+  <div class="form-item">
+    {{ t('kernel.sniff-override-destination') }}
+    <Switch v-model="fields['sniff-override-destination']" />
   </div>
 </template>
 

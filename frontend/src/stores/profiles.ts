@@ -23,13 +23,15 @@ export type ProfileType = {
     'external-controller': string
     'external-ui': string
     'external-ui-url': string
-    'tcp-multi-path': boolean
     profile: {
       'store-cache'?: boolean
       'store-fake-ip'?: boolean
     }
-    'lan-allowed-ips': string[]
-    'lan-disallowed-ips': string[]
+    'tcp-fast-open': boolean
+    'tcp-multi-path': boolean
+    'udp-fragment': boolean
+    sniff: boolean
+    'sniff-override-destination': boolean
   }
   tunConfig: {
     enable: boolean
