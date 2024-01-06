@@ -53,7 +53,7 @@ jobs:
           GOOS: ${{ matrix.GOOS }}
           GOARCH: ${{ matrix.GOARCH }}
           FILE_NAME: GUI.for.SingBox-${{ matrix.GOOS }}-${{ matrix.GOARCH }}.exe
-        run: $HOME/go/bin/wails build -m -s -trimpath -skipbindings -o ${{ env.FILE_NAME }}
+        run: $HOME/go/bin/wails build -m -s -trimpath -skipbindings -devtools -o ${{ env.FILE_NAME }}
 
       - name: Upload ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
         uses: actions/upload-release-asset@v1
