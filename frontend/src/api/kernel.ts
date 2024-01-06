@@ -30,13 +30,13 @@ const getCurrentProfile = () => {
 }
 
 const setupKernelApi = () => {
-  let base = 'http://127.0.0.1:20113'
+  let base = 'http://127.0.0.1:20123'
   let bearer = ''
 
   const profile = getCurrentProfile()
 
   if (profile) {
-    const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20113'
+    const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20123'
     // TODO: tls
     if (controller.startsWith(':')) {
       base = 'http://127.0.0.1' + controller
@@ -51,13 +51,13 @@ const setupKernelApi = () => {
 }
 
 const setupKernelWSApi = () => {
-  let base = 'ws://127.0.0.1:20113'
+  let base = 'ws://127.0.0.1:20123'
   let bearer = ''
 
   const profile = getCurrentProfile()
 
   if (profile) {
-    const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20113'
+    const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20123'
     if (controller.startsWith(':')) {
       base = 'ws://127.0.0.1' + controller
     } else {
