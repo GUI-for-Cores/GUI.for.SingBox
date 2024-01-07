@@ -392,32 +392,6 @@ const generateRouteConfig = async (profile: ProfileType) => {
 
   if (profile.generalConfig.mode == 'rule') {
     route.rules.push(
-      ...[
-        {
-          ip_is_private: true,
-          outbound: 'direct'
-        },
-        {
-          type: 'logical',
-          mode: 'and',
-          rules: [
-            {
-              rule_set: 'built-in-geosite-geolocation-!cn',
-              invert: true
-            },
-            {
-              rule_set: ['built-in-geoip-cn', 'built-in-geosite-cn']
-            }
-          ],
-          outbound: 'direct'
-        },
-        {
-          rule_set: 'built-in-geosite-geolocation-!cn',
-          outbound: proxyTag
-        }
-      ]
-    )
-    route.rules.push(
       ...profile.rulesConfig
         .filter((v) => v.type !== 'final')
         .map((rule) => generateRule(rule))
