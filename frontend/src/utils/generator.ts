@@ -146,7 +146,6 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   let http_proxy_port = 0
 
   const listenConfig = {
-    udp_fragment: profile.advancedConfig['udp-fragment'],
     sniff: profile.advancedConfig.sniff,
     sniff_override_destination: profile.advancedConfig['sniff-override-destination']
   }
@@ -160,7 +159,8 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       listen_port: profile.generalConfig['mixed-port'],
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
+      udp_fragment: profile.advancedConfig['udp-fragment']
     })
   }
 
@@ -175,7 +175,8 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       listen_port: profile.advancedConfig.port,
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
+      udp_fragment: profile.advancedConfig['udp-fragment']
     })
   }
 
@@ -186,7 +187,8 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       listen_port: profile.advancedConfig['socks-port'],
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
-      tcp_multi_path: profile.advancedConfig['tcp-multi-path']
+      tcp_multi_path: profile.advancedConfig['tcp-multi-path'],
+      udp_fragment: profile.advancedConfig['udp-fragment']
     })
   }
 
