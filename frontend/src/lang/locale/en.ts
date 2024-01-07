@@ -152,6 +152,7 @@ export default {
     rules: {
       payload: 'Payload',
       proxy: 'Proxy',
+      invert: 'Invert',
       ruleset: 'RuleSet',
       rulesets: 'RuleSets',
       'download-detour': 'Download Detour',
