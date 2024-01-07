@@ -319,11 +319,12 @@ export default {
     noSubs: 'There are no available subscriptions.'
   },
   profiles: {
-    shouldStop: 'Please stop the kernel first.',
+    shouldStop: 'Unable to delete, this profile is in use.',
     empty: 'The profiles list is empty, Please {action} a profile first.',
     copytoClipboard: 'Generate config to clipboard',
     copy: 'Copy as template',
     paste: 'Paste template',
+    start: 'Start/Restart with this Profile',
     clearClipboard: 'Clear template'
   },
   ruleset: {

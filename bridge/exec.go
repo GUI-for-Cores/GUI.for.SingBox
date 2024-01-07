@@ -70,9 +70,7 @@ func (a *App) StartKernel(path string, directory string) FlagResult {
 				started = true;
 			}
 		}
-		if(started) {
-			runtime.EventsEmit(a.Ctx, "kernelStopped", "")
-		}
+		runtime.EventsEmit(a.Ctx, "kernelStopped", "")
 	}()
 
 	go func() {
@@ -85,9 +83,7 @@ func (a *App) StartKernel(path string, directory string) FlagResult {
 				started = true;
 			}
 		}
-		if(started) {
-			runtime.EventsEmit(a.Ctx, "kernelStopped", "")
-		}
+		runtime.EventsEmit(a.Ctx, "kernelStopped", "")
 	}()
 
 	err = cmd.Start()

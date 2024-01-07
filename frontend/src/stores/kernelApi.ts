@@ -4,7 +4,13 @@ import { defineStore } from 'pinia'
 import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
-import { type ProfileType, useAppSettingsStore, useProfilesStore, useLogsStore , useEnvStore } from '@/stores'
+import {
+  type ProfileType,
+  useAppSettingsStore,
+  useProfilesStore,
+  useLogsStore,
+  useEnvStore
+} from '@/stores'
 import { getProxies, getProviders } from '@/api/kernel'
 import { EventsOn, KernelRunning, KillProcess, StartKernel } from '@/utils/bridge'
 import { deepClone } from '@/utils/others'
@@ -50,7 +56,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const currentProfile = ref<ProfileType>(getProfile())
-  const isRestarting = ref<boolean>(false)
+  const keepConfig = ref<boolean>(false)
 
   const refreshConfig = async () => {
     if (!currentProfile.value) {
@@ -98,7 +104,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       currentProfile.value.dnsConfig.fakeip = value
     }
     await generateConfigFile(currentProfile.value)
-    await restartKernel()
+    await restartKernelKeepConfig()
   }
 
   const refreshProviderProxies = async () => {
@@ -117,6 +123,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     EventsOn('kernelLog', logsStore.recordKernelLog)
     EventsOn('kernelPid', (pid) => {
+      console.log('kernelPid')
       loading.value = true
       appSettings.app.kernel.pid = pid
     })
@@ -133,12 +140,14 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       }
     })
     EventsOn('kernelStopped', async () => {
-      loading.value = false
-      appSettings.app.kernel.pid = 0
-      appSettings.app.kernel.running = false
+      if (appSettings.app.kernel.running || loading.value || appSettings.app.kernel.pid != 0) {
+        loading.value = false
+        appSettings.app.kernel.pid = 0
+        appSettings.app.kernel.running = false
 
-      if (appSettings.app.autoSetSystemProxy) {
-        await envStore.clearSystemProxy()
+        if (appSettings.app.autoSetSystemProxy) {
+          await envStore.clearSystemProxy()
+        }
       }
     })
   }
@@ -170,7 +179,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     logsStore.clearKernelLog()
 
-    if (!isRestarting.value) {
+    if (!keepConfig.value) {
       await generateConfigFile(profile)
       currentProfile.value = deepClone(profile)
     }
@@ -202,11 +211,16 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     logsStore.clearKernelLog()
   }
 
-  const restartKernel = async () => {
-    isRestarting.value = true
+  const restartKernelKeepConfig = async () => {
+    keepConfig.value = true
     await stopKernel()
     await startKernel()
-    isRestarting.value = false
+    keepConfig.value = false
+  }
+
+  const restartKernel = async () => {
+    await stopKernel()
+    await startKernel()
   }
 
   return {

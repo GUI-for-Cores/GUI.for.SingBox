@@ -319,11 +319,12 @@ export default {
     noSubs: '没有可用的订阅'
   },
   profiles: {
-    shouldStop: '请先停止内核',
+    shouldStop: '当前配置正在使用，无法删除',
     empty: '配置列表为空，请先{action}配置。',
     copytoClipboard: '生成配置到剪切板',
     copy: '复制为模板',
     paste: '粘贴模板',
+    start: '使用此配置启动/重启',
     clearClipboard: '清空模板'
   },
   ruleset: {

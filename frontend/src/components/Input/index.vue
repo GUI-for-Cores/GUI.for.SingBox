@@ -53,6 +53,7 @@ const onInput = debounce((e: any) => {
 }, props.delay)
 
 const showInput = () => {
+  if (props.disabled) return
   showEdit.value = true
   nextTick(() => {
     inputRef.value?.focus()

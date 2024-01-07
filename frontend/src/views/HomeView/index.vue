@@ -30,32 +30,6 @@ const profilesStore = useProfilesStore()
 const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 
-const onKernelStarted = async () => {
-  kernelLoading.value = false
-
-  await kernelApiStore.refreshConfig()
-  await envStore.updateSystemProxyState()
-
-  // Automatically set system proxy, but the priority is lower than tun mode
-  if (appSettingsStore.app.autoSetSystemProxy) {
-    try {
-      await envStore.setSystemProxy()
-    } catch (error: any) {
-      message.info(error)
-    }
-  }
-}
-
-const onKernelStopped = async () => {
-  if (appSettingsStore.app.autoSetSystemProxy) {
-    try {
-      await envStore.clearSystemProxy()
-    } catch (error: any) {
-      message.info(error)
-    }
-  }
-}
-
 const handleStartKernel = async () => {
   kernelLoading.value = true
 

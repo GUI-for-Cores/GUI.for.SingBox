@@ -54,12 +54,13 @@ const profilesStore = useProfilesStore()
 const [showAdvancedSetting, toggleAdvancedSetting] = useBool(false)
 
 const handleCancel = inject('cancel') as any
+const handleSubmit = inject('submit') as any
 
-const handleSubmit = async () => {
+const handleSave = async () => {
   if (props.isUpdate) {
     try {
       await profilesStore.editProfile(props.id, profile.value)
-      handleCancel()
+      handleSubmit()
     } catch (error: any) {
       console.error('editProfile: ', error)
       message.info(error)
@@ -148,7 +149,7 @@ if (props.isUpdate) {
     >
       {{ t('common.nextStep') }}
     </Button>
-    <Button @click="handleSubmit" :disable="!profile.name" type="primary">
+    <Button @click="handleSave" :disable="!profile.name" type="primary">
       {{ t('common.save') }}
     </Button>
   </div>
