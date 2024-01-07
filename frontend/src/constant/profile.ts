@@ -29,7 +29,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
 })
 
 export const TunConfigDefaults: ProfileType['tunConfig'] = {
-  enable: true,
+  enable: false,
   stack: 'System',
   'auto-route': true,
   interface_name: 'singbox',
