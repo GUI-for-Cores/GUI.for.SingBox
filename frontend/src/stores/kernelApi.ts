@@ -12,7 +12,7 @@ import {
   useEnvStore
 } from '@/stores'
 import { getProxies, getProviders } from '@/api/kernel'
-import { EventsOn, KernelRunning, KillProcess, StartKernel } from '@/utils/bridge'
+import { EventsOn, KernelRunning, KillProcess, StartKernel, GetInterfaces } from '@/utils/bridge'
 import { deepClone } from '@/utils/others'
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
@@ -45,20 +45,25 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     >
   >({})
 
-  const getProfile = () => {
+  const currentProfile = ref<ProfileType>()
+  const keepConfig = ref<boolean>(false)
+
+  const updateProfile = async () => {
     const appSettingsStore = useAppSettingsStore()
     const { profile: profileID } = appSettingsStore.app.kernel
     if (profileID) {
       const profilesStore = useProfilesStore()
-      return profilesStore.getProfileById(profileID) as ProfileType
+      const result = deepClone(profilesStore.getProfileById(profileID)) as ProfileType
+      const interfaces = await GetInterfaces()
+      result.tunConfig.enable = interfaces.some((f) => f === result.tunConfig.interface_name)
+      currentProfile.value = result
     }
-    return {} as ProfileType
   }
 
-  const currentProfile = ref<ProfileType>(getProfile())
-  const keepConfig = ref<boolean>(false)
-
   const refreshConfig = async () => {
+    if (!currentProfile.value) {
+      await updateProfile()
+    }
     if (!currentProfile.value) {
       return
     }
@@ -82,6 +87,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     if (!currentProfile.value) {
       return
     }
+
     if (name == 'tun') {
       currentProfile.value.tunConfig.enable = value
     } else if (name == 'http-port') {
