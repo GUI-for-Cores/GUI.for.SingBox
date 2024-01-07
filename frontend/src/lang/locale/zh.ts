@@ -154,6 +154,8 @@ export default {
       proxy: '代理',
       ruleset: '规则组',
       rulesets: '规则组列表',
+      'download-detour': '下载方式',
+      name: '名称',
       needGeodataMode: '请在高级设置中打开"GEO数据模式"',
       notFound: '代理组不存在',
       type: {
@@ -172,7 +174,8 @@ export default {
         'DST-PORT': '目标端口',
         'PROCESS-NAME': '源进程名',
         'PROCESS-PATH': '源进程路径',
-        'RULE-SET': '规则集',
+        'RULE-SET': '规则组',
+        'RULE-SET-URL': '规则组链接',
         'SRC-IP-CIDR': '源IP段地址'
       }
     },

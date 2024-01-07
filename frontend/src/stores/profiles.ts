@@ -56,7 +56,7 @@ export type ProfileType = {
     'fake-ip-filter': string[]
   }
   proxyGroupsConfig: {
-    id: string,
+    id: string
     tag: string
     type: ProxyGroup
     use: string[]
@@ -74,6 +74,9 @@ export type ProfileType = {
     type: string
     payload: string
     proxy: string
+    'ruleset-name': string
+    'ruleset-format': string,
+    'download-detour': string
   }[]
 }
 

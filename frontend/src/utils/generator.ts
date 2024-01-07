@@ -13,6 +13,8 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
     } else {
       return null
     }
+  } else if (type === 'rule_set_url') {
+    return { rule_set: rule['ruleset-name'], outbound: proxy }
   }
   const result_rule: Record<string, any> = { outbound: proxy }
   result_rule[type] = payload.split(',').map((r) => r.trim())
@@ -23,7 +25,15 @@ type ProxiesType = { type: string; tag: string }
 
 const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
   const rulesetsStore = useRulesetsStore()
-  const ruleSets: { tag: string; type: string; format: string; path: string }[] = []
+  const ruleSets: {
+    tag: string
+    type: string
+    format: string
+    path?: string
+    url?: string
+    download_detour?: string
+  }[] = []
+
   rules
     .filter((rule) => rule.type === 'rule_set')
     .forEach((rule) => {
@@ -34,6 +44,19 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
           type: 'local',
           format: ruleset.format,
           path: ruleset.path.replace('data/', '../')
+        })
+      }
+    })
+  rules
+    .filter((rule) => rule.type === 'rule_set_url')
+    .forEach((rule) => {
+      if (rule['ruleset-name']) {
+        ruleSets.push({
+          tag: rule['ruleset-name'],
+          type: 'remote',
+          format: rule['ruleset-format'],
+          url: rule.payload,
+          download_detour: rule['download-detour']
         })
       }
     })
@@ -210,7 +233,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
           server_port: http_proxy_port
         }
       },
-      ...listenConfig,
+      ...listenConfig
     })
   }
   return inbounds

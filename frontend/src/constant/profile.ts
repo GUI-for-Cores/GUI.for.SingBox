@@ -138,6 +138,9 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'final',
     payload: '',
-    proxy: '🐟 漏网之鱼'
+    proxy: '🐟 漏网之鱼',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': ''
   }
 ]

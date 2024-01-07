@@ -5,7 +5,7 @@ import { computed, ref, watch } from 'vue'
 import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
 import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
-import { RulesTypeOptions, DraggableOptions } from '@/constant'
+import { RulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
 
 interface Props {
   modelValue: ProfileType['rulesConfig']
@@ -27,7 +27,10 @@ const fields = ref({
   id: sampleID(),
   type: 'domain',
   payload: '',
-  proxy: ''
+  proxy: '',
+  'ruleset-name': sampleID(),
+  'ruleset-format': 'binary',
+  'download-detour': ''
 })
 
 const proxyOptions = computed(() => [
@@ -48,7 +51,10 @@ const handleAddRule = () => {
     id: sampleID(),
     type: 'domain',
     payload: '',
-    proxy: ''
+    proxy: '',
+    'ruleset-name': sampleID(),
+    'ruleset-format': 'binary',
+    'download-detour': ''
   }
   showModal.value = true
 }
@@ -92,6 +98,8 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
       if (ruleset) {
         ruleStr += ',' + ruleset.tag
       }
+    } else if (type === 'rule_set_url') {
+      ruleStr += ',' + rule['ruleset-name'] + '(' + rule['ruleset-format'] + ')'
     } else {
       ruleStr += ',' + payload
     }
@@ -154,6 +162,24 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
         >
           {{ ruleset.path }}
         </Card>
+      </div>
+    </template>
+
+    <template v-if="fields.type === 'rule_set_url'">
+      <Divider>{{ t('kernel.rules.ruleset') }}</Divider>
+      <div class="ruleseturl">
+        <div class="form-item">
+          {{ t('kernel.rules.name') }}
+          <Input v-model="fields['ruleset-name']" />
+        </div>
+        <div class="form-item">
+          {{ t('ruleset.format.name') }}
+          <Select v-model="fields['ruleset-format']" :options="RulesetFormatOptions" />
+        </div>
+        <div class="form-item">
+          {{ t('kernel.rules.download-detour') }}
+          <Select v-model="fields['download-detour']" :options="proxyOptions" />
+        </div>
       </div>
     </template>
   </Modal>

@@ -174,6 +174,10 @@ export const RulesTypeOptions = [
   //   value: 'SCRIPT'
   // },
   {
+    label: 'kernel.rules.type.RULE-SET-URL',
+    value: 'rule_set_url'
+  },
+  {
     label: 'kernel.rules.type.MATCH',
     value: 'final'
   }
