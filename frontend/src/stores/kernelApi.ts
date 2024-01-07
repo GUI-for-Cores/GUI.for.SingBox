@@ -157,7 +157,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       config.value.port = 0
       config.value['mixed-port'] = 0
       config.value['socks-port'] = 0
-      let inbound_tun: any = {}
+      let inbound_tun: any = null
       latestConfig.inbounds.forEach((inbound: any) => {
         if (inbound.type == 'tun') inbound_tun = inbound
         else if (inbound.type == 'mixed') config.value['mixed-port'] = inbound.listen_port
@@ -175,7 +175,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         config.value['interface-name'] = latestConfig.route.default_interface
       if (inbound_tun) {
         const stack = StackOptions.filter((s) => s.value.toLowerCase() === inbound_tun.stack)
-        const stackName = stack ? stack[0].value : inbound_tun.stack
+        const stackName = stack.length > 0 ? stack[0].value : inbound_tun.stack
         config.value.tun = {
           enable: true,
           stack: stackName,
