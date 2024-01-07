@@ -169,6 +169,7 @@ export default {
         MATCH: 'MATCH',
         'DOMAIN-SUFFIX': 'DOMAIN-SUFFIX',
         'DOMAIN-KEYWORD': 'DOMAIN-KEYWORD',
+        'DOMAIN-REGEX': 'DOMAIN-REGEX',
         'IP-CIDR': 'IP-CIDR',
         'IP-CIDR6': 'IP-CIDR6',
         'SRC-PORT': 'SRC-PORT',
@@ -177,7 +178,9 @@ export default {
         'PROCESS-PATH': 'PROCESS-PATH',
         'RULE-SET': 'RULE-SET',
         'RULE-SET-URL': 'RULE-SET-URL',
+        'PROTOCOL': 'PROTOCOL',
         'IP-PRIVATE': 'IP-PRIVATE',
+        'SRC-IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-CIDR': 'SRC-IP-CIDR'
       }
     },

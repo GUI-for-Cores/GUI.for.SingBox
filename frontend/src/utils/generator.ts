@@ -21,8 +21,10 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
       return null
     }
     return { rule_set: rule['ruleset-name'], outbound: proxy, ...invertConfig }
-  } else if (type === 'ip_is_private') {
-    return { ip_is_private: !invert, outbound: proxy }
+  } else if (['ip_is_private', 'src_ip_is_private'].includes(type)) {
+    const result_rule: Record<string, any> = { outbound: proxy }
+    result_rule[type] = !invert
+    return result_rule
   }
   const result_rule: Record<string, any> = { outbound: proxy, ...invertConfig }
   result_rule[type] = payload.split(',').map((r) => r.trim())

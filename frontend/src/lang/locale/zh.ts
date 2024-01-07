@@ -169,6 +169,7 @@ export default {
         MATCH: '全匹配',
         'DOMAIN-SUFFIX': '域名后缀',
         'DOMAIN-KEYWORD': '域名关键词',
+        'DOMAIN-REGEX': '域名正则表达式',
         'IP-CIDR': 'IPv4地址段',
         'IP-CIDR6': 'IPv6地址段',
         'SRC-PORT': '源端口',
@@ -177,7 +178,9 @@ export default {
         'PROCESS-PATH': '源进程路径',
         'RULE-SET': '规则组',
         'RULE-SET-URL': '规则组链接',
+        'PROTOCOL': '协议',
         'IP-PRIVATE': '私有IP',
+        'SRC-IP-PRIVATE': '源私有IP',
         'SRC-IP-CIDR': '源IP段地址'
       }
     },

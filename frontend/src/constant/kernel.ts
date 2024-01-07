@@ -141,6 +141,10 @@ export const RulesTypeOptions = [
     value: 'domain_keyword'
   },
   {
+    label: 'kernel.rules.type.DOMAIN-REGEX',
+    value: 'domain_regex'
+  },
+  {
     label: 'kernel.rules.type.IP-CIDR',
     value: 'ip_cidr'
   },
@@ -180,6 +184,14 @@ export const RulesTypeOptions = [
   {
     label: 'kernel.rules.type.IP-PRIVATE',
     value: 'ip_is_private'
+  },
+  {
+    label: 'kernel.rules.type.SRC-IP-PRIVATE',
+    value: 'source_ip_is_private'
+  },
+  {
+    label: 'kernel.rules.type.PROTOCOL',
+    value: 'protocol'
   },
   {
     label: 'kernel.rules.type.MATCH',

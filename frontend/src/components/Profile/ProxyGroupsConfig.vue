@@ -24,6 +24,7 @@ const showModal = ref(false)
 const showSortModal = ref(false)
 const groups = ref(deepClone(props.modelValue))
 const expandedSet = ref<Set<string>>(new Set(['built-in', 'Subscribes']))
+const SubscribesNameMap = ref<Record<string, string>>({})
 
 const proxyGroup = ref([
   {
@@ -206,6 +207,7 @@ watch(groups, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
 subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
   proxyGroup.value[1].proxies.push({ id, tag: name, type: 'use' })
   proxyGroup.value.push({ id, name, proxies })
+  SubscribesNameMap.value[id] = name
 })
 </script>
 
@@ -261,7 +263,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       <Divider>{{ t('profile.use') }}</Divider>
       <div v-draggable="[fields.use, DraggableOptions]" class="group-proxies">
         <Button v-for="use in fields.use" :key="use" type="link" class="group-item">
-          {{ subscribesStore.getSubscribeById(use)?.name }}
+          {{ SubscribesNameMap[use] || use }}
         </Button>
       </div>
     </div>

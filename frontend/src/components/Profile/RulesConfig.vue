@@ -40,7 +40,7 @@ const proxyOptions = computed(() => [
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
 
-const supportPayload = computed(() => !['final', 'rule_set', 'ip_is_private'].includes(fields.value.type))
+const supportPayload = computed(() => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type))
 const supportInvert = computed(() => 'final' !== fields.value.type)
 
 const { t } = useI18n()
@@ -94,7 +94,7 @@ const showLost = () => message.info('kernel.rules.notFound')
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule
   let ruleStr = type
-  if (!['final', 'ip_is_private'].includes(type)) {
+  if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
       const ruleset = rulesetsStore.getRulesetById(payload)
