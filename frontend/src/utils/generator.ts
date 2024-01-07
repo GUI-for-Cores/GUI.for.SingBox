@@ -3,8 +3,8 @@ import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore } from '@/stores'
 
-export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
-  const { type, payload, proxy, invert } = rule
+const generateCommonRule = (rule: Record<string, any>) => {
+  const { type, payload, invert } = rule
 
   const invertConfig = invert ? { invert: invert } : {}
 
@@ -12,7 +12,7 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
     const rulesetsStore = useRulesetsStore()
     const ruleset = rulesetsStore.getRulesetById(payload)
     if (ruleset) {
-      return { rule_set: ruleset.tag, ...invertConfig, outbound: proxy }
+      return { rule_set: ruleset.tag, ...invertConfig }
     } else {
       return null
     }
@@ -20,19 +20,18 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
     if (!rule['ruleset-name']) {
       return null
     }
-    return { rule_set: rule['ruleset-name'], ...invertConfig, outbound: proxy }
+    return { rule_set: rule['ruleset-name'], ...invertConfig }
   } else if (['ip_is_private', 'src_ip_is_private'].includes(type)) {
     const this_rule: Record<string, any> = {}
     this_rule[type] = !invert
     return {
-      ...this_rule,
-      outbound: proxy
+      ...this_rule
     }
   }
   const payloads_rule: Record<string, any> = {}
   const payloads = payload.split(',').map((r) => {
     const p = r.trim()
-    if (['port', 'source_port'].includes(type)) {
+    if (['port', 'source_port', 'ip_version'].includes(type)) {
       return parseInt(p)
     }
     return p
@@ -40,14 +39,39 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
   payloads_rule[type] = payloads.length == 1 ? payloads[0] : payloads
   return {
     ...payloads_rule,
-    ...invertConfig,
-    outbound: proxy
+    ...invertConfig
   }
+}
+
+export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
+  const common_rule = generateCommonRule(rule)
+  if (common_rule) {
+    return {
+      ...common_rule,
+      outbound: rule.proxy
+    }
+  }
+  return common_rule
+}
+
+export const generateDnsRule = (rule: ProfileType['dnsRulesConfig'][0]) => {
+  const common_rule = generateCommonRule(rule)
+  if (common_rule) {
+    return {
+      ...common_rule,
+      ...(rule['disable-cache'] ? { disable_cache: true } : {}),
+      server: rule.server
+    }
+  }
+  return common_rule
 }
 
 type ProxiesType = { type: string; tag: string }
 
-const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
+const generateRuleSets = async (
+  rules: ProfileType['rulesConfig'],
+  dnsRules: ProfileType['dnsRulesConfig']
+) => {
   const rulesetsStore = useRulesetsStore()
   const ruleSets: {
     tag: string
@@ -60,7 +84,9 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
 
   const usedRuleSets = new Set<string>()
 
-  rules
+  const allRules = [...rules, ...dnsRules]
+
+  allRules
     .filter((rule) => rule.type === 'rule_set')
     .forEach((rule) => {
       const ruleset = rulesetsStore.getRulesetById(rule.payload)
@@ -74,7 +100,8 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
         })
       }
     })
-  rules
+
+  allRules
     .filter((rule) => rule.type === 'rule_set_url')
     .forEach((rule) => {
       const tag = rule['ruleset-name']
@@ -93,13 +120,12 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
 }
 
 const generateDnsConfig = async (profile: ProfileType) => {
-  const proxyTag = profile.proxyGroupsConfig[0].tag
   const remote_dns = profile.dnsConfig['remote-dns']
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
   const local_dns = profile.dnsConfig['local-dns']
   const resolver_dns = profile.dnsConfig['resolver-dns']
-  const remote_detour = proxyTag
-  const direct_detour = 'direct'
+  const remote_detour = profile.dnsConfig['remote-dns-detour']
+  const remote_detour_config = remote_detour ? { detour: remote_detour } : {}
 
   return {
     servers: [
@@ -107,23 +133,23 @@ const generateDnsConfig = async (profile: ProfileType) => {
         tag: 'remote-dns',
         address: remote_dns,
         address_resolver: 'remote-resolver-dns',
-        detour: remote_detour
+        ...remote_detour_config
       },
       {
         tag: 'local-dns',
         address: local_dns,
         address_resolver: 'resolver-dns',
-        detour: direct_detour
+        detour: 'direct'
       },
       {
         tag: 'resolver-dns',
         address: resolver_dns,
-        detour: direct_detour
+        detour: 'direct'
       },
       {
         tag: 'remote-resolver-dns',
         address: remote_resolver_dns,
-        detour: remote_detour
+        ...remote_detour_config
       },
       ...(profile.dnsConfig.fakeip
         ? [
@@ -162,32 +188,12 @@ const generateDnsConfig = async (profile: ProfileType) => {
             }
           ]
         : []),
-      {
-        clash_mode: 'direct',
-        server: 'local-dns'
-      },
-      {
-        clash_mode: 'global',
-        server: 'remote-dns'
-      },
-      {
-        type: 'logical',
-        mode: 'and',
-        rules: [
-          {
-            rule_set: 'built-in-geosite-geolocation-!cn',
-            invert: true
-          },
-          {
-            rule_set: 'built-in-geosite-cn'
-          }
-        ],
-        server: 'local-dns'
-      },
-      {
-        rule_set: 'built-in-geosite-geolocation-!cn',
-        server: 'remote-dns'
-      }
+      ...profile.dnsRulesConfig
+        .filter(
+          (v) => v.type !== 'final' && (profile.dnsConfig.fakeip || v.server !== 'fakeip-dns')
+        )
+        .map((rule) => generateDnsRule(rule))
+        .filter((v) => v != null)
     ]
   }
 }
@@ -355,37 +361,8 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
 
 const generateRouteConfig = async (profile: ProfileType) => {
   const route: Record<string, any> = {
-    rule_set: [
-      {
-        type: 'remote',
-        tag: 'built-in-geoip-cn',
-        format: 'binary',
-        url: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs',
-        download_detour: 'direct'
-      },
-      {
-        type: 'remote',
-        tag: 'built-in-geosite-cn',
-        format: 'binary',
-        url: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs',
-        download_detour: 'direct'
-      },
-      {
-        type: 'remote',
-        tag: 'built-in-geosite-geolocation-!cn',
-        format: 'binary',
-        url: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
-        download_detour: 'direct'
-      },
-      ...(await generateRuleSets(profile.rulesConfig))
-    ],
-    rules: [
-      // {
-      //   network: 'udp',
-      //   port: 443,
-      //   outbound: 'block'
-      // }
-    ]
+    rule_set: await generateRuleSets(profile.rulesConfig, profile.dnsRulesConfig),
+    rules: []
   }
 
   if (profile.generalConfig.mode == 'rule') {

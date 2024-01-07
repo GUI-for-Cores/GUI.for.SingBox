@@ -2,15 +2,14 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 
-import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
 import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
-import { RulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
+import { DnsRulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
 
 interface Props {
-  modelValue: ProfileType['rulesConfig']
+  modelValue: ProfileType['dnsRulesConfig']
+  dnsConfig: ProfileType['dnsConfig'],
   proxyGroups: ProfileType['proxyGroupsConfig']
-  profile: ProfileType
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -27,30 +26,30 @@ const fields = ref({
   id: sampleID(),
   type: 'rule_set',
   payload: '',
-  proxy: '',
+  server: '',
   invert: false,
+  'disable-cache': false,
   'ruleset-name': '',
   'ruleset-format': 'binary',
   'download-detour': ''
 })
 
-const proxyOptions = computed(() => [
-  { label: 'direct', value: 'direct' },
-  { label: 'block', value: 'block' },
-  { label: 'dns-out', value: 'dns-out' },
-  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
+const dnsOptions = computed(() => [
+  { label: t('kernel.dns.local-dns'), value: 'local-dns' },
+  { label: t('kernel.dns.remote-dns'), value: 'remote-dns' },
+  ... (props.dnsConfig.fakeip ? [{ label:  t('kernel.dns.fakeip-dns'), value: 'fakeip-dns' }] : [])
 ])
 
 const downloadProxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
-
-const supportPayload = computed(() => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type))
+const supportPayload = computed(
+  () => !['final', 'rule_set'].includes(fields.value.type)
+)
 const supportInvert = computed(() => 'final' !== fields.value.type)
 
 const { t } = useI18n()
-const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleAddRule = () => {
@@ -59,8 +58,9 @@ const handleAddRule = () => {
     id: sampleID(),
     type: 'rule_set',
     payload: '',
-    proxy: '',
+    server: 'local-dns',
     invert: false,
+    'disable-cache': false,
     'ruleset-name': '',
     'ruleset-format': 'binary',
     'download-detour': ''
@@ -90,17 +90,10 @@ const handleUseRuleset = (ruleset: RuleSetType) => {
   fields.value.payload = ruleset.id
 }
 
-const hasLost = (r: ProfileType['rulesConfig'][0]) => {
-  if (['direct', 'block', 'dns-out'].includes(r.proxy)) return false
-  return !props.profile.proxyGroupsConfig.find((v) => v.tag === r.proxy)
-}
-
-const showLost = () => message.info('kernel.rules.notFound')
-
-const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
-  const { type, payload, proxy, invert } = rule
-  const opt = RulesTypeOptions.filter((v) => v.value === type)
-  let ruleStr = opt.length > 0 ? t(opt[0].label) :  type
+const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
+  const { type, payload, server, invert } = rule
+  const opt = DnsRulesTypeOptions.filter((v) => v.value === type)
+  let ruleStr = opt.length > 0 ? t(opt[0].label) : type
   if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
@@ -114,12 +107,12 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
       ruleStr += ',' + payload
     }
   }
-  
-  if(invert) {
+
+  if (invert) {
     ruleStr += ',' + t('kernel.rules.invert')
   }
 
-  ruleStr += ',' + proxy
+  ruleStr += ',' + t('kernel.dns.' + server)
   return ruleStr
 }
 
@@ -131,7 +124,6 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div v-draggable="[rules, DraggableOptions]">
       <Card v-for="(r, index) in rules" :key="r.id" class="rules-item">
         <div class="name">
-          <span v-if="hasLost(r)" @click="showLost" class="warn"> [ ! ] </span>
           {{ generateRuleDesc(r) }}
         </div>
         <div class="action">
@@ -153,19 +145,23 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
   <Modal v-model:open="showModal" @ok="handleAddEnd" max-width="80" max-height="80">
     <div class="form-item">
       {{ t('kernel.rules.type.name') }}
-      <Select v-model="fields.type" :options="RulesTypeOptions" />
+      <Select v-model="fields.type" :options="DnsRulesTypeOptions" />
     </div>
     <div v-show="supportPayload" class="form-item">
       {{ t('kernel.rules.payload') }}
       <Input v-model="fields.payload" autofocus />
     </div>
     <div class="form-item">
-      {{ t('kernel.rules.proxy') }}
-      <Select v-model="fields.proxy" :options="proxyOptions" />
+      DNS
+      <Select v-model="fields.server" :options="dnsOptions" />
     </div>
     <div v-show="supportInvert" class="form-item">
       {{ t('kernel.rules.invert') }}
       <Switch v-model="fields.invert" />
+    </div>
+    <div v-show="supportInvert" class="form-item">
+      {{ t('kernel.rules.disable-cache') }}
+      <Switch v-model="fields['disable-cache']" />
     </div>
 
     <template v-if="fields.type === 'rule_set'">

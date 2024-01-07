@@ -51,6 +51,7 @@ export type ProfileType = {
     'resolver-dns': string
     'remote-resolver-dns': string
     'final-dns': FinalDnsType
+    'remote-dns-detour': string
     'fake-ip-range-v4': string
     'fake-ip-range-v6': string
     'fake-ip-filter': string[]
@@ -75,6 +76,17 @@ export type ProfileType = {
     payload: string
     proxy: string
     invert: boolean
+    'ruleset-name': string
+    'ruleset-format': string,
+    'download-detour': string
+  }[],
+  dnsRulesConfig: {
+    id: string
+    type: string
+    payload: string
+    server: string
+    invert: boolean
+    'disable-cache': boolean
     'ruleset-name': string
     'ruleset-format': string,
     'download-detour': string

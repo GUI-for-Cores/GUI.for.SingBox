@@ -12,6 +12,7 @@ import AdvancedConfig from '@/components/Profile/AdvancedConfig.vue'
 import TunConfig from '@/components/Profile/TunConfig.vue'
 import DnsConfig from '@/components/Profile/DnsConfig.vue'
 import ProxyGroupsConfig from '@/components/Profile/ProxyGroupsConfig.vue'
+import DnsRulesConfig from '@/components/Profile/DnsRulesConfig.vue'
 import RulesConfig from '@/components/Profile/RulesConfig.vue'
 
 interface Props {
@@ -32,9 +33,10 @@ const stepItems = [
   { title: 'profile.step.name' },
   { title: 'profile.step.general' },
   { title: 'profile.step.tun' },
-  { title: 'profile.step.dns' },
   { title: 'profile.step.groups' },
-  { title: 'profile.step.rules' }
+  { title: 'profile.step.rules' },
+  { title: 'profile.step.dns' },
+  { title: 'profile.step.dnsRules' }
 ]
 
 const profile = ref<ProfileType>({
@@ -45,7 +47,8 @@ const profile = ref<ProfileType>({
   tunConfig: Defaults.TunConfigDefaults,
   dnsConfig: Defaults.DnsConfigDefaults,
   proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
-  rulesConfig: Defaults.RulesConfigDefaults()
+  rulesConfig: Defaults.RulesConfigDefaults(),
+  dnsRulesConfig: Defaults.DnsRulesConfigDefaults()
 })
 
 const { t } = useI18n()
@@ -122,18 +125,28 @@ if (props.isUpdate) {
   </div>
 
   <div v-show="currentStep === 3" class="step4">
-    <DnsConfig v-model="profile.dnsConfig" />
-  </div>
-
-  <div v-show="currentStep === 4" class="step5">
     <ProxyGroupsConfig v-model="profile.proxyGroupsConfig" />
   </div>
 
-  <div v-show="currentStep === 5" class="setp6">
+  <div v-show="currentStep === 4" class="setp5">
     <RulesConfig
       v-model="profile.rulesConfig"
       :proxy-groups="profile.proxyGroupsConfig"
       :profile="profile"
+    />
+  </div>
+
+  <div v-show="currentStep === 5" class="step6">
+    <DnsConfig v-model="profile.dnsConfig" 
+    :proxy-groups="profile.proxyGroupsConfig"
+    />
+  </div>
+
+  <div v-show="currentStep === 6" class="setp7">
+    <DnsRulesConfig
+      v-model="profile.dnsRulesConfig"
+      :dns-config="profile.dnsConfig"
+      :proxy-groups="profile.proxyGroupsConfig"
     />
   </div>
 

@@ -66,7 +66,7 @@ export default {
     'tcp-fast-open': 'TCP Fast Open',
     'tcp-multi-path': 'TCP Multi Path',
     'udp-fragment': 'UDP Fragment',
-    'sniff': 'Sniff',
+    sniff: 'Sniff',
     'sniff-override-destination': 'Sniff Override Destination',
     authentication: 'Http/Socks Auth',
     'skip-auth-prefixes': 'Skip Auth Prefixes',
@@ -101,13 +101,16 @@ export default {
       'remote-dns': 'Remote DNS',
       'resolver-dns': 'Resolver DNS',
       'remote-resolver-dns': 'Remote Resolver DNS',
+      'remote-dns-detour': 'Remote DNS Detour',
       'final-dns': 'Fallback DNS',
+      'fakeip-dns': 'Fake-IP DNS',
+      default: 'Default',
       strategy: {
-        name : 'Strategy',
+        name: 'Strategy',
         prefer_ipv4: 'Prefer IPV4',
         prefer_ipv6: 'Prefer IPV6',
         ipv4_only: 'IPV4 Only',
-        ipv6_only: 'IPV6 Only',
+        ipv6_only: 'IPV6 Only'
       }
     },
     tls: {
@@ -156,6 +159,7 @@ export default {
       ruleset: 'RuleSet',
       rulesets: 'RuleSets',
       'download-detour': 'Download Detour',
+      'disable-cache': 'Disable Cache',
       name: 'Name',
       needGeodataMode: 'Please enable the "geodata-mode" option in the advanced settings',
       notFound: 'proxy group does not exist',
@@ -178,11 +182,16 @@ export default {
         'PROCESS-PATH': 'PROCESS-PATH',
         'RULE-SET': 'RULE-SET',
         'RULE-SET-URL': 'RULE-SET-URL',
-        'PROTOCOL': 'PROTOCOL',
+        PROTOCOL: 'PROTOCOL',
         'IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-CIDR': 'SRC-IP-CIDR',
-        'CLASH-MODE': 'CLASH-MODE'
+        'CLASH-MODE': 'CLASH-MODE',
+        NETWORK: 'NETWORK',
+        'IP-VERSION': 'IP-VERSION',
+        'QUERY-TYPE': 'QUERY-TYPE',
+        INBOUND: 'INBOUND',
+        OUTBOUND: 'OUTBOUND'
       }
     },
     name: 'sing-box',
@@ -312,6 +321,7 @@ export default {
       tun: 'TUN',
       dns: 'DNS',
       groups: 'Proxy Groups',
+      dnsRules: 'DNS Rules',
       rules: 'Rules'
     },
     proxies: 'Proxies',

@@ -55,7 +55,7 @@ export default {
     global: '全局',
     direct: '直连',
     ruleDesp: '按照规则文件分流',
-    globalDesp: '仅走Global规则组',
+    globalDesp: '仅走Global规则集',
     directDesp: '所有流量直连',
     'keep-alive-interval': 'TCP Keep Alive 间隔',
     'find-process-mode': '进程匹配模式',
@@ -66,7 +66,7 @@ export default {
     'tcp-fast-open': 'TCP快速打开',
     'tcp-multi-path': '多路径TCP',
     'udp-fragment': 'UDP分段',
-    'sniff': '协议探测',
+    sniff: '协议探测',
     'sniff-override-destination': '探测域名覆盖目标地址',
     authentication: 'Http/Socks 验证用户',
     'skip-auth-prefixes': '跳过验证的IP段',
@@ -101,13 +101,16 @@ export default {
       'remote-dns': '远程DNS',
       'resolver-dns': '解析DNS',
       'remote-resolver-dns': '远程解析DNS',
+      'remote-dns-detour': '远程DNS出站',
       'final-dns': '回退DNS',
+      'fakeip-dns': 'Fake-IP DNS',
+      default: '默认',
       strategy: {
-        name : '策略',
+        name: '策略',
         prefer_ipv4: 'IPV4优先',
         prefer_ipv6: 'IPV6优先',
         ipv4_only: '只使用IPV4',
-        ipv6_only: '只使用IPV6',
+        ipv6_only: '只使用IPV6'
       }
     },
     tls: {
@@ -154,8 +157,9 @@ export default {
       proxy: '代理',
       invert: '取反',
       ruleset: '规则集',
-      rulesets: '规则组列表',
+      rulesets: '规则集列表',
       'download-detour': '下载方式',
+      'disable-cache': '关闭缓存',
       name: '名称',
       needGeodataMode: '请在高级设置中打开"GEO数据模式"',
       notFound: '代理组不存在',
@@ -177,12 +181,17 @@ export default {
         'PROCESS-NAME': '源进程名',
         'PROCESS-PATH': '源进程路径',
         'RULE-SET': '规则集',
-        'RULE-SET-URL': '规则组链接',
-        'PROTOCOL': '协议',
+        'RULE-SET-URL': '规则集链接',
+        PROTOCOL: '协议',
         'IP-PRIVATE': '私有IP',
         'SRC-IP-PRIVATE': '源私有IP',
         'SRC-IP-CIDR': '源IP段地址',
-        'CLASH-MODE': 'Clash模式'
+        'CLASH-MODE': 'Clash模式',
+        NETWORK: '网络协议',
+        'IP-VERSION': 'IP协议',
+        'QUERY-TYPE': '查询类型',
+        INBOUND: '入站',
+        OUTBOUND: '出站'
       }
     },
     name: 'sing-box',
@@ -312,6 +321,7 @@ export default {
       tun: 'TUN 设置',
       dns: 'DNS 设置',
       groups: '代理组设置',
+      dnsRules: 'DNS规则设置',
       rules: '规则设置'
     },
     proxies: '使用节点',
@@ -335,7 +345,7 @@ export default {
       source: '源文件',
       binary: '二进制'
     },
-    rulesetType: '规则组类型',
+    rulesetType: '规则集类型',
     name: '名称',
     url: '链接',
     path: '保存路径',
@@ -343,9 +353,9 @@ export default {
     updating: '更新中'
   },
   rulesets: {
-    empty: '规则组列表为空. 请先{action}规则组。',
+    empty: '规则集列表为空. 请先{action}规则集。',
     rulesetCount: '规则数量',
-    editRuleset: '编辑规则组列表'
+    editRuleset: '编辑规则集列表'
   },
   settings: {
     general: '通用',

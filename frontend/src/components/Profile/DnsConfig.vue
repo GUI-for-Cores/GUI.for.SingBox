@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { deepClone } from '@/utils'
@@ -7,7 +7,8 @@ import { type ProfileType } from '@/stores'
 import { DnsStrategyOptions, FinalDnsOptions } from '@/constant'
 
 interface Props {
-  modelValue: ProfileType['dnsConfig']
+  modelValue: ProfileType['dnsConfig'],
+  proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
 const props = withDefaults(defineProps<Props>(), {})
@@ -17,6 +18,13 @@ const emits = defineEmits(['update:modelValue'])
 const fields = ref(deepClone(props.modelValue))
 
 const { t } = useI18n()
+
+const proxyOptions = computed(() => [
+  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag })),
+  { label: 'direct', value: 'direct' },
+  { label: 'block', value: 'block' },
+  { label:  t('kernel.dns.default'), value: '' }
+])
 
 watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
@@ -48,6 +56,13 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
       <Select
         v-model="fields['final-dns']"
         :options="FinalDnsOptions"
+      />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.dns.remote-dns-detour') }}
+      <Select
+        v-model="fields['remote-dns-detour']"
+        :options="proxyOptions"
       />
     </div>
     <div class="form-item">

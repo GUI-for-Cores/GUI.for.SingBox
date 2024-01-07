@@ -198,9 +198,33 @@ export const RulesTypeOptions = [
     value: 'clash_mode'
   },
   {
+    label: 'kernel.rules.type.NETWORK',
+    value: 'network'
+  },
+  {
+    label: 'kernel.rules.type.IP-VERSION',
+    value: 'ip_version'
+  },
+  {
     label: 'kernel.rules.type.FALLBACK',
     value: 'final'
   }
+]
+
+export const DnsRulesTypeOptions = [
+  {
+    label: 'kernel.rules.type.QUERY-TYPE',
+    value: 'query_type'
+  },
+  {
+    label: 'kernel.rules.type.INBOUND',
+    value: 'inbound'
+  },
+  {
+    label: 'kernel.rules.type.OUTBOUND',
+    value: 'outbound'
+  },
+  ...RulesTypeOptions.filter((item) => !item.value.includes('ip_') && item.value != 'final')
 ]
 
 export const StackOptions = [
@@ -287,10 +311,10 @@ export const DnsStrategyOptions = [
   { label: 'kernel.dns.strategy.prefer_ipv4', value: 'prefer_ipv4' },
   { label: 'kernel.dns.strategy.prefer_ipv6', value: 'prefer_ipv6' },
   { label: 'kernel.dns.strategy.ipv4_only', value: 'ipv4_only' },
-  { label: 'kernel.dns.strategy.ipv6_only', value: 'ipv6_only' },
+  { label: 'kernel.dns.strategy.ipv6_only', value: 'ipv6_only' }
 ]
 
 export const FinalDnsOptions = [
   { label: 'kernel.dns.local-dns', value: 'local-dns' },
-  { label: 'kernel.dns.remote-dns', value: 'remote-dns' },
+  { label: 'kernel.dns.remote-dns', value: 'remote-dns' }
 ]

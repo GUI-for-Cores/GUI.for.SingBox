@@ -47,6 +47,7 @@ export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
   'resolver-dns': '223.5.5.5',
   'remote-resolver-dns': '8.8.8.8',
   'final-dns': FinalDnsType.Remote,
+  'remote-dns-detour': '🚀 节点选择',
   'fake-ip-range-v4': '198.18.0.1/16',
   'fake-ip-range-v6': 'fc00::/18',
   'fake-ip-filter': [
@@ -234,4 +235,62 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     'download-detour': '',
     invert: false
   }
+]
+
+export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
+  {
+    id: sampleID(),
+    type: 'clash_mode',
+    payload: 'direct',
+    server: 'local-dns',
+    invert: false,
+    'disable-cache': false,
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': ''
+  },
+  {
+    id: sampleID(),
+    type: 'clash_mode',
+    payload: 'global',
+    server: 'remote-dns',
+    invert: false,
+    'disable-cache': false,
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': ''
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs',
+    server: 'local-dns',
+    'disable-cache': false,
+    invert: false,
+    'ruleset-name': 'GEOSITE-CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
+    server: 'local-dns',
+    'disable-cache': false,
+    invert: true,
+    'ruleset-name': 'GEOLOCATION-!CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
+    server: 'remote-dns',
+    'disable-cache': false,
+    invert: false,
+    'ruleset-name': 'GEOLOCATION-!CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+  },
 ]
