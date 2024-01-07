@@ -28,6 +28,7 @@ const fields = ref({
   type: 'domain',
   payload: '',
   proxy: '',
+  invert: false,
   'ruleset-name': sampleID(),
   'ruleset-format': 'binary',
   'download-detour': ''
@@ -39,7 +40,8 @@ const proxyOptions = computed(() => [
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
 
-const supportPayload = computed(() => !['final', 'rule_set'].includes(fields.value.type))
+const supportPayload = computed(() => !['final', 'rule_set', 'ip_is_private'].includes(fields.value.type))
+const supportInvert = computed(() => 'final' !== fields.value.type)
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -52,6 +54,7 @@ const handleAddRule = () => {
     type: 'domain',
     payload: '',
     proxy: '',
+    invert: false,
     'ruleset-name': sampleID(),
     'ruleset-format': 'binary',
     'download-detour': ''
@@ -89,9 +92,9 @@ const hasLost = (r: ProfileType['rulesConfig'][0]) => {
 const showLost = () => message.info('kernel.rules.notFound')
 
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
-  const { type, payload, proxy } = rule
+  const { type, payload, proxy, invert } = rule
   let ruleStr = type
-  if (type !== 'final') {
+  if (!['final', 'ip_is_private'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
       const ruleset = rulesetsStore.getRulesetById(payload)
@@ -99,11 +102,16 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
         ruleStr += ',' + ruleset.tag
       }
     } else if (type === 'rule_set_url') {
-      ruleStr += ',' + rule['ruleset-name'] + '(' + rule['ruleset-format'] + ')'
+      ruleStr += ',' + rule['ruleset-name']
     } else {
       ruleStr += ',' + payload
     }
   }
+  
+  if(invert) {
+    ruleStr += ',' + t('kernel.rules.invert')
+  }
+
   ruleStr += ',' + proxy
   return ruleStr
 }
@@ -147,6 +155,10 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div class="form-item">
       {{ t('kernel.rules.proxy') }}
       <Select v-model="fields.proxy" :options="proxyOptions" />
+    </div>
+    <div v-show="supportInvert" class="form-item">
+      {{ t('kernel.rules.invert') }}
+      <Switch v-model="fields.invert" />
     </div>
 
     <template v-if="fields.type === 'rule_set'">

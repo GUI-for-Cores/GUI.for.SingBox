@@ -4,19 +4,27 @@ import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore } from '@/stores'
 
 export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
-  const { type, payload, proxy } = rule
+  const { type, payload, proxy, invert } = rule
+
+  const invertConfig = invert ? { invert: invert } : {}
+
   if (type === 'rule_set') {
     const rulesetsStore = useRulesetsStore()
     const ruleset = rulesetsStore.getRulesetById(payload)
     if (ruleset) {
-      return { rule_set: ruleset.tag, outbound: proxy }
+      return { rule_set: ruleset.tag, outbound: proxy, ...invertConfig }
     } else {
       return null
     }
   } else if (type === 'rule_set_url') {
-    return { rule_set: rule['ruleset-name'], outbound: proxy }
+    if (!rule['ruleset-name']) {
+      return null
+    }
+    return { rule_set: rule['ruleset-name'], outbound: proxy, ...invertConfig }
+  } else if (type === 'ip_is_private') {
+    return { ip_is_private: !invert, outbound: proxy }
   }
-  const result_rule: Record<string, any> = { outbound: proxy }
+  const result_rule: Record<string, any> = { outbound: proxy, ...invertConfig }
   result_rule[type] = payload.split(',').map((r) => r.trim())
   return result_rule
 }

@@ -136,11 +136,62 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
 export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   {
     id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs',
+    proxy: '🛑 全球拦截',
+    'ruleset-name': 'CATEGORY-ADS',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'ip_is_private',
+    payload: '',
+    proxy: '🎯 全球直连',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs',
+    proxy: '🎯 全球直连',
+    'ruleset-name': 'GEOIP-CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs',
+    proxy: '🎯 全球直连',
+    'ruleset-name': 'GEOSITE-CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
+    proxy: '🎯 全球直连',
+    'ruleset-name': 'GEOLOCATION-!CN',
+    'ruleset-format': 'binary',
+    'download-detour': '🎯 全球直连',
+    invert: true
+  },
+  {
+    id: sampleID(),
     type: 'final',
     payload: '',
     proxy: '🐟 漏网之鱼',
     'ruleset-name': '',
     'ruleset-format': '',
-    'download-detour': ''
+    'download-detour': '',
+    invert: false
   }
 ]

@@ -74,6 +74,7 @@ export type ProfileType = {
     type: string
     payload: string
     proxy: string
+    invert: boolean
     'ruleset-name': string
     'ruleset-format': string,
     'download-detour': string

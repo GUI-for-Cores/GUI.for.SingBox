@@ -155,6 +155,7 @@ export default {
       ruleset: 'RuleSet',
       rulesets: 'RuleSets',
       'download-detour': 'Download Detour',
+      name: 'Name',
       needGeodataMode: 'Please enable the "geodata-mode" option in the advanced settings',
       notFound: 'proxy group does not exist',
       type: {
@@ -175,6 +176,7 @@ export default {
         'PROCESS-PATH': 'PROCESS-PATH',
         'RULE-SET': 'RULE-SET',
         'RULE-SET-URL': 'RULE-SET-URL',
+        'IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-CIDR': 'SRC-IP-CIDR'
       }
     },

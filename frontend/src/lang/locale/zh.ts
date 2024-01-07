@@ -152,6 +152,7 @@ export default {
     rules: {
       payload: '载荷',
       proxy: '代理',
+      invert: '取反',
       ruleset: '规则组',
       rulesets: '规则组列表',
       'download-detour': '下载方式',
@@ -176,6 +177,7 @@ export default {
         'PROCESS-PATH': '源进程路径',
         'RULE-SET': '规则组',
         'RULE-SET-URL': '规则组链接',
+        'IP-PRIVATE': '私有IP',
         'SRC-IP-CIDR': '源IP段地址'
       }
     },

@@ -178,6 +178,10 @@ export const RulesTypeOptions = [
     value: 'rule_set_url'
   },
   {
+    label: 'kernel.rules.type.IP-PRIVATE',
+    value: 'ip_is_private'
+  },
+  {
     label: 'kernel.rules.type.MATCH',
     value: 'final'
   }
