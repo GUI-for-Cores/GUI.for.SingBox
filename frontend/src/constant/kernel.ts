@@ -224,6 +224,10 @@ export const DnsRulesTypeOptions = [
     label: 'kernel.rules.type.OUTBOUND',
     value: 'outbound'
   },
+  {
+    label: 'kernel.rules.type.FAKE-IP',
+    value: 'fakeip'
+  },
   ...RulesTypeOptions.filter((item) => !item.value.includes('ip_') && item.value != 'final')
 ]
 

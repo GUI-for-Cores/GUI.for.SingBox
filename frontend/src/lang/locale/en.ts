@@ -192,7 +192,8 @@ export default {
         'IP-VERSION': 'IP-VERSION',
         'QUERY-TYPE': 'QUERY-TYPE',
         INBOUND: 'INBOUND',
-        OUTBOUND: 'OUTBOUND'
+        OUTBOUND: 'OUTBOUND',
+        'FAKE-IP': 'FAKE-IP'
       }
     },
     name: 'sing-box',

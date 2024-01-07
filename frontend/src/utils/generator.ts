@@ -28,6 +28,7 @@ const generateCommonRule = (rule: Record<string, any>) => {
       ...this_rule
     }
   }
+
   const payloadsRule: Record<string, any> = {}
   const payloadsList: string[] = payload.split(',')
 
@@ -121,6 +122,61 @@ const generateRuleSets = async (
   return ruleSets
 }
 
+const generateDnsRulesWithFakeIp = async (profile: ProfileType) => {
+  let hasFakeIpRule = false
+
+  const rules = profile.dnsRulesConfig
+    .filter((item) => {
+      if (item.type === 'final') {
+        return false
+      }
+      if (item.type === 'fakeip') {
+        if (hasFakeIpRule) {
+          return false
+        }
+        hasFakeIpRule = true
+      }
+      return true
+    })
+    .map((rule) => generateDnsRule(rule))
+    .filter((v) => v != null) as Record<string, any>[]
+
+  if (hasFakeIpRule) {
+    const idx = rules.findIndex((item) => item['fakeip'] !== undefined)
+
+    if (idx >= 0) {
+      const invert = rules[idx]['invert'] ? { invert: true } : {}
+      const disable_cache = rules[idx]['disable_cache'] ? { disable_cache: true } : {}
+
+      rules[idx] = {
+        type: 'logical',
+        mode: 'and',
+        rules: [
+          {
+            domain_suffix: profile.dnsConfig['fake-ip-filter'],
+            invert: true
+          },
+          {
+            query_type: ['A', 'AAAA']
+          }
+        ],
+        ...invert,
+        ...disable_cache,
+        server: 'fakeip-dns'
+      }
+    }
+  }
+
+  return rules
+}
+
+const generateDnsRules = async (profile: ProfileType) => {
+  return profile.dnsRulesConfig
+    .filter((v) => v.type !== 'final' && v.type !== 'fakeip' && v.server !== 'fakeip-dns')
+    .map((rule) => generateDnsRule(rule))
+    .filter((v) => v != null)
+}
+
 const generateDnsConfig = async (profile: ProfileType) => {
   const remote_dns = profile.dnsConfig['remote-dns']
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
@@ -166,37 +222,9 @@ const generateDnsConfig = async (profile: ProfileType) => {
         address: 'rcode://success'
       }
     ],
-    rules: [
-      {
-        outbound: 'any',
-        server: 'local-dns',
-        disable_cache: true
-      },
-      ...(profile.dnsConfig.fakeip
-        ? [
-            {
-              type: 'logical',
-              mode: 'and',
-              rules: [
-                {
-                  domain_suffix: profile.dnsConfig['fake-ip-filter'],
-                  invert: true
-                },
-                {
-                  query_type: ['A', 'AAAA']
-                }
-              ],
-              server: 'fakeip-dns'
-            }
-          ]
-        : []),
-      ...profile.dnsRulesConfig
-        .filter(
-          (v) => v.type !== 'final' && (profile.dnsConfig.fakeip || v.server !== 'fakeip-dns')
-        )
-        .map((rule) => generateDnsRule(rule))
-        .filter((v) => v != null)
-    ]
+    rules: await (profile.dnsConfig.fakeip
+      ? generateDnsRulesWithFakeIp(profile)
+      : generateDnsRules(profile))
   }
 }
 

@@ -8,7 +8,7 @@ import { DnsRulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/c
 
 interface Props {
   modelValue: ProfileType['dnsRulesConfig']
-  dnsConfig: ProfileType['dnsConfig'],
+  dnsConfig: ProfileType['dnsConfig']
   proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
@@ -38,17 +38,16 @@ const dnsOptions = computed(() => [
   { label: t('kernel.dns.local-dns'), value: 'local-dns' },
   { label: t('kernel.dns.remote-dns'), value: 'remote-dns' },
   { label: t('kernel.dns.block'), value: 'block' },
-  ... (props.dnsConfig.fakeip ? [{ label:  t('kernel.dns.fakeip-dns'), value: 'fakeip-dns' }] : [])
+  ...(props.dnsConfig.fakeip ? [{ label: t('kernel.dns.fakeip-dns'), value: 'fakeip-dns' }] : [])
 ])
 
 const downloadProxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
-const supportPayload = computed(
-  () => !['final', 'rule_set'].includes(fields.value.type)
-)
+const supportPayload = computed(() => !['final', 'rule_set', 'fakeip'].includes(fields.value.type))
 const supportInvert = computed(() => 'final' !== fields.value.type)
+const supportServer = computed(() => 'fakeip' !== fields.value.type)
 
 const { t } = useI18n()
 const rulesetsStore = useRulesetsStore()
@@ -95,7 +94,7 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
   const { type, payload, server, invert } = rule
   const opt = DnsRulesTypeOptions.filter((v) => v.value === type)
   let ruleStr = opt.length > 0 ? t(opt[0].label) : type
-  if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
+  if (!['final', 'ip_is_private', 'src_ip_is_private', 'fakeip'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
       const ruleset = rulesetsStore.getRulesetById(payload)
@@ -113,7 +112,9 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
     ruleStr += ',' + t('kernel.rules.invert')
   }
 
-  ruleStr += ',' + t('kernel.dns.' + server)
+  if (type !== 'fakeip') {
+    ruleStr += ',' + t('kernel.dns.' + server)
+  }
   return ruleStr
 }
 
@@ -152,7 +153,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
       {{ t('kernel.rules.payload') }}
       <Input v-model="fields.payload" autofocus />
     </div>
-    <div class="form-item">
+    <div v-show="supportServer" class="form-item">
       DNS
       <Select v-model="fields.server" :options="dnsOptions" />
     </div>

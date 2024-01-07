@@ -192,7 +192,8 @@ export default {
         'IP-VERSION': 'IP协议',
         'QUERY-TYPE': '查询类型',
         INBOUND: '入站',
-        OUTBOUND: '出站'
+        OUTBOUND: '出站',
+        'FAKE-IP': 'Fake-IP'
       }
     },
     name: 'sing-box',

@@ -240,6 +240,28 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
 export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
   {
     id: sampleID(),
+    type: 'outbound',
+    payload: 'any',
+    server: 'local-dns',
+    invert: false,
+    'disable-cache': true,
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': ''
+  },
+  {
+    id: sampleID(),
+    type: 'fakeip',
+    payload: '',
+    server: 'fakeip-dns',
+    invert: false,
+    'disable-cache': false,
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': ''
+  },
+  {
+    id: sampleID(),
     type: 'clash_mode',
     payload: 'direct',
     server: 'local-dns',
