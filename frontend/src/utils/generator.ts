@@ -28,17 +28,19 @@ const generateCommonRule = (rule: Record<string, any>) => {
       ...this_rule
     }
   }
-  const payloads_rule: Record<string, any> = {}
-  const payloads = payload.split(',').map((r) => {
-    const p = r.trim()
-    if (['port', 'source_port', 'ip_version'].includes(type)) {
-      return parseInt(p)
-    }
-    return p
-  })
-  payloads_rule[type] = payloads.length == 1 ? payloads[0] : payloads
+  const payloadsRule: Record<string, any> = {}
+  const payloadsList: string[] = payload.split(',')
+
+  let payloads = []
+  if (['port', 'source_port', 'ip_version'].includes(type)) {
+    payloads = payloadsList.map((r) => parseInt(r.trim()))
+  } else {
+    payloads = payloadsList.map((r) => r.trim())
+  }
+
+  payloadsRule[type] = payloads.length == 1 ? payloads[0] : payloads
   return {
-    ...payloads_rule,
+    ...payloadsRule,
     ...invertConfig
   }
 }
