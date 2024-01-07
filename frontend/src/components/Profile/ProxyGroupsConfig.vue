@@ -261,7 +261,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       <Divider>{{ t('profile.use') }}</Divider>
       <div v-draggable="[fields.use, DraggableOptions]" class="group-proxies">
         <Button v-for="use in fields.use" :key="use" type="link" class="group-item">
-          {{ use }}
+          {{ subscribesStore.getSubscribeById(use)?.name }}
         </Button>
       </div>
     </div>
