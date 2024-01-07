@@ -181,7 +181,8 @@ export default {
         'PROTOCOL': 'PROTOCOL',
         'IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-PRIVATE': 'IP-PRIVATE',
-        'SRC-IP-CIDR': 'SRC-IP-CIDR'
+        'SRC-IP-CIDR': 'SRC-IP-CIDR',
+        'CLASH-MODE': 'CLASH-MODE'
       }
     },
     name: 'sing-box',

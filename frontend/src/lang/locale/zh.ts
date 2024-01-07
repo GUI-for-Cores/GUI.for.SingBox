@@ -181,7 +181,8 @@ export default {
         'PROTOCOL': '协议',
         'IP-PRIVATE': '私有IP',
         'SRC-IP-PRIVATE': '源私有IP',
-        'SRC-IP-CIDR': '源IP段地址'
+        'SRC-IP-CIDR': '源IP段地址',
+        'CLASH-MODE': 'Clash模式'
       }
     },
     name: 'sing-box',

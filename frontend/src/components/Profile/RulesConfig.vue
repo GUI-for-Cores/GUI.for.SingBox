@@ -37,6 +37,7 @@ const fields = ref({
 const proxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
   { label: 'block', value: 'block' },
+  { label: 'dns-out', value: 'dns-out' },
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
 
@@ -85,7 +86,7 @@ const handleUseRuleset = (ruleset: RuleSetType) => {
 }
 
 const hasLost = (r: ProfileType['rulesConfig'][0]) => {
-  if (['direct', 'block'].includes(r.proxy)) return false
+  if (['direct', 'block', 'dns-out'].includes(r.proxy)) return false
   return !props.profile.proxyGroupsConfig.find((v) => v.tag === r.proxy)
 }
 

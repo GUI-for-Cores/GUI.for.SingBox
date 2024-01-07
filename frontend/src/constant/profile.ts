@@ -136,6 +136,46 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
 export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   {
     id: sampleID(),
+    type: 'protocol',
+    payload: 'dns',
+    proxy: 'dns-out',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'port',
+    payload: '53',
+    proxy: 'dns-out',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },  
+  {
+    id: sampleID(),
+    type: 'clash_mode',
+    payload: 'direct',
+    proxy: '🎯 全球直连',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'clash_mode',
+    payload: 'global',
+    proxy: '🚀 节点选择',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
     type: 'rule_set_url',
     payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs',
     proxy: '🛑 全球拦截',

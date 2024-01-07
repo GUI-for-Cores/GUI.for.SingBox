@@ -12,7 +12,7 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
     const rulesetsStore = useRulesetsStore()
     const ruleset = rulesetsStore.getRulesetById(payload)
     if (ruleset) {
-      return { rule_set: ruleset.tag, outbound: proxy, ...invertConfig }
+      return { rule_set: ruleset.tag, ...invertConfig, outbound: proxy }
     } else {
       return null
     }
@@ -20,15 +20,29 @@ export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
     if (!rule['ruleset-name']) {
       return null
     }
-    return { rule_set: rule['ruleset-name'], outbound: proxy, ...invertConfig }
+    return { rule_set: rule['ruleset-name'], ...invertConfig, outbound: proxy }
   } else if (['ip_is_private', 'src_ip_is_private'].includes(type)) {
-    const result_rule: Record<string, any> = { outbound: proxy }
-    result_rule[type] = !invert
-    return result_rule
+    const this_rule: Record<string, any> = {}
+    this_rule[type] = !invert
+    return {
+      ...this_rule,
+      outbound: proxy
+    }
   }
-  const result_rule: Record<string, any> = { outbound: proxy, ...invertConfig }
-  result_rule[type] = payload.split(',').map((r) => r.trim())
-  return result_rule
+  const payloads_rule: Record<string, any> = {}
+  const payloads = payload.split(',').map((r) => {
+    const p = r.trim()
+    if (['port', 'source_port'].includes(type)) {
+      return parseInt(p)
+    }
+    return p
+  })
+  payloads_rule[type] = payloads.length == 1 ? payloads[0] : payloads
+  return {
+    ...payloads_rule,
+    ...invertConfig,
+    outbound: proxy
+  }
 }
 
 type ProxiesType = { type: string; tag: string }
@@ -335,8 +349,6 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
 }
 
 const generateRouteConfig = async (profile: ProfileType) => {
-  const proxyTag = profile.proxyGroupsConfig[0].tag
-
   const route: Record<string, any> = {
     rule_set: [
       {
@@ -363,32 +375,11 @@ const generateRouteConfig = async (profile: ProfileType) => {
       ...(await generateRuleSets(profile.rulesConfig))
     ],
     rules: [
-      {
-        type: 'logical',
-        mode: 'or',
-        rules: [
-          {
-            protocol: 'dns'
-          },
-          {
-            port: 53
-          }
-        ],
-        outbound: 'dns-out'
-      },
-      {
-        network: 'udp',
-        port: 443,
-        outbound: 'block'
-      },
-      {
-        clash_mode: 'direct',
-        outbound: 'direct'
-      },
-      {
-        clash_mode: 'global',
-        outbound: proxyTag
-      }
+      // {
+      //   network: 'udp',
+      //   port: 443,
+      //   outbound: 'block'
+      // }
     ]
   }
 
@@ -403,9 +394,12 @@ const generateRouteConfig = async (profile: ProfileType) => {
     if (final.length > 0) {
       route['final'] = final[0].proxy
     }
-  } else if (profile.generalConfig.mode == 'global') {
-    route['final'] = proxyTag
-  } else {
+  }
+
+  const final = profile.rulesConfig.filter((v) => v.type === 'final')
+  if (final.length > 0) {
+    route['final'] = final[0].proxy
+  } else if (profile.generalConfig.mode == 'direct') {
     route['final'] = 'direct'
   }
 

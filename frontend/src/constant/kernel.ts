@@ -194,6 +194,10 @@ export const RulesTypeOptions = [
     value: 'protocol'
   },
   {
+    label: 'kernel.rules.type.CLASH-MODE',
+    value: 'clash_mode'
+  },
+  {
     label: 'kernel.rules.type.MATCH',
     value: 'final'
   }
