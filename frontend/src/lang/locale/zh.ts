@@ -104,6 +104,7 @@ export default {
       'remote-dns-detour': '远程DNS出站',
       'final-dns': '回退DNS',
       'fakeip-dns': 'Fake-IP DNS',
+      'block': 'block',
       default: '默认',
       strategy: {
         name: '策略',
