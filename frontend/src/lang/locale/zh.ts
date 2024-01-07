@@ -166,7 +166,7 @@ export default {
         GEOSITE: '域名集合',
         IPSET: 'IP集',
         SCRIPT: '脚本',
-        MATCH: '全匹配',
+        FALLBACK: 'Fallback',
         'DOMAIN-SUFFIX': '域名后缀',
         'DOMAIN-KEYWORD': '域名关键词',
         'DOMAIN-REGEX': '域名正则表达式',

@@ -166,7 +166,7 @@ export default {
         GEOSITE: 'GEOSITE',
         IPSET: 'IPSET',
         SCRIPT: 'SCRIPT',
-        MATCH: 'MATCH',
+        FALLBACK: 'FALLBACK',
         'DOMAIN-SUFFIX': 'DOMAIN-SUFFIX',
         'DOMAIN-KEYWORD': 'DOMAIN-KEYWORD',
         'DOMAIN-REGEX': 'DOMAIN-REGEX',

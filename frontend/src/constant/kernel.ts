@@ -198,7 +198,7 @@ export const RulesTypeOptions = [
     value: 'clash_mode'
   },
   {
-    label: 'kernel.rules.type.MATCH',
+    label: 'kernel.rules.type.FALLBACK',
     value: 'final'
   }
 ]

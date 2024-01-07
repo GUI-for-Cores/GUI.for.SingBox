@@ -94,7 +94,8 @@ const showLost = () => message.info('kernel.rules.notFound')
 
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule
-  let ruleStr = type
+  const opt = RulesTypeOptions.filter((v) => v.value === type)
+  let ruleStr = opt.length > 0 ? t(opt[0].label) :  type
   if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
