@@ -29,7 +29,7 @@ const fields = ref({
   payload: '',
   proxy: '',
   invert: false,
-  'ruleset-name': sampleID(),
+  'ruleset-name': '',
   'ruleset-format': 'binary',
   'download-detour': ''
 })
@@ -55,7 +55,7 @@ const handleAddRule = () => {
     payload: '',
     proxy: '',
     invert: false,
-    'ruleset-name': sampleID(),
+    'ruleset-name': '',
     'ruleset-format': 'binary',
     'download-detour': ''
   }
