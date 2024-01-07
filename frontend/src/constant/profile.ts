@@ -134,25 +134,10 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
 }
 
 export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
-  // {
-  //   protocol: 'dns',
-  //   proxy: 'dns-out'
-  // },
-  // {
-  //   network: 'udp',
-  //   port: 443,
-  //   proxy: 'block'
-  // },
-  // {
-  //   clash_mode: 'direct',
-  //   proxy: 'direct'
-  // },
-  // {
-  //   clash_mode: 'global',
-  //   proxy: '🚀 节点选择'
-  // },
-  // {
-  //   ip_is_private: true,
-  //   proxy: 'direct'
-  // }
+  {
+    id: sampleID(),
+    type: 'final',
+    payload: '',
+    proxy: '🐟 漏网之鱼'
+  }
 ]
