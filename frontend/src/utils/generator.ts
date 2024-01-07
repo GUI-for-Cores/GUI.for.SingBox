@@ -58,11 +58,14 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
     download_detour?: string
   }[] = []
 
+  const usedRuleSets = new Set<string>()
+
   rules
     .filter((rule) => rule.type === 'rule_set')
     .forEach((rule) => {
       const ruleset = rulesetsStore.getRulesetById(rule.payload)
-      if (ruleset) {
+      if (ruleset && !usedRuleSets.has(ruleset.tag)) {
+        usedRuleSets.add(ruleset.tag)
         ruleSets.push({
           tag: ruleset.tag,
           type: 'local',
@@ -74,9 +77,11 @@ const generateRuleSets = async (rules: ProfileType['rulesConfig']) => {
   rules
     .filter((rule) => rule.type === 'rule_set_url')
     .forEach((rule) => {
-      if (rule['ruleset-name']) {
+      const tag = rule['ruleset-name']
+      if (tag && !usedRuleSets.has(tag)) {
+        usedRuleSets.add(tag)
         ruleSets.push({
-          tag: rule['ruleset-name'],
+          tag: tag,
           type: 'remote',
           format: rule['ruleset-format'],
           url: rule.payload,
