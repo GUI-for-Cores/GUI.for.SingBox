@@ -96,7 +96,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       let header: any = {}
 
       if (s.convert) {
-        const converterUrl = 'https://sing-box-subscribe.vercel.app/config/' + s.url
+        const converterUrl = 'https://sing-box-subscribe.vercel.app/config/url=' + s.url + '/&ua=' + userAgent
         const { body: b } = await HttpGet(converterUrl, {
           'User-Agent': userAgent
         })
