@@ -182,7 +182,7 @@ export default {
         'PROCESS-NAME': '源进程名',
         'PROCESS-PATH': '源进程路径',
         'RULE-SET': '规则集',
-        'RULE-SET-URL': '规则集链接',
+        'RULE-SET-URL': '远程规则集',
         PROTOCOL: '协议',
         'IP-PRIVATE': '私有IP',
         'SRC-IP-PRIVATE': '源私有IP',
