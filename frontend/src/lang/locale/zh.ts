@@ -324,7 +324,7 @@ export default {
       dns: 'DNS 设置',
       groups: '代理组设置',
       dnsRules: 'DNS规则设置',
-      rules: '规则设置'
+      rules: '路由规则设置'
     },
     proxies: '使用节点',
     use: '使用订阅',
