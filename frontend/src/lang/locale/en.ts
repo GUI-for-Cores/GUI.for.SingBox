@@ -327,7 +327,7 @@ export default {
       dns: 'DNS',
       groups: 'Proxy Groups',
       dnsRules: 'DNS Rules',
-      rules: 'Rules'
+      rules: 'Route Rules'
     },
     proxies: 'Proxies',
     use: 'Use',
