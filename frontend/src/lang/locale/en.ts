@@ -104,7 +104,7 @@ export default {
       'remote-dns-detour': 'Remote DNS Detour',
       'final-dns': 'Fallback DNS',
       'fakeip-dns': 'Fake-IP DNS',
-      'block': 'block',
+      'block': 'BLOCK',
       default: 'Default',
       strategy: {
         name: 'Strategy',
