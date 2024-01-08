@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { deepClone, sampleID } from '@/utils'
+import { deepClone, sampleID, isValidInlineRuleJson } from '@/utils'
 import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
 import { RulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
 
@@ -46,7 +46,9 @@ const downloadProxyOptions = computed(() => [
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
 
-const supportPayload = computed(() => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type))
+const supportPayload = computed(
+  () => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type)
+)
 const supportInvert = computed(() => 'final' !== fields.value.type)
 
 const { t } = useI18n()
@@ -95,12 +97,18 @@ const hasLost = (r: ProfileType['rulesConfig'][0]) => {
   return !props.profile.proxyGroupsConfig.find((v) => v.tag === r.proxy)
 }
 
+const hasError = (r: ProfileType['rulesConfig'][0]) => {
+  if (r.type !== 'inline') return false
+  return !isValidInlineRuleJson(r.payload)
+}
+
 const showLost = () => message.info('kernel.rules.notFound')
+const showError = () => message.info('kernel.rules.inlineRuleError')
 
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule
   const opt = RulesTypeOptions.filter((v) => v.value === type)
-  let ruleStr = opt.length > 0 ? t(opt[0].label) :  type
+  let ruleStr = opt.length > 0 ? t(opt[0].label) : type
   if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
@@ -114,8 +122,8 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
       ruleStr += ',' + payload
     }
   }
-  
-  if(invert) {
+
+  if (invert) {
     ruleStr += ',' + t('kernel.rules.invert')
   }
 
@@ -132,6 +140,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
       <Card v-for="(r, index) in rules" :key="r.id" class="rules-item">
         <div class="name">
           <span v-if="hasLost(r)" @click="showLost" class="warn"> [ ! ] </span>
+          <span v-if="hasError(r)" @click="showError" class="warn"> [ ! ] </span>
           {{ generateRuleDesc(r) }}
         </div>
         <div class="action">

@@ -21,6 +21,11 @@ const generateCommonRule = (rule: Record<string, any>) => {
       return null
     }
     return { rule_set: rule['ruleset-name'], ...invertConfig }
+  } else if (type === 'inline') {
+    if (!rule.payload) {
+      return null
+    }
+    return { ...JSON.parse(rule.payload), ...invertConfig }
   } else if (['ip_is_private', 'src_ip_is_private'].includes(type)) {
     const this_rule: Record<string, any> = {}
     this_rule[type] = !invert

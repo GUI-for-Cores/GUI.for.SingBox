@@ -164,6 +164,7 @@ export default {
       name: 'Name',
       needGeodataMode: 'Please enable the "geodata-mode" option in the advanced settings',
       notFound: 'proxy group does not exist',
+      inlineRuleError: 'error syntax',
       empty: 'Ruleset list is empty',
       type: {
         name: 'Type',
@@ -194,7 +195,8 @@ export default {
         'QUERY-TYPE': 'QUERY-TYPE',
         INBOUND: 'INBOUND',
         OUTBOUND: 'OUTBOUND',
-        'FAKE-IP': 'FAKE-IP'
+        'FAKE-IP': 'FAKE-IP',
+        'INLINE': 'INLINE'
       }
     },
     name: 'sing-box',

@@ -40,3 +40,12 @@ export const isValidPaylodYAML = (str: string) => {
 
 export const isValidIPV4 = (ip: string) =>
   /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(ip)
+
+export const isValidInlineRuleJson = (str: string) => {
+  try {
+    return JSON.parse(str)
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}

@@ -164,6 +164,7 @@ export default {
       name: '名称',
       needGeodataMode: '请在高级设置中打开"GEO数据模式"',
       notFound: '代理组不存在',
+      inlineRuleError: '内联规则语法错误',
       empty: '规则集列表为空',
       type: {
         name: '类型',
@@ -194,7 +195,8 @@ export default {
         'QUERY-TYPE': '查询类型',
         INBOUND: '入站',
         OUTBOUND: '出站',
-        'FAKE-IP': 'Fake-IP'
+        'FAKE-IP': 'Fake-IP',
+        'INLINE': '内联规则'
       }
     },
     name: 'sing-box',

@@ -208,6 +208,10 @@ export const RulesTypeOptions = [
   {
     label: 'kernel.rules.type.FALLBACK',
     value: 'final'
+  },
+  {
+    label: 'kernel.rules.type.INLINE',
+    value: 'inline'
   }
 ]
 

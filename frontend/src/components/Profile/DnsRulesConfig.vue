@@ -2,7 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 
-import { deepClone, sampleID } from '@/utils'
+import { useMessage } from '@/hooks'
+import { deepClone, sampleID, isValidInlineRuleJson } from '@/utils'
 import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
 import { DnsRulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
 
@@ -52,6 +53,7 @@ const supportInvert = computed(() => 'final' !== fields.value.type)
 const supportServer = computed(() => 'fakeip' !== fields.value.type)
 
 const { t } = useI18n()
+const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleAddRule = () => {
@@ -92,6 +94,13 @@ const handleUseRuleset = (ruleset: RuleSetType) => {
   fields.value.payload = ruleset.id
 }
 
+const hasError = (r: ProfileType['dnsRulesConfig'][0]) => {
+  if (r.type !== 'inline') return false
+  return !isValidInlineRuleJson(r.payload)
+}
+
+const showError = () => message.info('kernel.rules.inlineRuleError')
+
 const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
   const { type, payload, server, invert } = rule
   const opt = DnsRulesTypeOptions.filter((v) => v.value === type)
@@ -128,6 +137,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div v-draggable="[rules, DraggableOptions]">
       <Card v-for="(r, index) in rules" :key="r.id" class="rules-item">
         <div class="name">
+          <span v-if="hasError(r)" @click="showError" class="warn"> [ ! ] </span>
           {{ generateRuleDesc(r) }}
         </div>
         <div class="action">
