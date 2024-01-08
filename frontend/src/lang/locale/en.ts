@@ -95,7 +95,7 @@ export default {
       enable: 'Enable',
       'fake-ip-range-v4': 'Fake-IP Range(IPV4)',
       'fake-ip-range-v6': 'Fake-IP Range(IPV6)',
-      'fake-ip-filter': 'Fake-IP Filter',
+      'fake-ip-filter': 'Fake-IP Exclude',
       'fake-ip': 'Fake-IP',
       'local-dns': 'Local DNS',
       'remote-dns': 'Remote DNS',
