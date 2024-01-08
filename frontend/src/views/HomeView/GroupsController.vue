@@ -298,9 +298,10 @@ const delayColor = (delay = 0) => {
       margin-left: auto;
 
       .rotate-z {
-        transform: rotateZ(180deg);
+        transform: rotateZ(0deg);
       }
       &-expand {
+        transform: rotateZ(-90deg);
         transition: all 0.2s;
       }
     }

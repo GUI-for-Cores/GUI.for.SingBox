@@ -171,16 +171,19 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <template v-if="fields.type === 'rule_set'">
       <Divider>{{ t('kernel.rules.rulesets') }}</Divider>
       <div class="rulesets">
-        <Card
-          v-for="ruleset in rulesetsStore.rulesets"
-          :key="ruleset.tag"
-          @click="handleUseRuleset(ruleset)"
-          :selected="fields.payload === ruleset.id"
-          :title="ruleset.tag"
-          class="ruleset"
-        >
-          {{ ruleset.path }}
-        </Card>
+        <Empty v-if="rulesetsStore.rulesets.length === 0" :description="t('kernel.rules.empty')" />
+        <template v-else>
+          <Card
+            v-for="ruleset in rulesetsStore.rulesets"
+            :key="ruleset.tag"
+            @click="handleUseRuleset(ruleset)"
+            :selected="fields.payload === ruleset.id"
+            :title="ruleset.tag"
+            class="ruleset"
+          >
+            {{ ruleset.path }}
+          </Card>
+        </template>
       </div>
     </template>
 

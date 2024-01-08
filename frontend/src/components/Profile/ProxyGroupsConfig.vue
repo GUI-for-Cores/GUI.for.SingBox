@@ -302,7 +302,12 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
         class="group-title"
       >
         {{ group.name }}
-        <div style="margin-left: auto">{{ group.proxies.length }}</div>
+        <div style="margin-left: auto; margin-right: 8px">{{ group.proxies.length }}</div>
+        <Icon
+          :class="{ 'rotate-z': isExpanded(group.name) }"
+          icon="arrowRight"
+          class="action-expand"
+        />
       </Button>
       <div v-show="isExpanded(group.name)" class="group-proxies">
         <Empty v-if="group.proxies.length === 0" :description="t('kernel.proxyGroups.empty')" />
@@ -346,18 +351,30 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 
 .group {
   .group-title {
+    position: sticky;
+    top: 0;
     width: 100%;
     display: flex;
     align-items: center;
+    backdrop-filter: blur(4px);
   }
   .group-proxies {
     display: flex;
     flex-wrap: wrap;
+    background: var(--card-bg);
+    border-radius: 8px;
   }
   .group-item {
     display: flex;
     justify-content: center;
-    width: calc(25% - 4px);
+    width: calc(25% - 8px);
+    margin: 4px;
+  }
+  .action-expand {
+    transition: all 0.2s;
+  }
+  .rotate-z {
+    transform: rotateZ(90deg);
   }
 }
 </style>
