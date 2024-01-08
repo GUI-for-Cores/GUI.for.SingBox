@@ -37,8 +37,10 @@ const fields = ref({
 const dnsOptions = computed(() => [
   { label: t('kernel.dns.local-dns'), value: 'local-dns' },
   { label: t('kernel.dns.remote-dns'), value: 'remote-dns' },
-  { label: t('kernel.dns.block'), value: 'block' },
-  ...(props.dnsConfig.fakeip ? [{ label: t('kernel.dns.fakeip-dns'), value: 'fakeip-dns' }] : [])
+  { label: t('kernel.dns.resolver-dns'), value: 'resolver-dns' },
+  { label: t('kernel.dns.remote-resolver-dns'), value: 'remote-resolver-dns' },
+  ...(props.dnsConfig.fakeip ? [{ label: t('kernel.dns.fakeip-dns'), value: 'fakeip-dns' }] : []),
+  { label: t('kernel.dns.block'), value: 'block' }
 ])
 
 const downloadProxyOptions = computed(() => [
