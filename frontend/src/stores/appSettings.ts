@@ -94,6 +94,14 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     else WindowSetLightTheme()
   }
 
+  const getAppTheme = () => {
+    return app.value.theme === Theme.Auto
+      ? mediaQueryList.matches
+        ? Theme.Dark
+        : Theme.Light
+      : app.value.theme
+  }
+
   const updateAppSettings = (v: AppSettings) => {
     i18n.global.locale.value = v.lang
     const mode = v.theme === 'auto' ? (mediaQueryList.matches ? 'dark' : 'light') : v.theme
@@ -125,5 +133,5 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  return { setupAppSettings, app }
+  return { setupAppSettings, app, getAppTheme }
 })

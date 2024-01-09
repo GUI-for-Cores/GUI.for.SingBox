@@ -4,6 +4,8 @@ import CodeMirror from 'vue-codemirror6'
 import { json } from '@codemirror/lang-json'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { useAppSettingsStore } from '@/stores'
+import { Theme } from '@/constant'
 
 interface Props {
   modelValue: string
@@ -21,6 +23,8 @@ const code = ref(props.modelValue)
 
 const lang = { json, javascript }[props.lang]()
 
+const extension = useAppSettingsStore().getAppTheme() === Theme.Dark ? [oneDark] : []
+
 watch(code, (v) => emits('update:modelValue', v))
 </script>
 
@@ -31,7 +35,7 @@ watch(code, (v) => emits('update:modelValue', v))
       v-model="code"
       :lang="lang"
       :readonly="!editable"
-      :extensions="[oneDark]"
+      :extensions="[extension]"
       tab
     />
   </div>
