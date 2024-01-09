@@ -1,0 +1,51 @@
+on:
+  # Allow running the workflow manually
+  workflow_dispatch:
+  # Run the workflow when a push is made
+  push:
+    branches:
+      - main
+  # Run the workflow when a pull request is made
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    strategy:
+      matrix:
+        GOOS: [windows]
+        GOARCH: [amd64, arm64, 386]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21.4"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          cd frontend && npm install
+
+      - name: Build Frontend
+        run: cd frontend && npm run build
+
+      - name: Build for ${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+        env:
+          GOOS: ${{ matrix.GOOS }}
+          GOARCH: ${{ matrix.GOARCH }}
+          FILE_NAME: GUI.for.SingBox-${{ matrix.GOOS }}-${{ matrix.GOARCH }}.exe
+        run: $HOME/go/bin/wails build -m -s -trimpath -skipbindings -devtools -o ${{ env.FILE_NAME }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.FILE_NAME }}
+          path: ./build/bin/${{ env.FILE_NAME }}
