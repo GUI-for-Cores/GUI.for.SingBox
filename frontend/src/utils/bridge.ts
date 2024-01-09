@@ -57,7 +57,7 @@ export const UnzipZIPFile = async (path: string, output: string) => {
   return data
 }
 
-export const FileExists = async (path: string,) => {
+export const FileExists = async (path: string) => {
   const { flag, data } = await App.FileExists(path)
   if (!flag) {
     throw data
