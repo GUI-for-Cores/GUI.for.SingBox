@@ -67,7 +67,7 @@ initContent()
         {{ t('common.reset') }}
       </Button>
     </div>
-    <CodeViewer v-model="rulesetContent" editable />
+    <CodeViewer v-model="rulesetContent" lang="json" editable />
     <div class="action">
       <Button @click="handleCancel" :disable="loading">
         {{ t('common.cancel') }}
@@ -126,7 +126,7 @@ initContent()
 }
 
 .code-viewer {
-  margin-top: 2px;
+  margin-top: 5px;
   height: 100%;
 }
 </style>

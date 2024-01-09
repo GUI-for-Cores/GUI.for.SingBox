@@ -23,7 +23,7 @@ const code = ref(props.modelValue)
 
 const lang = { json, javascript }[props.lang]()
 
-const extension = useAppSettingsStore().getAppTheme() === Theme.Dark ? [oneDark] : []
+const extensions = useAppSettingsStore().getAppTheme() === Theme.Dark ? [oneDark] : []
 
 watch(code, (v) => emits('update:modelValue', v))
 </script>
@@ -35,7 +35,7 @@ watch(code, (v) => emits('update:modelValue', v))
       v-model="code"
       :lang="lang"
       :readonly="!editable"
-      :extensions="[extension]"
+      :extensions="extensions"
       tab
     />
   </div>
