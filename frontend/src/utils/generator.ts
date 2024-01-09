@@ -467,12 +467,14 @@ export const generateConfig = async (profile: ProfileType) => {
   }
 
   if (profile.dnsConfig.enable) {
+    const inet4_range = profile.dnsConfig['fake-ip-range-v4']
+    const inet6_range = profile.dnsConfig['fake-ip-range-v6']
     config['dns'] = {
       ...(await generateDnsConfig(profile)),
       fakeip: {
         enabled: profile.dnsConfig.fakeip,
-        inet4_range: profile.dnsConfig['fake-ip-range-v4'],
-        inet6_range: profile.dnsConfig['fake-ip-range-v6']
+        ...(inet4_range.length > 0 ? { inet4_range: inet4_range } : {}),
+        ...(inet6_range.length > 0 ? { inet6_range: inet6_range } : {})
       },
       final: profile.dnsConfig['final-dns'],
       strategy: profile.dnsConfig.strategy
