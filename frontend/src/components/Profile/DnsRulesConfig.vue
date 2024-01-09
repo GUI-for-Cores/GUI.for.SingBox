@@ -165,7 +165,7 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div v-show="supportPayload" class="form-item">
       {{ t('kernel.rules.payload') }}
       <Input v-show="!multilinePayload" v-model="fields.payload" autofocus />
-      <CodeViewer v-show="multilinePayload" v-model="fields.payload" editable />
+      <CodeViewer v-show="multilinePayload" v-model="fields.payload" lang="json" editable />
     </div>
     <div v-show="supportServer" class="form-item">
       DNS

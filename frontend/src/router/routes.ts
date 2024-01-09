@@ -24,11 +24,11 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/subscribes',
-    name: 'Subscribes',
+    path: '/subscriptions',
+    name: 'Subscriptions',
     component: SubscribesView,
     meta: {
-      name: 'router.subscribes'
+      name: 'router.subscriptions'
     }
   },
   {

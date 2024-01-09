@@ -133,6 +133,8 @@ export default {
       notFound: 'Some subscriptions or proxies are missing, please clean them up',
       needToAdd: 'Add at least one `Use` or `Proxies`',
       sort: 'View and Sort',
+      builtIn: 'Built-In',
+      subscriptions: 'Subscriptions',
       type: {
         name: 'Type',
         select: 'select',
@@ -223,7 +225,7 @@ export default {
   },
   router: {
     overview: 'OverView',
-    subscribes: 'Subscribes',
+    subscriptions: 'Subscriptions',
     rulesets: 'Rulesets',
     settings: 'Settings',
     debug: 'Debug',
@@ -313,7 +315,8 @@ export default {
     editProxies: 'Edit Proxies',
     proxies: {
       type: 'Type',
-      name: 'Name'
+      name: 'Name',
+      add: 'Add Proxy'
     }
   },
   profile: {
@@ -428,7 +431,8 @@ export default {
     latestVersion: 'Already the latest version'
   },
   titlebar: {
-    resetSize: 'Reset window'
+    resetSize: 'Reset window',
+    reload: 'Reload'
   },
   format: {
     seconds: 'Seconds',

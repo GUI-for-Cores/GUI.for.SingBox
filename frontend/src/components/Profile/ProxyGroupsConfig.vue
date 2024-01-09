@@ -29,7 +29,7 @@ const SubscribesNameMap = ref<Record<string, string>>({})
 const proxyGroup = ref([
   {
     id: 'built-in',
-    name: 'built-in',
+    name: 'kernel.proxyGroups.builtIn',
     proxies: [
       { id: 'direct', tag: 'direct', type: 'built-in' },
       { id: 'block', tag: 'block', type: 'built-in' },
@@ -38,7 +38,7 @@ const proxyGroup = ref([
   },
   {
     id: 'Subscribes',
-    name: 'Subscribes',
+    name: 'kernel.proxyGroups.subscriptions',
     proxies: []
   }
 ])
@@ -151,9 +151,7 @@ const isInuse = (groupID: string, proxyID: string) => {
   return fields.value.proxies.find((v) => v.id === proxyID)
 }
 
-const isSupportInverval = computed(() =>
-  ProxyGroup.UrlTest === fields.value.type
-)
+const isSupportInverval = computed(() => ProxyGroup.UrlTest === fields.value.type)
 
 const hasLost = (g: GroupsType[0]) => {
   const isProxiesLost = g.proxies.some(({ type, id }) => {
@@ -297,19 +295,19 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 
     <div v-for="group in proxyGroup" :key="group.name" class="group">
       <Button
-        :type="isExpanded(group.name) ? 'link' : 'text'"
-        @click="toggleExpanded(group.name)"
+        :type="isExpanded(group.id) ? 'link' : 'text'"
+        @click="toggleExpanded(group.id)"
         class="group-title"
       >
-        {{ group.name }}
+        {{ t(group.name) }}
         <div style="margin-left: auto; margin-right: 8px">{{ group.proxies.length }}</div>
         <Icon
-          :class="{ 'rotate-z': isExpanded(group.name) }"
+          :class="{ 'rotate-z': isExpanded(group.id) }"
           icon="arrowRight"
           class="action-expand"
         />
       </Button>
-      <div v-show="isExpanded(group.name)" class="group-proxies">
+      <div v-show="isExpanded(group.id)" class="group-proxies">
         <Empty v-if="group.proxies.length === 0" :description="t('kernel.proxyGroups.empty')" />
         <template v-else>
           <div v-for="proxy in group.proxies" :key="proxy.tag" class="group-item">

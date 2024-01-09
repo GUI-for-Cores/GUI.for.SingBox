@@ -14,7 +14,8 @@ import {
   KillProcess,
   ClearSystemProxy,
   WindowSetSize,
-  WindowCenter
+  WindowCenter,
+  WindowReloadApp
 } from '@/utils/bridge'
 
 const isPinned = ref(false)
@@ -61,6 +62,10 @@ const menus: Menu[] = [
       WindowCenter()
       isFullScreen.value = false
     }
+  },
+  {
+    label: 'titlebar.reload',
+    handler: WindowReloadApp
   }
 ]
 </script>

@@ -4,7 +4,7 @@ import { ref, computed, inject } from 'vue'
 
 import { useBool, useMessage } from '@/hooks'
 import { ProxyTypeOptions } from '@/constant'
-import { deepClone, ignoredError } from '@/utils'
+import { deepClone, ignoredError, sampleID } from '@/utils'
 import { ClipboardSetText, Readfile, Writefile } from '@/utils/bridge'
 import { type Menu, type SubscribeType, useSubscribesStore } from '@/stores'
 
@@ -14,6 +14,8 @@ interface Props {
 
 const props = defineProps<Props>()
 
+let editId = ''
+const isEdit = ref(false)
 const loading = ref(false)
 const keywords = ref('')
 const proxyType = ref('')
@@ -47,6 +49,7 @@ const menus: Menu[] = [
       try {
         const proxy = await getProxyByTag(record.tag)
         details.value = JSON.stringify(proxy, null, 2)
+        isEdit.value = false
         toggleDetails()
       } catch (error: any) {
         message.info(error)
@@ -60,6 +63,20 @@ const menus: Menu[] = [
         const proxy = await getProxyByTag(record.tag)
         await ClipboardSetText(JSON.stringify(proxy, null, 2))
         message.info('common.copied')
+      } catch (error: any) {
+        message.info(error)
+      }
+    }
+  },
+  {
+    label: 'common.edit',
+    handler: async (record: SubscribeType['proxies'][0]) => {
+      try {
+        const proxy = await getProxyByTag(record.tag)
+        details.value = JSON.stringify(proxy, null, 2)
+        isEdit.value = true
+        editId = record.tag
+        toggleDetails()
       } catch (error: any) {
         message.info(error)
       }
@@ -105,6 +122,44 @@ const resetForm = () => {
   proxyType.value = ''
   keywords.value = ''
 }
+const handleAdd = async () => {
+  editId = ''
+  details.value = ''
+  isEdit.value = true
+  toggleDetails()
+}
+
+const onEditEnd = async () => {
+  let proxy: any
+  try {
+    proxy = JSON.parse(details.value)
+  } catch (error: any) {
+    console.log(error)
+    message.info(error.message)
+  }
+
+  if (!proxy) return
+
+  await initAllFieldsProxies()
+
+  const allFieldsProxiesIdx = allFieldsProxies.value.findIndex((v: any) => v.tag === editId)
+  const subProxiesIdx = sub.value.proxies.findIndex((v) => v.tag === editId)
+
+  if (allFieldsProxiesIdx !== -1 && subProxiesIdx !== -1) {
+    allFieldsProxies.value.splice(allFieldsProxiesIdx, 1, proxy)
+    sub.value.proxies.splice(subProxiesIdx, 1, {
+      ...sub.value.proxies[subProxiesIdx],
+      tag: proxy.tag
+    })
+  } else {
+    allFieldsProxies.value.push(proxy)
+    sub.value.proxies.push({
+      id: sampleID(),
+      tag: proxy.tag,
+      type: proxy.type
+    })
+  }
+}
 
 const initAllFieldsProxies = async () => {
   if (allFieldsProxies.value) return
@@ -133,8 +188,11 @@ const getProxyByTag = async (tag: string) => {
         :
       </span>
       <Input v-model="keywords" :border="false" :delay="500" />
-      <Button @click="resetForm" type="primary" style="margin-left: 8px">
+      <Button @click="resetForm" class="ml-8">
         {{ t('common.reset') }}
+      </Button>
+      <Button @click="handleAdd" type="primary" class="ml-auto">
+        {{ t('subscribes.proxies.add') }}
       </Button>
     </div>
     <div class="proxies">
@@ -160,15 +218,16 @@ const getProxyByTag = async (tag: string) => {
 
   <Modal
     v-model:open="showDetails"
-    :submit="false"
-    :cancel="false"
-    title="common.details"
+    :submit="isEdit"
+    :cancel="isEdit"
+    :mask-closable="!isEdit"
+    :title="isEdit ? (details ? 'common.edit' : 'common.add') : 'common.details'"
+    @ok="onEditEnd"
     cancel-text="common.close"
     max-height="80"
     max-width="80"
-    mask-closable
   >
-    <CodeViewer v-model="details" />
+    <CodeViewer v-model="details" lang="json" :editable="isEdit" />
   </Modal>
 </template>
 
@@ -201,6 +260,14 @@ const getProxyByTag = async (tag: string) => {
     width: calc(25% - 4px);
     margin: 2px;
   }
+}
+
+.ml-8 {
+  margin-left: 8px;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 .action {
