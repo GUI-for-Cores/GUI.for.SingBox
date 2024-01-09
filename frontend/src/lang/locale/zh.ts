@@ -104,7 +104,7 @@ export default {
       'remote-dns-detour': '远程DNS出站',
       'final-dns': '回退DNS',
       'fakeip-dns': 'Fake-IP DNS',
-      'block': '禁止解析',
+      block: '禁止解析',
       default: '默认',
       strategy: {
         name: '策略',
@@ -196,7 +196,7 @@ export default {
         INBOUND: '入站',
         OUTBOUND: '出站',
         'FAKE-IP': 'Fake-IP',
-        'INLINE': '内联规则'
+        INLINE: '内联规则'
       }
     },
     name: 'sing-box',
@@ -382,6 +382,10 @@ export default {
     appFolder: {
       name: '应用程序文件夹',
       open: '打开应用程序文件夹'
+    },
+    kernelCache: {
+      name: '内核缓存',
+      clear: '清除持久化缓存'
     },
     lang: {
       name: '语言',

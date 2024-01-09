@@ -23,6 +23,7 @@ export enum FinalDnsType {
 }
 
 export const KernelWorkDirectory = 'data/sing-box'
+export const KernelCacheFilePath = KernelWorkDirectory + '/cache.db'
 export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
 
 export const getKernelFileName = async (isLatest = false) => {

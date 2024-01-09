@@ -383,6 +383,10 @@ export default {
       name: 'App Folder',
       open: 'Open application folder'
     },
+    kernelCache: {
+      name: 'Kernel Cache',
+      clear: 'Clear kernel cache'
+    },
     lang: {
       name: 'Language',
       zh: '简体中文',

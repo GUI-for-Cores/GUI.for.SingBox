@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { useAppSettingsStore } from '@/stores'
-import { Theme, Lang, WindowStartState, Color } from '@/constant'
+import { Theme, Lang, WindowStartState, Color, KernelCacheFilePath } from '@/constant'
 import { APP_TITLE, APP_VERSION, getTaskSchXmlString } from '@/utils'
 import {
   CheckPermissions,
@@ -15,7 +15,8 @@ import {
   QuerySchTask,
   CreateSchTask,
   DeleteSchTask,
-  Removefile
+  Removefile,
+  FileExists
 } from '@/utils/bridge'
 
 const isAdmin = ref(false)
@@ -98,6 +99,12 @@ const onPermChange = async (v: boolean) => {
 const handleOpenFolder = async () => {
   const { basePath } = await GetEnv()
   BrowserOpenURL(basePath)
+}
+
+const handleClearKernelCache = async () => {
+  if (await FileExists(KernelCacheFilePath)) {
+    await Removefile(KernelCacheFilePath)
+  }
 }
 
 const checkSchtask = async () => {
@@ -184,6 +191,13 @@ checkSchtask()
       <Button @click="handleOpenFolder" type="primary">
         <Icon icon="folder" fill="var(--btn-primary-color)" />
         <span style="margin-left: 8px">{{ t('settings.appFolder.open') }}</span>
+      </Button>
+    </div>
+    <div class="settings-item">
+      <div class="title">{{ t('settings.kernelCache.name') }}</div>
+      <Button @click="handleClearKernelCache" type="primary">
+        <Icon icon="reset" fill="var(--btn-primary-color)" />
+        <span style="margin-left: 8px">{{ t('settings.kernelCache.clear') }}</span>
       </Button>
     </div>
     <div class="settings-item">
