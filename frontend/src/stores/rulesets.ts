@@ -2,8 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { Readfile, Writefile, Copyfile, Download } from '@/utils/bridge'
-import { RulesetsFilePath, RulesetFormat } from '@/constant'
+import { Readfile, Writefile, Copyfile, Download, FileExists } from '@/utils/bridge'
+import { RulesetsFilePath, RulesetFormat, EmptyRuleSet } from '@/constant'
 import { deepClone, debounce } from '@/utils'
 
 export type RuleSetType = {
@@ -12,7 +12,7 @@ export type RuleSetType = {
   updateTime: string
   disabled: boolean
   type: 'Http' | 'File'
-  format: RulesetFormat.Binary
+  format: RulesetFormat
   path: string
   url: string
   interval: number
@@ -72,12 +72,24 @@ export const useRulesetsStore = defineStore('rulesets', () => {
 
   const _doUpdateRuleset = async (r: RuleSetType) => {
     if (r.type === 'File') {
-      if (r.url && r.path != r.url) {
-        Copyfile(r.url, r.path)
+      const exists = r.url.length > 0 && (await FileExists(r.url))
+      if (exists) {
+        if (r.path != r.url) {
+          await Copyfile(r.url, r.path)
+        }
+      } else if (r.path === r.url) {
+        // create a default ruleset file
+        await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
+      } else {
+        throw 'source ruleset file not exists ' + r.url
       }
     } else if (r.type === 'Http') {
       await Download(r.url, r.path)
+      if (!(await FileExists(r.path))) {
+        throw 'ruleset file not downloaded ' + r.url
+      }
     }
+
     r.updateTime = new Date().toLocaleString()
   }
 

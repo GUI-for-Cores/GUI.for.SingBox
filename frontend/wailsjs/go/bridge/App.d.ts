@@ -14,6 +14,8 @@ export function Download(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Exec(arg1:string,arg2:Array<string>):Promise<bridge.FlagResult>;
 
+export function FileExists(arg1:string):Promise<bridge.FlagResult>;
+
 export function GetEnv():Promise<bridge.EnvResult>;
 
 export function GetInterfaces():Promise<bridge.FlagResult>;

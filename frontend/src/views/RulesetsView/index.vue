@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { stringify } from 'yaml'
 import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { View } from '@/constant'
+import { View, EmptyRuleSet, RulesetFormat } from '@/constant'
 import { useMessage } from '@/hooks'
 import { Writefile } from '@/utils/bridge'
 import { DraggableOptions } from '@/constant'
 import { debounce, formatRelativeTime } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
-import { type RuleSetType, useRulesetsStore, useAppSettingsStore } from '@/stores'
+import { type RuleSetType, type Menu, useRulesetsStore, useAppSettingsStore } from '@/stores'
 
 import RulesetForm from './components/RulesetForm.vue'
 import RulesetView from './components/RulesetView.vue'
@@ -20,6 +19,17 @@ const rulesetTitle = ref('')
 const rulesetFormID = ref()
 const rulesetFormIsUpdate = ref(false)
 const subFormTitle = computed(() => (rulesetFormIsUpdate.value ? 'common.edit' : 'common.add'))
+
+const menuList: Menu[] = [
+  {
+    label: 'rulesets.editRuleset',
+    handler: (id: string) => handleEditRulesetList(id)
+  },
+  {
+    label: 'common.clear',
+    handler: (id: string) => handleClearRuleset(id)
+  }
+]
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -46,6 +56,16 @@ const handleEditRuleset = (r: RuleSetType) => {
   rulesetFormIsUpdate.value = true
   rulesetFormID.value = r.id
   showRulesetForm.value = true
+}
+
+const handleEditRulesetList = (id: string) => {
+  const r = rulesetsStore.getRulesetById(id)
+  if (r) {
+    // r.path
+    rulesetFormID.value = r.id
+    rulesetTitle.value = r.tag
+    showRulesetList.value = true
+  }
 }
 
 const handleUpdateRuleset = async (r: RuleSetType) => {
@@ -78,9 +98,10 @@ const handleDisableRuleset = async (r: RuleSetType) => {
 const handleClearRuleset = async (id: string) => {
   const r = rulesetsStore.getRulesetById(id)
   if (!r) return
+  if (r.format != RulesetFormat.Source) return
 
   try {
-    await Writefile(r.path, stringify({ payload: [] }))
+    await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
     await _updateProvidersRules(r.tag)
     rulesetsStore.editRuleset(r.id, r)
     message.info('common.success')
@@ -167,6 +188,11 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       :key="r.tag"
       :title="r.tag"
       :disabled="r.disabled"
+      v-menu="
+        r.format == RulesetFormat.Source
+          ? menuList.map((v) => ({ ...v, handler: () => v.handler?.(r.id) }))
+          : []
+      "
       class="ruleset"
     >
       <template #title-prefix>

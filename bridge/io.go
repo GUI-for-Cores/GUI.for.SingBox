@@ -186,3 +186,19 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 	}
 	return FlagResult{true, "Success"}
 }
+
+func (a *App) FileExists(path string) FlagResult {
+	fmt.Println("FileExists:", path)
+	
+	path, err := GetPath(path)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	_, err = os.Stat(path)
+    if err == nil {
+        return FlagResult{true, "true"}
+    } else if os.IsNotExist(err) {
+        return FlagResult{true, "false"}
+    } 
+	return FlagResult{false, err.Error()}
+}

@@ -360,7 +360,7 @@ export default {
   rulesets: {
     empty: 'The rulesets list is empty. Please {action} a ruleset first.',
     rulesetCount: 'Ruleset Count',
-    editRuleset: 'Edit Ruleset List'
+    editRuleset: 'Edit Ruleset File'
   },
   settings: {
     general: 'General',

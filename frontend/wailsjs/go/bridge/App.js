@@ -26,6 +26,10 @@ export function Exec(arg1, arg2) {
   return window['go']['bridge']['App']['Exec'](arg1, arg2);
 }
 
+export function FileExists(arg1) {
+  return window['go']['bridge']['App']['FileExists'](arg1);
+}
+
 export function GetEnv() {
   return window['go']['bridge']['App']['GetEnv']();
 }

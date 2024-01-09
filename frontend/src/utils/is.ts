@@ -14,7 +14,7 @@ export const isValidBase64 = (str: string) => {
 export const isValidSubYAML = (str: string) => {
   try {
     const { proxies } = parse(str)
-    return proxies
+    return !!proxies
   } catch (error) {
     return false
   }
@@ -23,7 +23,7 @@ export const isValidSubYAML = (str: string) => {
 export const isValidSubJson = (str: string) => {
   try {
     const { outbounds } = JSON.parse(str)
-    return outbounds
+    return !!outbounds
   } catch (error) {
     return false
   }
@@ -32,7 +32,7 @@ export const isValidSubJson = (str: string) => {
 export const isValidPaylodYAML = (str: string) => {
   try {
     const { payload } = parse(str)
-    return payload
+    return !!payload
   } catch (error) {
     return false
   }
@@ -43,7 +43,7 @@ export const isValidIPV4 = (ip: string) =>
 
 export const isValidInlineRuleJson = (str: string) => {
   try {
-    return JSON.parse(str)
+    return !!JSON.parse(str)
   } catch (error) {
     console.log(error)
     return false

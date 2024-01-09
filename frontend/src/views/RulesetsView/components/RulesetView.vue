@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { parse, stringify } from 'yaml'
-import { ref, computed, inject } from 'vue'
+import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { deepClone, ignoredError } from '@/utils'
+import { deepClone, ignoredError, isValidInlineRuleJson } from '@/utils'
 import { Readfile, Writefile } from '@/utils/bridge'
-import { type RuleSetType, type Menu, useRulesetsStore } from '@/stores'
+import { type RuleSetType, useRulesetsStore } from '@/stores'
 
 interface Props {
   id: string
@@ -15,29 +14,9 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const keywords = ref('')
 const ruleset = ref<RuleSetType>()
-
-const rulesetList = ref<string[]>([])
-
-const keywordsRegexp = computed(() => new RegExp(keywords.value))
-
-const filteredList = computed(() => {
-  return rulesetList.value.filter((v) => keywordsRegexp.value.test(v))
-})
-
-const menus: Menu[] = [
-  {
-    label: 'common.delete',
-    handler: (record: string) => {
-      if (!ruleset.value) return
-      const idx = rulesetList.value.findIndex((v) => v === record)
-      if (idx !== -1) {
-        rulesetList.value.splice(idx, 1)
-      }
-    }
-  }
-]
+const defaultRulesetContent = ref<string>('')
+const rulesetContent = ref<string>('')
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -50,55 +29,45 @@ const handleSave = async () => {
   if (!ruleset.value) return
   loading.value = true
   try {
-    await Writefile(ruleset.value.path, stringify({ payload: rulesetList.value }))
+    if (!isValidInlineRuleJson(rulesetContent.value)) {
+      throw 'syntax error'
+    }
+    await Writefile(ruleset.value.path, JSON.stringify(rulesetContent.value, null, 2))
     message.info('common.success')
     handleSubmit()
   } catch (error: any) {
     message.info(error)
     console.log(error)
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
-const resetForm = () => {
-  keywords.value = ''
+const resetContent = () => {
+  rulesetContent.value = deepClone(defaultRulesetContent.value)
 }
 
-const initRulesetList = async (r: RuleSetType) => {
-  const content = (await ignoredError(Readfile, r.path)) || '{}'
-  const { payload = [] } = parse(content)
-  rulesetList.value = payload
+const initContent = async () => {
+  const r = rulesetsStore.getRulesetById(props.id)
+  if (r) {
+    ruleset.value = deepClone(r)
+    const content = (await ignoredError(Readfile, r.path)) || ''
+    defaultRulesetContent.value = deepClone(content)
+    rulesetContent.value = content
+  }
 }
 
-const r = rulesetsStore.getRulesetById(props.id)
-if (r) {
-  ruleset.value = deepClone(r)
-  initRulesetList(r)
-}
+initContent()
 </script>
 
 <template>
   <div class="ruleset-view">
     <div class="form">
-      <span class="label">
-        {{ t('common.keywords') }}
-        :
-      </span>
-      <Input v-model="keywords" :border="false" :delay="500" />
-      <Button @click="resetForm" type="primary" style="margin-left: 8px">
+      <Button @click="resetContent" class="mr-8">
         {{ t('common.reset') }}
       </Button>
     </div>
-    <div class="rules">
-      <div
-        v-for="rule in filteredList"
-        :key="rule"
-        v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(rule) }))"
-        class="rule"
-      >
-        {{ rule }}
-      </div>
-    </div>
+    <Input v-model="rulesetContent" editable />
     <div class="action">
       <Button @click="handleCancel" :disable="loading">
         {{ t('common.cancel') }}
@@ -122,6 +91,7 @@ if (r) {
   z-index: 9;
   display: flex;
   align-items: center;
+  align-self: flex-end;
   background-color: var(--modal-bg);
   backdrop-filter: blur(2px);
   .label {
@@ -149,5 +119,9 @@ if (r) {
   display: flex;
   margin-top: 8px;
   justify-content: flex-end;
+}
+
+.mr-8 {
+  margin-right: 8px;
 }
 </style>

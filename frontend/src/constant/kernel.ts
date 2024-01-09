@@ -326,3 +326,8 @@ export const FinalDnsOptions = [
   { label: 'kernel.dns.local-dns', value: 'local-dns' },
   { label: 'kernel.dns.remote-dns', value: 'remote-dns' }
 ]
+
+export const EmptyRuleSet = {
+  version: 1,
+  rules: []
+}
