@@ -50,6 +50,7 @@ const supportPayload = computed(
   () => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type)
 )
 const supportInvert = computed(() => 'final' !== fields.value.type)
+const multilinePayload = computed(() => 'inline' === fields.value.type)
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -166,7 +167,8 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     </div>
     <div v-show="supportPayload" class="form-item">
       {{ t('kernel.rules.payload') }}
-      <Input v-model="fields.payload" autofocus />
+      <Input v-show="!multilinePayload" v-model="fields.payload" autofocus />
+      <CodeViewer v-show="multilinePayload" v-model="fields.payload" editable />
     </div>
     <div class="form-item">
       {{ t('kernel.rules.proxy') }}

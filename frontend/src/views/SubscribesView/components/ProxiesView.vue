@@ -168,7 +168,7 @@ const getProxyByTag = async (tag: string) => {
     max-width="80"
     mask-closable
   >
-    <CodeViewer :code="details" />
+    <CodeViewer v-model="details" />
   </Modal>
 </template>
 

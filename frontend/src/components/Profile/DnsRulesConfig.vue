@@ -51,6 +51,7 @@ const downloadProxyOptions = computed(() => [
 const supportPayload = computed(() => !['final', 'rule_set', 'fakeip'].includes(fields.value.type))
 const supportInvert = computed(() => 'final' !== fields.value.type)
 const supportServer = computed(() => 'fakeip' !== fields.value.type)
+const multilinePayload = computed(() => 'inline' === fields.value.type)
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -163,7 +164,8 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     </div>
     <div v-show="supportPayload" class="form-item">
       {{ t('kernel.rules.payload') }}
-      <Input v-model="fields.payload" autofocus />
+      <Input v-show="!multilinePayload" v-model="fields.payload" autofocus />
+      <CodeViewer v-show="multilinePayload" v-model="fields.payload" editable />
     </div>
     <div v-show="supportServer" class="form-item">
       DNS

@@ -123,7 +123,7 @@ onUnmounted(disconnect)
     max-width="90"
     mask-closable
   >
-    <CodeViewer :code="details" />
+    <CodeViewer v-model="details" />
   </Modal>
 </template>
 

@@ -32,7 +32,7 @@ const handleSave = async () => {
     if (!isValidInlineRuleJson(rulesetContent.value)) {
       throw 'syntax error'
     }
-    await Writefile(ruleset.value.path, JSON.stringify(rulesetContent.value, null, 2))
+    await Writefile(ruleset.value.path, rulesetContent.value)
     message.info('common.success')
     handleSubmit()
   } catch (error: any) {
@@ -67,7 +67,7 @@ initContent()
         {{ t('common.reset') }}
       </Button>
     </div>
-    <Input v-model="rulesetContent" editable />
+    <CodeViewer v-model="rulesetContent" editable />
     <div class="action">
       <Button @click="handleCancel" :disable="loading">
         {{ t('common.cancel') }}
@@ -123,5 +123,10 @@ initContent()
 
 .mr-8 {
   margin-right: 8px;
+}
+
+.code-viewer {
+  margin-top: 2px;
+  height: 100%;
 }
 </style>
