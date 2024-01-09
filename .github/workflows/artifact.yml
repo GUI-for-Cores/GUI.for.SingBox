@@ -46,6 +46,8 @@ jobs:
         run: $HOME/go/bin/wails build -m -s -trimpath -skipbindings -devtools -o ${{ env.FILE_NAME }}
 
       - uses: actions/upload-artifact@v3
+        env:
+          FILE_NAME: GUI.for.SingBox-${{ matrix.GOOS }}-${{ matrix.GOARCH }}.exe
         with:
           name: ${{ env.FILE_NAME }}
           path: ./build/bin/${{ env.FILE_NAME }}
