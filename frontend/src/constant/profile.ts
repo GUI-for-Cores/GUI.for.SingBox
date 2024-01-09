@@ -158,7 +158,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   {
     id: sampleID(),
     type: 'inline',
-    payload: JSON.stringify({ network: 'udp', port: 443 }),
+    payload: JSON.stringify({ network: 'udp', port: 443 }, null, 2),
     proxy: '🛑 全球拦截',
     'ruleset-name': '',
     'ruleset-format': '',
