@@ -103,7 +103,7 @@ const handleOpenFolder = async () => {
 
 const handleClearKernelCache = async () => {
   if (await FileExists(KernelCacheFilePath)) {
-    await Removefile(KernelCacheFilePath)
+    Removefile(KernelCacheFilePath)
   }
 }
 

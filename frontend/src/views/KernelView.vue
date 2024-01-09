@@ -10,7 +10,6 @@ import {
   Download,
   UnzipZIPFile,
   HttpGetJSON,
-  HttpGet,
   Exec,
   Movefile,
   Removefile,
