@@ -35,7 +35,7 @@ const sub = ref<SubscribeType>({
   exclude: '',
   proxyPrefix: '',
   disabled: false,
-  userAgent: APP_TITLE + '/' + APP_VERSION,
+  userAgent: APP_TITLE,
   proxies: []
 })
 

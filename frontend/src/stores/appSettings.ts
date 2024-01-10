@@ -49,10 +49,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     windowStartState: WindowStartState.Normal,
     openInspectorOnStartup: false,
     exitOnClose: false,
-    closeKernelOnExit: false,
+    closeKernelOnExit: true,
     autoSetSystemProxy: false,
     autoStartKernel: false,
-    userAgent: APP_TITLE + '/' + APP_VERSION,
+    userAgent: APP_TITLE,
     startupDelay: 30,
     kernel: {
       branch: 'latest',
