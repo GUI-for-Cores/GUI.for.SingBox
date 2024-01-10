@@ -69,7 +69,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         @change="conStackChange"
       />
     </Card>
-    <Card :title="t('kernel.tun.device')" class="card-item">
+    <Card :title="t('kernel.tun.interface_name')" class="card-item">
       <Input
         v-model="kernelApiStore.config.tun.device"
         @submit="onTunDeviceSubmit"
