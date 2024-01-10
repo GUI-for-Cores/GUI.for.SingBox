@@ -6,6 +6,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useAppSettingsStore } from '@/stores'
 import { Theme } from '@/constant'
+import { computed } from 'vue'
 
 interface Props {
   modelValue: string
@@ -23,7 +24,9 @@ const code = ref(props.modelValue)
 
 const lang = { json, javascript }[props.lang]()
 
-const extensions = useAppSettingsStore().getAppTheme() === Theme.Dark ? [oneDark] : []
+const extensions = computed(() => {
+  return useAppSettingsStore().getAppTheme() === Theme.Dark ? [oneDark] : []
+})
 
 watch(code, (v) => emits('update:modelValue', v))
 </script>
