@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
 import { useAppSettingsStore } from '@/stores'
-import { Readfile, Writefile, HttpGet } from '@/utils/bridge'
+import { Readfile, Writefile, HttpGet, FileExists } from '@/utils/bridge'
 import { SubscribesFilePath, NodeConverterFilePath } from '@/constant'
 import { deepClone, debounce, isValidBase64, isValidSubJson, sampleID } from '@/utils'
 
@@ -87,7 +87,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     let proxies: Record<string, any>[] = []
 
     if (s.type === 'File') {
-      body = await Readfile(s.url)
+      if (await FileExists(s.url)) {
+        body = await Readfile(s.url)
+      } else if (s.url === s.path) {
+        body = '{outbounds:[]}'
+      } else {
+        throw 'Subscription file not exist'
+      }
     }
 
     if (s.type === 'Http') {
@@ -96,7 +102,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       let header: any = {}
 
       if (s.convert) {
-        const converterUrl = 'https://sing-box-subscribe.vercel.app/config/url=' + s.url + '/&ua=' + userAgent
+        const converterUrl =
+          'https://sing-box-subscribe.vercel.app/config/url=' + s.url + '/&ua=' + userAgent
         const { body: b } = await HttpGet(converterUrl, {
           'User-Agent': userAgent
         })
@@ -154,7 +161,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
 
       await promise
-    } else if(isValidSubJson(body)) {
+    } else if (isValidSubJson(body)) {
       const outbounds = JSON.parse(body).outbounds ?? []
       proxies = outbounds.filter((v: any) => {
         if ('server' in v && 'tag' in v) {

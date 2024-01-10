@@ -293,7 +293,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 
     <Divider> {{ t('profile.use') }} & {{ t('profile.proxies') }} </Divider>
 
-    <div v-for="group in proxyGroup" :key="group.name" class="group">
+    <div v-for="group in proxyGroup" :key="group.id" class="group">
       <Button
         :type="isExpanded(group.id) ? 'link' : 'text'"
         @click="toggleExpanded(group.id)"
@@ -310,7 +310,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       <div v-show="isExpanded(group.id)" class="group-proxies">
         <Empty v-if="group.proxies.length === 0" :description="t('kernel.proxyGroups.empty')" />
         <template v-else>
-          <div v-for="proxy in group.proxies" :key="proxy.tag" class="group-item">
+          <div v-for="proxy in group.proxies" :key="proxy.id" class="group-item">
             <Button
               @click="handleAddProxy(group.id, proxy.id, proxy.tag)"
               :type="isInuse(group.id, proxy.id) ? 'link' : 'text'"
