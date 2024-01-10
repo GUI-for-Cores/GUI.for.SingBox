@@ -165,7 +165,13 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     <div v-show="supportPayload" class="form-item">
       {{ t('kernel.rules.payload') }}
       <Input v-show="!multilinePayload" v-model="fields.payload" autofocus />
-      <CodeViewer v-show="multilinePayload" v-model="fields.payload" lang="json" editable />
+      <CodeViewer
+        v-show="multilinePayload"
+        v-model="fields.payload"
+        lang="json"
+        editable
+        class="code-viewer"
+      />
     </div>
     <div v-show="supportServer" class="form-item">
       DNS
@@ -245,5 +251,10 @@ watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true
     margin: 8px;
     font-size: 10px;
   }
+}
+
+.code-viewer {
+  min-width: 50%;
+  max-width: 90%;
 }
 </style>
