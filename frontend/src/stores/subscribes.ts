@@ -161,9 +161,16 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
 
       await promise
-    } else if (isValidSubJson(body)) {
-      const outbounds = JSON.parse(body).outbounds ?? []
-      proxies = outbounds.filter((v: any) => {
+    } else {
+      if (isValidSubJson(body)) {
+        proxies = JSON.parse(body).outbounds ?? []
+      } else if (s.url === s.path) {
+        proxies = JSON.parse(body) ?? []
+      } else {
+        throw 'Not a valid subscription data'
+      }
+
+      proxies = proxies.filter((v: any) => {
         if ('server' in v && 'tag' in v) {
           const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
           const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
@@ -171,12 +178,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         }
         return false
       })
-    } else {
-      throw 'Not a valid subscription data'
     }
 
     if (s.proxyPrefix) {
-      proxies = proxies.map((v) => ({ ...v, tag: s.proxyPrefix + v.tag }))
+      proxies = proxies.map((v) => ({
+        ...v,
+        tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
+      }))
     }
 
     await Writefile(s.path, JSON.stringify(proxies, null, 2))
