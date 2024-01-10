@@ -90,7 +90,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       if (await FileExists(s.url)) {
         body = await Readfile(s.url)
       } else if (s.url === s.path) {
-        body = '{outbounds:[]}'
+        body = '{"outbounds":[]}'
       } else {
         throw 'Subscription file not exist'
       }
