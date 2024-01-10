@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { APP_TITLE, APP_VERSION, ignoredError } from '@/utils'
+import { APP_TITLE, APP_VERSION, APP_CHANNEL, ignoredError } from '@/utils'
 import { type Menu, useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
   WindowFullscreen,
@@ -79,7 +79,7 @@ const menus: Menu[] = [
       }"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ APP_CHANNEL ==='Stable'? '' : APP_CHANNEL }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
     <div v-menu="menus" class="menus"></div>
