@@ -16,6 +16,7 @@ const props = defineProps<Props>()
 const loading = ref(false)
 const ruleset = ref<RuleSetType>()
 const rulesetContent = ref<string>('')
+const initialized = ref(false)
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -49,6 +50,7 @@ const initContent = async () => {
     const content = (await ignoredError(Readfile, r.path)) || ''
     rulesetContent.value = content
   }
+  initialized.value = true
 }
 
 initContent()
@@ -56,7 +58,7 @@ initContent()
 
 <template>
   <div class="ruleset-view">
-    <CodeViewer v-model="rulesetContent" lang="json" editable />
+    <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable />
     <div class="action">
       <Button @click="handleCancel" :disable="loading">
         {{ t('common.cancel') }}
@@ -73,16 +75,14 @@ initContent()
   display: flex;
   flex-direction: column;
   height: 100%;
+  justify-content: space-between;
+  overflow: auto;
 }
 
 .action {
-  display: flex;
-  margin-top: 8px;
-  justify-content: flex-end;
-}
-
-.code-viewer {
+  align-self: flex-end;
   margin-top: 5px;
-  height: 100%;
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 </style>
