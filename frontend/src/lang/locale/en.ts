@@ -249,6 +249,7 @@ export default {
       refresh: 'Refresh',
       delayTest: 'Delay Test',
       stop: 'Stop Kernel',
+      restart: 'Restart Kernel',
       viewlog: 'view log',
       start: 'Click to Start',
       noLogs: 'Log is empty',

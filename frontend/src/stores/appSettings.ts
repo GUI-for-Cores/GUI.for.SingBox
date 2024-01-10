@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
-import { debounce, APP_TITLE, APP_VERSION } from '@/utils'
+import { debounce, APP_TITLE } from '@/utils'
 import { Theme, WindowStartState, Lang, View, Color, Colors } from '@/constant'
 import { WindowSetDarkTheme, WindowSetLightTheme, Readfile, Writefile } from '@/utils/bridge'
 
@@ -16,7 +16,6 @@ type AppSettings = {
   subscribesView: View
   rulesetsView: View
   windowStartState: WindowStartState
-  openInspectorOnStartup: boolean
   exitOnClose: boolean
   closeKernelOnExit: boolean
   autoSetSystemProxy: boolean
@@ -38,6 +37,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   let firstOpen = true
   let latestUserConfig = ''
 
+  const themeMode = ref<Theme.Dark | Theme.Light>(Theme.Light)
+
   const app = ref<AppSettings>({
     lang: Lang.EN,
     theme: Theme.Auto,
@@ -47,7 +48,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     subscribesView: View.Grid,
     rulesetsView: View.Grid,
     windowStartState: WindowStartState.Normal,
-    openInspectorOnStartup: false,
     exitOnClose: false,
     closeKernelOnExit: true,
     autoSetSystemProxy: false,
@@ -85,31 +85,27 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
   mediaQueryList.addEventListener('change', ({ matches }) => {
     console.log('onSystemThemeChange')
-    app.value.theme === 'auto' && setAppTheme(matches ? 'dark' : 'light')
+    if (app.value.theme === Theme.Auto) {
+      themeMode.value = matches ? Theme.Dark : Theme.Light
+      setAppTheme(themeMode.value)
+    }
   })
 
-  const setAppTheme = (theme: 'dark' | 'light') => {
+  const setAppTheme = (theme: Theme.Dark | Theme.Light) => {
     document.body.setAttribute('theme-mode', theme)
-    if (theme === 'dark') WindowSetDarkTheme()
+    if (theme === Theme.Dark) WindowSetDarkTheme()
     else WindowSetLightTheme()
-  }
-
-  const getAppTheme = () => {
-    return app.value.theme === Theme.Auto
-      ? mediaQueryList.matches
-        ? Theme.Dark
-        : Theme.Light
-      : app.value.theme
   }
 
   const updateAppSettings = (v: AppSettings) => {
     i18n.global.locale.value = v.lang
-    const mode = v.theme === 'auto' ? (mediaQueryList.matches ? 'dark' : 'light') : v.theme
+    themeMode.value =
+      v.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : v.theme
     const { primary, secondary } = Colors[v.color]
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
     document.body.style.fontFamily = v['font-family']
-    setAppTheme(mode)
+    setAppTheme(themeMode.value)
   }
 
   watch(
@@ -133,5 +129,5 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  return { setupAppSettings, app, getAppTheme }
+  return { setupAppSettings, app, themeMode }
 })

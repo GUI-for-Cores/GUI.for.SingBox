@@ -7,7 +7,7 @@ export default {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     const appStore = useApp()
 
-    const delay = binding.modifiers.fast ? 200 : 1000
+    const delay = binding.modifiers.fast ? 200 : 500
 
     const show = debounce((x: number, y: number) => {
       if (el.dataset.showTips === 'true') {

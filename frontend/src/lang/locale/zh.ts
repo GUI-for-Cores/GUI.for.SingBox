@@ -249,6 +249,7 @@ export default {
       refresh: '刷新',
       delayTest: '延迟测试',
       stop: '停止内核',
+      restart: '重启内核',
       viewlog: '查看日志',
       start: '启动内核',
       noLogs: '日志为空',

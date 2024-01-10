@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 
+import icons from './icons'
+
 type IconFuncType = Record<string, { default: Component }>
 
 const Icons: IconFuncType = import.meta.glob('./*Icon.vue', { eager: true })
@@ -13,39 +15,8 @@ for (const path in Icons) {
   IconsMap[name] = Icons[path].default
 }
 
-type IconType =
-  | 'link'
-  | 'edit'
-  | 'loading'
-  | 'selected'
-  | 'disabled'
-  | 'pin'
-  | 'pinFill'
-  | 'minimize'
-  | 'maximize'
-  | 'maximize2'
-  | 'close'
-  | 'arrowDown'
-  | 'arrowRight'
-  | 'speedTest'
-  | 'empty'
-  | 'github'
-  | 'forbidden'
-  | 'telegram'
-  | 'expand'
-  | 'collapse'
-  | 'refresh'
-  | 'settings'
-  | 'settings'
-  | 'log'
-  | 'error'
-  | 'stop'
-  | 'reset'
-  | 'folder'
-  | 'restartApp'
-
 interface Props {
-  icon: IconType
+  icon: (typeof icons)[number]
 }
 
 defineProps<Props>()
