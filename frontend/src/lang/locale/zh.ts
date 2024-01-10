@@ -288,8 +288,9 @@ export default {
     }
   },
   subscribe: {
-    http: '远程',
-    file: '本地',
+    http: '远程下载',
+    file: '本地文件',
+    manual: '手动管理',
     name: '名称',
     url: '链接',
     convert: '订阅转换',
@@ -346,8 +347,9 @@ export default {
     clearClipboard: '清空模板'
   },
   ruleset: {
-    http: 'HTTP',
-    file: 'FILE',
+    http: '远程下载',
+    file: '本地文件',
+    manual: '手动管理',
     format: {
       name: '文件格式',
       source: '源文件',

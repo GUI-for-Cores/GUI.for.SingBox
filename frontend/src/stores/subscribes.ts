@@ -15,7 +15,7 @@ export type SubscribeType = {
   total: number
   expire: string
   updateTime: string
-  type: 'Http' | 'File'
+  type: 'Http' | 'File' | 'Manual'
   convert: true
   url: string
   website: string
@@ -86,7 +86,16 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     let body = ''
     let proxies: Record<string, any>[] = []
 
-    if (s.type === 'File') {
+    if (s.type === 'Manual') {
+      if (s.path.length == 0) {
+        throw 'Subscription file path is empty'
+      }
+      if (await FileExists(s.path)) {
+        body = await Readfile(s.path)
+      } else {
+        body = '{"outbounds":[]}'
+      }
+    } else if (s.type === 'File') {
       if (await FileExists(s.url)) {
         body = await Readfile(s.url)
       } else if (s.url === s.path) {
@@ -94,9 +103,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       } else {
         throw 'Subscription file not exist'
       }
-    }
-
-    if (s.type === 'Http') {
+    } else if (s.type === 'Http') {
       const appSettings = useAppSettingsStore()
       const userAgent = s.userAgent || appSettings.app.userAgent
       let header: any = {}
@@ -164,7 +171,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     } else {
       if (isValidSubJson(body)) {
         proxies = JSON.parse(body).outbounds ?? []
-      } else if (s.url === s.path) {
+      } else if (s.type === 'Manual' || s.url === s.path) {
         proxies = JSON.parse(body) ?? []
       } else {
         throw 'Not a valid subscription data'
@@ -180,11 +187,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       })
     }
 
-    if (s.proxyPrefix) {
-      proxies = proxies.map((v) => ({
-        ...v,
-        tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
-      }))
+    if (s.type !== 'Manual') {
+      if (s.proxyPrefix) {
+        proxies = proxies.map((v) => ({
+          ...v,
+          tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
+        }))
+      }
     }
 
     await Writefile(s.path, JSON.stringify(proxies, null, 2))

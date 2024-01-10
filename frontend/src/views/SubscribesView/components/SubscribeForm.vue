@@ -64,7 +64,8 @@ const handleSubmit = async () => {
   loading.value = false
 }
 
-const resetUserAgent = () => (sub.value.userAgent = APP_TITLE + '/' + APP_VERSION)
+const resetUserAgent = () => (sub.value.userAgent = APP_TITLE)
+const isManual = () => sub.value.type === 'Manual'
 
 if (props.isUpdate) {
   const s = subscribeStore.getSubscribeById(props.id)
@@ -84,19 +85,20 @@ if (props.isUpdate) {
         v-model="sub.type"
         :options="[
           { label: 'subscribe.http', value: 'Http' },
-          { label: 'subscribe.file', value: 'File' }
+          { label: 'subscribe.file', value: 'File' },
+          { label: 'subscribe.manual', value: 'Manual' }
         ]"
       />
     </div>
-    <div v-show="sub.type==='Http'" class="form-item">
-      <div class="name"> {{ t('subscribe.convert') }}</div>
+    <div v-show="sub.type === 'Http'" class="form-item">
+      <div class="name">{{ t('subscribe.convert') }}</div>
       <Switch v-model="sub.convert" />
     </div>
     <div class="form-item">
       <div class="name">* {{ t('subscribe.name') }}</div>
       <Input v-model="sub.name" auto-size autofocus class="input" />
     </div>
-    <div class="form-item">
+    <div v-show="!isManual()" class="form-item">
       <div class="name">* {{ t('subscribe.url') }}</div>
       <Input
         v-model="sub.url"
@@ -114,12 +116,12 @@ if (props.isUpdate) {
         class="input"
       />
     </div>
-    <Divider>
+    <Divider v-show="!isManual()">
       <Button @click="toggleShowMore" type="text" size="small">
         {{ t('common.more') }}
       </Button>
     </Divider>
-    <div v-show="showMore">
+    <div v-show="showMore && !isManual()">
       <div class="form-item">
         <div class="name">{{ t('subscribe.include') }}</div>
         <Input v-model="sub.include" placeholder="keyword1|keyword2" auto-size class="input" />
@@ -154,7 +156,7 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disable="!sub.name || !sub.url || !sub.path"
+      :disable="!sub.name || !sub.path || (!sub.url && sub.type !== 'Manual')"
       type="primary"
     >
       {{ t('common.save') }}

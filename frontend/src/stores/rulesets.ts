@@ -11,7 +11,7 @@ export type RuleSetType = {
   tag: string
   updateTime: string
   disabled: boolean
-  type: 'Http' | 'File'
+  type: 'Http' | 'File' | 'Manual'
   format: RulesetFormat
   path: string
   url: string
@@ -71,7 +71,14 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   }
 
   const _doUpdateRuleset = async (r: RuleSetType) => {
-    if (r.type === 'File') {
+    if (r.type === 'Manual') {
+      if (r.path.length == 0) {
+        throw 'Ruleset file path is empty'
+      }
+      if (!(await FileExists(r.path))) {
+        await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
+      }
+    } else if (r.type === 'File') {
       const exists = r.url.length > 0 && (await FileExists(r.url))
       if (exists) {
         if (r.path != r.url) {
@@ -81,12 +88,12 @@ export const useRulesetsStore = defineStore('rulesets', () => {
         // create a default ruleset file
         await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
       } else {
-        throw 'source ruleset file not exists ' + r.url
+        throw 'Source ruleset file not exists ' + r.url
       }
     } else if (r.type === 'Http') {
       await Download(r.url, r.path)
       if (!(await FileExists(r.path))) {
-        throw 'ruleset file not downloaded ' + r.url
+        throw 'Ruleset file not downloaded ' + r.url
       }
     }
 

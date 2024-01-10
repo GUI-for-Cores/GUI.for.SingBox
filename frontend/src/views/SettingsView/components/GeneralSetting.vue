@@ -83,7 +83,7 @@ const resetFontFamily = () => {
 }
 
 const resetUserAgent = () => {
-  appSettings.app.userAgent = APP_TITLE + '/' + APP_VERSION
+  appSettings.app.userAgent = APP_TITLE
 }
 
 const onPermChange = async (v: boolean) => {

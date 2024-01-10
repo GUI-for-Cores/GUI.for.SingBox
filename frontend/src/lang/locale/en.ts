@@ -290,6 +290,7 @@ export default {
   subscribe: {
     http: 'HTTP',
     file: 'FILE',
+    manual: "MANUAL",
     name: 'Name',
     url: 'Url',
     convert: 'Convert Subscribe',
@@ -348,6 +349,7 @@ export default {
   ruleset: {
     http: 'HTTP',
     file: 'FILE',
+    manual: "MANUAL",
     format: {
       name: 'Format',
       source: 'Source',

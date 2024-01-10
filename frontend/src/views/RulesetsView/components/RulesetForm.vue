@@ -38,6 +38,21 @@ const [showMore, toggleShowMore] = useBool(false)
 const rulesetsStore = useRulesetsStore()
 
 const handleCancel = inject('cancel') as any
+const isManual = () => {
+  if (ruleset.value.type === 'Manual' && ruleset.value.format === RulesetFormat.Binary) {
+    ruleset.value.format = RulesetFormat.Source
+  }
+  updatePostfix()
+  return ruleset.value.type === 'Manual'
+}
+
+const updatePostfix = async () => {
+  const source = ruleset.value.format === RulesetFormat.Source ? '.srs' : '.json'
+  const target = ruleset.value.format === RulesetFormat.Source ? '.json' : '.srs'
+  if (ruleset.value.path.endsWith(source)) {
+    ruleset.value.path = ruleset.value.path.replace(source, target)
+  }
+}
 
 const handleSubmit = async () => {
   loading.value = true
@@ -84,11 +99,12 @@ if (props.isUpdate) {
       v-model="ruleset.type"
       :options="[
         { label: 'ruleset.http', value: 'Http' },
-        { label: 'ruleset.file', value: 'File' }
+        { label: 'ruleset.file', value: 'File' },
+        { label: 'ruleset.manual', value: 'Manual' }
       ]"
     />
   </div>
-  <div class="form-item">
+  <div v-show="!isManual()" class="form-item">
     <div class="name">
       {{ t('ruleset.format.name') }}
     </div>
@@ -98,7 +114,7 @@ if (props.isUpdate) {
     <div class="name">* {{ t('ruleset.name') }}</div>
     <Input v-model="ruleset.tag" auto-size autofocus class="input" />
   </div>
-  <div class="form-item">
+  <div v-show="!isManual()" class="form-item">
     <div class="name">* {{ t('ruleset.url') }}</div>
     <Input
       v-model="ruleset.url"
@@ -120,12 +136,12 @@ if (props.isUpdate) {
       class="input"
     />
   </div>
-  <Divider>
+  <Divider v-show="!isManual()">
     <Button @click="toggleShowMore" type="text" size="small">
       {{ t('common.more') }}
     </Button>
   </Divider>
-  <div v-show="showMore">
+  <div v-show="showMore && !isManual()">
     <div class="form-item">
       <div class="name">{{ t('ruleset.interval') }}</div>
       <Input
