@@ -4,17 +4,41 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
+func CreateHttpClient(a *App) *http.Client {
+	systemProxy := a.GetSystemProxy() 
+	if systemProxy.Flag && len(systemProxy.Data) > 0 {
+		if !strings.HasPrefix(systemProxy.Data, "http") {
+			systemProxy.Data = "http://" + systemProxy.Data
+		}
+		proxyUrl, err := url.Parse(systemProxy.Data) 
+		if err == nil {
+			return &http.Client{
+				Timeout: 15 * time.Second,
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(proxyUrl),
+				},
+			}
+		}
+	}
+
+	return &http.Client{
+		Timeout: 15 * time.Second,
+		Transport: &http.Transport{
+            Proxy: http.ProxyFromEnvironment,
+        },
+	}
+}
 
 func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
 	fmt.Println("HttpGet:", url, headers)
 
-	client := &http.Client{
-		Timeout: 15 * time.Second,
-	}
+	client := CreateHttpClient(a)
 
 	header := make(http.Header)
 
@@ -58,7 +82,8 @@ func (a *App) Download(url string, path string) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	client := &http.Client{}
+	client := CreateHttpClient(a)
+
 	header := make(http.Header)
 	header.Set("User-Agent", Config.UserAgent)
 
