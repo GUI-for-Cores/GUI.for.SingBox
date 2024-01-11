@@ -151,9 +151,9 @@ const locateGroup = (group: any, chain: string) => {
 
 const delayColor = (delay = 0) => {
   if (delay === 0) return 'var(--level-0-color)'
-  if (delay < 200) return 'var(--level-1-color)'
-  if (delay < 500) return 'var(--level-2-color)'
-  if (delay < 1200) return 'var(--level-3-color)'
+  if (delay < 500) return 'var(--level-1-color)'
+  if (delay < 1000) return 'var(--level-2-color)'
+  if (delay < 1500) return 'var(--level-3-color)'
   return 'var(--level-4-color)'
 }
 </script>
