@@ -182,7 +182,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
   >
     <Card
       v-for="s in subscribeStore.subscribes"
-      :key="s.name"
+      :key="s.id"
       :title="s.name"
       :disabled="s.disabled"
       v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"

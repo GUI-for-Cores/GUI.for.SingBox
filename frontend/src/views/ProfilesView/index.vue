@@ -195,7 +195,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
   >
     <Card
       v-for="p in profilesStore.profiles"
-      :key="p.name"
+      :key="p.id"
       :title="p.name"
       :selected="appSettingsStore.app.kernel.profile === p.id"
       @dblclick="handleUseProfile(p)"

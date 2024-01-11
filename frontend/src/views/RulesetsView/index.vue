@@ -185,7 +185,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
   >
     <Card
       v-for="r in rulesetsStore.rulesets"
-      :key="r.tag"
+      :key="r.id"
       :title="r.tag"
       :disabled="r.disabled"
       v-menu="

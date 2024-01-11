@@ -3,8 +3,8 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed, inject } from 'vue'
 
 import { useBool, useMessage } from '@/hooks'
-import { ProxyTypeOptions } from '@/constant'
 import { deepClone, ignoredError, sampleID } from '@/utils'
+import { ProxyTypeOptions, DraggableOptions } from '@/constant'
 import { ClipboardSetText, Readfile, Writefile } from '@/utils/bridge'
 import { type Menu, type SubscribeType, useSubscribesStore } from '@/stores'
 
@@ -140,7 +140,7 @@ const onEditEnd = async () => {
     toggleDetails()
     return
   }
-  
+
   await initAllFieldsProxies()
 
   const allFieldsProxiesIdx = allFieldsProxies.value.findIndex((v: any) => v.tag === editId)
@@ -196,7 +196,7 @@ const getProxyByTag = async (tag: string) => {
         {{ t('subscribes.proxies.add') }}
       </Button>
     </div>
-    <div class="proxies">
+    <div v-draggable="[sub.proxies, { ...DraggableOptions }]" class="proxies">
       <Card
         v-for="proxy in filteredProxies"
         :key="proxy.tag"
