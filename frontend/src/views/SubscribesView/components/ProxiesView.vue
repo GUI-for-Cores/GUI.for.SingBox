@@ -136,10 +136,11 @@ const onEditEnd = async () => {
   } catch (error: any) {
     console.log(error)
     message.info(error.message)
+    // reopen
+    toggleDetails()
+    return
   }
-
-  if (!proxy) return
-
+  
   await initAllFieldsProxies()
 
   const allFieldsProxiesIdx = allFieldsProxies.value.findIndex((v: any) => v.tag === editId)
