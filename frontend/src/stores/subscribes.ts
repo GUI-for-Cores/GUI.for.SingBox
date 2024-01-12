@@ -214,16 +214,21 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
 
       if (body.length == 0) {
-        const { header: h, body: b } = await downloadSubFallback(s.path, userAgent)
+        const { header: h, body: b } = await downloadSubFallback(s.url, userAgent)
         body = b
         header = h
       }
 
-      if (header['Subscription-Userinfo']) {
-        if (Array.isArray(header['Subscription-Userinfo'])) {
-          userInfo = header['Subscription-Userinfo'][0]
-        } else {
-          userInfo = header['Subscription-Userinfo']
+      console.log(header)
+
+      for (const headerKey of Object.keys(header)) {
+        if (headerKey.toLowerCase() === 'subscription-userinfo') {
+          if (Array.isArray(header[headerKey])) {
+            userInfo = header[headerKey][0]
+          } else {
+            userInfo = header[headerKey]
+          }
+          break
         }
       }
     }
