@@ -179,7 +179,7 @@ export const RulesTypeOptions = [
   //   value: 'SCRIPT'
   // },
   {
-    label: 'kernel.rules.type.RULE-SET-URL',
+    label: 'kernel.rules.type.REMOTE-RULE-SET',
     value: 'rule_set_url'
   },
   {

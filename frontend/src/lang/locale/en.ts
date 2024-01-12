@@ -186,7 +186,7 @@ export default {
         'PROCESS-NAME': 'PROCESS-NAME',
         'PROCESS-PATH': 'PROCESS-PATH',
         'RULE-SET': 'RULE-SET',
-        'RULE-SET-URL': 'RULE-SET-URL',
+        'REMOTE-RULE-SET': 'REMOTE-RULE-SET',
         PROTOCOL: 'PROTOCOL',
         'IP-PRIVATE': 'IP-PRIVATE',
         'SRC-IP-PRIVATE': 'IP-PRIVATE',
