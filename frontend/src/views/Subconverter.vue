@@ -3,22 +3,21 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { useAppSettingsStore } from '@/stores'
-import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, RestartApp } from '@/utils/bridge'
-import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, APP_VERSION_API } from '@/utils'
+import { useAppSettingsStore, useSubconverterStore } from '@/stores'
+import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, FileExists } from '@/utils/bridge'
 
 let downloadUrl = ''
 
 const loading = ref(false)
 const downloading = ref(false)
-const needRestart = ref(false)
-const remoteVersion = ref(APP_VERSION)
-const needUpdate = computed(() => APP_VERSION !== remoteVersion.value)
-
 const { t } = useI18n()
 const { message } = useMessage()
 
 const appSettings = useAppSettingsStore()
+const subconverter = useSubconverterStore()
+
+const remoteVersion = ref(subconverter.SUBCONVERTER_VERSION)
+const needUpdate = computed(() => subconverter.SUBCONVERTER_VERSION !== remoteVersion.value)
 
 const downloadApp = async () => {
   if (loading.value || downloading.value) return
@@ -36,16 +35,18 @@ const downloadApp = async () => {
   downloading.value = true
 
   try {
-    const { appName } = await GetEnv()
+    const appPath = subconverter.SUBCONVERTER_PATH
 
-    await Download(downloadUrl, appName + '.tmp')
+    await Download(downloadUrl, appPath + '.tmp')
 
-    await Movefile(appName, appName + '_' + APP_VERSION + '.bak')
+    if (await FileExists(appPath)) {
+      await Movefile(appPath, appPath + '_' + subconverter.SUBCONVERTER_VERSION + '.bak')
+    }
 
-    await Movefile(appName + '.tmp', appName)
-
-    needRestart.value = true
-    message.info('about.updateSuccessfulRestart')
+    await Movefile(appPath + '.tmp', appPath)
+    subconverter.SUBCONVERTER_VERSION = remoteVersion.value
+    subconverter.SUBCONVERTER_EXISTS = true
+    message.info('about.updateSuccessful')
   } catch (error: any) {
     console.log(error)
     message.info(error, 5)
@@ -60,7 +61,7 @@ const checkForUpdates = async (showTips = false) => {
   loading.value = true
 
   try {
-    const { json } = await HttpGetJSON(APP_VERSION_API, {
+    const { json } = await HttpGetJSON(subconverter.SUBCONVERTER_VERSION_API, {
       'User-Agent': appSettings.app.userAgent
     })
     const { os, arch } = await GetEnv()
@@ -69,13 +70,16 @@ const checkForUpdates = async (showTips = false) => {
     if (msg) throw msg
 
     const suffix = { windows: '.exe', linux: '' }[os]
-    const assetName = `GUI.for.SingBox-${os}-${arch}${suffix}`
+    const assetName = `sing-box-subconverter-${os}-${arch}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName
 
     remoteVersion.value = tag_name
     downloadUrl = asset.browser_download_url
+
+    console.log(subconverter.SUBCONVERTER_VERSION.length)
+    console.log(remoteVersion.value.length)
 
     if (showTips) {
       message.info(needUpdate.value ? 'about.newVersion' : 'about.latestVersion')
@@ -88,39 +92,23 @@ const checkForUpdates = async (showTips = false) => {
   loading.value = false
 }
 
-const handleRestartApp = async () => {
-  try {
-    await RestartApp()
-  } catch (error: any) {
-    message.info(error)
-  }
-}
-
 checkForUpdates()
 </script>
 
 <template>
   <div class="about">
-    <img src="@/assets/logo.png" draggable="false"/>
-    <div class="appname">{{ APP_TITLE }}</div>
+    <img src="@/assets/logo.png" draggable="false" />
+    <div class="appname">sing-box-subconverer</div>
     <div class="appver">
-      <Button v-if="needRestart" @click="handleRestartApp" size="small" type="primary">
-        <Icon icon="restartApp" fill="var(--btn-primary-color)" style="margin-top: 1px" />
-        <span style="margin-left: 4px">{{ t('about.restart') }}</span>
+      <Button @click="checkForUpdates(true)" :loading="loading" type="link" size="small">
+        {{ subconverter.SUBCONVERTER_VERSION }}
       </Button>
-      <template v-else>
-        <Button @click="checkForUpdates(true)" :loading="loading" type="link" size="small">
-          {{ APP_VERSION }}
-        </Button>
-        <Button v-if="needUpdate" @click="downloadApp" :loading="downloading" size="small">
-          {{ t('about.new') }}: {{ remoteVersion }}
-        </Button>
-      </template>
+      <Button v-if="needUpdate" @click="downloadApp" :loading="downloading" size="small">
+        {{ t('about.new') }}: {{ remoteVersion }}
+      </Button>
     </div>
-    <div @click="BrowserOpenURL(PROJECT_URL)" class="url"><Icon icon="github" />GitHub</div>
-    <div @click="BrowserOpenURL(TG_GROUP)" class="url"><Icon icon="telegram" />Telegram Group</div>
-    <div @click="BrowserOpenURL(TG_CHANNEL)" class="url">
-      <Icon icon="telegram" />Telegram Channel
+    <div @click="BrowserOpenURL(subconverter.SUBCONVERTER_URL)" class="url">
+      <Icon icon="github" />GitHub
     </div>
   </div>
 </template>

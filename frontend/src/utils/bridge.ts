@@ -65,6 +65,14 @@ export const FileExists = async (path: string) => {
   return data === 'true'
 }
 
+export const AbsolutePath = async (path: string) => {
+  const { flag, data } = await App.AbsolutePath(path)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
 export const Download = async (url: string, path: string) => {
   const { flag, data } = await App.Download(url, path)
   if (!flag) {

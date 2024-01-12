@@ -3,8 +3,8 @@ import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useBool, useMessage } from '@/hooks'
-import { type SubscribeType, useSubscribesStore } from '@/stores'
-import { deepClone, sampleID, APP_TITLE, APP_VERSION } from '@/utils'
+import { type SubscribeType, useSubscribesStore, useSubconverterStore } from '@/stores'
+import { deepClone, sampleID, APP_TITLE } from '@/utils'
 
 interface Props {
   id?: string
@@ -43,6 +43,7 @@ const { t } = useI18n()
 const { message } = useMessage()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
+const subconverterStore = useSubconverterStore()
 
 const handleCancel = inject('cancel') as any
 
@@ -90,7 +91,7 @@ if (props.isUpdate) {
         ]"
       />
     </div>
-    <div v-show="sub.type === 'Http'" class="form-item">
+    <div v-show="sub.type !== 'Manual' && subconverterStore.SUBCONVERTER_EXISTS" class="form-item">
       <div class="name">{{ t('subscribe.convert') }}</div>
       <Switch v-model="sub.convert" />
     </div>

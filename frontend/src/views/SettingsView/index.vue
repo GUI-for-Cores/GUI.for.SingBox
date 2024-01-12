@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import AboutView from '@/views/AboutView.vue'
+import subconverter from '@/views/Subconverter.vue'
 import GeneralSetting from './components/GeneralSetting.vue'
 import KernelView from '@/views/KernelView.vue'
 import ComponentsView from '@/views/ComponentsView.vue'
@@ -13,6 +14,7 @@ const settings = [
   // { key: 'components', tab: 'router.components' }
 ]
 
+const showSubConvert = ref(false)
 const showAbout = ref(false)
 const activeKey = ref(settings[0].key)
 
@@ -33,13 +35,21 @@ const { t } = useI18n()
       <ComponentsView />
     </template>
 
+
     <template #extra>
+      <Button @click="showSubConvert = true" type="text">
+        {{ t('router.subconverter') }}
+      </Button>
+
       <Button @click="showAbout = true" type="text">
         {{ t('router.about') }}
       </Button>
     </template>
   </Tabs>
 
+  <Modal v-model:open="showSubConvert" :cancel="false" :submit="false" min-width="50" mask-closable>
+    <subconverter />
+  </Modal>
   <Modal v-model:open="showAbout" :cancel="false" :submit="false" min-width="50" mask-closable>
     <AboutView />
   </Modal>

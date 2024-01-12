@@ -2,8 +2,16 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { useAppSettingsStore } from '@/stores'
-import { Readfile, Writefile, HttpGet, FileExists } from '@/utils/bridge'
+import { useAppSettingsStore, useSubconverterStore } from '@/stores'
+import {
+  Readfile,
+  Writefile,
+  HttpGet,
+  FileExists,
+  Removefile,
+  Exec,
+  AbsolutePath
+} from '@/utils/bridge'
 import { SubscribesFilePath, NodeConverterFilePath } from '@/constant'
 import { deepClone, debounce, isValidBase64, isValidSubJson, sampleID } from '@/utils'
 
@@ -80,6 +88,66 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
   }
 
+  const convertSub = async (path: string, subconverter: string, workDir: string) => {
+    const tmpFile = workDir + '/tmp.json'
+    try {
+      await Exec(subconverter, '--path', path, '--out', await AbsolutePath(tmpFile))
+      if (await FileExists(tmpFile)) {
+        return await Readfile(tmpFile)
+      }
+    } finally {
+      Removefile(tmpFile)
+    }
+    return ''
+  }
+
+  const downloadSub = async (
+    url: string,
+    userAgent: string,
+    subconverter: string,
+    workDir: string
+  ) => {
+    const tmpFile = workDir + '/tmp.json'
+    try {
+      const out = await Exec(
+        subconverter,
+        '--url',
+        url,
+        '--ua',
+        userAgent,
+        '--out',
+        await AbsolutePath(tmpFile)
+      )
+      if (await FileExists(tmpFile)) {
+        const body = await Readfile(tmpFile)
+        const outs = out.trim().split('\n')
+        const header = outs[outs.length - 1]
+        return { header: JSON.parse(header), body: body }
+      }
+    } finally {
+      Removefile(tmpFile)
+    }
+    return { header: '', body: '' }
+  }
+
+  const downloadSubFallback = async (url: string, userAgent: string) => {
+    // if (s.convert) {
+    //   const converterUrl =
+    //     'https://sing-box-subscribe.vercel.app/config/url=' + url + '/&ua=' + userAgent
+    //   const { body: b } = await HttpGet(converterUrl, {
+    //     'User-Agent': userAgent
+    //   })
+
+    //   const { header: h } = await HttpGet(url, {
+    //     'User-Agent': userAgent
+    //   })
+    //   return {header: h, body: b}
+    // }
+    return await HttpGet(url, {
+      'User-Agent': userAgent
+    })
+  }
+
   const _doUpdateSub = async (s: SubscribeType) => {
     const pattern = /upload=(\d*); download=(\d*); total=(\d*); expire=(\d*)/
     let userInfo = 'upload=0; download=0; total=0; expire=0'
@@ -93,43 +161,70 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       if (await FileExists(s.path)) {
         body = await Readfile(s.path)
       } else {
-        body = '{"outbounds":[]}'
+        body = '[]'
       }
     } else if (s.type === 'File') {
       if (await FileExists(s.url)) {
-        body = await Readfile(s.url)
+        if (s.convert) {
+          const subconverter = useSubconverterStore()
+          await subconverter.ensureInitialized()
+          if (subconverter.SUBCONVERTER_EXISTS) {
+            try {
+              body = await convertSub(
+                s.url,
+                subconverter.SUBCONVERTER_PATH,
+                subconverter.SUBCONVERTER_DIR
+              )
+            } catch (error) {
+              console.error('UpdateSub', error)
+            }
+          }
+        }
+        if (body.length == 0) {
+          body = await Readfile(s.url)
+        }
       } else if (s.url === s.path) {
-        body = '{"outbounds":[]}'
+        body = '[]'
       } else {
         throw 'Subscription file not exist'
       }
     } else if (s.type === 'Http') {
       const appSettings = useAppSettingsStore()
       const userAgent = s.userAgent || appSettings.app.userAgent
+
       let header: any = {}
 
       if (s.convert) {
-        const converterUrl =
-          'https://sing-box-subscribe.vercel.app/config/url=' + s.url + '/&ua=' + userAgent
-        const { body: b } = await HttpGet(converterUrl, {
-          'User-Agent': userAgent
-        })
-
-        const { header: h } = await HttpGet(s.url, {
-          'User-Agent': userAgent
-        })
-        header = h
-        body = b
-      } else {
-        const { header: h, body: b } = await HttpGet(s.url, {
-          'User-Agent': userAgent
-        })
-        header = h
-        body = b
+        const subconverter = useSubconverterStore()
+        await subconverter.ensureInitialized()
+        if (subconverter.SUBCONVERTER_EXISTS) {
+          try {
+            const { header: h, body: b } = await downloadSub(
+              s.url,
+              userAgent,
+              subconverter.SUBCONVERTER_PATH,
+              subconverter.SUBCONVERTER_DIR
+            )
+            body = b
+            header = h
+          } catch (error) {
+            console.error('UpdateSub', error)
+          }
+        }
       }
 
-      if (header['Subscription-Userinfo'] && header['Subscription-Userinfo'][0]) {
-        userInfo = header['Subscription-Userinfo'][0]
+      if (body.length == 0) {
+        const { header: h, body: b } = await downloadSubFallback(s.path, userAgent)
+        body = b
+        header = h
+      }
+
+      if (header['Subscription-Userinfo']) {
+        if (Array.isArray(header['Subscription-Userinfo'])) {
+          userInfo = header['Subscription-Userinfo'][0]
+        } else {
+          userInfo = header['Subscription-Userinfo']
+        }
       }
     }
 
@@ -171,10 +266,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     } else {
       if (isValidSubJson(body)) {
         proxies = JSON.parse(body).outbounds ?? []
-      } else if (s.type === 'Manual' || s.url === s.path) {
-        proxies = JSON.parse(body) ?? []
       } else {
-        throw 'Not a valid subscription data'
+        try {
+          proxies = JSON.parse(body)
+        } catch (error) {
+          throw 'Not a valid subscription data'
+        }
       }
 
       proxies = proxies.filter((v: any) => {

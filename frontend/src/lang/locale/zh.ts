@@ -231,6 +231,7 @@ export default {
     debug: '调试',
     components: '组件预览',
     about: '关于',
+    subconverter: '订阅转换',
     profiles: '配置',
     kernel: '内核'
   },
@@ -429,7 +430,8 @@ export default {
     restart: '重启软件',
     noNeedUpdate: '已经是最新版本，无需更新',
     noDownloadLink: '没有发现下载链接',
-    updateSuccessful: '更新完成，请重启软件',
+    updateSuccessfulRestart: '更新完成，请重启软件',
+    updateSuccessful: '更新完成',
     newVersion: '发现新版本',
     latestVersion: '已经是最新版本了'
   },
