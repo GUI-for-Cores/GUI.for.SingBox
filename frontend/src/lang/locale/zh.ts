@@ -452,5 +452,12 @@ export default {
     year: '年',
     ago: '前',
     later: '后'
+  },
+  outbound: {
+    select: '🚀 节点选择',
+    urltest: '🎈 自动选择',
+    direct: '🎯 全球直连',
+    block: '🛑 全球拦截',
+    fallback: '🐟 漏网之鱼'
   }
 }

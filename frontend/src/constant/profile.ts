@@ -1,6 +1,8 @@
 import { sampleID } from '@/utils'
 import type { ProfileType } from '@/stores'
 import { ProxyGroup, FinalDnsType } from '@/constant'
+import i18n from '@/lang'
+const { t } = i18n.global
 
 export const GeneralConfigDefaults: ProfileType['generalConfig'] = {
   mode: 'rule',
@@ -47,7 +49,7 @@ export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
   'resolver-dns': '223.5.5.5',
   'remote-resolver-dns': '8.8.8.8',
   'final-dns': FinalDnsType.Remote,
-  'remote-dns-detour': '🚀 节点选择',
+  'remote-dns-detour': t('outbound.select'),
   'fake-ip-range-v4': '198.18.0.1/16',
   'fake-ip-range-v6': 'fc00::/18',
   'fake-ip-filter': [
@@ -65,18 +67,18 @@ export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
 }
 
 export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] => {
-  const id1 = sampleID() // 🚀 节点选择
-  const id2 = sampleID() // 🎈 自动选择
-  const id3 = sampleID() // 🎯 全球直连
-  const id4 = sampleID() // 🛑 全球拦截
-  const id5 = sampleID() // 🐟 漏网之鱼
+  const id1 = sampleID()
+  const id2 = sampleID()
+  const id3 = sampleID()
+  const id4 = sampleID()
+  const id5 = sampleID()
 
   return [
     {
       id: id1,
-      tag: '🚀 节点选择',
+      tag: t('outbound.select'),
       type: ProxyGroup.Select,
-      proxies: [{ id: id2, type: 'built-in', tag: '🎈 自动选择' }],
+      proxies: [{ id: id2, type: 'built-in', tag: t('outbound.urltest') }],
       use: [],
       url: '',
       interval: 300,
@@ -84,7 +86,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
     },
     {
       id: id2,
-      tag: '🎈 自动选择',
+      tag: t('outbound.urltest'),
       type: ProxyGroup.UrlTest,
       proxies: [],
       use: [],
@@ -94,7 +96,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
     },
     {
       id: id3,
-      tag: '🎯 全球直连',
+      tag: t('outbound.direct'),
       type: ProxyGroup.Select,
       proxies: [
         { id: 'direct', type: 'built-in', tag: 'direct' },
@@ -107,7 +109,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
     },
     {
       id: id4,
-      tag: '🛑 全球拦截',
+      tag: t('outbound.block'),
       type: ProxyGroup.Select,
       proxies: [
         { id: 'block', type: 'built-in', tag: 'block' },
@@ -120,11 +122,11 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
     },
     {
       id: id5,
-      tag: '🐟 漏网之鱼',
+      tag: t('outbound.fallback'),
       type: ProxyGroup.Select,
       proxies: [
-        { id: id1, type: 'built-in', tag: '🚀 节点选择' },
-        { id: id3, type: 'built-in', tag: '🎯 全球直连' }
+        { id: id1, type: 'built-in', tag: t('outbound.select') },
+        { id: id3, type: 'built-in', tag: t('outbound.direct') }
       ],
       use: [],
       url: '',
@@ -159,7 +161,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'inline',
     payload: JSON.stringify({ network: 'udp', port: 443 }, null, 2),
-    proxy: '🛑 全球拦截',
+    proxy: t('outbound.block'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -169,7 +171,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'clash_mode',
     payload: 'direct',
-    proxy: '🎯 全球直连',
+    proxy: t('outbound.direct'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -179,7 +181,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'clash_mode',
     payload: 'global',
-    proxy: '🚀 节点选择',
+    proxy: t('outbound.select'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -190,17 +192,17 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'rule_set_url',
     payload:
       'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs',
-    proxy: '🛑 全球拦截',
+    proxy: t('outbound.block'),
     'ruleset-name': 'CATEGORY-ADS',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连',
+    'download-detour': t('outbound.direct'),
     invert: false
   },
   {
     id: sampleID(),
     type: 'ip_is_private',
     payload: '',
-    proxy: '🎯 全球直连',
+    proxy: t('outbound.direct'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -210,20 +212,20 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'rule_set_url',
     payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs',
-    proxy: '🎯 全球直连',
+    proxy: t('outbound.direct'),
     'ruleset-name': 'GEOIP-CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连',
+    'download-detour': t('outbound.direct'),
     invert: false
   },
   {
     id: sampleID(),
     type: 'rule_set_url',
     payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs',
-    proxy: '🎯 全球直连',
+    proxy: t('outbound.direct'),
     'ruleset-name': 'GEOSITE-CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连',
+    'download-detour': t('outbound.direct'),
     invert: false
   },
   {
@@ -231,17 +233,17 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'rule_set_url',
     payload:
       'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
-    proxy: '🎯 全球直连',
+    proxy: t('outbound.direct'),
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连',
+    'download-detour': t('outbound.direct'),
     invert: true
   },
   {
     id: sampleID(),
     type: 'final',
     payload: '',
-    proxy: '🐟 漏网之鱼',
+    proxy: t('outbound.fallback'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -303,7 +305,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOSITE-CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连'
+    'download-detour': t('outbound.direct')
   },
   {
     id: sampleID(),
@@ -315,7 +317,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: true,
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连'
+    'download-detour': t('outbound.direct')
   },
   {
     id: sampleID(),
@@ -327,6 +329,6 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': '🎯 全球直连'
+    'download-detour': t('outbound.direct')
   }
 ]

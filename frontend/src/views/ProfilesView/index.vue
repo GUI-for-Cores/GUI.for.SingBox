@@ -266,7 +266,8 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
     :title="formTitle"
     :footer="false"
     @ok="onProfileFormEnd"
-    max-height="80"
+    min-width="70"
+    max-height="90"
   >
     <ProfileForm :is-update="isUpdate" :id="profileID" :step="profileStep" />
   </Modal>

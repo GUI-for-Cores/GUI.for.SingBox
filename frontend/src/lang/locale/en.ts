@@ -452,5 +452,12 @@ export default {
     year: 'Year',
     ago: 'Ago',
     later: 'Later'
+  },
+  outbound: {
+    select: '🚀 Select',
+    urltest: '🎈 Auto Select',
+    direct: '🎯 Direct',
+    block: '🛑 Block',
+    fallback: '🐟 Fallback'
   }
 }
