@@ -18,8 +18,10 @@ const fields = ref(deepClone(props.modelValue))
 
 const { t } = useI18n()
 
-if(!fields.value['inet4-address']) fields.value['inet4-address'] = TunConfigDefaults['inet4-address']
-if(!fields.value['inet6-address']) fields.value['inet6-address'] = TunConfigDefaults['inet6-address']
+if (fields.value['inet4-address'] === undefined)
+  fields.value['inet4-address'] = TunConfigDefaults['inet4-address']
+if (fields.value['inet6-address'] === undefined)
+  fields.value['inet6-address'] = TunConfigDefaults['inet6-address']
 
 watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>

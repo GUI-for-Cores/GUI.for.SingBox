@@ -292,19 +292,20 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   }
 
   if (profile.tunConfig.enable) {
-    const inet4_address = profile.tunConfig['inet4-address']
-    const inet6_address = profile.tunConfig['inet6-address']
+    let inet4_address = profile.tunConfig['inet4-address']
+    let inet6_address = profile.tunConfig['inet6-address']
+    if (inet4_address === undefined) {
+      inet4_address = TunConfigDefaults['inet4-address']
+    }
+    if (inet6_address === undefined) {
+      inet6_address = TunConfigDefaults['inet6-address']
+    }
+
     inbounds.push({
       type: 'tun',
       interface_name: profile.tunConfig.interface_name,
-      inet4_address:
-        inet4_address && inet4_address.length > 0
-          ? inet4_address
-          : TunConfigDefaults['inet4-address'],
-      inet6_address:
-        inet6_address && inet6_address.length > 0
-          ? inet6_address
-          : TunConfigDefaults['inet6-address'],
+      ...(inet4_address.length > 0 ? { inet4_address: inet4_address } : {}),
+      ...(inet6_address.length > 0 ? { inet6_address: inet6_address } : {}),
       mtu: profile.tunConfig.mtu,
       auto_route: profile.tunConfig['auto-route'],
       strict_route: profile.tunConfig['strict-route'],
