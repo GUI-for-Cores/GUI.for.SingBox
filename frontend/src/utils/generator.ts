@@ -294,6 +294,12 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   if (profile.tunConfig.enable) {
     let inet4_address = profile.tunConfig['inet4-address']
     let inet6_address = profile.tunConfig['inet6-address']
+
+    if (profile.advancedConfig.domain_strategy == 'ipv4_only') {
+      inet6_address = ''
+    } else if (profile.advancedConfig.domain_strategy == 'ipv6_only') {
+      inet4_address = ''
+    }
     if (inet4_address === undefined) {
       inet4_address = TunConfigDefaults['inet4-address']
     }
