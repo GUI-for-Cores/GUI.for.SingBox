@@ -71,7 +71,8 @@ export type ProfileType = {
     }[]
     url: string
     interval: number
-    tolerance: number
+    tolerance: number,
+    filter: string
   }[]
   rulesConfig: {
     id: string

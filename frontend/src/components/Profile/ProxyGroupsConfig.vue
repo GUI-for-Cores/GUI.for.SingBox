@@ -51,7 +51,8 @@ const fields = ref<GroupsType[0]>({
   url: '',
   interval: 0,
   use: [],
-  tolerance: 0
+  tolerance: 0,
+  filter: ''
 })
 
 const { t } = useI18n()
@@ -68,7 +69,8 @@ const handleAddGroup = () => {
     url: 'https://www.gstatic.com/generate_204',
     interval: 300,
     use: [],
-    tolerance: 150
+    tolerance: 150,
+    filter: ''
   }
   showModal.value = true
 }
@@ -271,6 +273,10 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     <div class="form-item">
       {{ t('kernel.proxyGroups.name') }}
       <Input v-model="fields.tag" autofocus />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.proxyGroups.filter') }}
+      <Input v-model="fields.filter" placeholder="keyword1|keyword2" />
     </div>
     <div class="form-item">
       {{ t('kernel.proxyGroups.type.name') }}

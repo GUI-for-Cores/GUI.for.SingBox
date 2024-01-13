@@ -85,7 +85,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       use: [],
       url: '',
       interval: 300,
-      tolerance: 150
+      tolerance: 150,
+      filter: ''
     },
     {
       id: id2,
@@ -95,7 +96,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       use: [],
       url: 'https://www.gstatic.com/generate_204',
       interval: 300,
-      tolerance: 150
+      tolerance: 150,
+      filter: ''
     },
     {
       id: id3,
@@ -108,7 +110,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       use: [],
       url: '',
       interval: 300,
-      tolerance: 150
+      tolerance: 150,
+      filter: ''
     },
     {
       id: id4,
@@ -121,7 +124,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       use: [],
       url: '',
       interval: 300,
-      tolerance: 150
+      tolerance: 150,
+      filter: ''
     },
     {
       id: id5,
@@ -134,7 +138,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       use: [],
       url: '',
       interval: 300,
-      tolerance: 150
+      tolerance: 150,
+      filter: ''
     }
   ]
 }

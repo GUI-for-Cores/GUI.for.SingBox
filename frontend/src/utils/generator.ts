@@ -323,6 +323,13 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   return inbounds
 }
 
+const filterProxy = (proxy: { type: string; tag: string }, filter: string) => {
+  if (!filter || filter.length == 0 || proxy.type === 'built-in') {
+    return true
+  }
+  return new RegExp(filter).test(proxy.tag)
+}
+
 const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig']) => {
   const outbounds = []
 
@@ -331,7 +338,6 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
   groups.forEach((group) => {
     group.use.forEach((use) => subs.add(use))
   })
-
   const proxyMap: Record<string, ProxiesType[]> = {}
   const proxyTags = new Set<string>()
   const proxies: any = []
@@ -356,7 +362,7 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
 
   for (const group of groups) {
     for (const proxy of group.proxies)
-      if (proxy.type !== 'built-in') {
+      if (proxy.type !== 'built-in' && filterProxy(proxy, group.filter)) {
         if (!proxyTags.has(proxy.tag)) {
           if (!proxyMap[proxy.type]) {
             const sub = subscribesStore.getSubscribeById(proxy.type)
@@ -381,9 +387,27 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
       }
   }
 
-  function getGroupOutbounds(group_proxies: any[], uses: string[]) {
-    const outbounds = group_proxies.map((proxy) => proxy.tag)
-    outbounds.push(...uses.map((use) => proxyMap[use].map((proxy) => proxy.tag)).flat())
+  const usedProxies = new Set<string>()
+
+  function getGroupOutbounds(group_proxies: any[], uses: string[], filter: string) {
+    const outbounds = group_proxies
+      .filter((proxy) => filterProxy(proxy, filter))
+      .map((proxy) => {
+        usedProxies.add(proxy.tag)
+        return proxy.tag
+      })
+    outbounds.push(
+      ...uses
+        .map((use) =>
+          proxyMap[use]
+            .filter((proxy) => filterProxy(proxy, filter))
+            .map((proxy) => {
+              usedProxies.add(proxy.tag)
+              return proxy.tag
+            })
+        )
+        .flat()
+    )
     return outbounds
   }
 
@@ -392,19 +416,19 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
       outbounds.push({
         tag: group.tag,
         type: 'selector',
-        outbounds: getGroupOutbounds(group.proxies, group.use)
+        outbounds: getGroupOutbounds(group.proxies, group.use, group.filter)
       })
     group.type === ProxyGroup.UrlTest &&
       outbounds.push({
         tag: group.tag,
         type: 'urltest',
-        outbounds: getGroupOutbounds(group.proxies, group.use),
+        outbounds: getGroupOutbounds(group.proxies, group.use, group.filter),
         url: group.url,
         interval: group.interval.toString() + 's',
         tolerance: group.tolerance
       })
   })
-  outbounds.push(...proxies)
+  outbounds.push(...proxies.filter((v: any) => usedProxies.has(v.tag)))
   return outbounds
 }
 
