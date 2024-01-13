@@ -316,7 +316,8 @@ export const RulesetFormatOptions = [
   { label: 'ruleset.format.binary', value: RulesetFormat.Binary }
 ]
 
-export const DnsStrategyOptions = [
+export const DomainStrategyOptions = [
+  { label: 'kernel.dns.strategy.default', value: '' },
   { label: 'kernel.dns.strategy.prefer_ipv4', value: 'prefer_ipv4' },
   { label: 'kernel.dns.strategy.prefer_ipv6', value: 'prefer_ipv6' },
   { label: 'kernel.dns.strategy.ipv4_only', value: 'ipv4_only' },

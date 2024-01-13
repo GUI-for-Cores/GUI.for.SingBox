@@ -64,6 +64,7 @@ export default {
     'external-ui-url': 'External UI URL',
     'unified-delay': 'unified-delay',
     'tcp-fast-open': 'TCP Fast Open',
+    domain_strategy: 'Domain Strategy',
     'tcp-multi-path': 'TCP Multi Path',
     'udp-fragment': 'UDP Fragment',
     sniff: 'Sniff',
@@ -108,6 +109,7 @@ export default {
       default: 'Default',
       strategy: {
         name: 'Strategy',
+        default: 'Default',
         prefer_ipv4: 'Prefer IPV4',
         prefer_ipv6: 'Prefer IPV6',
         ipv4_only: 'IPV4 Only',

@@ -219,8 +219,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         header = h
       }
 
-      console.log(header)
-
       for (const headerKey of Object.keys(header)) {
         if (headerKey.toLowerCase() === 'subscription-userinfo') {
           if (Array.isArray(header[headerKey])) {

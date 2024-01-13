@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { deepClone } from '@/utils'
 import { type ProfileType } from '@/stores'
-import { DnsStrategyOptions, FinalDnsOptions } from '@/constant'
+import { DomainStrategyOptions, FinalDnsOptions } from '@/constant'
 
 interface Props {
   modelValue: ProfileType['dnsConfig'],
@@ -69,7 +69,7 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
       {{ t('kernel.dns.strategy.name') }}
       <Select
         v-model="fields['strategy']"
-        :options="DnsStrategyOptions"
+        :options="DomainStrategyOptions"
       />
     </div>
   

@@ -23,6 +23,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
     'store-cache': true,
     'store-fake-ip': false
   },
+  domain_strategy: 'prefer_ipv4',
   'tcp-fast-open': false,
   'tcp-multi-path': false,
   'udp-fragment': false,

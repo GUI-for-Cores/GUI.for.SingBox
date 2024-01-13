@@ -27,6 +27,7 @@ export type ProfileType = {
       'store-cache'?: boolean
       'store-fake-ip'?: boolean
     }
+    domain_strategy: string
     'tcp-fast-open': boolean
     'tcp-multi-path': boolean
     'udp-fragment': boolean

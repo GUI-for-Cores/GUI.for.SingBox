@@ -64,6 +64,7 @@ export default {
     'external-ui-url': '自定义外部用户界面下载地址',
     'unified-delay': '统一延迟',
     'tcp-fast-open': 'TCP快速打开',
+    domain_strategy: '域名策略',
     'tcp-multi-path': '多路径TCP',
     'udp-fragment': 'UDP分段',
     sniff: '协议探测',
@@ -108,6 +109,7 @@ export default {
       default: '默认',
       strategy: {
         name: '策略',
+        default: '默认',
         prefer_ipv4: 'IPV4优先',
         prefer_ipv6: 'IPV6优先',
         ipv4_only: '只使用IPV4',

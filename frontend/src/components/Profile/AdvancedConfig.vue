@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { deepClone } from '@/utils'
 import { type ProfileType } from '@/stores'
-import { GlobalClientFingerprintOptions } from '@/constant'
+import { DomainStrategyOptions } from '@/constant'
 
 interface Props {
   modelValue: ProfileType['advancedConfig']
@@ -54,6 +54,13 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
   <div class="form-item">
     {{ t('kernel.store-fake-ip') }}
     <Switch v-model="fields.profile['store-fake-ip']" />
+  </div>
+  <div class="form-item">
+      {{ t('kernel.domain_strategy') }}
+      <Select
+        v-model="fields.domain_strategy"
+        :options="DomainStrategyOptions"
+      />
   </div>
   <div class="form-item">
     {{ t('kernel.tcp-fast-open') }}

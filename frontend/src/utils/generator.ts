@@ -240,7 +240,10 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
 
   const listenConfig = {
     sniff: profile.advancedConfig.sniff,
-    sniff_override_destination: profile.advancedConfig['sniff-override-destination']
+    sniff_override_destination: profile.advancedConfig['sniff-override-destination'],
+    ...(profile.advancedConfig.domain_strategy && profile.advancedConfig.domain_strategy.length > 0
+      ? { domain_strategy: profile.advancedConfig.domain_strategy }
+      : {})
   }
 
   if (profile.generalConfig['mixed-port'] > 0) {
@@ -477,7 +480,7 @@ export const generateConfig = async (profile: ProfileType) => {
         ...(inet6_range.length > 0 ? { inet6_range: inet6_range } : {})
       },
       final: profile.dnsConfig['final-dns'],
-      strategy: profile.dnsConfig.strategy
+      ...(profile.dnsConfig.strategy.length > 0 ? { strategy: profile.dnsConfig.strategy } : {})
     }
   }
   return config
