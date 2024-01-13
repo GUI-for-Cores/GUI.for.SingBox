@@ -6,18 +6,17 @@
 </div>
 
 ## Preview
-<div align="center">
-    <img src="docs/imgs/preview1.png" width="600" height="380">
-    <img src="docs/imgs/preview2.png" width="600" height="380">
-    <br/>
-    <img src="docs/imgs/preview3.png" width="600" height="380">
-    <img src="docs/imgs/preview4.png" width="600" height="380">
-     <br/>
-    <img src="docs/imgs/preview5.png" width="600" height="380">
-    <img src="docs/imgs/preview6.png" width="600" height="380">
-    <br/>
-</div>
 
+<div align="center">
+  <img src="docs/imgs/preview1.png" width="600" height="380">
+  <img src="docs/imgs/preview2.png" width="600" height="380">
+  <br/>
+  <img src="docs/imgs/preview3.png" width="600" height="380">
+  <img src="docs/imgs/preview4.png" width="600" height="380">
+  <br/>
+  <img src="docs/imgs/preview5.png" width="600" height="380">
+  <img src="docs/imgs/preview6.png" width="600" height="380">
+</div>
 
 ## Build
 
@@ -33,7 +32,7 @@
 
 2、Pull and Build
 
-```
+```bash
 git clone https://github.com/GUI-for-Cores/GUI.for.SingBox.git
 
 cd GUI.for.SingBox
