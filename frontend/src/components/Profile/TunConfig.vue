@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { deepClone } from '@/utils'
-import { StackOptions } from '@/constant'
+import { StackOptions, TunConfigDefaults } from '@/constant'
 import { type ProfileType } from '@/stores'
 
 interface Props {
@@ -17,6 +17,9 @@ const emits = defineEmits(['update:modelValue'])
 const fields = ref(deepClone(props.modelValue))
 
 const { t } = useI18n()
+
+if(!fields.value['inet4-address']) fields.value['inet4-address'] = TunConfigDefaults['inet4-address']
+if(!fields.value['inet6-address']) fields.value['inet6-address'] = TunConfigDefaults['inet6-address']
 
 watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
@@ -50,6 +53,14 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     <div class="form-item">
       {{ t('kernel.tun.endpoint-independent-nat') }}
       <Switch v-model="fields['endpoint-independent-nat']" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.tun.inet4-address') }}
+      <Input v-model="fields['inet4-address']" editable />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.tun.inet6-address') }}
+      <Input v-model="fields['inet6-address']" editable />
     </div>
   </template>
 </template>

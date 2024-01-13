@@ -41,7 +41,9 @@ export type ProfileType = {
     interface_name: string
     mtu: number
     'strict-route': boolean
-    'endpoint-independent-nat': boolean
+    'endpoint-independent-nat': boolean,
+    'inet4-address': string,
+    'inet6-address': string
   }
   dnsConfig: {
     enable: boolean

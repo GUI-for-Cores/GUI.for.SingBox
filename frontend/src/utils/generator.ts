@@ -2,6 +2,7 @@ import { Readfile, Writefile } from '@/utils/bridge'
 import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore } from '@/stores'
+import { TunConfigDefaults } from '@/constant'
 
 const generateCommonRule = (rule: Record<string, any>) => {
   const { type, payload, invert } = rule
@@ -246,12 +247,14 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       : {})
   }
 
+  const listen = profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1'
+
   if (profile.generalConfig['mixed-port'] > 0) {
     http_proxy_port = profile.generalConfig['mixed-port']
 
     inbounds.push({
       type: 'mixed',
-      listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
+      listen: listen,
       listen_port: profile.generalConfig['mixed-port'],
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
@@ -267,7 +270,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
 
     inbounds.push({
       type: 'http',
-      listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
+      listen: listen,
       listen_port: profile.advancedConfig.port,
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
@@ -279,7 +282,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   if (profile.advancedConfig['socks-port'] > 0) {
     inbounds.push({
       type: 'socks',
-      listen: profile.generalConfig['allow-lan'] ? '::' : '127.0.0.1',
+      listen: listen,
       listen_port: profile.advancedConfig['socks-port'],
       ...listenConfig,
       tcp_fast_open: profile.advancedConfig['tcp-fast-open'],
@@ -289,11 +292,19 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   }
 
   if (profile.tunConfig.enable) {
+    const inet4_address = profile.tunConfig['inet4-address']
+    const inet6_address = profile.tunConfig['inet6-address']
     inbounds.push({
       type: 'tun',
       interface_name: profile.tunConfig.interface_name,
-      inet4_address: '172.19.0.1/30',
-      inet6_address: 'fdfe:dcba:9876::1/126',
+      inet4_address:
+        inet4_address && inet4_address.length > 0
+          ? inet4_address
+          : TunConfigDefaults['inet4-address'],
+      inet6_address:
+        inet6_address && inet6_address.length > 0
+          ? inet6_address
+          : TunConfigDefaults['inet6-address'],
       mtu: profile.tunConfig.mtu,
       auto_route: profile.tunConfig['auto-route'],
       strict_route: profile.tunConfig['strict-route'],

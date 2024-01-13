@@ -87,6 +87,8 @@ export default {
       'strict-route': '严格路由',
       mtu: '最大传输单元',
       'endpoint-independent-nat': '独立于端点的 NAT',
+      'inet4-address': 'IPv4前缀',
+      'inet6-address': 'IPv6前缀',
       system: 'System',
       gvisor: 'Gvisor',
       mixed: 'Mixed',

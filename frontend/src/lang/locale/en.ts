@@ -87,6 +87,8 @@ export default {
       'strict-route': 'Strict Route',
       mtu: 'MTU',
       'endpoint-independent-nat': 'Endpoint Independent NAT',
+      'inet4-address': 'IPV4 Prefix',
+      'inet6-address': 'IPV6 Prefix',
       system: 'System',
       gvisor: 'Gvisor',
       mixed: 'Mixed',

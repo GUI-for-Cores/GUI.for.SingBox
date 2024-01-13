@@ -38,7 +38,9 @@ export const TunConfigDefaults: ProfileType['tunConfig'] = {
   interface_name: 'singbox',
   mtu: 9000,
   'strict-route': true,
-  'endpoint-independent-nat': false
+  'endpoint-independent-nat': false,
+  'inet4-address': '172.19.0.1/30',
+  'inet6-address': 'fdfe:dcba:9876::1/126',
 }
 
 export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
