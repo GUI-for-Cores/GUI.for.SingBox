@@ -110,6 +110,7 @@ const handleSave = async () => {
     )
     await Writefile(path, JSON.stringify(filteredProxies, null, 2))
     await subscribeStore.editSubscribe(id, sub.value)
+    await subscribeStore.syncProxiesOrder(id)
     handleSubmit()
   } catch (error: any) {
     console.log(error)

@@ -295,9 +295,9 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
     let inet4_address = profile.tunConfig['inet4-address']
     let inet6_address = profile.tunConfig['inet6-address']
 
-    if (profile.advancedConfig.domain_strategy == 'ipv4_only') {
+    if (profile.advancedConfig.domain_strategy === 'ipv4_only') {
       inet6_address = ''
-    } else if (profile.advancedConfig.domain_strategy == 'ipv6_only') {
+    } else if (profile.advancedConfig.domain_strategy === 'ipv6_only') {
       inet4_address = ''
     }
     if (inet4_address === undefined) {
@@ -356,6 +356,14 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
       try {
         const subStr = await Readfile(sub.path)
         const subProxies = JSON.parse(subStr)
+        
+        // let subProxies = JSON.parse(subStr)
+        // subProxies = sub.proxies
+        //   .map((proxy) => {
+        //     return subProxies.find((v: any) => v.tag === proxy.tag)
+        //   })
+        //   .filter((v) => v !== undefined)
+
         proxyMap[sub.id] = subProxies
         for (const subProxy of subProxies) {
           proxyTags.add(subProxy.tag)

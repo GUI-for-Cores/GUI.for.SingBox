@@ -88,6 +88,22 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
   }
 
+  const syncProxiesOrder = async (id: string) => {
+    const idx = subscribes.value.findIndex((v) => v.id === id)
+    if (idx === -1) return
+    const sub = subscribes.value[idx]
+    if (await FileExists(sub.path)) {
+      const subStr = await Readfile(sub.path)
+      let subProxies = JSON.parse(subStr)
+      subProxies = sub.proxies
+        .map((proxy) => {
+          return subProxies.find((v: any) => v.tag === proxy.tag)
+        })
+        .filter((v) => v !== undefined)
+      Writefile(sub.path, JSON.stringify(subProxies, null, 2))
+    }
+  }
+
   const convertSub = async (path: string, subconverter: string, workDir: string) => {
     const tmpFile = workDir + '/tmp.json'
     try {
@@ -357,6 +373,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     saveSubscribes,
     addSubscribe,
     editSubscribe,
+    syncProxiesOrder,
     deleteSubscribe,
     updateSubscribe,
     updateSubscribes,
