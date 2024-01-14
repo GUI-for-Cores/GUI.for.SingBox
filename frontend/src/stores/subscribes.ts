@@ -128,7 +128,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       const out = await Exec(
         subconverter,
         '--url',
-        url,
+        url.replace(' ', '\n').replace('|', '\n'),
         '--ua',
         userAgent,
         '--out',
@@ -137,8 +137,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       if (await FileExists(tmpFile)) {
         const body = await Readfile(tmpFile)
         const outs = out.trim().split('\n')
-        const header = outs[outs.length - 1]
-        return { header: JSON.parse(header), body: body }
+        const header = outs.length > 0 ? outs[outs.length - 1] : ''
+        try {
+          return { header: JSON.parse(header), body: body }
+        } catch (e) {
+          return { header: '', body: body }
+        }
       }
     } finally {
       Removefile(tmpFile)
