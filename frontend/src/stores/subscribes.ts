@@ -128,7 +128,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       const out = await Exec(
         subconverter,
         '--url',
-        url.replace(' ', '\n').replace('|', '\n'),
+        url.split(/[ |]/).join('\n'),
         '--ua',
         userAgent,
         '--out',
