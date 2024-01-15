@@ -107,7 +107,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   const convertSub = async (path: string, subconverter: string, workDir: string) => {
     const tmpFile = workDir + '/tmp.json'
     try {
-      await Exec(subconverter, '--path', path, '--out', await AbsolutePath(tmpFile))
+      await Exec(subconverter, ['--path', path, '--out', await AbsolutePath(tmpFile)])
       if (await FileExists(tmpFile)) {
         return await Readfile(tmpFile)
       }
@@ -125,15 +125,14 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   ) => {
     const tmpFile = workDir + '/tmp.json'
     try {
-      const out = await Exec(
-        subconverter,
+      const out = await Exec(subconverter, [
         '--url',
         url.split(/[ |]/).join('\n'),
         '--ua',
         userAgent,
         '--out',
         await AbsolutePath(tmpFile)
-      )
+      ])
       if (await FileExists(tmpFile)) {
         const body = await Readfile(tmpFile)
         const outs = out.trim().split('\n')

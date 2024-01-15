@@ -160,7 +160,7 @@ const getLocalVersion = async () => {
   try {
     const fileName = await getKernelFileName()
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
-    const res = await Exec(kernelFilePath, 'version')
+    const res = await Exec(kernelFilePath, ['version'])
     versionDetail.value[0] = res.trim()
     return (
       res
@@ -182,7 +182,7 @@ const getLatestLocalVersion = async () => {
   try {
     const fileName = await getKernelFileName(true)
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
-    const res = await Exec(kernelFilePath, 'version')
+    const res = await Exec(kernelFilePath, ['version'])
     versionDetail.value[1] = res.trim()
     return (
       res

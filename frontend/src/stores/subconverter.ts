@@ -21,7 +21,7 @@ export const useSubconverterStore = defineStore('subconverter', () => {
     if (initialized.value) return
     if (await FileExists(SUBCONVERTER_PATH.value)) {
       if (initialized.value) return
-      const version = await Exec(SUBCONVERTER_PATH.value, '--version')
+      const version = await Exec(SUBCONVERTER_PATH.value, ['--version'])
       if (version) {
         SUBCONVERTER_VERSION.value = 'v' + version.trim()
       }

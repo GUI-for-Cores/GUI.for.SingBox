@@ -1,5 +1,7 @@
 import * as App from '@wails/go/bridge/App'
 export * from '@wails/runtime/runtime'
+import { sampleID } from './others'
+import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 
 export const Writefile = async (path: string, content: string) => {
   const { flag, data } = await App.Writefile(path, content)
@@ -41,22 +43,6 @@ export const Removefile = async (path: string) => {
   return data
 }
 
-export const Makedir = async (path: string) => {
-  const { flag, data } = await App.Makedir(path)
-  if (!flag) {
-    throw data
-  }
-  return data
-}
-
-export const UnzipZIPFile = async (path: string, output: string) => {
-  const { flag, data } = await App.UnzipZIPFile(path, output)
-  if (!flag) {
-    throw data
-  }
-  return data
-}
-
 export const FileExists = async (path: string) => {
   const { flag, data } = await App.FileExists(path)
   if (!flag) {
@@ -67,6 +53,22 @@ export const FileExists = async (path: string) => {
 
 export const AbsolutePath = async (path: string) => {
   const { flag, data } = await App.AbsolutePath(path)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const Makedir = async (path: string) => {
+  const { flag, data } = await App.Makedir(path)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const UnzipZIPFile = async (path: string, output: string) => {
+  const { flag, data } = await App.UnzipZIPFile(path, output)
   if (!flag) {
     throw data
   }
@@ -102,7 +104,7 @@ export const HttpGetJSON = async (url: string, headers = {}) => {
   }
 }
 
-export const Exec = async (path: string, ...args: string[]) => {
+export const Exec = async (path: string, args: string[]) => {
   const { flag, data } = await App.Exec(path, args)
   if (!flag) {
     throw data
@@ -110,11 +112,29 @@ export const Exec = async (path: string, ...args: string[]) => {
   return data
 }
 
-export const StartKernel = async (path: string, directory: string) => {
-  const { flag, data } = await App.StartKernel(path, directory)
+export const ExecBackground = async (
+  path: string,
+  args: string[],
+  onOut: (out: string) => void,
+  onEnd: () => void
+) => {
+  const outEvent = sampleID()
+  const endEvent = sampleID()
+  const { flag, data } = await App.ExecBackground(path, args, outEvent, endEvent)
   if (!flag) {
     throw data
   }
+
+  EventsOn(outEvent, (out: string) => {
+    onOut && onOut(out)
+  })
+
+  EventsOn(endEvent, () => {
+    onEnd && onEnd()
+    EventsOff(outEvent)
+    EventsOff(endEvent)
+  })
+
   return Number(data)
 }
 

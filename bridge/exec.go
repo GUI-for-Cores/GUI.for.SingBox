@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
-	"strings"
+	"sync"
 	"syscall"
 
 	"github.com/shirou/gopsutil/process"
@@ -16,12 +16,17 @@ import (
 func (a *App) Exec(path string, args []string) FlagResult {
 	fmt.Println("Exec:", path, args)
 
-	path, err := GetPath(path)
+	exe_path, err := GetPath(path)
+
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
-	cmd := exec.Command(path, args...)
+	if a.FileExists(exe_path).Data != "true" {
+		exe_path = path
+	}
+
+	cmd := exec.Command(exe_path, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
 	out, err := cmd.CombinedOutput()
@@ -32,68 +37,68 @@ func (a *App) Exec(path string, args []string) FlagResult {
 	return FlagResult{true, string(out)}
 }
 
-func (a *App) StartKernel(path string, directory string) FlagResult {
-	fmt.Println("StartKernel:", path, directory)
+func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string) FlagResult {
+	fmt.Println("ExecBackground:", path, args)
 
-	path, err := GetPath(path)
+	exe_path, err := GetPath(path)
+
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
-	directory, err = GetPath(directory)
-	if err != nil {
-		return FlagResult{false, err.Error()}
+	if a.FileExists(exe_path).Data != "true" {
+		exe_path = path
 	}
 
-	cmd := exec.Command(path, "run", "-c", directory + "/config.json", "-D", directory)
+	cmd := exec.Command(exe_path, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
+
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
-
-	scanner := bufio.NewScanner(stdout)
-	scannerErr := bufio.NewScanner(stderr)
-
-	go func() {
-		var started  bool = false;
-		for scanner.Scan() {
-			text := scanner.Text()
-			runtime.EventsEmit(a.Ctx, "kernelLog", text)
-			if !started && strings.Contains(strings.ToLower(text), "sing-box started") {
-				runtime.EventsEmit(a.Ctx, "kernelStarted", "")
-				started = true;
-			}
-		}
-		runtime.EventsEmit(a.Ctx, "kernelStopped", "")
-	}()
-
-	go func() {
-		var started  bool = false;
-		for scannerErr.Scan() {
-			text := scannerErr.Text()
-			runtime.EventsEmit(a.Ctx, "kernelLog", text)
-			if !started && strings.Contains(strings.ToLower(text), "sing-box started") {
-				runtime.EventsEmit(a.Ctx, "kernelStarted", "")
-				started = true;
-			}
-		}
-		runtime.EventsEmit(a.Ctx, "kernelStopped", "")
-	}()
 
 	err = cmd.Start()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
-	pid := cmd.Process.Pid
+	if outEvent != "" {
+		wg := sync.WaitGroup{}
+		wg.Add(2)
 
-	runtime.EventsEmit(a.Ctx, "kernelPid", pid)
+		outScanner := bufio.NewScanner(stdout)
+		go func() {
+			defer wg.Done()
+			for outScanner.Scan() {
+				text := outScanner.Text()
+				runtime.EventsEmit(a.Ctx, outEvent, ""+text)
+			}
+		}()
+
+		errScanner := bufio.NewScanner(stderr)
+		go func() {
+			defer wg.Done()
+			for errScanner.Scan() {
+				text := errScanner.Text()
+				runtime.EventsEmit(a.Ctx, outEvent, ""+text)
+			}
+		}()
+
+		go func() {
+			wg.Wait()
+			if endEvent != "" {
+				runtime.EventsEmit(a.Ctx, endEvent, "")
+			}
+		}()
+	}
+
+	pid := cmd.Process.Pid
 
 	return FlagResult{true, strconv.Itoa(pid)}
 }

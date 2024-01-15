@@ -21,7 +21,7 @@ import {
   EventsOn,
   KernelRunning,
   KillProcess,
-  StartKernel,
+  ExecBackground,
   GetInterfaces,
   Readfile
 } from '@/utils/bridge'
@@ -193,42 +193,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   /* Bridge API */
   const loading = ref(false)
 
-  const setupKernelApi = async () => {
-    const envStore = useEnvStore()
-    const logsStore = useLogsStore()
-    const appSettings = useAppSettingsStore()
-
-    EventsOn('kernelLog', logsStore.recordKernelLog)
-    EventsOn('kernelPid', (pid) => {
-      console.log('kernelPid')
-      loading.value = true
-      appSettings.app.kernel.pid = pid
-    })
-    EventsOn('kernelStarted', async () => {
-      loading.value = false
-      appSettings.app.kernel.running = true
-
-      await refreshConfig()
-      await envStore.updateSystemProxyState()
-
-      // Automatically set system proxy, but the priority is lower than tun mode
-      if (!config.value.tun.enable && appSettings.app.autoSetSystemProxy) {
-        await envStore.setSystemProxy()
-      }
-    })
-    EventsOn('kernelStopped', async () => {
-      if (appSettings.app.kernel.running || loading.value || appSettings.app.kernel.pid != 0) {
-        loading.value = false
-        appSettings.app.kernel.pid = 0
-        appSettings.app.kernel.running = false
-
-        if (appSettings.app.autoSetSystemProxy) {
-          await envStore.clearSystemProxy()
-        }
-      }
-    })
-  }
-
   const updateKernelStatus = async () => {
     const appSettingsStore = useAppSettingsStore()
 
@@ -242,6 +206,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const startKernel = async () => {
+    const envStore = useEnvStore()
     const logsStore = useLogsStore()
     const profilesStore = useProfilesStore()
     const appSettingsStore = useAppSettingsStore()
@@ -273,7 +238,42 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
 
-    await StartKernel(kernelFilePath, KernelWorkDirectory)
+    const kernelWorkDir = envStore.env.basePath + '/' + KernelWorkDirectory
+
+    const _pid = await ExecBackground(
+      kernelFilePath,
+      ['run', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
+      // stdout
+      async (out: string) => {
+        logsStore.recordKernelLog(out)
+        if (out.toLowerCase().includes('sing-box started')) {
+          loading.value = false
+          appSettingsStore.app.kernel.running = true
+
+          await refreshConfig()
+          await envStore.updateSystemProxyState()
+
+          // Automatically set system proxy, but the priority is lower than tun mode
+          if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
+            await envStore.setSystemProxy()
+          }
+        }
+      },
+      // end
+      async () => {
+        loading.value = false
+        appSettingsStore.app.kernel.pid = 0
+        appSettingsStore.app.kernel.running = false
+
+        if (appSettingsStore.app.autoSetSystemProxy) {
+          await envStore.clearSystemProxy()
+        }
+      }
+    )
+
+    loading.value = true
+
+    appSettingsStore.app.kernel.pid = _pid
   }
 
   const stopKernel = async () => {
@@ -305,7 +305,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     stopKernel,
     restartKernel,
     updateKernelStatus,
-    setupKernelApi,
     loading,
     config,
     proxies,

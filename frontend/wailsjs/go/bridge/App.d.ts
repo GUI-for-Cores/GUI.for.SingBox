@@ -16,6 +16,8 @@ export function Download(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Exec(arg1:string,arg2:Array<string>):Promise<bridge.FlagResult>;
 
+export function ExecBackground(arg1:string,arg2:Array<string>,arg3:string,arg4:string):Promise<bridge.FlagResult>;
+
 export function FileExists(arg1:string):Promise<bridge.FlagResult>;
 
 export function GetEnv():Promise<bridge.EnvResult>;
@@ -43,8 +45,6 @@ export function Removefile(arg1:string):Promise<bridge.FlagResult>;
 export function RestartApp():Promise<bridge.FlagResult>;
 
 export function SetSystemProxy(arg1:boolean,arg2:string):Promise<bridge.FlagResult>;
-
-export function StartKernel(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function SwitchPermissions(arg1:boolean,arg2:string):Promise<bridge.FlagResult>;
 
