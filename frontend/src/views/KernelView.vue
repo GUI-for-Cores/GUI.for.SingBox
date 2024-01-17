@@ -75,7 +75,9 @@ const downloadCore = async () => {
 
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
 
-    await ignoredError(Movefile, kernelFilePath, kernelFilePath + '.bak')
+    const bakFile = kernelFilePath + '.bak'
+
+    await ignoredError(Movefile, kernelFilePath, bakFile)
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
@@ -87,6 +89,7 @@ const downloadCore = async () => {
     await Movefile(tmp_path + '/' + fileName, kernelFilePath)
     await Removefile(tmp_path)
     await Removefile(tmp)
+    await ignoredError(Removefile, bakFile)
 
     downloadSuccessful.value[0] = true
 
@@ -128,8 +131,9 @@ const downloadLatestCore = async () => {
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 
     const latestKernelFilePath = KernelWorkDirectory + '/' + latestFileName
-
-    await ignoredError(Movefile, latestKernelFilePath, latestKernelFilePath + '.bak')
+    const bakFile = latestKernelFilePath + '.bak'
+    
+    await ignoredError(Movefile, latestKernelFilePath, bakFile)
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
@@ -141,6 +145,7 @@ const downloadLatestCore = async () => {
     await Movefile(tmp_path + '/' + fileName, latestKernelFilePath)
     await Removefile(tmp_path)
     await Removefile(tmp)
+    await ignoredError(Removefile, bakFile)
 
     downloadSuccessful.value[1] = true
 

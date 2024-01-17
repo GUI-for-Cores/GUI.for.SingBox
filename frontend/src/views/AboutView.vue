@@ -4,8 +4,24 @@ import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { useAppSettingsStore } from '@/stores'
-import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, RestartApp } from '@/utils/bridge'
-import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, APP_VERSION_API } from '@/utils'
+import {
+  Download,
+  HttpGetJSON,
+  BrowserOpenURL,
+  Movefile,
+  GetEnv,
+  RestartApp,
+  Removefile
+} from '@/utils/bridge'
+import {
+  APP_TITLE,
+  APP_VERSION,
+  PROJECT_URL,
+  TG_GROUP,
+  TG_CHANNEL,
+  APP_VERSION_API,
+  ignoredError
+} from '@/utils'
 
 let downloadUrl = ''
 
@@ -38,11 +54,15 @@ const downloadApp = async () => {
   try {
     const { appName } = await GetEnv()
 
+    const bakFile = appName + '_' + APP_VERSION + '.bak'
+
     await Download(downloadUrl, appName + '.tmp')
 
-    await Movefile(appName, appName + '_' + APP_VERSION + '.bak')
+    await Movefile(appName, bakFile)
 
     await Movefile(appName + '.tmp', appName)
+
+    await ignoredError(Removefile, bakFile)
 
     needRestart.value = true
     message.info('about.updateSuccessfulRestart')
@@ -101,7 +121,7 @@ checkForUpdates()
 
 <template>
   <div class="about">
-    <img src="@/assets/logo.png" draggable="false"/>
+    <img src="@/assets/logo.png" draggable="false" />
     <div class="appname">{{ APP_TITLE }}</div>
     <div class="appver">
       <Button v-if="needRestart" @click="handleRestartApp" size="small" type="primary">

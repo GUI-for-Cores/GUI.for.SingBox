@@ -3,8 +3,17 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
+import { ignoredError } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore } from '@/stores'
-import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, FileExists } from '@/utils/bridge'
+import {
+  Download,
+  HttpGetJSON,
+  BrowserOpenURL,
+  Movefile,
+  GetEnv,
+  FileExists,
+  Removefile
+} from '@/utils/bridge'
 
 let downloadUrl = ''
 
@@ -39,17 +48,19 @@ const downloadApp = async () => {
 
     await Download(downloadUrl, appPath + '.tmp')
 
-    if (await FileExists(appPath)) {
-      await Movefile(appPath, appPath + '_' + subconverter.SUBCONVERTER_VERSION + '.bak')
-    }
+    const bakFile = appPath + '_' + subconverter.SUBCONVERTER_VERSION + '.bak'
+
+    await ignoredError(Movefile, appPath, bakFile)
 
     await Movefile(appPath + '.tmp', appPath)
     subconverter.SUBCONVERTER_VERSION = remoteVersion.value
     subconverter.SUBCONVERTER_EXISTS = true
+
+    await ignoredError(Removefile, bakFile)
+
     message.info('about.updateSuccessful')
   } catch (error: any) {
     console.log(error)
-    message.info(error, 5)
   }
 
   downloading.value = false
@@ -77,9 +88,6 @@ const checkForUpdates = async (showTips = false) => {
 
     remoteVersion.value = tag_name
     downloadUrl = asset.browser_download_url
-
-    console.log(subconverter.SUBCONVERTER_VERSION.length)
-    console.log(remoteVersion.value.length)
 
     if (showTips) {
       message.info(needUpdate.value ? 'about.newVersion' : 'about.latestVersion')
