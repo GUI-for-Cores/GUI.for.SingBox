@@ -16,15 +16,8 @@ import {
   useLogsStore,
   useEnvStore
 } from '@/stores'
-import { getProxies, getProviders } from '@/api/kernel'
-import {
-  EventsOn,
-  KernelRunning,
-  KillProcess,
-  ExecBackground,
-  GetInterfaces,
-  Readfile
-} from '@/utils/bridge'
+import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
+import { KernelRunning, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
 import { deepClone } from '@/utils/others'
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
@@ -102,7 +95,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value['socks-port'] = currentProfile.value.advancedConfig['socks-port']
     config.value['log-level'] = currentProfile.value.generalConfig['log-level']
     config.value['allow-lan'] = currentProfile.value.generalConfig['allow-lan']
-    config.value.mode = currentProfile.value.generalConfig.mode
+    try {
+      config.value.mode = (await getConfigs()).mode
+    } catch (e) {
+      config.value.mode = currentProfile.value.generalConfig.mode
+    }
     config.value['interface-name'] = currentProfile.value.generalConfig['interface-name']
     config.value.fakeip = currentProfile.value.dnsConfig.fakeip
     config.value.tun = {
@@ -111,6 +108,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       'auto-route': currentProfile.value.tunConfig['auto-route'],
       device: currentProfile.value.tunConfig.interface_name
     }
+  }
+
+  const patchConfig = async (options: Record<string, any>) => {
+    await setConfigs(options)
   }
 
   const updateConfig = async (name: string, value: any) => {
@@ -167,7 +168,13 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           config.value['allow-lan'] = inbound.listen === '::'
         }
       })
-      config.value.mode = latestConfig.experimental.clash_api.default_mode
+
+      try {
+        config.value.mode = (await getConfigs()).mode
+      } catch (e) {
+        config.value.mode = latestConfig.experimental.clash_api.default_mode
+      }
+
       config.value['log-level'] = latestConfig.log.level
       config.value.fakeip = latestConfig.dns.fakeip.enabled
       if (latestConfig.route.auto_detect_interface) config.value['interface-name'] = 'Auto'
@@ -311,6 +318,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     providers,
     refreshConfig,
     updateConfig,
+    patchConfig,
     refreshProviderProxies
   }
 })

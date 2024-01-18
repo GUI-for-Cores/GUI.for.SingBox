@@ -11,7 +11,6 @@ import {
   BrowserOpenURL,
   Movefile,
   GetEnv,
-  FileExists,
   Removefile
 } from '@/utils/bridge'
 

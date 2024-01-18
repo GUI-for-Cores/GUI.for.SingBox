@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useMessage } from '@/hooks'
 import { useAppSettingsStore } from '@/stores'
 import { Theme, Lang, WindowStartState, Color, KernelCacheFilePath } from '@/constant'
-import { APP_TITLE, APP_VERSION, getTaskSchXmlString } from '@/utils'
+import { APP_TITLE, getTaskSchXmlString } from '@/utils'
 import {
   CheckPermissions,
   SwitchPermissions,
