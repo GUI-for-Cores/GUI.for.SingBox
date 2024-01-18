@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
   color?: 'cyan' | 'green' | 'red' | 'default'
+  size?: 'small' | 'default'
 }
 
 withDefaults(defineProps<Props>(), {
@@ -9,7 +10,7 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div :class="color" class="tag">
+  <div :class="[color, size]" class="tag">
     <slot />
   </div>
 </template>
@@ -38,8 +39,14 @@ withDefaults(defineProps<Props>(), {
   border: 1px solid #d52e3b;
 }
 .default {
-  color: #1e1e1e;
+  color: #3d3d3d;
   background-color: #fafafa;
-  border: 1px solid #1e1e1e;
+  border: 1px solid #898989;
+}
+
+.small {
+  padding: 0 4px;
+  margin: 0 2px;
+  font-size: 10px;
 }
 </style>

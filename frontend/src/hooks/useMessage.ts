@@ -24,7 +24,7 @@ class Message {
     this.t = t
   }
 
-  public info = (msg: string, duration = 3) => {
+  public info = (msg: string, duration = 3_000) => {
     const info = document.createElement('div')
     info.style.cssText = `
       transition: all .2s;
@@ -46,7 +46,7 @@ class Message {
     setTimeout(() => {
       info.remove()
       delete this.instances[id]
-    }, duration * 1000)
+    }, duration)
 
     return { id }
   }
@@ -57,8 +57,11 @@ class Message {
     }
   }
 
-  public destroy = () => {
-    this.dom.remove()
+  public destroy = (id: string) => {
+    document.getElementById(id)?.remove()
+    if (this.instances[id]) {
+      delete this.instances[id]
+    }
   }
 }
 

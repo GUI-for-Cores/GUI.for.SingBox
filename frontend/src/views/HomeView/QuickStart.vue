@@ -86,8 +86,8 @@ const handleSubmit = async () => {
     await subscribeStore.updateSubscribe(subscribe.id)
   } catch (error: any) {
     console.log(error)
-    message.info(error, 10)
-    message.info('home.initFailed', 10)
+    message.info(error, 10_000)
+    message.info('home.initFailed', 10_000)
   }
 
   loading.value = false
