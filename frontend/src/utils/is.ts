@@ -1,6 +1,7 @@
 import { parse } from 'yaml'
 
 export const isValidBase64 = (str: string) => {
+  if (typeof str !== 'string') return false
   if (str === '' || str.trim() === '') {
     return false
   }
@@ -12,6 +13,7 @@ export const isValidBase64 = (str: string) => {
 }
 
 export const isValidSubYAML = (str: string) => {
+  if (typeof str !== 'string') return false
   try {
     const { proxies } = parse(str)
     return !!proxies
@@ -21,6 +23,7 @@ export const isValidSubYAML = (str: string) => {
 }
 
 export const isValidSubJson = (str: string) => {
+  if (typeof str !== 'string') return false
   try {
     const { outbounds } = JSON.parse(str)
     return !!outbounds

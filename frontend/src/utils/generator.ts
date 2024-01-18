@@ -1,7 +1,7 @@
 import { Readfile, Writefile } from '@/utils/bridge'
 import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
-import { type ProfileType, useSubscribesStore, useRulesetsStore } from '@/stores'
+import { type ProfileType, useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'
 import { TunConfigDefaults } from '@/constant'
 
 const generateCommonRule = (rule: Record<string, any>) => {
@@ -533,7 +533,9 @@ export const generateConfig = async (profile: ProfileType) => {
       ...(profile.dnsConfig.strategy.length > 0 ? { strategy: profile.dnsConfig.strategy } : {})
     }
   }
-  return config
+
+  const pluginsStore = usePluginsStore()
+  return await pluginsStore.onGenerateTrigger(config)
 }
 
 export const generateConfigFile = async (profile: ProfileType) => {
