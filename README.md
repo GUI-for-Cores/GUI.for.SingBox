@@ -17,6 +17,10 @@
   <img src="docs/imgs/preview5.png" width="400" height="250">
 </div>
 
+## Document
+
+[Community](https://gui-for-cores.github.io/gfs/community.html)
+
 ## Build
 
 1、Build Environment
