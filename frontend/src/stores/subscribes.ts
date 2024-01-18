@@ -2,7 +2,6 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { useAppSettingsStore, useSubconverterStore } from '@/stores'
 import {
   Readfile,
   Writefile,
@@ -12,8 +11,9 @@ import {
   Exec,
   AbsolutePath
 } from '@/utils/bridge'
-import { SubscribesFilePath, NodeConverterFilePath } from '@/constant'
-import { deepClone, debounce, isValidBase64, isValidSubJson, sampleID } from '@/utils'
+import { SubscribesFilePath } from '@/constant'
+import { deepClone, debounce, isValidSubJson, sampleID } from '@/utils'
+import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'
 
 export type SubscribeType = {
   id: string
@@ -250,61 +250,22 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
     }
 
-    if (isValidBase64(body)) {
-      let converterStr = ''
-      try {
-        converterStr = await Readfile(NodeConverterFilePath)
-      } catch {
-        throw NodeConverterFilePath + ' Not Found!'
-      }
-      const url = URL.createObjectURL(new Blob([converterStr]))
-      const worker = new Worker(url)
+    const pluginStore = usePluginsStore()
 
-      let resolve: (value: unknown) => void
-      const promise = new Promise((r) => (resolve = r))
-
-      const links = atob(body).trim().split('\n')
-      links.forEach((link, index) => {
-        worker.postMessage({ link, done: index === links.length - 1 })
-      })
-
-      worker.onmessage = ({ data: { node, done } }) => {
-        if (node) {
-          if ('server' in node && 'tag' in node) {
-            const flag1 = s.include ? new RegExp(s.include).test(node.tag) : true
-            const flag2 = s.exclude ? !new RegExp(s.exclude).test(node.tag) : true
-            if (flag1 && flag2) proxies.push(node)
-          }
-        }
-
-        if (done) {
-          worker.terminate()
-          URL.revokeObjectURL(url)
-          resolve(null)
-        }
-      }
-
-      await promise
-    } else {
-      if (isValidSubJson(body)) {
-        proxies = JSON.parse(body).outbounds ?? []
-      } else {
-        try {
-          proxies = JSON.parse(body)
-        } catch (error) {
-          throw 'Not a valid subscription data'
-        }
-      }
-
-      proxies = proxies.filter((v: any) => {
-        if ('server' in v && 'tag' in v) {
-          const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
-          const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
-          return flag1 && flag2
-        }
-        return false
-      })
+    proxies = await pluginStore.onSubscribeTrigger(body)
+    
+    if (!Array.isArray(proxies)) {
+      throw 'Not a valid subscription data'
     }
+
+    proxies = proxies.filter((v: any) => {
+      if ('server' in v && 'tag' in v) {
+        const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
+        const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
+        return flag1 && flag2
+      }
+      return false
+    })
 
     if (s.type !== 'Manual') {
       if (s.proxyPrefix) {

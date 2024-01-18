@@ -31,7 +31,11 @@ export default {
     success: 'Success',
     copy: 'Copy',
     copied: 'Copied',
-    auto: 'Auto'
+    auto: 'Auto',
+    import: 'Import',
+    install: 'Install',
+    uninstall: 'Uninstall',
+    run: 'Run'
   },
   kernel: {
     port: 'HTTP(s) Port',
@@ -231,6 +235,7 @@ export default {
     overview: 'OverView',
     subscriptions: 'Subscriptions',
     rulesets: 'Rulesets',
+    plugins: 'Plugins',
     settings: 'Settings',
     debug: 'Debug',
     components: 'Components',
@@ -369,9 +374,32 @@ export default {
     updating: 'Updating'
   },
   rulesets: {
-    empty: 'The rulesets list is empty. Please {action} a ruleset first.',
+    empty: 'The ruleset list is empty. Please {action} a ruleset first.',
     rulesetCount: 'Ruleset Count',
     editRuleset: 'Edit Ruleset File'
+  },
+  plugin: {
+    trigger: 'Trigger',
+    'on::manual': 'on::manual',
+    'on::startup': 'on::startup',
+    'on::shutdown': 'on::shutdown',
+    'on::generate': 'on::generate',
+    'on::subscribe': 'on::subscribe',
+    name: 'Name',
+    description: 'Description',
+    url: 'URL',
+    install: 'Requires installation',
+    installed: 'Installed',
+    path: 'Path',
+    type: 'Type',
+    http: 'HTTP',
+    file: 'FILE'
+  },
+  plugins: {
+    updating: 'Updating',
+    empty: 'The plugin list is empty. Please {action} or {import} a plugin first.',
+    source: 'Source',
+    reload: 'Reload'
   },
   settings: {
     general: 'General',

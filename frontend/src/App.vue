@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+import { EventsOn } from '@/utils/bridge'
 import { ignoredError, sleep } from '@/utils'
+import { useMessage } from '@/hooks'
 import {
   useAppSettingsStore,
   useProfilesStore,
   useSubscribesStore,
   useRulesetsStore,
+  usePluginsStore,
   useEnvStore,
   useApp
 } from '@/stores'
@@ -21,15 +24,26 @@ const appSettings = useAppSettingsStore()
 const profilesStore = useProfilesStore()
 const subscribesStore = useSubscribesStore()
 const rulesetsStore = useRulesetsStore()
+const pluginsStore = usePluginsStore()
 const envStore = useEnvStore()
+
+const { message } = useMessage()
+window.Plugins.message = message
 
 appSettings.setupAppSettings().then(async () => {
   await ignoredError(envStore.setupEnv)
   await ignoredError(profilesStore.setupProfiles)
   await ignoredError(subscribesStore.setupSubscribes)
   await ignoredError(rulesetsStore.setupRulesets)
+  await ignoredError(pluginsStore.setupPlugins)
   await sleep(1000)
   loading.value = false
+
+  EventsOn('onShutdown', async () => {
+    pluginsStore.onShutdownTrigger()
+  })
+
+  pluginsStore.onStartupTrigger()
 })
 </script>
 

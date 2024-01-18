@@ -31,7 +31,11 @@ export default {
     success: '成功',
     copy: '复制',
     copied: '已复制',
-    auto: '自动'
+    auto: '自动',
+    import: '导入',
+    install: '安装',
+    uninstall: '卸载',
+    run: '运行'
   },
   kernel: {
     port: 'HTTP(s)代理端口',
@@ -231,6 +235,7 @@ export default {
     overview: '概览',
     subscriptions: '订阅',
     rulesets: '规则集',
+    plugins: '插件',
     settings: '设置',
     debug: '调试',
     components: '组件预览',
@@ -372,6 +377,29 @@ export default {
     empty: '规则集列表为空. 请先{action}规则集。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则集文件'
+  },
+  plugin: {
+    trigger: '触发器',
+    'on::manual': '手动触发',
+    'on::startup': '启动APP时',
+    'on::shutdown': '关闭APP时',
+    'on::generate': '生成配置时',
+    'on::subscribe': '更新订阅时',
+    name: '名称',
+    description: '描述',
+    url: '地址',
+    install: '需要安装',
+    installed: '已安装',
+    path: '保存路径',
+    type: '类型',
+    http: 'HTTP',
+    file: 'FILE'
+  },
+  plugins: {
+    updating: '更新中',
+    empty: '插件列表为空，请先{action}或{import}插件。',
+    source: '源码',
+    reload: '重载插件'
   },
   settings: {
     general: '通用',

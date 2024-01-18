@@ -1,7 +1,8 @@
-import './assets/main.less'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+
+import './assets/main.less'
+import './globalMethods'
 
 import App from './App.vue'
 import router from './router'
