@@ -31,9 +31,9 @@ const appSettings = useAppSettingsStore()
 const extensions = computed(() => (appSettings.themeMode === Theme.Dark ? [oneDark] : []))
 
 const onChange = debounce((e: any) => {
-  const code = e.doc.text.join('\n')
+  const code = e.doc.toString()
   if (props.modelValue !== code) {
-    emits('update:modelValue', e.doc.text.join('\n'))
+    emits('update:modelValue', code)
   }
 }, 500)
 </script>
