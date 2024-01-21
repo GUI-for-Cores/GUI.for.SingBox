@@ -40,33 +40,35 @@ export const TunConfigDefaults: ProfileType['tunConfig'] = {
   'strict-route': true,
   'endpoint-independent-nat': false,
   'inet4-address': '172.19.0.1/30',
-  'inet6-address': 'fdfe:dcba:9876::1/126',
+  'inet6-address': 'fdfe:dcba:9876::1/126'
 }
 
-export const DnsConfigDefaults: ProfileType['dnsConfig'] = {
-  enable: true,
-  fakeip: false,
-  strategy: 'prefer_ipv4',
-  'local-dns': 'https://223.5.5.5/dns-query',
-  'remote-dns': 'tls://8.8.8.8',
-  'resolver-dns': '223.5.5.5',
-  'remote-resolver-dns': '8.8.8.8',
-  'final-dns': FinalDnsType.Remote,
-  'remote-dns-detour': t('outbound.select'),
-  'fake-ip-range-v4': '198.18.0.1/16',
-  'fake-ip-range-v6': 'fc00::/18',
-  'fake-ip-filter': [
-    '.lan',
-    '.localdomain',
-    '.example',
-    '.invalid',
-    '.localhost',
-    '.test',
-    '.local',
-    '.home.arpa',
-    '.msftconnecttest.com',
-    '.msftncsi.com'
-  ]
+export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => {
+  return {
+    enable: true,
+    fakeip: false,
+    strategy: 'prefer_ipv4',
+    'local-dns': 'https://223.5.5.5/dns-query',
+    'remote-dns': 'tls://8.8.8.8',
+    'resolver-dns': '223.5.5.5',
+    'remote-resolver-dns': '8.8.8.8',
+    'final-dns': FinalDnsType.Remote,
+    'remote-dns-detour': t('outbound.select'),
+    'fake-ip-range-v4': '198.18.0.1/16',
+    'fake-ip-range-v6': 'fc00::/18',
+    'fake-ip-filter': [
+      '.lan',
+      '.localdomain',
+      '.example',
+      '.invalid',
+      '.localhost',
+      '.test',
+      '.local',
+      '.home.arpa',
+      '.msftconnecttest.com',
+      '.msftncsi.com'
+    ]
+  }
 }
 
 export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] => {
@@ -246,6 +248,17 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     'ruleset-format': 'binary',
     'download-detour': t('outbound.direct'),
     invert: true
+  },
+  {
+    id: sampleID(),
+    type: 'rule_set_url',
+    payload:
+      'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
+    proxy: t('outbound.select'),
+    'ruleset-name': 'GEOLOCATION-!CN',
+    'ruleset-format': 'binary',
+    'download-detour': t('outbound.direct'),
+    invert: false
   },
   {
     id: sampleID(),

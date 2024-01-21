@@ -45,7 +45,7 @@ const profile = ref<ProfileType>({
   generalConfig: Defaults.GeneralConfigDefaults,
   advancedConfig: Defaults.AdvancedConfigDefaults(),
   tunConfig: Defaults.TunConfigDefaults,
-  dnsConfig: Defaults.DnsConfigDefaults,
+  dnsConfig: Defaults.DnsConfigDefaults(),
   proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
   rulesConfig: Defaults.RulesConfigDefaults(),
   dnsRulesConfig: Defaults.DnsRulesConfigDefaults()
