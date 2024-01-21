@@ -30,12 +30,11 @@ type HTTPResult struct {
 }
 
 type AppConfig struct {
-	Lang                   string `yaml:"lang"`
-	WindowStartState       int    `yaml:"windowStartState"`
-	CloseKernelOnExit      bool   `yaml:"closeKernelOnExit"`
-	OpenInspectorOnStartup bool   `yaml:"openInspectorOnStartup"`
-	UserAgent              string `yaml:"userAgent"`
-	Kernel                 struct {
+	Lang              string `yaml:"lang"`
+	WindowStartState  int    `yaml:"windowStartState"`
+	CloseKernelOnExit bool   `yaml:"closeKernelOnExit"`
+	UserAgent         string `yaml:"userAgent"`
+	Kernel            struct {
 		Pid int32 `yaml:"pid"`
 	} `yaml:"kernel"`
 }

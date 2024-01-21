@@ -1,3 +1,5 @@
+//go:build windows
+
 package bridge
 
 import (
@@ -84,17 +86,11 @@ func CreateTray(a *App, icon []byte) {
 
 			mHide.Click(func() { runtime.WindowHide(a.Ctx) })
 
-			mRestart.Click(func() { 
-				runtime.EventsEmit(a.Ctx, "onShutdown", "")
-				time.Sleep(500 * time.Millisecond) // 0.5s
-				
-				TrayRestartApp(a) 
-			})
+			mRestart.Click(func() { TrayRestartApp(a) })
 
 			mQuit.Click(func() {
 				runtime.EventsEmit(a.Ctx, "onShutdown", "")
 				time.Sleep(500 * time.Millisecond) // 0.5s
-
 				InitBridge()
 				QuitApp(a, Config.CloseKernelOnExit)
 			})

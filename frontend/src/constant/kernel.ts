@@ -28,7 +28,7 @@ export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
 
 export const getKernelFileName = async (isLatest = false) => {
   const { os } = await GetEnv()
-  const fileSuffix = { windows: '.exe', linux: '' }[os]
+  const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
   const latest = isLatest ? '-latest' : ''
   return `sing-box${latest}${fileSuffix}`
 }

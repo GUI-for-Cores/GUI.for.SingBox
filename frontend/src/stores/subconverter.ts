@@ -15,7 +15,7 @@ export const useSubconverterStore = defineStore('subconverter', () => {
 
   const initSubconverter = async () => {
     const { os } = await GetEnv()
-    const suffix = { windows: '.exe', linux: '' }[os]
+    const suffix = { windows: '.exe', linux: '', darwin: '' }[os]
     SUBCONVERTER_PATH.value = SUBCONVERTER_DIR.value + '/sing-box-subconverter' + suffix
 
     if (initialized.value) return

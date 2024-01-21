@@ -27,7 +27,7 @@ func (a *App) Exec(path string, args []string) FlagResult {
 	}
 
 	cmd := exec.Command(exe_path, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	HideExecWindow(cmd)
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -51,7 +51,7 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	}
 
 	cmd := exec.Command(exe_path, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	HideExecWindow(cmd)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
