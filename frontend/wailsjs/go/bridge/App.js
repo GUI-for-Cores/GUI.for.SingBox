@@ -94,6 +94,10 @@ export function SwitchPermissions(arg1, arg2) {
   return window['go']['bridge']['App']['SwitchPermissions'](arg1, arg2);
 }
 
+export function UnzipGZFile(arg1, arg2) {
+  return window['go']['bridge']['App']['UnzipGZFile'](arg1, arg2);
+}
+
 export function UnzipZIPFile(arg1, arg2) {
   return window['go']['bridge']['App']['UnzipZIPFile'](arg1, arg2);
 }

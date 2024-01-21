@@ -48,6 +48,8 @@ export function SetSystemProxy(arg1:boolean,arg2:string):Promise<bridge.FlagResu
 
 export function SwitchPermissions(arg1:boolean,arg2:string):Promise<bridge.FlagResult>;
 
+export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+
 export function UnzipZIPFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Writefile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
