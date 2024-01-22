@@ -258,16 +258,16 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       throw 'Not a valid subscription data'
     }
 
-    proxies = proxies.filter((v: any) => {
-      if ('server' in v && 'tag' in v) {
-        const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
-        const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
-        return flag1 && flag2
-      }
-      return false
-    })
-
     if (s.type !== 'Manual') {
+      proxies = proxies.filter((v: any) => {
+        if ('tag' in v) {
+          const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
+          const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
+          return flag1 && flag2
+        }
+        return false
+      })
+
       if (s.proxyPrefix) {
         proxies = proxies.map((v) => ({
           ...v,
