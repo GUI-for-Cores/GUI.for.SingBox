@@ -77,7 +77,7 @@ if (props.isUpdate) {
 </script>
 
 <template>
-  <div class="subform">
+  <div class="form">
     <div class="form-item row">
       <div class="name">
         {{ t('subscribes.subtype') }}
@@ -96,11 +96,11 @@ if (props.isUpdate) {
       <Switch v-model="sub.convert" />
     </div>
     <div class="form-item">
-      <div class="name">* {{ t('subscribe.name') }}</div>
+      <div class="name">{{ t('subscribe.name') }} *</div>
       <Input v-model="sub.name" auto-size autofocus class="input" />
     </div>
     <div v-show="!isManual()" class="form-item">
-      <div class="name">* {{ t('subscribe.url') }}</div>
+      <div class="name">{{ t('subscribe.url') }} *</div>
       <Input
         v-model="sub.url"
         :placeholder="sub.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.json'"
@@ -109,7 +109,7 @@ if (props.isUpdate) {
       />
     </div>
     <div class="form-item">
-      <div class="name">* {{ t('subscribe.path') }}</div>
+      <div class="name">{{ t('subscribe.path') }} *</div>
       <Input
         v-model="sub.path"
         placeholder="data/subscribes/{filename}.json"
@@ -152,7 +152,7 @@ if (props.isUpdate) {
       </div>
     </div>
   </div>
-  <div class="action">
+  <div class="form-action">
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button
       @click="handleSubmit"
@@ -166,7 +166,10 @@ if (props.isUpdate) {
 </template>
 
 <style lang="less" scoped>
-.subform {
+.form {
+  padding: 0 8px;
+  overflow-y: auto;
+  max-height: 58vh;
   .name {
     font-size: 14px;
     padding: 8px 0;
@@ -182,9 +185,5 @@ if (props.isUpdate) {
       margin-right: 8px;
     }
   }
-}
-.action {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>

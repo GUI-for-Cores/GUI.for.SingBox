@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
@@ -21,7 +21,6 @@ const profileID = ref()
 const profileStep = ref(0)
 const showForm = ref(false)
 const isUpdate = ref(false)
-const formTitle = computed(() => (isUpdate.value ? 'common.edit' : 'common.add'))
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -263,7 +262,6 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 
   <Modal
     v-model:open="showForm"
-    :title="formTitle"
     :footer="false"
     @ok="onProfileFormEnd"
     min-width="70"

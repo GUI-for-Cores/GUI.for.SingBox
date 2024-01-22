@@ -98,19 +98,14 @@ const handleSubmit = async () => {
 
 <template>
   <div class="form-item">
-    <div class="name">* {{ t('subscribe.url') }}</div>
+    <div class="name">{{ t('subscribe.url') }} *</div>
     <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 86%" />
   </div>
 
-  <div class="action">
+  <div class="form-action">
     <Button @click="handleCancel" :disable="loading">{{ t('common.cancel') }}</Button>
     <Button @click="handleSubmit" :loading="loading" type="primary">{{ t('common.save') }}</Button>
   </div>
 </template>
 
-<style lang="less" scoped>
-.action {
-  display: flex;
-  justify-content: flex-end;
-}
-</style>
+<style lang="less" scoped></style>

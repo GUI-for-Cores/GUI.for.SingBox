@@ -399,7 +399,11 @@ export default {
     updating: '更新中',
     empty: '插件列表为空，请先{action}或{import}插件。',
     source: '源码',
-    reload: '重载插件'
+    reload: '重载插件',
+    hub: '插件中心',
+    update: '更新列表',
+    updateSuccess: '列表更新成功',
+    total: '插件数量为'
   },
   settings: {
     general: '通用',

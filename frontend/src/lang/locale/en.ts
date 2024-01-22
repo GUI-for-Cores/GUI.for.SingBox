@@ -399,7 +399,11 @@ export default {
     updating: 'Updating',
     empty: 'The plugin list is empty. Please {action} or {import} a plugin first.',
     source: 'Source',
-    reload: 'Reload'
+    reload: 'Reload',
+    hub: 'Plugin-Hub',
+    update: 'Update List',
+    updateSuccess: 'updated successfully',
+    total: 'Number of plug-ins'
   },
   settings: {
     general: 'General',

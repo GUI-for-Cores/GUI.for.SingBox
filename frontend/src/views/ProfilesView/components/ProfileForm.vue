@@ -99,58 +99,60 @@ if (props.isUpdate) {
 </script>
 
 <template>
-  <div class="title">{{ t(stepItems[currentStep].title) }}</div>
+  <div class="title" style="--wails-draggable: drag">{{ t(stepItems[currentStep].title) }}</div>
 
-  <div v-show="currentStep === 0" class="step1">
-    <div class="form-item">
-      <div class="name">* {{ t('profile.name') }}</div>
-      <Input v-model="profile.name" auto-size autofocus style="flex: 1; margin-left: 8px" />
+  <div class="form">
+    <div v-show="currentStep === 0" class="step1">
+      <div class="form-item">
+        <div class="name">{{ t('profile.name') }} *</div>
+        <Input v-model="profile.name" auto-size autofocus style="flex: 1; margin-left: 8px" />
+      </div>
+    </div>
+
+    <div v-show="currentStep === 1" class="step2">
+      <GeneralConfig v-model="profile.generalConfig" />
+      <Divider>
+        <Button type="text" size="small" @click="toggleAdvancedSetting">
+          {{ t('profile.advancedSettings') }}
+        </Button>
+      </Divider>
+      <div v-if="showAdvancedSetting">
+        <AdvancedConfig v-model="profile.advancedConfig" :profile="profile" />
+      </div>
+    </div>
+
+    <div v-show="currentStep === 2" class="step3">
+      <TunConfig v-model="profile.tunConfig" />
+    </div>
+
+    <div v-show="currentStep === 3" class="step4">
+      <ProxyGroupsConfig v-model="profile.proxyGroupsConfig" />
+    </div>
+
+    <div v-show="currentStep === 4" class="step5">
+      <RulesConfig
+        v-model="profile.rulesConfig"
+        :proxy-groups="profile.proxyGroupsConfig"
+        :profile="profile"
+      />
+    </div>
+
+    <div v-show="currentStep === 5" class="step6">
+      <DnsConfig v-model="profile.dnsConfig" 
+      :proxy-groups="profile.proxyGroupsConfig"
+      />
+    </div>
+
+    <div v-show="currentStep === 6" class="step7">
+      <DnsRulesConfig
+        v-model="profile.dnsRulesConfig"
+        :dns-config="profile.dnsConfig"
+        :proxy-groups="profile.proxyGroupsConfig"
+      />
     </div>
   </div>
 
-  <div v-show="currentStep === 1" class="step2">
-    <GeneralConfig v-model="profile.generalConfig" />
-    <Divider>
-      <Button type="text" size="small" @click="toggleAdvancedSetting">
-        {{ t('profile.advancedSettings') }}
-      </Button>
-    </Divider>
-    <div v-if="showAdvancedSetting">
-      <AdvancedConfig v-model="profile.advancedConfig" :profile="profile" />
-    </div>
-  </div>
-
-  <div v-show="currentStep === 2" class="step3">
-    <TunConfig v-model="profile.tunConfig" />
-  </div>
-
-  <div v-show="currentStep === 3" class="step4">
-    <ProxyGroupsConfig v-model="profile.proxyGroupsConfig" />
-  </div>
-
-  <div v-show="currentStep === 4" class="setp5">
-    <RulesConfig
-      v-model="profile.rulesConfig"
-      :proxy-groups="profile.proxyGroupsConfig"
-      :profile="profile"
-    />
-  </div>
-
-  <div v-show="currentStep === 5" class="step6">
-    <DnsConfig v-model="profile.dnsConfig" 
-    :proxy-groups="profile.proxyGroupsConfig"
-    />
-  </div>
-
-  <div v-show="currentStep === 6" class="setp7">
-    <DnsRulesConfig
-      v-model="profile.dnsRulesConfig"
-      :dns-config="profile.dnsConfig"
-      :proxy-groups="profile.proxyGroupsConfig"
-    />
-  </div>
-
-  <div class="action">
+  <div class="form-action">
     <Button @click="handleCancel" type="text">{{ t('common.cancel') }}</Button>
     <Button @click="handlePrevStep" :disable="currentStep == 0" type="text">
       {{ t('common.prevStep') }}
@@ -174,9 +176,9 @@ if (props.isUpdate) {
   font-weight: bold;
   margin: 0 0 16px 0;
 }
-.action {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
+.form {
+  padding: 0 8px;
+  overflow-y: auto;
+  max-height: 60vh;
 }
 </style>

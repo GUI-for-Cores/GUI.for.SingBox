@@ -71,7 +71,7 @@ provide('submit', handleSubmit)
 <template>
   <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
     <div :style="contentStyle" class="modal" style="--wails-draggable: false">
-      <div @dblclick="toggleFullScreen" class="title" style="--wails-draggable: drag">
+      <div v-if="title" @dblclick="toggleFullScreen" class="title" style="--wails-draggable: drag">
         {{ t(title) }}
       </div>
       <div class="content">
@@ -101,12 +101,13 @@ provide('submit', handleSubmit)
   z-index: 999;
 
   .modal {
+    padding-top: 16px;
     display: flex;
     flex-direction: column;
     background-color: var(--modal-bg);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     .title {
-      padding: 16px;
+      padding: 0 16px 16px 16px;
       font-size: 14px;
       font-weight: bold;
     }

@@ -9,9 +9,11 @@ import { usePluginsStore, useAppSettingsStore, type PluginType, type Menu } from
 
 import PluginForm from './components/PluginForm.vue'
 import PluginView from './components/PluginView.vue'
+import PluginHub from './components/PluginHub.vue'
 
 const showPluginForm = ref(false)
 const showPluginView = ref(false)
+const showPluginHub = ref(false)
 const pluginTitle = ref('')
 const pluginFormID = ref()
 const pluginFormIsUpdate = ref(false)
@@ -40,7 +42,7 @@ const pluginsStore = usePluginsStore()
 const appSettingsStore = useAppSettingsStore()
 
 const handleImportPlugin = async () => {
-  message.info('Developing')
+  showPluginHub.value = true
 }
 
 const handleAddPlugin = async () => {
@@ -157,7 +159,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       ]"
     />
     <Button class="ml-auto" @click="handleImportPlugin" type="link">
-      {{ t('common.import') }}
+      {{ t('plugins.hub') }}
     </Button>
     <Button
       @click="handleUpdatePlugins"
@@ -264,7 +266,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
         </span>
       </template>
 
-      <div :class="{ descsription: appSettingsStore.app.pluginsView === View.Grid }">
+      <div :class="{ description: appSettingsStore.app.pluginsView === View.Grid }">
         {{ t('plugin.description') }}
         :
         {{ p.description || '--' }}
@@ -322,6 +324,17 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   >
     <PluginView :id="pluginFormID" />
   </Modal>
+
+  <Modal
+    v-model:open="showPluginHub"
+    title="plugins.hub"
+    :submit="false"
+    cancel-text="common.close"
+    height="90"
+    width="90"
+  >
+    <PluginHub />
+  </Modal>
 </template>
 
 <style lang="less" scoped>
@@ -347,7 +360,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   font-size: 12px;
   line-height: 1.6;
 
-  .descsription {
+  .description {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

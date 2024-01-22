@@ -74,57 +74,58 @@ if (props.isUpdate) {
 </script>
 
 <template>
-  <div class="form-item">
-    <div class="name">
-      {{ t('plugin.type') }}
+  <div class="form">
+    <div class="form-item">
+      <div class="name">
+        {{ t('plugin.type') }}
+      </div>
+      <Radio
+        v-model="plugin.type"
+        :options="[
+          { label: 'plugin.http', value: 'Http' },
+          { label: 'plugin.file', value: 'File' }
+        ]"
+      />
     </div>
-    <Radio
-      v-model="plugin.type"
-      :options="[
-        { label: 'plugin.http', value: 'Http' },
-        { label: 'plugin.file', value: 'File' }
-      ]"
-    />
+    <div class="form-item">
+      {{ t('plugin.install') }}
+      <Switch v-model="plugin.install" />
+    </div>
+    <div class="form-item">
+      <div style="padding-right: 8px">
+        {{ t('plugin.trigger') }}
+      </div>
+      <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions" />
+    </div>
+    <div class="form-item">
+      {{ t('plugin.name') }} *
+      <Input v-model="plugin.name" auto-size autofocus class="input" />
+    </div>
+    <div v-show="plugin.type === 'Http'" class="form-item">
+      <div class="name">{{ t('plugin.url') }} *</div>
+      <Input
+        v-model="plugin.url"
+        :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
+        auto-size
+        class="input"
+      />
+    </div>
+    <div class="form-item">
+      {{ t('plugin.path') }} *
+      <Input
+        v-model="plugin.path"
+        placeholder="data/plugins/plugin-{filename}.js"
+        auto-size
+        autofocus
+        class="input"
+      />
+    </div>
+    <div class="form-item">
+      {{ t('plugin.description') }}
+      <Input v-model="plugin.description" auto-size autofocus class="input" />
+    </div>
   </div>
-  <div class="form-item">
-    {{ t('plugin.trigger') }}
-  </div>
-  <div class="form-item justify-center">
-    <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions" />
-  </div>
-  <div class="form-item">
-    {{ t('plugin.install') }}
-    <Switch v-model="plugin.install" />
-  </div>
-  <div class="form-item">
-    * {{ t('plugin.name') }}
-    <Input v-model="plugin.name" auto-size autofocus class="input" />
-  </div>
-  <div v-show="plugin.type === 'Http'" class="form-item">
-    <div class="name">* {{ t('plugin.url') }}</div>
-    <Input
-      v-model="plugin.url"
-      :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
-      auto-size
-      class="input"
-    />
-  </div>
-  <div class="form-item">
-    * {{ t('plugin.path') }}
-    <Input
-      v-model="plugin.path"
-      placeholder="data/plugins/plugin-{filename}.js"
-      auto-size
-      autofocus
-      class="input"
-    />
-  </div>
-  <div class="form-item">
-    {{ t('plugin.description') }}
-    <Input v-model="plugin.description" auto-size autofocus class="input" />
-  </div>
-
-  <div class="action">
+  <div class="form-action">
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button
       @click="handleSubmit"
@@ -138,18 +139,14 @@ if (props.isUpdate) {
 </template>
 
 <style lang="less" scoped>
+.form {
+  padding: 0 8px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
 .form-item {
-  margin-bottom: 4px;
   .input {
     width: 80%;
   }
-}
-.action {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.justify-center {
-  justify-content: center;
 }
 </style>
