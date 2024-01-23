@@ -23,7 +23,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
     'store-cache': true,
     'store-fake-ip': false
   },
-  domain_strategy: 'prefer_ipv4',
+  domain_strategy: '',
   'tcp-fast-open': false,
   'tcp-multi-path': false,
   'udp-fragment': false,
@@ -47,7 +47,7 @@ export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => {
   return {
     enable: true,
     fakeip: false,
-    strategy: 'prefer_ipv4',
+    strategy: '',
     'local-dns': 'https://223.5.5.5/dns-query',
     'remote-dns': 'tls://8.8.8.8',
     'resolver-dns': '223.5.5.5',
@@ -105,10 +105,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       id: id3,
       tag: t('outbound.direct'),
       type: ProxyGroup.Select,
-      proxies: [
-        { id: 'direct', type: 'built-in', tag: 'direct' },
-        { id: 'block', type: 'built-in', tag: 'block' }
-      ],
+      proxies: [{ id: 'direct', type: 'built-in', tag: 'direct' }],
       use: [],
       url: '',
       interval: 300,
@@ -119,10 +116,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       id: id4,
       tag: t('outbound.block'),
       type: ProxyGroup.Select,
-      proxies: [
-        { id: 'block', type: 'built-in', tag: 'block' },
-        { id: 'direct', type: 'built-in', tag: 'direct' }
-      ],
+      proxies: [{ id: 'block', type: 'built-in', tag: 'block' }],
       use: [],
       url: '',
       interval: 300,
@@ -149,18 +143,8 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
 export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   {
     id: sampleID(),
-    type: 'protocol',
-    payload: 'dns',
-    proxy: 'dns-out',
-    'ruleset-name': '',
-    'ruleset-format': '',
-    'download-detour': '',
-    invert: false
-  },
-  {
-    id: sampleID(),
-    type: 'port',
-    payload: '53',
+    type: 'inline',
+    payload: JSON.stringify({ protocol: 'dns', port: 53 }, null, 2),
     proxy: 'dns-out',
     'ruleset-name': '',
     'ruleset-format': '',
@@ -243,17 +227,6 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'rule_set_url',
     payload:
       'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
-    proxy: t('outbound.direct'),
-    'ruleset-name': 'GEOLOCATION-!CN',
-    'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
-    invert: true
-  },
-  {
-    id: sampleID(),
-    type: 'rule_set_url',
-    payload:
-      'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
     proxy: t('outbound.select'),
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
@@ -325,18 +298,6 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     'disable-cache': false,
     invert: false,
     'ruleset-name': 'GEOSITE-CN',
-    'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct')
-  },
-  {
-    id: sampleID(),
-    type: 'rule_set_url',
-    payload:
-      'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
-    server: 'local-dns',
-    'disable-cache': false,
-    invert: true,
-    'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
     'download-detour': t('outbound.direct')
   },
