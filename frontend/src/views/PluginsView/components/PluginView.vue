@@ -54,14 +54,14 @@ if (p) {
 <template>
   <div class="plugin-view">
     <CodeViewer v-model="code" lang="javascript" editable />
-    <div class="action">
-      <Button @click="handleCancel" :disable="loading">
-        {{ t('common.cancel') }}
-      </Button>
-      <Button @click="handleSave" :loading="loading" type="primary">
-        {{ t('common.save') }}
-      </Button>
-    </div>
+  </div>
+  <div class="form-action">
+    <Button @click="handleCancel" :disable="loading">
+      {{ t('common.cancel') }}
+    </Button>
+    <Button @click="handleSave" :loading="loading" type="primary">
+      {{ t('common.save') }}
+    </Button>
   </div>
 </template>
 
@@ -69,10 +69,8 @@ if (p) {
 .plugin-view {
   display: flex;
   flex-direction: column;
-}
-.action {
-  display: flex;
-  margin-top: 8px;
-  justify-content: flex-end;
+  padding: 0 8px;
+  overflow-y: auto;
+  max-height: 58vh;
 }
 </style>
