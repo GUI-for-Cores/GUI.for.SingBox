@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/wailsapp/wails/v2/pkg/options"
+	R "github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,6 +20,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
 	a.Ctx = ctx
+}
+
+func (a *App) OnSecondInstanceLaunch(secondInstanceData options.SecondInstanceData) {
+	R.WindowUnminimise(*&a.Ctx)
+	R.Show(*&a.Ctx)
+	go R.EventsEmit(*&a.Ctx, "launchArgs", secondInstanceData.Args)
 }
 
 var Env = &EnvResult{

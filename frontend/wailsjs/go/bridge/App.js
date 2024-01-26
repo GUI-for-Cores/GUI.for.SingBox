@@ -66,6 +66,10 @@ export function Movefile(arg1, arg2) {
   return window['go']['bridge']['App']['Movefile'](arg1, arg2);
 }
 
+export function OnSecondInstanceLaunch(arg1) {
+  return window['go']['bridge']['App']['OnSecondInstanceLaunch'](arg1);
+}
+
 export function ProcessInfo(arg1) {
   return window['go']['bridge']['App']['ProcessInfo'](arg1);
 }

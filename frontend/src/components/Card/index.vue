@@ -16,7 +16,7 @@ withDefaults(defineProps<Props>(), {})
       class="header"
     >
       <slot name="title-prefix" />
-      <div v-if="title" class="title">{{ title }}</div>
+      <div v-if="title" v-tips="title" class="title">{{ title }}</div>
       <slot name="title-suffix" />
       <div class="extra">
         <slot name="extra" />

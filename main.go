@@ -54,7 +54,11 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
-		OnStartup:        app.Startup,
+		SingleInstanceLock: &options.SingleInstanceLock{
+			UniqueId:               "GUI.for.Cores-GUI.for.Clash",
+			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
+		},
+		OnStartup: app.Startup,
 		Bind: []interface{}{
 			app,
 		},
