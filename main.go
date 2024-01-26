@@ -55,7 +55,7 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		SingleInstanceLock: &options.SingleInstanceLock{
-			UniqueId:               "GUI.for.Cores-GUI.for.Clash",
+			UniqueId:               "GUI.for.Cores-GUI.for.SingBox",
 			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
 		},
 		OnStartup: app.Startup,
