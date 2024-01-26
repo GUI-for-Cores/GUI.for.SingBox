@@ -15,7 +15,6 @@ export type RuleSetType = {
   format: RulesetFormat
   path: string
   url: string
-  interval: number
   // Not Config
   updating?: boolean
 }

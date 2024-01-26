@@ -27,14 +27,12 @@ const ruleset = ref<RuleSetType>({
   format: RulesetFormat.Binary,
   type: 'Http',
   url: '',
-  interval: 86400,
   path: `data/rulesets/${sampleID()}.srs`,
   disabled: false
 })
 
 const { t } = useI18n()
 const { message } = useMessage()
-const [showMore, toggleShowMore] = useBool(false)
 const rulesetsStore = useRulesetsStore()
 
 const handleCancel = inject('cancel') as any
@@ -136,22 +134,6 @@ if (props.isUpdate) {
         auto-size
         class="input"
       />
-    </div>
-    <Divider v-show="!isManual()">
-      <Button @click="toggleShowMore" type="text" size="small">
-        {{ t('common.more') }}
-      </Button>
-    </Divider>
-    <div v-show="showMore && !isManual()">
-      <div class="form-item">
-        <div class="name">{{ t('ruleset.interval') }}</div>
-        <Input
-          v-model="ruleset.interval"
-          placeholder="data/rulesets/{filename}.srs"
-          auto-size
-          type="number"
-        />
-      </div>
     </div>
   </div>
 
