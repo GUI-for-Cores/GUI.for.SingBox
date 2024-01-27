@@ -11,7 +11,7 @@ import {
   useRulesetsStore,
   usePluginsStore,
   useEnvStore,
-  useApp
+  useAppStore
 } from '@/stores'
 
 import SplashView from '@/views/SplashView.vue'
@@ -19,7 +19,7 @@ import { NavigationBar, MainPage, TitleBar } from '@/components'
 
 const loading = ref(true)
 
-const appStore = useApp()
+const appStore = useAppStore()
 const appSettings = useAppSettingsStore()
 const profilesStore = useProfilesStore()
 const subscribesStore = useSubscribesStore()
@@ -31,17 +31,20 @@ const { message } = useMessage()
 window.Plugins.message = message
 
 appSettings.setupAppSettings().then(async () => {
-  await ignoredError(envStore.setupEnv)
-  await ignoredError(profilesStore.setupProfiles)
-  await ignoredError(subscribesStore.setupSubscribes)
-  await ignoredError(rulesetsStore.setupRulesets)
-  await ignoredError(pluginsStore.setupPlugins)
+  EventsOn('onTrayReady', async () => {
+    appStore.setupTrayMenus()
+  })
+
+  await Promise.all([
+    ignoredError(envStore.setupEnv),
+    ignoredError(profilesStore.setupProfiles),
+    ignoredError(subscribesStore.setupSubscribes),
+    ignoredError(rulesetsStore.setupRulesets),
+    ignoredError(pluginsStore.setupPlugins)
+  ])
+
   await sleep(1000)
   loading.value = false
-
-  EventsOn('onShutdown', async () => {
-    pluginsStore.onShutdownTrigger()
-  })
 
   pluginsStore.onStartupTrigger()
 })

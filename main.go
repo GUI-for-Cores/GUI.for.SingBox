@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"guiforsingbox/bridge"
 
@@ -22,8 +23,6 @@ func main() {
 
 	// Create an instance of the app structure
 	app := bridge.NewApp()
-
-	bridge.CreateTray(app, icon)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -70,7 +69,10 @@ func main() {
 			UniqueId:               "GUI.for.Cores-GUI.for.SingBox",
 			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
 		},
-		OnStartup: app.Startup,
+		OnStartup: func(ctx context.Context) {
+			app.Ctx = ctx
+			bridge.CreateTray(app, icon)
+		},
 		Bind: []interface{}{
 			app,
 		},

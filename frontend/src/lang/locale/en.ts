@@ -35,7 +35,8 @@ export default {
     import: 'Import',
     install: 'Install',
     uninstall: 'Uninstall',
-    run: 'Run'
+    run: 'Run',
+    refresh: 'Refresh'
   },
   kernel: {
     port: 'HTTP(s) Port',
@@ -497,5 +498,19 @@ export default {
     direct: '🎯 Direct',
     block: '🛑 Block',
     fallback: '🐟 Fallback'
+  },  
+  tray: {
+    hide: 'Hide',
+    hideTip: 'Hide Window',
+    show: 'Show',
+    showTip: 'Show Window',
+    restart: 'Restart',
+    restartTip: 'Restart App',
+    exit: 'Exit',
+    exitTip: 'Exit App',
+    setSystemProxy: 'Set System Proxy',
+    clearSystemProxy: 'Clear System Proxy',
+    enableTunMode: 'Enable Tun Mode',
+    disableTunMode: 'Disable Tun Mode'
   }
 }

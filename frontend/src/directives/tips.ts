@@ -1,11 +1,11 @@
 import { type Directive, type DirectiveBinding } from 'vue'
 
-import { useApp } from '@/stores'
 import { debounce } from '@/utils'
+import { useAppStore } from '@/stores'
 
 export default {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
-    const appStore = useApp()
+    const appStore = useAppStore()
 
     const delay = binding.modifiers.fast ? 200 : 500
 
@@ -28,7 +28,7 @@ export default {
     }
   },
   beforeUnmount(el: HTMLElement) {
-    const appStore = useApp()
+    const appStore = useAppStore()
     appStore.tipsShow = false
     el.dataset.showTips = 'false'
   }

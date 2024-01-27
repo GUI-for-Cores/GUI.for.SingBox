@@ -1,7 +1,9 @@
-import * as App from '@wails/go/bridge/App'
-export * from '@wails/runtime/runtime'
 import { sampleID } from './others'
+export * from '@wails/runtime/runtime'
+import type { MenuItem, TrayContent } from '@/constant'
+import * as App from '@wails/go/bridge/App'
 import { EventsOn, EventsOff } from '@wails/runtime/runtime'
+import i18n from '@/lang'
 
 export const Writefile = async (path: string, content: string) => {
   const { flag, data } = await App.Writefile(path, content)
@@ -239,10 +241,24 @@ export const DeleteSchTask = async (taskName: string) => {
   return data
 }
 
-export const RestartApp = async () => {
-  const { flag, data } = await App.RestartApp()
-  if (!flag) {
-    throw data
-  }
-  return data
+export const RestartApp = App.RestartApp
+
+export const ExitApp = App.ExitApp
+
+export const UpdateTrayMenus = async (menus: MenuItem[]) => {
+  const { t } = i18n.global
+  const _menus = menus.map((menu) => {
+    const { type = '', text = '', tooltip = '', event = '', children = [] } = menu
+    return { type, text: t(text), tooltip, event, children }
+  })
+  await App.UpdateTrayMenus(_menus as any)
+}
+
+export const UpdateTray = async (tray: TrayContent) => {
+  const { icon = '', title = '', tooltip = '' } = tray
+  await App.UpdateTray({
+    icon,
+    title,
+    tooltip
+  })
 }

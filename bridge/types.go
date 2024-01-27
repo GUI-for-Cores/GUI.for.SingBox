@@ -30,11 +30,20 @@ type HTTPResult struct {
 }
 
 type AppConfig struct {
-	Lang              string `yaml:"lang"`
-	WindowStartState  int    `yaml:"windowStartState"`
-	CloseKernelOnExit bool   `yaml:"closeKernelOnExit"`
-	UserAgent         string `yaml:"userAgent"`
-	Kernel            struct {
-		Pid int32 `yaml:"pid"`
-	} `yaml:"kernel"`
+	WindowStartState int    `yaml:"windowStartState"`
+	UserAgent        string `yaml:"userAgent"`
+}
+
+type MenuItem struct {
+	Type    string     `json:"type"` // Menu Type: item / separator
+	Text    string     `json:"text"`
+	Tooltip string     `json:"tooltip"`
+	Event   string     `json:"event"`
+	Childen []MenuItem `json:"children"`
+}
+
+type TrayContents struct {
+	Icon    string `json:"icon"`
+	Title   string `json:"title"`
+	Tooltip string `json:"tooltip"`
 }

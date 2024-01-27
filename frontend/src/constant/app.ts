@@ -82,3 +82,17 @@ export const PluginsTriggerOptions = [
   { label: 'plugin.on::startup', value: PluginTrigger.OnStartup },
   { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown }
 ]
+
+export type MenuItem = {
+  type: string
+  text?: string
+  tooltip?: string
+  event?: (() => void) | string
+  children?: MenuItem[]
+}
+
+export type TrayContent = {
+  icon?: string
+  title?: string
+  tooltip?: string
+}

@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 
 import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
+import { KernelRunning, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
+import { deepClone } from '@/utils/others'
+import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
 import {
   KernelWorkDirectory,
   getKernelFileName,
@@ -14,11 +17,9 @@ import {
   useAppSettingsStore,
   useProfilesStore,
   useLogsStore,
-  useEnvStore
+  useEnvStore,
+  useAppStore
 } from '@/stores'
-import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
-import { KernelRunning, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
-import { deepClone } from '@/utils/others'
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
   /** RESTful API */
@@ -40,15 +41,12 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   })
 
   const proxies = ref<Record<string, Proxy>>({})
-  const providers = ref<
-    Record<
-      string,
-      {
-        name: string
-        proxies: Proxy[]
-      }
-    >
-  >({})
+  const providers = ref<{
+    [key: string]: {
+      name: string
+      proxies: Proxy[]
+    }
+  }>({})
 
   const currentProfile = ref<ProfileType>()
   const keepConfig = ref<boolean>(false)
@@ -213,6 +211,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const startKernel = async () => {
+    const appStore = useAppStore()
     const envStore = useEnvStore()
     const logsStore = useLogsStore()
     const profilesStore = useProfilesStore()

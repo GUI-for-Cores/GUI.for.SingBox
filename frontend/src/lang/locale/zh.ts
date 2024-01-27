@@ -35,7 +35,8 @@ export default {
     import: '导入',
     install: '安装',
     uninstall: '卸载',
-    run: '运行'
+    run: '运行',
+    refresh: '刷新'
   },
   kernel: {
     port: 'HTTP(s)代理端口',
@@ -497,5 +498,19 @@ export default {
     direct: '🎯 全球直连',
     block: '🛑 全球拦截',
     fallback: '🐟 漏网之鱼'
+  },
+  tray: {
+    hide: '隐藏',
+    hideTip: '隐藏窗口',
+    show: '显示',
+    showTip: '显示窗口',
+    restart: '重启',
+    restartTip: '重启程序',
+    exit: '退出',
+    exitTip: '退出程序',
+    setSystemProxy: '设置系统代理',
+    clearSystemProxy: '清除系统代理',
+    enableTunMode: '启用系统代理',
+    disableTunMode: '禁用系统代理'
   }
 }

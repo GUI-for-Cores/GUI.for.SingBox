@@ -1,10 +1,10 @@
 import type { Directive, DirectiveBinding } from 'vue'
 
-import { useApp } from '@/stores'
+import { useAppStore } from '@/stores'
 
 export default {
   mounted(el: any, binding: DirectiveBinding) {
-    const appStore = useApp()
+    const appStore = useAppStore()
 
     el.oncontextmenu = (e: MouseEvent) => {
       e.preventDefault()

@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { APP_TITLE, APP_VERSION, APP_CHANNEL, ignoredError, sleep } from '@/utils'
-import {
-  type Menu,
-  useAppSettingsStore,
-  useKernelApiStore,
-  usePluginsStore,
-  useEnvStore
-} from '@/stores'
+import { APP_TITLE, APP_VERSION, APP_CHANNEL} from '@/utils'
+import { type Menu, useAppSettingsStore, useKernelApiStore, useEnvStore, useAppStore } from '@/stores'
 import {
   WindowFullscreen,
   WindowIsFullscreen,
   WindowUnfullscreen,
   WindowSetAlwaysOnTop,
   WindowHide,
-  Quit,
-  KernelRunning,
-  KillProcess,
-  ClearSystemProxy,
   WindowSetSize,
   WindowCenter,
   WindowReloadApp
@@ -29,8 +19,8 @@ const isFullScreen = ref(false)
 
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
-const pluginsStore = usePluginsStore()
 const envStore = useEnvStore()
+const appStore = useAppStore()
 
 const toggleFullScreen = async () => {
   const isFull = await WindowIsFullscreen()
@@ -44,24 +34,8 @@ const pinWindow = () => {
 }
 
 const closeWindow = async () => {
-  const {
-    exitOnClose,
-    closeKernelOnExit,
-    kernel: { pid }
-  } = appSettingsStore.app
-
-  if (exitOnClose && closeKernelOnExit) {
-    await ClearSystemProxy()
-    const running = await ignoredError<boolean>(KernelRunning, pid)
-    if (running) {
-      await ignoredError(KillProcess, pid)
-    }
-  }
-
-  if (exitOnClose) {
-    pluginsStore.onShutdownTrigger()
-    await sleep(500)
-    Quit()
+  if (appSettingsStore.app.exitOnClose) {
+    appStore.exitApp()
   } else {
     WindowHide()
   }

@@ -34,6 +34,10 @@ export function ExecBackground(arg1, arg2, arg3, arg4) {
   return window['go']['bridge']['App']['ExecBackground'](arg1, arg2, arg3, arg4);
 }
 
+export function ExitApp() {
+  return window['go']['bridge']['App']['ExitApp']();
+}
+
 export function FileExists(arg1) {
   return window['go']['bridge']['App']['FileExists'](arg1);
 }
@@ -104,6 +108,14 @@ export function UnzipGZFile(arg1, arg2) {
 
 export function UnzipZIPFile(arg1, arg2) {
   return window['go']['bridge']['App']['UnzipZIPFile'](arg1, arg2);
+}
+
+export function UpdateTray(arg1) {
+  return window['go']['bridge']['App']['UpdateTray'](arg1);
+}
+
+export function UpdateTrayMenus(arg1) {
+  return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
 }
 
 export function Writefile(arg1, arg2) {
