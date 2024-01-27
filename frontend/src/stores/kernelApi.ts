@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
-import { KernelRunning, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
+import { ProcessInfo, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
 import { deepClone } from '@/utils/others'
 import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
 import {
@@ -27,17 +27,15 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     port: 0,
     'mixed-port': 0,
     'socks-port': 0,
-    'log-level': '',
+    'interface-name': '',
     'allow-lan': false,
     mode: '',
-    'interface-name': '',
+    fakeip: false,
     tun: {
       enable: false,
       stack: 'System',
-      'auto-route': true,
       device: ''
-    },
-    fakeip: false
+    }
   })
 
   const proxies = ref<Record<string, Proxy>>({})
@@ -65,14 +63,12 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         result.advancedConfig.port = config.value.port
         result.generalConfig['mixed-port'] = config.value['mixed-port']
         result.advancedConfig['socks-port'] = config.value['socks-port']
-        result.generalConfig['log-level'] = config.value['log-level']
         result.generalConfig['allow-lan'] = config.value['allow-lan']
         result.generalConfig['interface-name'] = config.value['interface-name']
         result.dnsConfig.fakeip = config.value.fakeip
         if (config.value.tun.device) {
           result.tunConfig.enable = config.value.tun.enable
           result.tunConfig.stack = config.value.tun.stack
-          result.tunConfig['auto-route'] = config.value.tun['auto-route']
           result.tunConfig.interface_name = config.value.tun.device
         }
       }
@@ -91,7 +87,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value.port = currentProfile.value.advancedConfig.port
     config.value['mixed-port'] = currentProfile.value.generalConfig['mixed-port']
     config.value['socks-port'] = currentProfile.value.advancedConfig['socks-port']
-    config.value['log-level'] = currentProfile.value.generalConfig['log-level']
     config.value['allow-lan'] = currentProfile.value.generalConfig['allow-lan']
     try {
       config.value.mode = (await getConfigs()).mode
@@ -103,7 +98,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value.tun = {
       enable: currentProfile.value.tunConfig.enable,
       stack: currentProfile.value.tunConfig.stack,
-      'auto-route': currentProfile.value.tunConfig['auto-route'],
       device: currentProfile.value.tunConfig.interface_name
     }
   }
@@ -173,7 +167,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         config.value.mode = latestConfig.experimental.clash_api.default_mode
       }
 
-      config.value['log-level'] = latestConfig.log.level
       config.value.fakeip = latestConfig.dns.fakeip.enabled
       if (latestConfig.route.auto_detect_interface) config.value['interface-name'] = 'Auto'
       else if (latestConfig.route.default_interface)
@@ -184,7 +177,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         config.value.tun = {
           enable: true,
           stack: stackName,
-          'auto-route': inbound_tun.auto_route,
           device: inbound_tun.interface_name
         }
       }
@@ -197,15 +189,22 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
   /* Bridge API */
   const loading = ref(false)
+  const statusLoading = ref(true)
+
+  const isKernelRunning = async (pid: number) => {
+    return pid && (await ProcessInfo(pid)).startsWith('sing-box')
+  }
 
   const updateKernelStatus = async () => {
     const appSettingsStore = useAppSettingsStore()
 
-    const { pid } = appSettingsStore.app.kernel
-
-    const running = await ignoredError(KernelRunning, pid)
+    const running = await ignoredError(isKernelRunning, appSettingsStore.app.kernel.pid)
 
     appSettingsStore.app.kernel.running = !!running
+
+    if (!appSettingsStore.app.kernel.running) {
+      appSettingsStore.app.kernel.pid = 0
+    }
 
     return appSettingsStore.app.kernel.running
   }
@@ -217,7 +216,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     const profilesStore = useProfilesStore()
     const appSettingsStore = useAppSettingsStore()
 
-    const { profile: profileID, branch, pid } = appSettingsStore.app.kernel
+    const { profile: profileID, branch } = appSettingsStore.app.kernel
 
     if (!profileID) throw 'Choose a profile first'
 
@@ -225,28 +224,20 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     if (!profile) throw 'Profile does not exist: ' + profileID
 
-    logsStore.clearKernelLog()
+    await stopKernel()
 
     if (!keepConfig.value) {
       await generateConfigFile(profile)
       currentProfile.value = deepClone(profile)
     }
 
-    if (pid) {
-      const running = await ignoredError(KernelRunning, pid)
-      if (running) {
-        await ignoredError(KillProcess, pid)
-        appSettingsStore.app.kernel.running = false
-      }
-    }
-
     const fileName = await getKernelFileName(branch === 'latest')
-
     const kernelFilePath = KernelWorkDirectory + '/' + fileName
-
     const kernelWorkDir = envStore.env.basePath + '/' + KernelWorkDirectory
 
-    const _pid = await ExecBackground(
+    loading.value = true
+
+    const pid = await ExecBackground(
       kernelFilePath,
       ['run', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
       // stdout
@@ -254,15 +245,17 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         logsStore.recordKernelLog(out)
         if (out.toLowerCase().includes('sing-box started')) {
           loading.value = false
+          appSettingsStore.app.kernel.pid = pid
           appSettingsStore.app.kernel.running = true
 
           await refreshConfig()
-          await envStore.updateSystemProxyState()
 
           // Automatically set system proxy, but the priority is lower than tun mode
           if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
             await envStore.setSystemProxy()
           }
+
+          appStore.updateTrayMenus()
         }
       },
       // end
@@ -274,24 +267,27 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         if (appSettingsStore.app.autoSetSystemProxy) {
           await envStore.clearSystemProxy()
         }
+
+        appStore.updateTrayMenus()
       }
     )
-
-    loading.value = true
-
-    appSettingsStore.app.kernel.pid = _pid
   }
 
   const stopKernel = async () => {
+    const appStore = useAppStore()
     const logsStore = useLogsStore()
     const appSettingsStore = useAppSettingsStore()
 
-    await ignoredError(KillProcess, appSettingsStore.app.kernel.pid)
+    const { pid } = appSettingsStore.app.kernel
+    const running = await ignoredError(isKernelRunning, pid)
+    running && (await KillProcess(pid))
 
-    appSettingsStore.app.kernel.running = false
     appSettingsStore.app.kernel.pid = 0
+    appSettingsStore.app.kernel.running = false
 
     logsStore.clearKernelLog()
+
+    appStore.updateTrayMenus()
   }
 
   const restartKernelKeepConfig = async () => {
@@ -312,6 +308,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     restartKernel,
     updateKernelStatus,
     loading,
+    statusLoading,
     config,
     proxies,
     providers,

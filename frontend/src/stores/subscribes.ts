@@ -12,7 +12,7 @@ import {
   AbsolutePath
 } from '@/utils/bridge'
 import { SubscribesFilePath } from '@/constant'
-import { deepClone, debounce, isValidSubJson, sampleID } from '@/utils'
+import { deepClone, debounce, sampleID, APP_TITLE } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'
 
 export type SubscribeType = {
@@ -62,6 +62,30 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       subscribes.value.pop()
       throw error
     }
+  }
+
+  const importSubscribe = async (name: string, url: string) => {
+    const id = sampleID()
+    await addSubscribe({
+      id: id,
+      name: name,
+      upload: 0,
+      download: 0,
+      total: 0,
+      expire: '',
+      updateTime: '',
+      type: 'Http',
+      convert: true,
+      url: url,
+      website: '',
+      path: `data/subscribes/${id}.json`,
+      include: '',
+      exclude: '',
+      proxyPrefix: '',
+      disabled: false,
+      userAgent: APP_TITLE,
+      proxies: []
+    })
   }
 
   const deleteSubscribe = async (id: string) => {
@@ -324,6 +348,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     deleteSubscribe,
     updateSubscribe,
     updateSubscribes,
-    getSubscribeById
+    getSubscribeById,
+    importSubscribe
   }
 })

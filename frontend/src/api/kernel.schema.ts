@@ -3,16 +3,14 @@ export type KernelApiConfig = {
   'socks-port': number
   'mixed-port': number
   'interface-name': string
+  'allow-lan': boolean
+  mode: string
+  fakeip: boolean
   tun: {
     enable: boolean
     stack: string
-    'auto-route': boolean
     device: string
   }
-  'allow-lan': boolean
-  mode: string
-  'log-level': string,
-  fakeip: boolean
 }
 
 export type Proxy = {

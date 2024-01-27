@@ -35,11 +35,12 @@ type AppConfig struct {
 }
 
 type MenuItem struct {
-	Type    string     `json:"type"` // Menu Type: item / separator
-	Text    string     `json:"text"`
-	Tooltip string     `json:"tooltip"`
-	Event   string     `json:"event"`
-	Childen []MenuItem `json:"children"`
+	Type     string     `json:"type"` // Menu Type: item / separator
+	Text     string     `json:"text"`
+	Tooltip  string     `json:"tooltip"`
+	Event    string     `json:"event"`
+	Children []MenuItem `json:"children"`
+	Show     bool       `json:"show"`
 }
 
 type TrayContents struct {

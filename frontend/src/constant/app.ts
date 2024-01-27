@@ -84,11 +84,12 @@ export const PluginsTriggerOptions = [
 ]
 
 export type MenuItem = {
-  type: string
+  type: 'item' | 'separator'
   text?: string
   tooltip?: string
   event?: (() => void) | string
   children?: MenuItem[]
+  show?: boolean
 }
 
 export type TrayContent = {

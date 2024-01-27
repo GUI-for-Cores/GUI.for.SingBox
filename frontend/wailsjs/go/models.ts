@@ -54,6 +54,7 @@ export namespace bridge {
 	    tooltip: string;
 	    event: string;
 	    children: MenuItem[];
+	    show: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MenuItem(source);
@@ -66,6 +67,7 @@ export namespace bridge {
 	        this.tooltip = source["tooltip"];
 	        this.event = source["event"];
 	        this.children = this.convertValues(source["children"], MenuItem);
+	        this.show = source["show"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

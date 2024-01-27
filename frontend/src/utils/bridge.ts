@@ -1,9 +1,8 @@
 import { sampleID } from './others'
 export * from '@wails/runtime/runtime'
-import type { MenuItem, TrayContent } from '@/constant'
 import * as App from '@wails/go/bridge/App'
+import type { TrayContent } from '@/constant'
 import { EventsOn, EventsOff } from '@wails/runtime/runtime'
-import i18n from '@/lang'
 
 export const Writefile = async (path: string, content: string) => {
   const { flag, data } = await App.Writefile(path, content)
@@ -148,13 +147,12 @@ export const ExecBackground = async (
   return Number(data)
 }
 
-export const KernelRunning = async (pid: number) => {
-  if (pid === 0) return false
+export const ProcessInfo = async (pid: number) => {
   const { flag, data } = await App.ProcessInfo(pid)
   if (!flag) {
     throw data
   }
-  return data.startsWith('sing-box')
+  return data
 }
 
 export const KillProcess = async (pid: number) => {
@@ -245,14 +243,7 @@ export const RestartApp = App.RestartApp
 
 export const ExitApp = App.ExitApp
 
-export const UpdateTrayMenus = async (menus: MenuItem[]) => {
-  const { t } = i18n.global
-  const _menus = menus.map((menu) => {
-    const { type = '', text = '', tooltip = '', event = '', children = [] } = menu
-    return { type, text: t(text), tooltip, event, children }
-  })
-  await App.UpdateTrayMenus(_menus as any)
-}
+export const UpdateTrayMenus = App.UpdateTrayMenus
 
 export const UpdateTray = async (tray: TrayContent) => {
   const { icon = '', title = '', tooltip = '' } = tray

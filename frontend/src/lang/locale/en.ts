@@ -511,6 +511,11 @@ export default {
     setSystemProxy: 'Set System Proxy',
     clearSystemProxy: 'Clear System Proxy',
     enableTunMode: 'Enable Tun Mode',
-    disableTunMode: 'Disable Tun Mode'
+    disableTunMode: 'Disable Tun Mode',
+    kernel: 'Kernel',
+    proxy: 'System Proxy',
+    startKernel: 'Start Kernel',
+    stopKernel: 'Stop Kernel',
+    restartKernel: 'Restart Kernel'
   }
 }

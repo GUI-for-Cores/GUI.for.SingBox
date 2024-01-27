@@ -511,6 +511,11 @@ export default {
     setSystemProxy: '设置系统代理',
     clearSystemProxy: '清除系统代理',
     enableTunMode: '启用系统代理',
-    disableTunMode: '禁用系统代理'
+    disableTunMode: '禁用系统代理',
+    kernel: '内核管理',
+    proxy: '系统代理',
+    startKernel: '开启内核',
+    stopKernel: '关闭内核',
+    restartKernel: '重启内核'
   }
 }
