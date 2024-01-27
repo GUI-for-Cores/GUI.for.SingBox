@@ -14,7 +14,8 @@ import {
   Movefile,
   Removefile,
   GetEnv,
-  Makedir
+  Makedir,
+  UnzipGZFile
 } from '@/utils/bridge'
 
 const releaseUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
@@ -59,7 +60,7 @@ const downloadCore = async () => {
     const { assets, name, message: msg } = json
     if (msg) throw msg
 
-    const suffix = { windows: '.zip', linux: '.gz' }[os]
+    const suffix = { windows: '.zip', linux: '.gz', darwin: '.gz' }[os]
     const assetName = `sing-box-${name}-${os}-${arch}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
@@ -82,7 +83,7 @@ const downloadCore = async () => {
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
     } else {
-      // TODO: unzip gz
+      await UnzipGZFile(tmp, kernelFilePath)
     }
 
     const tmp_path = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}`
@@ -115,7 +116,7 @@ const downloadLatestCore = async () => {
     const { assets, name, message: msg } = json[0]
     if (msg) throw msg
 
-    const suffix = { windows: '.zip', linux: '.gz' }[os]
+    const suffix = { windows: '.zip', linux: '.gz', darwin: '.gz' }[os]
     const assetName = `sing-box-${name}-${os}-${arch}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
@@ -138,7 +139,7 @@ const downloadLatestCore = async () => {
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
     } else {
-      // TODO: unzip gz
+      await UnzipGZFile(tmp, latestKernelFilePath)
     }
 
     const tmp_path = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}`

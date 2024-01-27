@@ -10,13 +10,14 @@ import (
 	"strings"
 	"time"
 )
+
 func CreateHttpClient(a *App) *http.Client {
-	systemProxy := a.GetSystemProxy() 
+	systemProxy := a.GetSystemProxy()
 	if systemProxy.Flag && len(systemProxy.Data) > 0 {
 		if !strings.HasPrefix(systemProxy.Data, "http") {
 			systemProxy.Data = "http://" + systemProxy.Data
 		}
-		proxyUrl, err := url.Parse(systemProxy.Data) 
+		proxyUrl, err := url.Parse(systemProxy.Data)
 		if err == nil {
 			return &http.Client{
 				Timeout: 15 * time.Second,
@@ -30,8 +31,8 @@ func CreateHttpClient(a *App) *http.Client {
 	return &http.Client{
 		Timeout: 15 * time.Second,
 		Transport: &http.Transport{
-            Proxy: http.ProxyFromEnvironment,
-        },
+			Proxy: http.ProxyFromEnvironment,
+		},
 	}
 }
 

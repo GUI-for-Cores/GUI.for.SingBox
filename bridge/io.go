@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"os"
@@ -187,6 +188,45 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
+func (a *App) UnzipGZFile(path string, output string) FlagResult {
+	fmt.Println("UnzipGZFile:", path, output)
+
+	path, err := GetPath(path)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	output, err = GetPath(output)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	gzipFile, err := os.Open(path)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer gzipFile.Close()
+
+	outputFile, err := os.Create(output)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer outputFile.Close()
+
+	gzipReader, err := gzip.NewReader(gzipFile)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer gzipReader.Close()
+
+	_, err = io.Copy(outputFile, gzipReader)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, "Success"}
+}
+
 func (a *App) FileExists(path string) FlagResult {
 	fmt.Println("FileExists:", path)
 	
@@ -195,10 +235,10 @@ func (a *App) FileExists(path string) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 	_, err = os.Stat(path)
-    if err == nil {
-        return FlagResult{true, "true"}
-    } else if os.IsNotExist(err) {
-        return FlagResult{true, "false"}
-    } 
+	if err == nil {
+		return FlagResult{true, "true"}
+	} else if os.IsNotExist(err) {
+		return FlagResult{true, "false"}
+	}
 	return FlagResult{false, err.Error()}
 }

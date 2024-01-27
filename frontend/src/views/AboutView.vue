@@ -88,7 +88,7 @@ const checkForUpdates = async (showTips = false) => {
     const { tag_name, assets, message: msg } = json
     if (msg) throw msg
 
-    const suffix = { windows: '.exe', linux: '' }[os]
+    const suffix = { windows: '.exe', linux: '', darwin: '' }[os]
     const assetName = `GUI.for.SingBox-${os}-${arch}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)

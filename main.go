@@ -7,6 +7,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
@@ -31,7 +32,7 @@ func main() {
 		Height:        540,
 		MinWidth:      600,
 		MinHeight:     400,
-		Frameless:     true,
+		Frameless:     bridge.Env.OS == "windows",
 		DisableResize: false,
 		StartHidden: func() bool {
 			if bridge.Env.FromTaskSch {
@@ -50,6 +51,17 @@ func main() {
 			WindowIsTranslucent:  true,
 			BackdropType:         windows.Acrylic,
 		},
+		Mac: &mac.Options{
+			TitleBar:             mac.TitleBarHiddenInset(),
+			Appearance:           mac.DefaultAppearance,
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			About: &mac.AboutInfo{
+				Title:   "GUI.for.SingBox",
+				Message: "© 2024 GUI.for.Cores",
+				Icon:    icon,
+			},
+		},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -61,9 +73,6 @@ func main() {
 		OnStartup: app.Startup,
 		Bind: []interface{}{
 			app,
-		},
-		Debug: options.Debug{
-			OpenInspectorOnStartup: bridge.Config.OpenInspectorOnStartup,
 		},
 	})
 

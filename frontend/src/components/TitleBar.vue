@@ -2,7 +2,13 @@
 import { ref } from 'vue'
 
 import { APP_TITLE, APP_VERSION, APP_CHANNEL, ignoredError, sleep } from '@/utils'
-import { type Menu, useAppSettingsStore, useKernelApiStore, usePluginsStore } from '@/stores'
+import {
+  type Menu,
+  useAppSettingsStore,
+  useKernelApiStore,
+  usePluginsStore,
+  useEnvStore
+} from '@/stores'
 import {
   WindowFullscreen,
   WindowIsFullscreen,
@@ -24,6 +30,7 @@ const isFullScreen = ref(false)
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 const pluginsStore = usePluginsStore()
+const envStore = useEnvStore()
 
 const toggleFullScreen = async () => {
   const isFull = await WindowIsFullscreen()
@@ -78,7 +85,12 @@ const menus: Menu[] = [
 </script>
 
 <template>
-  <div @dblclick="toggleFullScreen" class="titlebar" style="--wails-draggable: drag">
+  <div
+    v-if="envStore.env.os === 'windows'"
+    @dblclick="toggleFullScreen"
+    class="titlebar"
+    style="--wails-draggable: drag"
+  >
     <img class="logo" draggable="false" src="@/assets/logo.png" />
     <div
       :style="{
@@ -104,6 +116,18 @@ const menus: Menu[] = [
         <Icon icon="close" />
       </Button>
     </div>
+  </div>
+  <div v-else class="placeholder" style="--wails-draggable: drag">
+    <div
+      :style="{
+        color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)'
+      }"
+      v-menu="menus"
+      class="appname"
+    >
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ APP_CHANNEL === 'Stable' ? '' : APP_CHANNEL }}
+    </div>
+    <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
   </div>
 </template>
 
@@ -144,6 +168,16 @@ const menus: Menu[] = [
     &:hover {
       background-color: var(--hover-bg-color);
     }
+  }
+}
+.placeholder {
+  user-select: none;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .appname {
+    font-size: 12px;
   }
 }
 </style>
