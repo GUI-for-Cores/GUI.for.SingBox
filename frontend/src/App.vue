@@ -27,9 +27,9 @@ window.Plugins.message = message
 EventsOn('launchArgs', async (args: string[]) => {
   console.log('launchArgs', args)
   const url = new URL(args[0])
-  if (url.pathname === '//install-config/') {
+  if (url.pathname.startsWith('//import-remote-profile')) {
     const _url = url.searchParams.get('url')
-    const _name = url.searchParams.get('name') || sampleID()
+    const _name = decodeURIComponent(url.hash).slice(1) || sampleID()
 
     if (!_url) {
       message.info('URL missing')
