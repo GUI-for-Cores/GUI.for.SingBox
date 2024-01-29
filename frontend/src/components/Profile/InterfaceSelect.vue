@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import { GetInterfaces } from '@/utils/bridge'
 
@@ -21,6 +21,13 @@ const onChange = (val: string) => {
   emits('update:modelValue', val)
   emits('change', val)
 }
+
+watch(
+  () => props.modelValue,
+  (v) => {
+    value.value = v
+  }
+)
 
 GetInterfaces().then((res) => {
   options.value = [

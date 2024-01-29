@@ -84,7 +84,6 @@ const onSystemProxySwitchChange = async (enable: boolean) => {
   try {
     await envStore.switchSystemProxy(enable)
     // await kernelApiStore.updateConfig('tun', false)
-    // await kernelApiStore.refreshConfig()
   } catch (error: any) {
     console.error(error)
     message.info(error)

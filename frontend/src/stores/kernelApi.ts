@@ -102,37 +102,45 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   }
 
-  const patchConfig = async (options: Record<string, any>) => {
-    await setConfigs(options)
+  const patchConfig = async (name: string, value: any) => {
+    await updateCurrentProfile(name, value)
+    await setConfigs({name: value})
+  }
+
+  const updateCurrentProfile = async (name: string, value: any) => {
+      if (!currentProfile.value) {
+        return
+      }
+
+      if (name == 'tun') {
+        currentProfile.value.tunConfig.enable = value
+      } else if (name == 'http-port') {
+        currentProfile.value.advancedConfig.port = value
+      } else if (name == 'socks-port') {
+        currentProfile.value.advancedConfig['socks-port'] = value
+      } else if (name == 'mixed-port') {
+        currentProfile.value.generalConfig['mixed-port'] = value
+      } else if (name == 'allow-lan') {
+        currentProfile.value.generalConfig['allow-lan'] = value
+      } else if (name == 'tun-stack') {
+        currentProfile.value.tunConfig.stack = value
+      } else if (name == 'tun-device') {
+        currentProfile.value.tunConfig.interface_name = value
+      } else if (name == 'interface-name') {
+        currentProfile.value.generalConfig['interface-name'] = value
+      } else if (name == 'mode') {
+        currentProfile.value.generalConfig.mode = value
+      } else if (name == 'fakeip') {
+        currentProfile.value.dnsConfig.fakeip = value
+      }
   }
 
   const updateConfig = async (name: string, value: any) => {
-    if (!currentProfile.value) {
-      return
+    updateCurrentProfile(name, value)
+    if(currentProfile.value)
+    {
+      await generateConfigFile(currentProfile.value)
     }
-
-    if (name == 'tun') {
-      currentProfile.value.tunConfig.enable = value
-    } else if (name == 'http-port') {
-      currentProfile.value.advancedConfig.port = value
-    } else if (name == 'socks-port') {
-      currentProfile.value.advancedConfig['socks-port'] = value
-    } else if (name == 'mixed-port') {
-      currentProfile.value.generalConfig['mixed-port'] = value
-    } else if (name == 'allow-lan') {
-      currentProfile.value.generalConfig['allow-lan'] = value
-    } else if (name == 'tun-stack') {
-      currentProfile.value.tunConfig.stack = value
-    } else if (name == 'tun-device') {
-      currentProfile.value.tunConfig.interface_name = value
-    } else if (name == 'interface-name') {
-      currentProfile.value.generalConfig['interface-name'] = value
-    } else if (name == 'mode') {
-      currentProfile.value.generalConfig.mode = value
-    } else if (name == 'fakeip') {
-      currentProfile.value.dnsConfig.fakeip = value
-    }
-    await generateConfigFile(currentProfile.value)
     await restartKernelKeepConfig()
   }
 

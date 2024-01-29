@@ -70,12 +70,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
       />
     </Card>
     <Card :title="t('kernel.tun.interface_name')" class="card-item">
-      <Input
-        v-model="kernelApiStore.config.tun.device"
-        @submit="onTunDeviceSubmit"
-        editable
-        disabled
-      />
+      <Input v-model="kernelApiStore.config.tun.device" @submit="onTunDeviceSubmit" editable />
     </Card>
     <Card :title="t('kernel.interface-name')" class="card-item">
       <InterfaceSelect

@@ -29,13 +29,11 @@ const isActiveMode = (mode: string) => kernelApiStore.config.mode === mode
 const handleChangeMode = async (mode: string) => {
   if (mode === kernelApiStore.config.mode) return
 
-  kernelApiStore.patchConfig({ mode })
+  kernelApiStore.patchConfig('mode', mode)
 
   const { connections } = await getConnections()
   const promises = (connections || []).map((v) => deleteConnection(v.id))
   await Promise.all(promises)
-
-  kernelApiStore.refreshConfig()
 }
 
 const onConnections = (data: any) => {
