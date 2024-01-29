@@ -58,7 +58,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     userAgent: APP_TITLE,
     startupDelay: 30,
     kernel: {
-      branch: 'latest',
+      branch: 'main',
       profile: '',
       pid: 0,
       running: false,
