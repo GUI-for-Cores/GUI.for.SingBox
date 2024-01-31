@@ -30,7 +30,6 @@ const handleSave = async () => {
   try {
     await Writefile(plugin.value.path, code.value)
     await pluginsStore.reloadPlugin(plugin.value, code.value)
-    message.info('common.success')
     handleSubmit()
   } catch (error: any) {
     message.info(error)

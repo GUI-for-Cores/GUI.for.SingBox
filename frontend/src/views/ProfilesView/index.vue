@@ -125,7 +125,6 @@ const handleDeleteProfile = async (p: ProfileType) => {
 
   try {
     await profilesStore.deleteProfile(p.id)
-    message.info('common.success')
   } catch (error: any) {
     console.error('deleteProfile: ', error)
     message.info(error)

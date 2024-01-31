@@ -2,7 +2,6 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useBool } from '@/hooks'
 import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
 import { type RuleSetType, useRulesetsStore } from '@/stores'

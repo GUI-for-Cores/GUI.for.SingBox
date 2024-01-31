@@ -71,7 +71,7 @@ func main() {
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
-			bridge.CreateTray(app, icon)
+			bridge.CreateTray(app, icon, assets)
 		},
 		Bind: []interface{}{
 			app,

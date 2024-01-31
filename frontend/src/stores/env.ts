@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { useKernelApiStore, useAppStore } from '@/stores'
-import { SetSystemProxy, GetEnv, ClearSystemProxy, GetSystemProxy } from '@/utils/bridge'
+import { SetSystemProxy, ClearSystemProxy, GetSystemProxy, GetEnv } from '@/utils/bridge'
 
 export const useEnvStore = defineStore('env', () => {
   const env = ref({

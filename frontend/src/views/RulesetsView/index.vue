@@ -72,7 +72,6 @@ const handleUpdateRuleset = async (r: RuleSetType) => {
   try {
     await rulesetsStore.updateRuleset(r.id)
     await _updateProvidersRules(r.tag)
-    message.info('common.success')
   } catch (error: any) {
     console.error('updateRuleset: ', error)
     message.info(error)
@@ -82,7 +81,6 @@ const handleUpdateRuleset = async (r: RuleSetType) => {
 const handleDeleteRuleset = async (s: RuleSetType) => {
   try {
     await rulesetsStore.deleteRuleset(s.id)
-    message.info('common.success')
   } catch (error: any) {
     console.error('deleteRuleset: ', error)
     message.info(error)
@@ -92,7 +90,6 @@ const handleDeleteRuleset = async (s: RuleSetType) => {
 const handleDisableRuleset = async (r: RuleSetType) => {
   r.disabled = !r.disabled
   rulesetsStore.editRuleset(r.id, r)
-  message.info('common.success')
 }
 
 const handleClearRuleset = async (id: string) => {
@@ -104,7 +101,6 @@ const handleClearRuleset = async (id: string) => {
     await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
     await _updateProvidersRules(r.tag)
     rulesetsStore.editRuleset(r.id, r)
-    message.info('common.success')
   } catch (error: any) {
     message.info(error)
     console.log(error)

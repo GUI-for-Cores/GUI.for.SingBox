@@ -3,6 +3,7 @@
 package bridge
 
 import (
+	"embed"
 	"fmt"
 	"os/exec"
 	"syscall"
@@ -11,7 +12,10 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func CreateTray(a *App, icon []byte) {
+var assets embed.FS
+
+func CreateTray(a *App, icon []byte, fs embed.FS) {
+	assets = fs
 	go func() {
 		systray.Run(func() {
 			systray.SetIcon([]byte(icon))
@@ -27,8 +31,8 @@ func (a *App) UpdateTray(icon TrayContents) {
 	fmt.Println("UpdateTray")
 
 	if icon.Icon != "" {
-		icon := a.Readfile(icon.Icon).Data
-		systray.SetIcon([]byte(icon))
+		ico, _ := assets.ReadFile("frontend/dist/" + icon.Icon)
+		systray.SetIcon(ico)
 	}
 	if icon.Title != "" {
 		systray.SetTitle(icon.Title)

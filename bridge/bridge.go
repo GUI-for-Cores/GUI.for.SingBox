@@ -16,8 +16,9 @@ func NewApp() *App {
 }
 
 func (a *App) OnSecondInstanceLaunch(secondInstanceData options.SecondInstanceData) {
+	R.WindowUnminimise(*&a.Ctx)
 	R.Show(*&a.Ctx)
-	R.EventsEmit(*&a.Ctx, "launchArgs", secondInstanceData.Args)
+	go R.EventsEmit(*&a.Ctx, "launchArgs", secondInstanceData.Args)
 }
 
 var Env = &EnvResult{

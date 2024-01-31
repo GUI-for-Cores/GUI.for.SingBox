@@ -46,7 +46,7 @@ const getList = async () => {
 
 const handleAddPlugin = async (plugin: PluginType) => {
   await pluginsStore.addPlugin(plugin)
-  message.info('common.success')
+  await pluginsStore.updatePlugin(plugin.id)
 }
 
 const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)

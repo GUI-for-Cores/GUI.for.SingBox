@@ -70,7 +70,11 @@ appSettings.setupAppSettings().then(async () => {
 
   loading.value = false
 
-  pluginsStore.onStartupTrigger()
+  try {
+    await pluginsStore.onStartupTrigger()
+  } catch (error: any) {
+    message.info(error)
+  }
 })
 </script>
 

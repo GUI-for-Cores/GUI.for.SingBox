@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import i18n from '@/lang'
 import type { MenuItem } from '@/constant'
-import { debounce, deepClone, ignoredError, sampleID } from '@/utils'
+import { debounce, deepClone, sampleID } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   EventsOff,
@@ -12,7 +12,8 @@ import {
   WindowHide,
   WindowShow,
   RestartApp,
-  ExitApp
+  ExitApp,
+  UpdateTray
 } from '@/utils/bridge'
 
 export type Menu = {
@@ -69,7 +70,11 @@ export const useAppStore = defineStore('app', () => {
 
     setTimeout(ExitApp, 3_000)
 
-    await ignoredError(pluginsStore.onShutdownTrigger)
+    try {
+      await pluginsStore.onShutdownTrigger()
+    } catch (error: any) {
+      window.Plugins.message.info(error)
+    }
 
     ExitApp()
   }
@@ -143,13 +148,40 @@ export const useAppStore = defineStore('app', () => {
             type: 'item',
             text: 'tray.setSystemProxy',
             show: !envStore.systemProxy,
-            event: envStore.setSystemProxy
+            event: async () => {
+              // await kernelApiStore.updateConfig('tun', false)
+              await envStore.setSystemProxy()
+            }
           },
           {
             type: 'item',
             text: 'tray.clearSystemProxy',
             show: envStore.systemProxy,
             event: envStore.clearSystemProxy
+          }
+        ]
+      },
+      {
+        type: 'item',
+        text: 'tray.tun',
+        show: appSettings.app.kernel.running,
+        children: [
+          {
+            type: 'item',
+            text: 'tray.enableTunMode',
+            show: !kernelApiStore.config.tun.enable,
+            event: async () => {
+              // await envStore.clearSystemProxy()
+              await kernelApiStore.updateConfig('tun', true)
+            }
+          },
+          {
+            type: 'item',
+            text: 'tray.disableTunMode',
+            show: kernelApiStore.config.tun.enable,
+            event: async () => {
+              await kernelApiStore.updateConfig('tun', false)
+            }
           }
         ]
       },
@@ -189,8 +221,19 @@ export const useAppStore = defineStore('app', () => {
 
     const processedMenus = generateUniqueEventsForMenu(trayMenus)
 
+    let icon = `normal.ico`
+
+    if (appSettings.app.kernel.running) {
+      if (kernelApiStore.config.tun.enable) {
+        icon = `tun.ico`
+      } else if (envStore.systemProxy) {
+        icon = `proxy.ico`
+      }
+    }
+
+    await UpdateTray({ icon })
     await UpdateTrayMenus(processedMenus as any)
-  }, 1000)
+  }, 500)
 
   return {
     menuShow,

@@ -121,7 +121,7 @@ checkForUpdates()
 
 <template>
   <div class="about">
-    <img src="@/assets/logo.png" draggable="false" />
+    <img src="@/assets/logo.png" style="width: 128px" draggable="false" />
     <div class="appname">{{ APP_TITLE }}</div>
     <div class="appver">
       <Button v-if="needRestart" @click="handleRestartApp" size="small" type="primary">

@@ -283,7 +283,8 @@ export default {
       name: '控制器',
       autoClose: '自动断开连接',
       unAvailable: '展示不可用节点',
-      cardMode: '卡片模式'
+      cardMode: '卡片模式',
+      sortBy: '按延迟排序'    
     },
     connections: {
       host: '主机',
@@ -510,8 +511,9 @@ export default {
     exitTip: '退出程序',
     setSystemProxy: '设置系统代理',
     clearSystemProxy: '清除系统代理',
-    enableTunMode: '启用系统代理',
-    disableTunMode: '禁用系统代理',
+    tun: 'Tun模式',
+    enableTunMode: '启用TUN模式',
+    disableTunMode: '禁用TUN模式',
     kernel: '内核管理',
     proxy: '系统代理',
     startKernel: '开启内核',

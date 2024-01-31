@@ -1,10 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
+import { deepClone } from '@/utils/others'
 import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
 import { ProcessInfo, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
-import { deepClone } from '@/utils/others'
 import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
 import {
   KernelWorkDirectory,

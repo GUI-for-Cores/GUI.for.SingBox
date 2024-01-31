@@ -33,7 +33,6 @@ const handleSave = async () => {
       throw 'syntax error'
     }
     await Writefile(ruleset.value.path, rulesetContent.value)
-    message.info('common.success')
     handleSubmit()
   } catch (error: any) {
     message.info(error)

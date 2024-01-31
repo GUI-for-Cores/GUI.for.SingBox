@@ -243,12 +243,15 @@ export const usePluginsStore = defineStore('plugins', () => {
         result = `\`${result}\``
       }
 
-      const fn = new AsyncFunction(`${cache.code}; return await ${fnName}(${result})`)
-
-      result = await fn(result)
+      try {
+        const fn = new AsyncFunction(`${cache.code}; return await ${fnName}(${result})`)
+        result = await fn(result)
+      } catch (error: any) {
+        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+      }
 
       if (!Array.isArray(result)) {
-        throw `【${cache.plugin.name}】 Error: Wrong result`
+        throw `[${cache.plugin.name}] Error: Wrong result`
       }
     }
 
@@ -275,9 +278,12 @@ export const usePluginsStore = defineStore('plugins', () => {
       )
         continue
 
-      const fn = new AsyncFunction(`${cache.code}; await ${fnName}()`)
-
-      await await fn()
+        try {
+          const fn = new AsyncFunction(`${cache.code}; await ${fnName}()`)
+          await await fn()
+        } catch (error: any) {
+          throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+        }
     }
     return
   }
@@ -297,14 +303,17 @@ export const usePluginsStore = defineStore('plugins', () => {
         (cache.plugin.install && !cache.plugin.installed)
       )
         continue
+        
+      try {
+        const fn = new AsyncFunction(
+          `${cache.code}; return await ${fnName}(${JSON.stringify(params)})`
+        )
+        params = await fn()
+      } catch (error: any) {
+        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+      }
 
-      const fn = new AsyncFunction(
-        `${cache.code}; return await ${fnName}(${JSON.stringify(params)})`
-      )
-
-      params = await fn()
-
-      if (!params) throw `【${cache.plugin.name}】 Error: Wrong result`
+      if (!params) throw `[${cache.plugin.name}] Error: Wrong result`
     }
 
     return params as Record<string, any>

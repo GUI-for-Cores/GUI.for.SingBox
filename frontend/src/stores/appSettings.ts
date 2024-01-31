@@ -32,6 +32,7 @@ type AppSettings = {
     autoClose: boolean
     unAvailable: boolean
     cardMode: boolean
+    sortByDelay: boolean
   }
 }
 
@@ -64,7 +65,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       running: false,
       autoClose: true,
       unAvailable: true,
-      cardMode: true
+      cardMode: true,
+      sortByDelay: false
     }
   })
 
@@ -132,13 +134,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  watch(
-    () => app.value.lang,
-    () => {
-      const appStore = useAppStore()
-      appStore.updateTrayMenus()
-    }
-  )
-  
+  watch([() => app.value.lang, () => themeMode.value], () => {
+    const appStore = useAppStore()
+    appStore.updateTrayMenus()
+  })
+
   return { setupAppSettings, app, themeMode }
 })

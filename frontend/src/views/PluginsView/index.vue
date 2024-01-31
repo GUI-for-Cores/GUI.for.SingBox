@@ -69,7 +69,6 @@ const handleUpdatePlugins = async () => {
 const handleUpdatePlugin = async (s: PluginType) => {
   try {
     await pluginsStore.updatePlugin(s.id)
-    message.info('common.success')
   } catch (error: any) {
     console.error('handleUpdatePlugin: ', error)
     message.info(error)
@@ -79,7 +78,6 @@ const handleUpdatePlugin = async (s: PluginType) => {
 const handleDeletePlugin = async (p: PluginType) => {
   try {
     await pluginsStore.deletePlugin(p.id)
-    message.info('common.success')
   } catch (error: any) {
     console.error('handleDeletePlugin: ', error)
     message.info(error)
@@ -90,7 +88,6 @@ const handleDisablePlugin = async (p: PluginType) => {
   try {
     p.disabled = !p.disabled
     pluginsStore.editPlugin(p.id, p)
-    message.info('common.success')
   } catch (error: any) {
     p.disabled = !p.disabled
     console.error('handleDisablePlugin: ', error)
@@ -114,7 +111,6 @@ const handleInstallation = async (p: PluginType) => {
     }
     p.installed = !p.installed
     await pluginsStore.editPlugin(p.id, p)
-    message.info('common.success')
   } catch (error: any) {
     message.info(p.name + ': ' + error)
   }
@@ -266,7 +262,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
         </span>
       </template>
 
-      <div :class="{ description: appSettingsStore.app.pluginsView === View.Grid }">
+      <div v-tips="p.description" :class="{ description: appSettingsStore.app.pluginsView === View.Grid }">
         {{ t('plugin.description') }}
         :
         {{ p.description || '--' }}
