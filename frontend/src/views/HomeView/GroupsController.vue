@@ -48,7 +48,17 @@ const groups = computed(() => {
           const history = proxies[v].history || []
           const delay = history[history.length - 1]?.delay
           return { ...proxies[v], delay }
-        }).sort((a, b) => (!appSettings.app.kernel.sortByDelay ? 0 : a.delay - b.delay))
+        })
+        .sort((a, b) => {
+          if (!appSettings.app.kernel.sortByDelay) {
+            return 0
+          }
+          if (a.delay && b.delay) {
+            return a.delay - b.delay
+          } else {
+            return (a.delay || Number.MAX_SAFE_INTEGER) - (b.delay || Number.MAX_SAFE_INTEGER)
+          }
+        })
 
       const chains = [provider.now]
       let tmp = proxies[provider.now]
