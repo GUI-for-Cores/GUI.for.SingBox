@@ -103,8 +103,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const patchConfig = async (name: string, value: any) => {
+    const body: Record<string, any> = {}
+    body[name] = value
+    await setConfigs(body)
     await updateCurrentProfile(name, value)
-    await setConfigs({name: value})
   }
 
   const updateCurrentProfile = async (name: string, value: any) => {
@@ -133,6 +135,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       } else if (name == 'fakeip') {
         currentProfile.value.dnsConfig.fakeip = value
       }
+
+      await refreshConfig()
   }
 
   const updateConfig = async (name: string, value: any) => {
