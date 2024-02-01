@@ -66,7 +66,7 @@ const handleSave = async () => {
       handleSubmit()
     } catch (error: any) {
       console.error('editProfile: ', error)
-      message.info(error)
+      message.error(error)
       return
     }
     return
@@ -77,7 +77,7 @@ const handleSave = async () => {
     handleCancel()
   } catch (error: any) {
     console.error('addProfile: ')
-    message.info(error)
+    message.error(error)
     return
   }
 }

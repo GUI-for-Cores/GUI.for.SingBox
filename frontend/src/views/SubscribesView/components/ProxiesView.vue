@@ -52,7 +52,7 @@ const menus: Menu[] = [
         isEdit.value = false
         toggleDetails()
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
       }
     }
   },
@@ -62,9 +62,9 @@ const menus: Menu[] = [
       try {
         const proxy = await getProxyByTag(record.tag)
         await ClipboardSetText(JSON.stringify(proxy, null, 2))
-        message.info('common.copied')
+        message.success('common.copied')
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
       }
     }
   },
@@ -78,7 +78,7 @@ const menus: Menu[] = [
         editId = record.tag
         toggleDetails()
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
       }
     }
   },
@@ -114,7 +114,7 @@ const handleSave = async () => {
     handleSubmit()
   } catch (error: any) {
     console.log(error)
-    message.info(error)
+    message.error(error)
   }
   loading.value = false
 }
@@ -136,7 +136,7 @@ const onEditEnd = async () => {
     proxy = JSON.parse(details.value)
   } catch (error: any) {
     console.log(error)
-    message.info(error.message)
+    message.error(error.message)
     // reopen
     toggleDetails()
     return

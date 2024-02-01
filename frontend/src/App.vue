@@ -25,22 +25,21 @@ const { message } = useMessage()
 window.Plugins.message = message
 
 EventsOn('launchArgs', async (args: string[]) => {
-  console.log('launchArgs', args)
   const url = new URL(args[0])
   if (url.pathname.startsWith('//import-remote-profile')) {
     const _url = url.searchParams.get('url')
     const _name = decodeURIComponent(url.hash).slice(1) || sampleID()
 
     if (!_url) {
-      message.info('URL missing')
+      message.error('URL missing')
       return
     }
 
     try {
       await subscribesStore.importSubscribe(_name, _url)
-      message.info('common.success')
+      message.success('common.success')
     } catch (error: any) {
-      message.info('URL missing')
+      message.error('URL missing')
     }
   }
 })
@@ -73,7 +72,7 @@ appSettings.setupAppSettings().then(async () => {
   try {
     await pluginsStore.onStartupTrigger()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
 })
 </script>

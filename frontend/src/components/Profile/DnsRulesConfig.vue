@@ -100,7 +100,7 @@ const hasError = (r: ProfileType['dnsRulesConfig'][0]) => {
   return !isValidInlineRuleJson(r.payload)
 }
 
-const showError = () => message.info('kernel.rules.inlineRuleError')
+const showError = () => message.warn('kernel.rules.inlineRuleError')
 
 const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
   const { type, payload, server, invert } = rule

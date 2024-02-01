@@ -36,7 +36,7 @@ const handleStartKernel = async () => {
     await kernelApiStore.startKernel()
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
     kernelLoading.value = false
   }
 
@@ -50,7 +50,7 @@ const handleRestartKernel = async () => {
     await kernelApiStore.restartKernel()
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -59,7 +59,7 @@ const handleStopKernel = async () => {
     await kernelApiStore.stopKernel()
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -76,7 +76,7 @@ const onTunSwitchChange = async (enable: boolean) => {
     // await envStore.clearSystemProxy()
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -86,7 +86,7 @@ const onSystemProxySwitchChange = async (enable: boolean) => {
     // await kernelApiStore.updateConfig('tun', false)
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
     envStore.systemProxy = !envStore.systemProxy
   }
 }

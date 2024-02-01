@@ -49,10 +49,10 @@ const handleUpdateSubs = async () => {
   try {
     await subscribeStore.updateSubscribes()
     await _updateAllProviderProxies()
-    message.info('success')
+    message.success('success')
   } catch (error: any) {
     console.error('updateSubscribes: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -77,7 +77,7 @@ const handleUpdateSub = async (s: SubscribeType) => {
     await _updateProviderProxies(s.id)
   } catch (error: any) {
     console.error('updateSubscribe: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -86,7 +86,7 @@ const handleDeleteSub = async (s: SubscribeType) => {
     await subscribeStore.deleteSubscribe(s.id)
   } catch (error: any) {
     console.error('deleteSubscribe: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -100,7 +100,7 @@ const onEditProxiesEnd = async () => {
     await _updateProviderProxies(proxiesSub.value.id)
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 }
 

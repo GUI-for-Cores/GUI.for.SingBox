@@ -32,7 +32,7 @@ const handleSave = async () => {
     await pluginsStore.reloadPlugin(plugin.value, code.value)
     handleSubmit()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
     console.log(error)
   }
   loading.value = false

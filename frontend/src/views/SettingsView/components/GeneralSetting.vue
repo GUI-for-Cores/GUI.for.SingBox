@@ -89,10 +89,10 @@ const resetUserAgent = () => {
 const onPermChange = async (v: boolean) => {
   try {
     await SwitchPermissions(v)
-    message.info('success')
+    message.success('success')
   } catch (error: any) {
     message.info(error)
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -125,17 +125,17 @@ const onTaskSchChange = async (v: boolean) => {
     }
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
     isTaskScheduled.value = !v
   }
 }
 
 const onStartupDelayChange = async (delay: number) => {
   try {
-    createSchTask(delay)
+    await createSchTask(delay)
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 }
 

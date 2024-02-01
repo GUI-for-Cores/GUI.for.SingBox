@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import * as Defaults from '@/constant'
-import { sampleID, APP_TITLE, APP_VERSION } from '@/utils'
+import { sampleID, APP_TITLE } from '@/utils'
 import {
   useProfilesStore,
   useAppSettingsStore,
@@ -76,18 +76,18 @@ const handleSubmit = async () => {
     appSettingsStore.app.kernel.profile = profile.name
   } catch (error: any) {
     console.log(error)
-    message.info(error)
+    message.error(error)
     return
   }
 
-  message.info('home.initSuccessful')
+  message.success('home.initSuccessful')
 
   try {
     await subscribeStore.updateSubscribe(subscribe.id)
   } catch (error: any) {
     console.log(error)
-    message.info(error, 10_000)
-    message.info('home.initFailed', 10_000)
+    message.warn(error, 10_000)
+    message.warn('home.initFailed', 10_000)
   }
 
   loading.value = false

@@ -1,13 +1,39 @@
-import { useI18n } from 'vue-i18n'
-import { APP_TITLE } from '@/utils'
+import { render, createVNode, type VNode } from 'vue'
+import { APP_TITLE, sampleID } from '@/utils'
 
-const ID = APP_TITLE + '-toast'
+import MessageComp, { type IconType } from '@/components/Message/index.vue'
+
+const createMessage = (
+  icon: IconType,
+  content: string,
+  duration: number,
+  parent: HTMLElement,
+  instances: Record<string, { dom: HTMLDivElement; vnode: VNode }>
+) => {
+  const id = sampleID()
+  const dom = document.createElement('div')
+  const vnode = createVNode(MessageComp, { icon, content })
+
+  dom.id = id
+  dom.style.cssText = `display: flex; align-items: center; justify-content: center;`
+  instances[id] = { dom, vnode }
+  parent.appendChild(dom)
+  render(vnode, dom)
+
+  setTimeout(() => {
+    dom.remove()
+    delete instances[id]
+  }, duration)
+
+  return id
+}
 
 class Message {
   private dom: HTMLElement
-  private instances: { [key: string]: HTMLElement }
+  private instances: { [key: string]: { dom: HTMLDivElement; vnode: VNode } }
   private t: any
   constructor() {
+    const ID = APP_TITLE + '-toast'
     this.dom = document.getElementById(ID) || document.createElement('div')
     this.dom.id = ID
     this.dom.style.cssText = `
@@ -19,48 +45,35 @@ class Message {
     `
     document.body.appendChild(this.dom)
     this.instances = {}
-
-    const { t } = useI18n()
-    this.t = t
   }
 
-  public info = (msg: string, duration = 3_000) => {
-    const info = document.createElement('div')
-    info.style.cssText = `
-      transition: all .2s;
-      display: block;
-      color: var(--color);
-      background: var(--toast-bg);
-      padding: 8px;
-      border-radius: 8px;
-      margin: 4px 0;
-      box-shadow: 0 4px 4px rgba(0, 0, 0, .2);
-    `
-    const id = 'ID-' + Math.random()
-    info.id = id
-    info.textContent = this.t(msg)
+  public info = (content: string, duration = 3_000) => ({
+    id: createMessage('info', content, duration, this.dom, this.instances)
+  })
 
-    this.instances[id] = info
-    this.dom.appendChild(info)
+  public warn = (content: string, duration = 3_000) => ({
+    id: createMessage('warn', content, duration, this.dom, this.instances)
+  })
 
-    setTimeout(() => {
-      info.remove()
-      delete this.instances[id]
-    }, duration)
+  public error = (content: string, duration = 3_000) => ({
+    id: createMessage('error', content, duration, this.dom, this.instances)
+  })
 
-    return { id }
-  }
+  public success = (content: string, duration = 3_000) => ({
+    id: createMessage('success', content, duration, this.dom, this.instances)
+  })
 
-  public update = (id: string, msg: string) => {
-    if (this.instances[id]) {
-      this.instances[id].textContent = msg
+  public update = (id: string, content: string, icon?: IconType) => {
+    const instance = this.instances[id]
+    if (instance) {
+      icon && (instance.vnode.component!.props.icon = icon)
+      content && (instance.vnode.component!.props.content = content)
     }
   }
 
   public destroy = (id: string) => {
-    document.getElementById(id)?.remove()
     if (this.instances[id]) {
-      delete this.instances[id]
+      this.instances[id].dom.remove()
     }
   }
 }

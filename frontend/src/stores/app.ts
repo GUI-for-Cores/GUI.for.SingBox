@@ -73,7 +73,7 @@ export const useAppStore = defineStore('app', () => {
     try {
       await pluginsStore.onShutdownTrigger()
     } catch (error: any) {
-      window.Plugins.message.info(error)
+      window.Plugins.message.error(error)
     }
 
     ExitApp()

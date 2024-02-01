@@ -27,9 +27,9 @@ const updateList = async () => {
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]
     await Writefile(cacheFile, JSON.stringify([...list1, ...list2]))
-    message.info('plugins.updateSuccess')
+    message.success('plugins.updateSuccess')
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
   loading.value = false
 }

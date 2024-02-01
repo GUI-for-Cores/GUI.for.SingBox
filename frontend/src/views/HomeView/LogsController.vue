@@ -41,9 +41,9 @@ const menus: Menu[] = [
         if (type !== 'info') throw 'Not Support'
         await addToRuleSet(ruleset as any, getPayload(payload))
         await updateProvidersRules(ruleset)
-        message.info('success')
+        message.success('success')
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
         console.log(error)
       }
     }

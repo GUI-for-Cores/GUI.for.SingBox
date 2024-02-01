@@ -26,7 +26,11 @@ const icons = [
   'log',
   'settings',
   'stop',
-  'restart'
+  'restart',
+  'messageSuccess',
+  'messageError',
+  'messageWarn',
+  'messageInfo'
 ] as const
 
 export default icons

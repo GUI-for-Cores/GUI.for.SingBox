@@ -39,13 +39,8 @@ const appSettings = useAppSettingsStore()
 const downloadApp = async () => {
   if (loading.value || downloading.value) return
 
-  if (!needUpdate.value) {
-    message.info('about.noNeedUpdate')
-    return
-  }
-
   if (!downloadUrl) {
-    message.info('about.noDownloadLink')
+    message.error('about.noDownloadLink')
     return
   }
 
@@ -65,10 +60,10 @@ const downloadApp = async () => {
     await ignoredError(Removefile, bakFile)
 
     needRestart.value = true
-    message.info('about.updateSuccessfulRestart')
+    message.success('about.updateSuccessfulRestart')
   } catch (error: any) {
     console.log(error)
-    message.info(error, 5_000)
+    message.error(error, 5_000)
   }
 
   downloading.value = false
@@ -102,7 +97,7 @@ const checkForUpdates = async (showTips = false) => {
     }
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
 
   loading.value = false
@@ -112,7 +107,7 @@ const handleRestartApp = async () => {
   try {
     await RestartApp()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
 }
 

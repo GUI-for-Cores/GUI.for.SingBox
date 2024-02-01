@@ -93,12 +93,14 @@ const downloadCore = async () => {
 
     downloadSuccessful.value = true
 
-    message.info('Download Successful')
+    message.success('Download Successful')
   } catch (error: any) {
     console.log(error)
-    message.info(error)
+    message.error(error)
     downloadSuccessful.value = false
   }
+
+  downloadLoading.value = false
 
   updateLocalVersion()
 }
@@ -135,7 +137,7 @@ const getRemoteVersion = async (showTips = false) => {
     return name as string
   } catch (error: any) {
     console.log(error)
-    showTips && message.info(error)
+    showTips && message.error(error)
   } finally {
     remoteVersionLoading.value= false
   }
@@ -150,9 +152,9 @@ const handleRestartKernel = async () => {
 
     downloadSuccessful.value = false
 
-    message.info('common.success')
+    message.success('common.success')
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -189,13 +191,20 @@ initVersion()
     :
     {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
   </Tag>
-  <Button v-show="needUpdate" @click="downloadCore" :loading="downloadLoading" type="primary">
+  <Button
+    v-show="!remoteVersionLoading && needUpdate"
+    @click="downloadCore"
+    :loading="downloadLoading"
+    size="small"
+    type="primary"
+  >
     {{ t('kernel.update') }} : {{ remoteVersion }}
   </Button>
   <Button
-    v-show="needRestart"
+    v-show="!remoteVersionLoading && needRestart"
     @click="handleRestartKernel"
     :loading="kernelApiStore.loading"
+    size="small"
     type="primary"
   >
     {{ t('kernel.restart') }}

@@ -103,8 +103,8 @@ const hasError = (r: ProfileType['rulesConfig'][0]) => {
   return !isValidInlineRuleJson(r.payload)
 }
 
-const showLost = () => message.info('kernel.rules.notFound')
-const showError = () => message.info('kernel.rules.inlineRuleError')
+const showLost = () => message.warn('kernel.rules.notFound')
+const showError = () => message.warn('kernel.rules.inlineRuleError')
 
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule

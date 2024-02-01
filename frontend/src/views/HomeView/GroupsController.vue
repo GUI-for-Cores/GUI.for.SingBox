@@ -46,18 +46,14 @@ const groups = computed(() => {
         })
         .map((v) => {
           const history = proxies[v].history || []
-          const delay = history[history.length - 1]?.delay
+          const delay = history[history.length - 1]?.delay || 0
           return { ...proxies[v], delay }
         })
         .sort((a, b) => {
-          if (!appSettings.app.kernel.sortByDelay) {
-            return 0
-          }
-          if (a.delay && b.delay) {
-            return a.delay - b.delay
-          } else {
-            return (a.delay || Number.MAX_SAFE_INTEGER) - (b.delay || Number.MAX_SAFE_INTEGER)
-          }
+          if (!appSettings.app.kernel.sortByDelay || a.delay === b.delay) return 0
+          if (!a.delay) return 1
+          if (!b.delay) return -1
+          return a.delay - b.delay
         })
 
       const chains = [provider.now]
@@ -101,7 +97,7 @@ const handleUseProxy = async (group: any, proxy: any) => {
     await Promise.all(promises)
     await kernelApiStore.refreshProviderProxies()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -127,7 +123,7 @@ const handleGroupDelay = async (group: string) => {
     await getGroupDelay(group)
     await kernelApiStore.refreshProviderProxies()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
   loadingSet.value.delete(group)
 }
@@ -138,7 +134,7 @@ const handleProxyDelay = async (proxy: string) => {
     const _proxy = kernelApiStore.proxies[proxy]
     _proxy.history[_proxy.history.length - 1].delay = delay
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
   }
 }
 

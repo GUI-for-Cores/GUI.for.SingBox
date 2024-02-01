@@ -37,7 +37,7 @@ const secondaryMenus: Menu[] = [
       try {
         await kernelApiStore.startKernel()
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
         console.error(error)
       }
     }
@@ -47,7 +47,7 @@ const secondaryMenus: Menu[] = [
     handler: async (id: string) => {
       const p = profilesStore.getProfileById(id)!
       appStore.setProfilesClipboard(p)
-      message.info('common.success')
+      message.success('common.success')
     }
   },
   {
@@ -59,9 +59,9 @@ const secondaryMenus: Menu[] = [
         const str = JSON.stringify(config, null, 2)
         const ok = await ClipboardSetText(str)
         if (!ok) throw 'ClipboardSetText Error'
-        message.info('common.success')
+        message.success('common.success')
       } catch (error: any) {
-        message.info(error)
+        message.error(error)
       }
     }
   }
@@ -119,7 +119,7 @@ const handleEditProfile = (p: ProfileType, step = 0) => {
 const handleDeleteProfile = async (p: ProfileType) => {
   const { profile, running } = appSettingsStore.app.kernel
   if (profile === p.id && running) {
-    message.info('profiles.shouldStop')
+    message.warn('profiles.shouldStop')
     return
   }
 
@@ -127,7 +127,7 @@ const handleDeleteProfile = async (p: ProfileType) => {
     await profilesStore.deleteProfile(p.id)
   } catch (error: any) {
     console.error('deleteProfile: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 

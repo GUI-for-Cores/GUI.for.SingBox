@@ -58,7 +58,7 @@ const handleSubmit = async () => {
     }
   } catch (error: any) {
     console.error(error)
-    message.info(error)
+    message.error(error)
   }
   handleCancel()
   loading.value = true

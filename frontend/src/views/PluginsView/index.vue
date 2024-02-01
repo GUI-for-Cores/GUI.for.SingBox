@@ -26,10 +26,10 @@ const menuList: Menu[] = [
       const plugin = pluginsStore.getPluginById(id)
       try {
         await pluginsStore.reloadPlugin(plugin!)
-        message.info('common.success')
+        message.success('common.success')
       } catch (error: any) {
         console.log(error)
-        message.info(error)
+        message.error(error)
       }
     }
   }
@@ -59,10 +59,10 @@ const handleEditPlugin = (p: PluginType) => {
 const handleUpdatePlugins = async () => {
   try {
     await pluginsStore.updatePlugins()
-    message.info('common.success')
+    message.success('common.success')
   } catch (error: any) {
     console.error('handleUpdatePlugins: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -71,7 +71,7 @@ const handleUpdatePlugin = async (s: PluginType) => {
     await pluginsStore.updatePlugin(s.id)
   } catch (error: any) {
     console.error('handleUpdatePlugin: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -80,7 +80,7 @@ const handleDeletePlugin = async (p: PluginType) => {
     await pluginsStore.deletePlugin(p.id)
   } catch (error: any) {
     console.error('handleDeletePlugin: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -91,7 +91,7 @@ const handleDisablePlugin = async (p: PluginType) => {
   } catch (error: any) {
     p.disabled = !p.disabled
     console.error('handleDisablePlugin: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -112,7 +112,7 @@ const handleInstallation = async (p: PluginType) => {
     p.installed = !p.installed
     await pluginsStore.editPlugin(p.id, p)
   } catch (error: any) {
-    message.info(p.name + ': ' + error)
+    message.error(p.name + ': ' + error)
   }
   p.loading = false
 }
@@ -121,7 +121,7 @@ const handleOnRun = async (p: PluginType) => {
   try {
     await pluginsStore.manualTrigger(p, PluginManualEvent.OnRun)
   } catch (error: any) {
-    message.info(p.name + ': ' + error)
+    message.error(p.name + ': ' + error)
   }
 }
 
@@ -262,7 +262,10 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
         </span>
       </template>
 
-      <div v-tips="p.description" :class="{ description: appSettingsStore.app.pluginsView === View.Grid }">
+      <div
+        v-tips="p.description"
+        :class="{ description: appSettingsStore.app.pluginsView === View.Grid }"
+      >
         {{ t('plugin.description') }}
         :
         {{ p.description || '--' }}

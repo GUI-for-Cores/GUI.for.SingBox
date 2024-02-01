@@ -45,10 +45,10 @@ const handleUpdateRulesets = async () => {
   try {
     await rulesetsStore.updateRulesets()
     await _updateAllProvidersRules()
-    message.info('common.success')
+    message.success('common.success')
   } catch (error: any) {
     console.error('updateRulesets: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -74,7 +74,7 @@ const handleUpdateRuleset = async (r: RuleSetType) => {
     await _updateProvidersRules(r.tag)
   } catch (error: any) {
     console.error('updateRuleset: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -83,7 +83,7 @@ const handleDeleteRuleset = async (s: RuleSetType) => {
     await rulesetsStore.deleteRuleset(s.id)
   } catch (error: any) {
     console.error('deleteRuleset: ', error)
-    message.info(error)
+    message.error(error)
   }
 }
 
@@ -102,8 +102,8 @@ const handleClearRuleset = async (id: string) => {
     await _updateProvidersRules(r.tag)
     rulesetsStore.editRuleset(r.id, r)
   } catch (error: any) {
-    message.info(error)
-    console.log(error)
+    message.error(error)
+    console.error(error)
   }
 }
 
@@ -111,8 +111,8 @@ const onEditRuelsetListEnd = async () => {
   try {
     await _updateProvidersRules(rulesetTitle.value)
   } catch (error: any) {
-    message.info(error)
-    console.log(error)
+    message.error(error)
+    console.error(error)
   }
 }
 

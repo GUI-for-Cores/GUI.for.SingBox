@@ -67,7 +67,7 @@ const menu: Menu[] = [
         await deleteConnection(record.id)
       } catch (error: any) {
         console.log(error)
-        message.info(error)
+        message.error(error)
       }
     }
   },
@@ -84,9 +84,9 @@ const menu: Menu[] = [
   //         const payload = record.metadata.host || record.metadata.destinationIP + '/32'
   //         await addToRuleSet(ruleset as any, behavior + ',' + payload)
   //         await updateProvidersRules(ruleset)
-  //         message.info('success')
+  //         message.success('success')
   //       } catch (error: any) {
-  //         message.info(error)
+  //         message.error(error)
   //         console.log(error)
   //       }
   //     }

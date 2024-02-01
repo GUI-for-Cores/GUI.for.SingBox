@@ -198,9 +198,9 @@ const toggleExpanded = (key: string) => {
 
 const isExpanded = (key: string) => expandedSet.value.has(key)
 
-const showLost = () => message.info('kernel.proxyGroups.notFound')
+const showLost = () => message.warn('kernel.proxyGroups.notFound')
 
-const showNeedToAdd = () => message.info('kernel.proxyGroups.needToAdd')
+const showNeedToAdd = () => message.warn('kernel.proxyGroups.needToAdd')
 
 watch(groups, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 

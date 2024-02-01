@@ -35,7 +35,7 @@ const handleSave = async () => {
     await Writefile(ruleset.value.path, rulesetContent.value)
     handleSubmit()
   } catch (error: any) {
-    message.info(error)
+    message.error(error)
     console.log(error)
   } finally {
     loading.value = false
