@@ -78,7 +78,7 @@ export class Request {
       return null as T
     }
 
-    if ([504, 401].includes(res.status)) {
+    if ([504, 401, 503].includes(res.status)) {
       const { message } = await res.json()
       throw message
     }

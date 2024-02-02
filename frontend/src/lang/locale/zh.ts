@@ -395,7 +395,10 @@ export default {
     path: '保存路径',
     type: '类型',
     http: 'HTTP',
-    file: 'FILE'
+    file: 'FILE',
+    menus: '菜单',
+    menuKey: '菜单名称',
+    menuValue: '触发方法名'
   },
   plugins: {
     updating: '更新中',

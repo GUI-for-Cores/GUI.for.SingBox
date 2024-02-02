@@ -15,6 +15,7 @@ export type PluginType = {
   url: string
   path: string
   triggers: PluginTrigger[]
+  menus: Record<string, string>
   disabled: boolean
   install: boolean
   installed: boolean

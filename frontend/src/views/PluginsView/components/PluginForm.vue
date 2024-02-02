@@ -2,10 +2,10 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
-import { deepClone, ignoredError, sampleID } from '@/utils'
+import { useBool, useMessage } from '@/hooks'
 import { PluginsTriggerOptions } from '@/constant'
 import { usePluginsStore, type PluginType } from '@/stores'
+import { deepClone, ignoredError, sampleID } from '@/utils'
 
 interface Props {
   id?: string
@@ -31,6 +31,7 @@ const plugin = ref<PluginType>({
   url: '',
   path: `data/plugins/plugin-${pluginID}.js`,
   triggers: [],
+  menus: {},
   disabled: false,
   install: false,
   installed: false
@@ -38,6 +39,7 @@ const plugin = ref<PluginType>({
 
 const { t } = useI18n()
 const { message } = useMessage()
+const [showMore, toggleShowMore] = useBool(false)
 const pluginsStore = usePluginsStore()
 
 const handleCancel = inject('cancel') as any
@@ -124,6 +126,20 @@ if (props.isUpdate) {
       {{ t('plugin.description') }}
       <Input v-model="plugin.description" auto-size autofocus class="input" />
     </div>
+    <Divider>
+      <Button @click="toggleShowMore" type="text" size="small">
+        {{ t('common.more') }}
+      </Button>
+    </Divider>
+    <div v-show="showMore">
+      <div class="form-item" :class="{ 'flex-start': Object.keys(plugin.menus).length !== 0 }">
+        <div class="name">{{ t('plugin.menus') }}</div>
+        <KeyValueEditor
+          v-model="plugin.menus"
+          :placeholder="[t('plugin.menuKey'), t('plugin.menuValue')]"
+        />
+      </div>
+    </div>
   </div>
   <div class="form-action">
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
@@ -142,11 +158,14 @@ if (props.isUpdate) {
 .form {
   padding: 0 8px;
   overflow-y: auto;
-  max-height: 60vh;
+  max-height: 58vh;
 }
 .form-item {
   .input {
     width: 80%;
   }
+}
+.flex-start {
+  align-items: flex-start;
 }
 </style>

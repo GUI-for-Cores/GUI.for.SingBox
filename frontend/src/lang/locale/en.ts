@@ -395,7 +395,10 @@ export default {
     path: 'Path',
     type: 'Type',
     http: 'HTTP',
-    file: 'FILE'
+    file: 'FILE',
+    menus: 'Menus',
+    menuKey: 'Menu Title',
+    menuValue: 'Trigger function name'
   },
   plugins: {
     updating: 'Updating',

@@ -5,9 +5,9 @@ import { useI18n, I18nT } from 'vue-i18n'
 import { View } from '@/constant'
 import { useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant'
-import { BrowserOpenURL } from '@/utils/bridge'
 import { updateProvidersProxies } from '@/api/kernel'
-import { formatBytes, formatRelativeTime, debounce } from '@/utils'
+import { BrowserOpenURL, Removefile } from '@/utils/bridge'
+import { formatBytes, formatRelativeTime, debounce, ignoredError } from '@/utils'
 import {
   type SubscribeType,
   type Menu,
@@ -83,6 +83,7 @@ const handleUpdateSub = async (s: SubscribeType) => {
 
 const handleDeleteSub = async (s: SubscribeType) => {
   try {
+    await ignoredError(Removefile, s.path)
     await subscribeStore.deleteSubscribe(s.id)
   } catch (error: any) {
     console.error('deleteSubscribe: ', error)

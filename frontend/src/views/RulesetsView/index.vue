@@ -2,12 +2,11 @@
 import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { View, EmptyRuleSet, RulesetFormat } from '@/constant'
 import { useMessage } from '@/hooks'
-import { Writefile } from '@/utils/bridge'
-import { DraggableOptions } from '@/constant'
-import { debounce, formatRelativeTime } from '@/utils'
+import { Removefile, Writefile } from '@/utils/bridge'
+import { debounce, formatRelativeTime, ignoredError } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
+import { DraggableOptions, View, EmptyRuleSet, RulesetFormat } from '@/constant'
 import { type RuleSetType, type Menu, useRulesetsStore, useAppSettingsStore } from '@/stores'
 
 import RulesetForm from './components/RulesetForm.vue'
@@ -78,9 +77,10 @@ const handleUpdateRuleset = async (r: RuleSetType) => {
   }
 }
 
-const handleDeleteRuleset = async (s: RuleSetType) => {
+const handleDeleteRuleset = async (r: RuleSetType) => {
   try {
-    await rulesetsStore.deleteRuleset(s.id)
+    await ignoredError(Removefile, r.path)
+    await rulesetsStore.deleteRuleset(r.id)
   } catch (error: any) {
     console.error('deleteRuleset: ', error)
     message.error(error)

@@ -2,8 +2,9 @@
 import { ref, computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { debounce } from '@/utils'
 import { useMessage } from '@/hooks'
+import { Removefile } from '@/utils/bridge'
+import { debounce, ignoredError } from '@/utils'
 import { DraggableOptions, PluginManualEvent, PluginTrigger, View } from '@/constant'
 import { usePluginsStore, useAppSettingsStore, type PluginType, type Menu } from '@/stores'
 
@@ -77,11 +78,39 @@ const handleUpdatePlugin = async (s: PluginType) => {
 
 const handleDeletePlugin = async (p: PluginType) => {
   try {
+    await ignoredError(Removefile, p.path)
     await pluginsStore.deletePlugin(p.id)
   } catch (error: any) {
     console.error('handleDeletePlugin: ', error)
     message.error(error)
   }
+}
+
+const generateMenus = (p: PluginType) => {
+  const builtInMenus: Menu[] = menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))
+
+  if (Object.keys(p.menus).length !== 0) {
+    builtInMenus.push({
+      label: '',
+      separator: true
+    })
+  }
+
+  const pluginMenus: Menu[] = Object.entries(p.menus).map(([title, fn]) => ({
+    label: title,
+    handler: async () => {
+      try {
+        p.running = true
+        await pluginsStore.manualTrigger(p, fn as any)
+      } catch (error: any) {
+        message.error(p.name + ': ' + error)
+      } finally {
+        p.running = false
+      }
+    }
+  }))
+
+  return builtInMenus.concat(...pluginMenus)
 }
 
 const handleDisablePlugin = async (p: PluginType) => {
@@ -179,7 +208,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       :key="p.id"
       :title="p.name"
       :disabled="p.disabled"
-      v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))"
+      v-menu="generateMenus(p)"
       class="plugin"
     >
       <template #title-prefix>
