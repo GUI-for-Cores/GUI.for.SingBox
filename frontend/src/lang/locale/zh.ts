@@ -37,7 +37,8 @@ export default {
     uninstall: '卸载',
     run: '运行',
     refresh: '刷新',
-    confirm: '确定'
+    confirm: '确定',
+    selectAll: '全选'
   },
   kernel: {
     port: 'HTTP(s)代理端口',

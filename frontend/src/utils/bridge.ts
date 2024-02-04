@@ -118,8 +118,8 @@ export const HttpGetJSON = async (url: string, headers = {}) => {
   }
 }
 
-export const Exec = async (path: string, args: string[]) => {
-  const { flag, data } = await App.Exec(path, args)
+export const Exec = async (path: string, args: string[], convert = false) => {
+  const { flag, data } = await App.Exec(path, args, convert)
   if (!flag) {
     throw data
   }

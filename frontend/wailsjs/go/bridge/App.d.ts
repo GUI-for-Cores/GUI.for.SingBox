@@ -15,7 +15,7 @@ export function DeleteSchTask(arg1:string):Promise<bridge.FlagResult>;
 
 export function Download(arg1:string,arg2:string,arg3:string):Promise<bridge.FlagResult>;
 
-export function Exec(arg1:string,arg2:Array<string>):Promise<bridge.FlagResult>;
+export function Exec(arg1:string,arg2:Array<string>,arg3:boolean):Promise<bridge.FlagResult>;
 
 export function ExecBackground(arg1:string,arg2:Array<string>,arg3:string,arg4:string):Promise<bridge.FlagResult>;
 

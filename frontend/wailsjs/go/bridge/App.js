@@ -26,8 +26,8 @@ export function Download(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['Download'](arg1, arg2, arg3);
 }
 
-export function Exec(arg1, arg2) {
-  return window['go']['bridge']['App']['Exec'](arg1, arg2);
+export function Exec(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['Exec'](arg1, arg2, arg3);
 }
 
 export function ExecBackground(arg1, arg2, arg3, arg4) {

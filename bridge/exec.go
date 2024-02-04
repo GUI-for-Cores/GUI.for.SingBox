@@ -13,7 +13,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func (a *App) Exec(path string, args []string) FlagResult {
+func (a *App) Exec(path string, args []string, convert bool) FlagResult {
 	fmt.Println("Exec:", path, args)
 
 	exe_path, err := GetPath(path)
@@ -34,7 +34,14 @@ func (a *App) Exec(path string, args []string) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	return FlagResult{true, string(out)}
+	output := ""
+	if convert {
+		output = ConvertByte2String(out)
+	} else {
+		output = string(out)
+	}
+
+	return FlagResult{true, output}
 }
 
 func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string) FlagResult {
