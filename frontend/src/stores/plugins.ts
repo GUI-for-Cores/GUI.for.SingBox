@@ -325,13 +325,13 @@ export const usePluginsStore = defineStore('plugins', () => {
   const manualTrigger = async (plugin: PluginType, event: PluginManualEvent) => {
     const cache = PluginsCache[plugin.id]
 
-    if (!cache) throw `【${plugin.name}】: Missing source code`
-    if (cache.plugin.disabled) throw `【${plugin.name}】: Plugin disabled`
+    if (!cache) throw `[${plugin.name}]: Missing source code`
+    if (cache.plugin.disabled) throw `[${plugin.name}]: Plugin disabled`
     try {
       const fn = new AsyncFunction(`${cache.code}; await ${event}()`)
       await fn()
     } catch (error: any) {
-      throw `【${cache.plugin.name}】 Error: ` + (error.message || error)
+      throw `[${cache.plugin.name}] Error: ` + (error.message || error)
     }
   }
 
