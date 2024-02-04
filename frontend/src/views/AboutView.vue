@@ -51,7 +51,11 @@ const downloadApp = async () => {
 
     const bakFile = appName + '_' + APP_VERSION + '.bak'
 
-    await Download(downloadUrl, appName + '.tmp')
+    const { id } = message.info('Downloading...')
+
+    await Download(downloadUrl, appName + '.tmp', (progress, total) => {
+      message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
+    })
 
     await Movefile(appName, bakFile)
 

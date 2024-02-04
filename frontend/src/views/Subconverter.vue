@@ -45,7 +45,11 @@ const downloadApp = async () => {
   try {
     const appPath = subconverter.SUBCONVERTER_PATH
 
-    await Download(downloadUrl, appPath + '.tmp')
+    const { id } = message.info('Downloading...')
+
+    await Download(downloadUrl, appPath + '.tmp', (progress, total) => {
+      message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
+    })
 
     const bakFile = appPath + '_' + subconverter.SUBCONVERTER_VERSION + '.bak'
 

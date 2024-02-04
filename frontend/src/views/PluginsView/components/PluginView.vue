@@ -39,6 +39,11 @@ const handleSave = async () => {
 }
 
 const initPluginCode = async (p: PluginType) => {
+  const _code = pluginsStore.getPluginCodefromCache(p.id)
+  if (_code) {
+    code.value = _code
+    return
+  }
   const content = (await ignoredError(Readfile, p.path)) || ''
   code.value = content
 }

@@ -36,7 +36,8 @@ export default {
     install: 'Install',
     uninstall: 'Uninstall',
     run: 'Run',
-    refresh: 'Refresh'
+    refresh: 'Refresh',
+    confirm: 'Confirm'
   },
   kernel: {
     port: 'HTTP(s) Port',

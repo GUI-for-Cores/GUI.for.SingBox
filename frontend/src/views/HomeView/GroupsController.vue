@@ -132,7 +132,7 @@ const handleProxyDelay = async (proxy: string) => {
   try {
     const { delay } = await getProxyDelay(proxy)
     const _proxy = kernelApiStore.proxies[proxy]
-    _proxy.history[_proxy.history.length - 1].delay = delay
+    _proxy.history.push({ delay })
   } catch (error: any) {
     message.error(error)
   }

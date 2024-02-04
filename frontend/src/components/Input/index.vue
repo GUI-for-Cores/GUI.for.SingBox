@@ -89,6 +89,7 @@ defineExpose({
       @input="($event) => onInput($event)"
       @blur="onSubmit"
       @keydown.enter="inputRef?.blur"
+      autocomplete="off"
       ref="inputRef"
     />
   </div>

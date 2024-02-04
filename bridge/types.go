@@ -48,3 +48,10 @@ type TrayContents struct {
 	Title   string `json:"title"`
 	Tooltip string `json:"tooltip"`
 }
+
+type DownloadTracker struct {
+	Total          int64
+	Progress       int64
+	ProgressChange string
+	App            *App
+}

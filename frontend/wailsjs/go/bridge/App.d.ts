@@ -13,7 +13,7 @@ export function CreateSchTask(arg1:string,arg2:string):Promise<bridge.FlagResult
 
 export function DeleteSchTask(arg1:string):Promise<bridge.FlagResult>;
 
-export function Download(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+export function Download(arg1:string,arg2:string,arg3:string):Promise<bridge.FlagResult>;
 
 export function Exec(arg1:string,arg2:Array<string>):Promise<bridge.FlagResult>;
 

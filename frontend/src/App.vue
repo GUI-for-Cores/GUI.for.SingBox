@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 
 import * as Stores from '@/stores'
-import { useMessage } from '@/hooks'
 import { EventsOn } from '@/utils/bridge'
+import { useMessage, usePicker } from '@/hooks'
 import { ignoredError, sampleID, sleep } from '@/utils'
-
 
 import SplashView from '@/views/SplashView.vue'
 import { NavigationBar, MainPage, TitleBar } from '@/components'
@@ -22,7 +21,9 @@ const kernelApiStore = Stores.useKernelApiStore()
 const subscribesStore = Stores.useSubscribesStore()
 
 const { message } = useMessage()
+const { picker } = usePicker()
 window.Plugins.message = message
+window.Plugins.picker = picker
 
 EventsOn('launchArgs', async (args: string[]) => {
   const url = new URL(args[0])
@@ -55,11 +56,15 @@ appSettings.setupAppSettings().then(async () => {
 
   kernelApiStore.updateKernelStatus().then(async (running) => {
     kernelApiStore.statusLoading = false
-    if (running) {
-      await kernelApiStore.refreshConfig()
-      await envStore.updateSystemProxyState()
-    } else if (appSettings.app.autoStartKernel) {
-      await kernelApiStore.startKernel()
+    try {
+      if (running) {
+        await kernelApiStore.refreshConfig()
+        await envStore.updateSystemProxyState()
+      } else if (appSettings.app.autoStartKernel) {
+        await kernelApiStore.startKernel()
+      }
+    } catch (error: any) {
+      message.error(error)
     }
 
     appStore.updateTrayMenus()

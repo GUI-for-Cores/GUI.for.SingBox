@@ -66,7 +66,7 @@ watch(
     margin-left: 4px;
   }
   .add {
-    margin: 8px -2px 0 -2px;
+    margin: 0 -2px 0 -2px;
     display: flex;
   }
 }

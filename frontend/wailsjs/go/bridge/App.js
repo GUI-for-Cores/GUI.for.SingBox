@@ -22,8 +22,8 @@ export function DeleteSchTask(arg1) {
   return window['go']['bridge']['App']['DeleteSchTask'](arg1);
 }
 
-export function Download(arg1, arg2) {
-  return window['go']['bridge']['App']['Download'](arg1, arg2);
+export function Download(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['Download'](arg1, arg2, arg3);
 }
 
 export function Exec(arg1, arg2) {

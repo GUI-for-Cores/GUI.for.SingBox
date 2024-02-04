@@ -84,8 +84,13 @@ export const UnzipGZFile = async (path: string, output: string) => {
   return data
 }
 
-export const Download = async (url: string, path: string) => {
-  const { flag, data } = await App.Download(url, path)
+type DownloadProgressCallback = (progress: number, total: number) => void
+
+export const Download = async (url: string, path: string, progress?: DownloadProgressCallback) => {
+  const event = progress ? sampleID() : ''
+  if (event && progress) EventsOn(event, progress)
+  const { flag, data } = await App.Download(url, path, event)
+  if (event) EventsOff(event)
   if (!flag) {
     throw data
   }

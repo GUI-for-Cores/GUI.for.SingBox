@@ -69,8 +69,12 @@ const downloadCore = async () => {
 
     await Makedir('data/sing-box')
 
-    await Download(asset.browser_download_url, tmp)
+    const { id } = message.info('Downloading...')
 
+    await Download(asset.browser_download_url, tmp, (progress, total) => {
+      message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
+    })
+    
     const fileName = await getKernelFileName() // sing-box.exe
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 

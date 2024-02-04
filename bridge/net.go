@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func CreateHttpClient(a *App) *http.Client {
@@ -70,7 +72,7 @@ func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
 	return HTTPResult{true, resp.Header, string(b)}
 }
 
-func (a *App) Download(url string, path string) FlagResult {
+func (a *App) Download(url string, path string, event string) FlagResult {
 	fmt.Println("Download:", url, path)
 
 	path, err := GetPath(path)
@@ -111,10 +113,20 @@ func (a *App) Download(url string, path string) FlagResult {
 	}
 	defer file.Close()
 
-	_, err = io.Copy(file, resp.Body)
+	reader := io.TeeReader(resp.Body, &DownloadTracker{Total: resp.ContentLength, ProgressChange: event, App: a})
+
+	_, err = io.Copy(file, reader)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
 	return FlagResult{true, "Success"}
+}
+
+func (dt *DownloadTracker) Write(p []byte) (n int, err error) {
+	dt.Progress += int64(len(p))
+	if dt.ProgressChange != "" {
+		runtime.EventsEmit(dt.App.Ctx, dt.ProgressChange, dt.Progress, dt.Total)
+	}
+	return
 }

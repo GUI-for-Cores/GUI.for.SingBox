@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import vTips from '@/directives/tips'
+
 interface Props {
   title?: string
   subtitle?: string
