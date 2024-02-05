@@ -74,7 +74,7 @@ const downloadCore = async () => {
     await Download(asset.browser_download_url, tmp, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     })
-    
+
     const fileName = await getKernelFileName() // sing-box.exe
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 
@@ -196,7 +196,7 @@ initVersion()
     {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
   </Tag>
   <Button
-    v-show="!remoteVersionLoading && needUpdate"
+    v-show="!localVersionLoading && !remoteVersionLoading && needUpdate"
     @click="downloadCore"
     :loading="downloadLoading"
     size="small"
@@ -205,7 +205,7 @@ initVersion()
     {{ t('kernel.update') }} : {{ remoteVersion }}
   </Button>
   <Button
-    v-show="!remoteVersionLoading && needRestart"
+    v-show="!localVersionLoading && !remoteVersionLoading && needRestart"
     @click="handleRestartKernel"
     :loading="kernelApiStore.loading"
     size="small"

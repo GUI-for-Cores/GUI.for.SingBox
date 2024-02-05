@@ -70,12 +70,12 @@ const handleSelectAll = () => {
       </div>
 
       <div class="form-action">
-        <Button @click="handleSelectAll" type="text" size="small">
+        <Button v-if="type === 'multi'" @click="handleSelectAll" type="text" size="small">
           {{ t('common.selectAll') }}
         </Button>
         <Button type="text" size="small" class="mr-auto">
-          {{ selected.size }} / {{ options.length }}</Button
-        >
+          {{ selected.size }} / {{ options.length }}
+        </Button>
         <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
         <Button @click="handleConfirm" size="small" type="primary">
           {{ t('common.confirm') }}
