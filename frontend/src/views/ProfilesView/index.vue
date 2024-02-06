@@ -5,13 +5,12 @@ import { useI18n, I18nT } from 'vue-i18n'
 import { useMessage } from '@/hooks'
 import { ClipboardSetText } from '@/utils/bridge'
 import { DraggableOptions, View } from '@/constant'
-import { debounce, generateConfig, sampleID } from '@/utils'
+import { debounce, deepClone, generateConfig, sampleID } from '@/utils'
 import {
   type ProfileType,
   type Menu,
   useProfilesStore,
   useAppSettingsStore,
-  useAppStore,
   useKernelApiStore
 } from '@/stores'
 
@@ -24,7 +23,6 @@ const isUpdate = ref(false)
 
 const { t } = useI18n()
 const { message } = useMessage()
-const appStore = useAppStore()
 const profilesStore = useProfilesStore()
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
@@ -45,8 +43,10 @@ const secondaryMenus: Menu[] = [
   {
     label: 'profiles.copy',
     handler: async (id: string) => {
-      const p = profilesStore.getProfileById(id)!
-      appStore.setProfilesClipboard(p)
+      const p = deepClone(profilesStore.getProfileById(id)!)
+      p.id = sampleID()
+      p.name = p.name + '(Copy)'
+      profilesStore.addProfile(p)
       message.success('common.success')
     }
   },
@@ -61,7 +61,7 @@ const secondaryMenus: Menu[] = [
         if (!ok) throw 'ClipboardSetText Error'
         message.success('common.success')
       } catch (error: any) {
-        message.error(error)
+        message.error(error.message || error)
       }
     }
   }
@@ -75,7 +75,7 @@ const menus: Menu[] = [
     'profile.step.groups',
     'profile.step.rules',
     'profile.step.dns',
-    'profile.step.dnsRules',
+    'profile.step.dnsRules'
   ].map((v, i) => {
     return {
       label: v,
@@ -94,14 +94,6 @@ const menus: Menu[] = [
     children: secondaryMenus
   }
 ]
-
-const handlePasteProfile = () => {
-  const p = appStore.getProfilesClipboard() as ProfileType
-  p.id = sampleID()
-  p.name = p.name + '(Copy)'
-  profilesStore.addProfile(p)
-  appStore.clearProfilesClipboard()
-}
 
 const handleAddProfile = async () => {
   isUpdate.value = false
@@ -173,14 +165,6 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
       ]"
       style="margin-right: auto"
     />
-    <template v-if="appStore.profilesClipboard">
-      <Button @click="handlePasteProfile" type="link">
-        {{ t('profiles.paste') }}
-      </Button>
-      <Button @click="appStore.clearProfilesClipboard" type="link">
-        {{ t('profiles.clearClipboard') }}
-      </Button>
-    </template>
     <Button @click="handleAddProfile" type="primary">
       {{ t('common.add') }}
     </Button>

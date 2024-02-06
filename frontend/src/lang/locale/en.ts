@@ -356,10 +356,8 @@ export default {
     shouldStop: 'Unable to delete, this profile is in use.',
     empty: 'The profiles list is empty, Please {action} a profile first.',
     copytoClipboard: 'Generate config to clipboard',
-    copy: 'Copy as template',
-    paste: 'Paste template',
-    start: 'Start/Restart with this Profile',
-    clearClipboard: 'Clear template'
+    copy: 'Copy and Paste',
+    start: 'Start/Restart with this Profile'
   },
   ruleset: {
     http: 'HTTP',
@@ -449,9 +447,10 @@ export default {
       fullscreen: 'Fullscreen'
     },
     needRestart: 'Restart Required',
+    needAdmin: 'Admin required',
     exitOnClose: 'Exit On Close Window',
     closeKernelOnExit: 'Close Kernel On Exit App',
-    autoSetSystemProxy: 'Auto Set System Proxy',
+    autoSetSystemProxy: 'Auto Set / Clear System Proxy',
     autoStartKernel: 'Auto Start Kernel',
     admin: 'Run As Admin',
     startup: {

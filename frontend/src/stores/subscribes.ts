@@ -217,7 +217,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
     } else if (s.type === 'Http') {
       const appSettings = useAppSettingsStore()
-      const userAgent = s.userAgent || appSettings.app.userAgent
+      const userAgent = s.userAgent || appSettings.app.userAgent || APP_TITLE
 
       let header: any = {}
 

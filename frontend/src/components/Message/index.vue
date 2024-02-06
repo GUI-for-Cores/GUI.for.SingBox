@@ -27,7 +27,7 @@ const icon = computed(() => iconMap[props.icon] as any)
 
 <template>
   <div class="message">
-    <Icon :icon="icon" />
+    <Icon style="flex-shrink: 0" :icon="icon" />
     <div class="content">{{ t(content) }}</div>
   </div>
 </template>
@@ -44,6 +44,8 @@ const icon = computed(() => iconMap[props.icon] as any)
   .content {
     font-size: 14px;
     padding: 0 8px;
+    word-wrap: break-word;
+    word-break: break-all;
   }
 }
 </style>

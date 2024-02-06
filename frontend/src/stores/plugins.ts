@@ -4,8 +4,8 @@ import { parse, stringify } from 'yaml'
 
 import { useAppSettingsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
-import { debounce, deepClone, ignoredError, isValidSubJson } from '@/utils'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
+import { debounce, deepClone, ignoredError, isValidSubJson, APP_TITLE } from '@/utils'
 
 export type PluginType = {
   id: string
@@ -164,7 +164,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     if (plugin.type === 'Http') {
       const appSettings = useAppSettingsStore()
       const { body } = await HttpGet(plugin.url, {
-        'User-Agent': appSettings.app.userAgent
+        'User-Agent': appSettings.app.userAgent  || APP_TITLE
       })
       code = body
     }

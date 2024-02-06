@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { ignoredError } from '@/utils'
-import { usePluginsStore, type PluginType } from '@/stores'
+import { APP_TITLE, ignoredError } from '@/utils'
+import { usePluginsStore, type PluginType, useAppSettingsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
 
 const loading = ref(false)
@@ -17,12 +17,14 @@ const gfsUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/
 const { t } = useI18n()
 const { message } = useMessage()
 const pluginsStore = usePluginsStore()
+const appSettings = useAppSettingsStore()
 
 const updateList = async () => {
   loading.value = true
+  const userAgent = appSettings.app.userAgent || APP_TITLE
   try {
-    const { body: body1 } = await HttpGet(hubUrl)
-    const { body: body2 } = await HttpGet(gfsUrl)
+    const { body: body1 } = await HttpGet(hubUrl, { 'User-Agent': userAgent })
+    const { body: body2 } = await HttpGet(gfsUrl, { 'User-Agent': userAgent })
     const list1 = JSON.parse(body1)
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]
@@ -45,8 +47,15 @@ const getList = async () => {
 }
 
 const handleAddPlugin = async (plugin: PluginType) => {
-  await pluginsStore.addPlugin(plugin)
-  await pluginsStore.updatePlugin(plugin.id)
+  try {
+    await pluginsStore.addPlugin(plugin)
+    const { id } = message.info('plugins.updating')
+    await pluginsStore.updatePlugin(plugin.id)
+    message.update(id, 'common.success', 'success')
+  } catch (error: any) {
+    console.error(error)
+    message.error(error.message || error)
+  }
 }
 
 const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)

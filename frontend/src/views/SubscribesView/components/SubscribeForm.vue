@@ -35,7 +35,7 @@ const sub = ref<SubscribeType>({
   exclude: '',
   proxyPrefix: '',
   disabled: false,
-  userAgent: APP_TITLE,
+  userAgent: '',
   proxies: []
 })
 
@@ -65,7 +65,7 @@ const handleSubmit = async () => {
   loading.value = false
 }
 
-const resetUserAgent = () => (sub.value.userAgent = APP_TITLE)
+const resetUserAgent = () => (sub.value.userAgent = '')
 const isManual = () => sub.value.type === 'Manual'
 
 if (props.isUpdate) {
@@ -144,7 +144,7 @@ if (props.isUpdate) {
       <div class="form-item">
         <div class="name">{{ t('subscribe.useragent') }}</div>
         <div style="display: flex; align-items: center; width: 80%">
-          <Input v-model="sub.userAgent" placeholder="" auto-size style="width: 100%" />
+          <Input v-model="sub.userAgent" :placeholder="APP_TITLE" auto-size style="width: 100%" />
           <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')">
             <Icon icon="reset" fill="var(--primary-btn-color)" />
           </Button>

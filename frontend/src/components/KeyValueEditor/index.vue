@@ -56,7 +56,7 @@ watch(
   padding: 0 8px 0 8px;
   display: inline-block;
   flex-direction: column;
-  min-width: 408px;
+  min-width: 224px;
   .item {
     display: flex;
     align-items: center;

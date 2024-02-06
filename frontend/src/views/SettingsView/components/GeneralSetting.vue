@@ -117,16 +117,17 @@ const checkSchtask = async () => {
 }
 
 const onTaskSchChange = async (v: boolean) => {
+  isTaskScheduled.value = !v
   try {
     if (v) {
-      createSchTask(appSettings.app.startupDelay)
+      await createSchTask(appSettings.app.startupDelay)
     } else {
       await DeleteSchTask(APP_TITLE)
     }
+    isTaskScheduled.value = !v
   } catch (error: any) {
     console.error(error)
     message.error(error)
-    isTaskScheduled.value = !v
   }
 }
 
@@ -234,6 +235,7 @@ checkSchtask()
     <div class="settings-item">
       <div class="title">
         {{ t('settings.startup.name') }}
+        <span class="tips">({{ t('settings.needAdmin') }})</span>
       </div>
       <div style="display: flex; align-items: center">
         <Switch v-model="isTaskScheduled" @change="onTaskSchChange" style="margin-right: 16px" />

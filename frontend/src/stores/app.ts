@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import i18n from '@/lang'
 import type { MenuItem } from '@/constant'
-import { debounce, deepClone, sampleID } from '@/utils'
+import { debounce, sampleID } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   EventsOff,
@@ -39,20 +39,6 @@ export const useAppStore = defineStore('app', () => {
     x: 0,
     y: 0
   })
-
-  /* Profiles Clipboard */
-  const profilesClipboard = ref<any>()
-  const setProfilesClipboard = (data: any) => {
-    profilesClipboard.value = deepClone(data)
-  }
-
-  const getProfilesClipboard = () => {
-    return deepClone(profilesClipboard.value)
-  }
-
-  const clearProfilesClipboard = () => {
-    profilesClipboard.value = false
-  }
 
   /* System Tray & Menus */
   const exitApp = async () => {
@@ -242,10 +228,6 @@ export const useAppStore = defineStore('app', () => {
     tipsShow,
     tipsMessage,
     tipsPosition,
-    profilesClipboard,
-    setProfilesClipboard,
-    getProfilesClipboard,
-    clearProfilesClipboard,
     updateTrayMenus,
     exitApp
   }

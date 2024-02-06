@@ -356,10 +356,8 @@ export default {
     shouldStop: '当前配置正在使用，无法删除',
     empty: '配置列表为空，请先{action}配置。',
     copytoClipboard: '生成配置到剪切板',
-    copy: '复制为模板',
-    paste: '粘贴模板',
-    start: '使用此配置启动/重启',
-    clearClipboard: '清空模板'
+    copy: '复制并粘贴',
+    start: '使用此配置启动/重启'
   },
   ruleset: {
     http: '远程下载',
@@ -449,9 +447,10 @@ export default {
       fullscreen: '全屏'
     },
     needRestart: '重启生效',
+    needAdmin: '需要管理员权限',
     exitOnClose: '关闭窗口时退出程序',
     closeKernelOnExit: '退出程序时同时关闭内核',
-    autoSetSystemProxy: '自动配置系统代理',
+    autoSetSystemProxy: '自动配置/清除系统代理',
     autoStartKernel: '自动启动内核程序',
     admin: '以管理员身份运行',
     startup: {
