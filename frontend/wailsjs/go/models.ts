@@ -55,6 +55,7 @@ export namespace bridge {
 	    event: string;
 	    children: MenuItem[];
 	    show: boolean;
+	    checked: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MenuItem(source);
@@ -68,6 +69,7 @@ export namespace bridge {
 	        this.event = source["event"];
 	        this.children = this.convertValues(source["children"], MenuItem);
 	        this.show = source["show"];
+	        this.checked = source["checked"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

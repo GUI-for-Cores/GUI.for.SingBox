@@ -152,6 +152,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     const [{ providers: a }, { proxies: b }] = await Promise.all([getProviders(), getProxies()])
     providers.value = a
     proxies.value = b
+    const appStore = useAppStore()
+    appStore.updateTrayMenus()
   }
 
   const initConfig = async () => {
@@ -261,6 +263,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           appSettingsStore.app.kernel.running = true
 
           await refreshConfig()
+          await refreshProviderProxies()
 
           // Automatically set system proxy, but the priority is lower than tun mode
           if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {

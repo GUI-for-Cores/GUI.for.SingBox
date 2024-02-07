@@ -90,6 +90,7 @@ export type MenuItem = {
   event?: (() => void) | string
   children?: MenuItem[]
   show?: boolean
+  checked?: boolean
 }
 
 export type TrayContent = {

@@ -41,6 +41,7 @@ type MenuItem struct {
 	Event    string     `json:"event"`
 	Children []MenuItem `json:"children"`
 	Show     bool       `json:"show"`
+	Checked  bool       `json:"checked"`
 }
 
 type TrayContents struct {

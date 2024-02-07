@@ -66,6 +66,10 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 		}
 		m.Click(func() { runtime.EventsEmit(a.Ctx, menu.Event) })
 
+		if menu.Checked {
+			m.Check()
+		}
+
 		for _, child := range menu.Children {
 			createMenuItem(child, a, m)
 		}

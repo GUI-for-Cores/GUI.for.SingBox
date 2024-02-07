@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import i18n from '@/lang'
 import type { MenuItem } from '@/constant'
 import { debounce, sampleID } from '@/utils'
+import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   EventsOff,
@@ -94,12 +95,88 @@ export const useAppStore = defineStore('app', () => {
     return menus.map(processMenu)
   }
 
+  const handleUseProxy = async (group: any, proxy: any) => {
+    if (group.type !== 'Selector' || group.now === proxy.name) return
+    const promises: Promise<null>[] = []
+    const appSettings = useAppSettingsStore()
+    const kernelApiStore = useKernelApiStore()
+    if (appSettings.app.kernel.autoClose) {
+      const { connections } = await getConnections()
+      promises.push(
+        ...(connections || [])
+          .filter((v) => v.chains.includes(group.name))
+          .map((v) => deleteConnection(v.id))
+      )
+    }
+    await useProxy(group.name, proxy.name)
+    await Promise.all(promises)
+    await kernelApiStore.refreshProviderProxies()
+  }
+
   const updateTrayMenus = debounce(async () => {
     const envStore = useEnvStore()
     const appSettings = useAppSettingsStore()
     const kernelApiStore = useKernelApiStore()
 
+    const { proxies } = kernelApiStore
+
+    const groupsMenus: MenuItem[] = (() => {
+      if (!proxies) return []
+      return Object.values(proxies)
+        .filter((v) => v.all && !['GLOBAL', 'Fallback'].includes(v.name))
+        .map((provider) => {
+          const all = provider.all
+            .filter((v) => {
+              if (
+                appSettings.app.kernel.unAvailable ||
+                ['direct', 'block'].includes(v) ||
+                proxies[v].all
+              ) {
+                return true
+              }
+              const history = proxies[v].history || []
+              return history && history[history.length - 1]?.delay > 0
+            })
+            .map((v) => {
+              const history = proxies[v].history || []
+              const delay = history[history.length - 1]?.delay || 0
+              return { ...proxies[v], delay }
+            })
+            .sort((a, b) => {
+              if (!appSettings.app.kernel.sortByDelay || a.delay === b.delay) return 0
+              if (!a.delay) return 1
+              if (!b.delay) return -1
+              return a.delay - b.delay
+            })
+          return { ...provider, all }
+        })
+        .map((group) => {
+          return {
+            type: 'item',
+            text: group.name,
+            show: true,
+            children: group.all.map((proxy) => {
+              return {
+                type: 'item',
+                text: proxy.name,
+                show: true,
+                checked: proxy.name === group.now,
+                event: () => {
+                  console.log(group, proxy)
+                  handleUseProxy(group, proxy)
+                }
+              }
+            })
+          }
+        })
+    })()
+
     const trayMenus: MenuItem[] = [
+      ...groupsMenus,
+      {
+        type: 'separator',
+        show: groupsMenus.length !== 0
+      },
       {
         type: 'item',
         text: 'tray.kernel',
