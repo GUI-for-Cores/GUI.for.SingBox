@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { ProxyGroupType } from '@/constant'
-import { ignoredError, sleep, updateTrayMenus } from '@/utils'
+import { ignoredError, sleep } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
   useProxy,

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import * as Defaults from '@/constant'
-import { sampleID, APP_TITLE } from '@/utils'
+import { sampleID, APP_TITLE, deepClone } from '@/utils'
 import {
   useProfilesStore,
   useAppSettingsStore,
@@ -13,14 +13,15 @@ import {
   type ProfileType
 } from '@/stores'
 
-const url = ref('')
-const loading = ref(false)
-
 const { t } = useI18n()
 const { message } = useMessage()
 const subscribeStore = useSubscribesStore()
 const profilesStore = useProfilesStore()
 const appSettingsStore = useAppSettingsStore()
+
+const url = ref('')
+const loading = ref(false)
+const useragent = ref(deepClone(appSettingsStore.app.userAgent || APP_TITLE))
 
 const handleCancel = inject('cancel') as any
 
@@ -62,7 +63,7 @@ const handleSubmit = async () => {
     exclude: '',
     proxyPrefix: '',
     disabled: false,
-    userAgent: APP_TITLE,
+    userAgent: useragent.value || appSettingsStore.app.userAgent || APP_TITLE,
     proxies: []
   }
 
@@ -99,7 +100,11 @@ const handleSubmit = async () => {
 <template>
   <div class="form-item">
     <div class="name">{{ t('subscribe.url') }} *</div>
-    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 86%" />
+    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 80%" />
+  </div>
+  <div class="form-item">
+    <div class="name">{{ t('subscribe.useragent') }}</div>
+    <Input v-model="useragent" auto-size :placeholder="appSettingsStore.app.userAgent" style="width: 80%" />
   </div>
 
   <div class="form-action">
