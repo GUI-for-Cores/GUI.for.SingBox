@@ -1,10 +1,10 @@
-export const ProfilesFilePath = './data/profiles.yaml'
+export const ProfilesFilePath = 'data/profiles.yaml'
 
-export const SubscribesFilePath = './data/subscribes.yaml'
+export const SubscribesFilePath = 'data/subscribes.yaml'
 
-export const RulesetsFilePath = './data/rulesets.yaml'
+export const RulesetsFilePath = 'data/rulesets.yaml'
 
-export const PluginsFilePath = './data/plugins.yaml'
+export const PluginsFilePath = 'data/plugins.yaml'
 
 export enum WindowStartState {
   Normal = 0,
@@ -89,7 +89,7 @@ export type MenuItem = {
   tooltip?: string
   event?: (() => void) | string
   children?: MenuItem[]
-  show?: boolean
+  hidden?: boolean
   checked?: boolean
 }
 

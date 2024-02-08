@@ -114,7 +114,7 @@ export const HttpGetJSON = async (url: string, headers = {}) => {
     const json = JSON.parse(body)
     return { header, json }
   } catch {
-    throw 'Wrong data format'
+    throw 'Wrong data format: ' + body
   }
 }
 

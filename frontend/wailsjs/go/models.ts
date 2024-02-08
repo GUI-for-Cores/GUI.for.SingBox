@@ -54,7 +54,7 @@ export namespace bridge {
 	    tooltip: string;
 	    event: string;
 	    children: MenuItem[];
-	    show: boolean;
+	    hidden: boolean;
 	    checked: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -68,7 +68,7 @@ export namespace bridge {
 	        this.tooltip = source["tooltip"];
 	        this.event = source["event"];
 	        this.children = this.convertValues(source["children"], MenuItem);
-	        this.show = source["show"];
+	        this.hidden = source["hidden"];
 	        this.checked = source["checked"];
 	    }
 	
@@ -90,13 +90,13 @@ export namespace bridge {
 		    return a;
 		}
 	}
-	export class TrayContents {
+	export class TrayContent {
 	    icon: string;
 	    title: string;
 	    tooltip: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new TrayContents(source);
+	        return new TrayContent(source);
 	    }
 	
 	    constructor(source: any = {}) {

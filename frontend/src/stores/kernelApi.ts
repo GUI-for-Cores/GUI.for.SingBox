@@ -1,24 +1,23 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
 import { deepClone } from '@/utils/others'
-import { generateConfigFile, ignoredError } from '@/utils'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
 import { ProcessInfo, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
-import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
 import {
   KernelWorkDirectory,
   getKernelFileName,
   KernelConfigFilePath,
   StackOptions
 } from '@/constant'
+import { generateConfigFile, ignoredError, updateTrayMenus } from '@/utils'
+import { getConfigs, setConfigs, getProxies, getProviders } from '@/api/kernel'
 import {
   type ProfileType,
   useAppSettingsStore,
   useProfilesStore,
   useLogsStore,
-  useEnvStore,
-  useAppStore
+  useEnvStore
 } from '@/stores'
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
@@ -110,39 +109,38 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const updateCurrentProfile = async (name: string, value: any) => {
-      if (!currentProfile.value) {
-        return
-      }
+    if (!currentProfile.value) {
+      return
+    }
 
-      if (name == 'tun') {
-        currentProfile.value.tunConfig.enable = value
-      } else if (name == 'http-port') {
-        currentProfile.value.advancedConfig.port = value
-      } else if (name == 'socks-port') {
-        currentProfile.value.advancedConfig['socks-port'] = value
-      } else if (name == 'mixed-port') {
-        currentProfile.value.generalConfig['mixed-port'] = value
-      } else if (name == 'allow-lan') {
-        currentProfile.value.generalConfig['allow-lan'] = value
-      } else if (name == 'tun-stack') {
-        currentProfile.value.tunConfig.stack = value
-      } else if (name == 'tun-device') {
-        currentProfile.value.tunConfig.interface_name = value
-      } else if (name == 'interface-name') {
-        currentProfile.value.generalConfig['interface-name'] = value
-      } else if (name == 'mode') {
-        currentProfile.value.generalConfig.mode = value
-      } else if (name == 'fakeip') {
-        currentProfile.value.dnsConfig.fakeip = value
-      }
+    if (name == 'tun') {
+      currentProfile.value.tunConfig.enable = value
+    } else if (name == 'http-port') {
+      currentProfile.value.advancedConfig.port = value
+    } else if (name == 'socks-port') {
+      currentProfile.value.advancedConfig['socks-port'] = value
+    } else if (name == 'mixed-port') {
+      currentProfile.value.generalConfig['mixed-port'] = value
+    } else if (name == 'allow-lan') {
+      currentProfile.value.generalConfig['allow-lan'] = value
+    } else if (name == 'tun-stack') {
+      currentProfile.value.tunConfig.stack = value
+    } else if (name == 'tun-device') {
+      currentProfile.value.tunConfig.interface_name = value
+    } else if (name == 'interface-name') {
+      currentProfile.value.generalConfig['interface-name'] = value
+    } else if (name == 'mode') {
+      currentProfile.value.generalConfig.mode = value
+    } else if (name == 'fakeip') {
+      currentProfile.value.dnsConfig.fakeip = value
+    }
 
-      await refreshConfig()
+    await refreshConfig()
   }
 
   const updateConfig = async (name: string, value: any) => {
     updateCurrentProfile(name, value)
-    if(currentProfile.value)
-    {
+    if (currentProfile.value) {
       await generateConfigFile(currentProfile.value)
     }
     await restartKernelKeepConfig()
@@ -152,8 +150,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     const [{ providers: a }, { proxies: b }] = await Promise.all([getProviders(), getProxies()])
     providers.value = a
     proxies.value = b
-    const appStore = useAppStore()
-    appStore.updateTrayMenus()
   }
 
   const initConfig = async () => {
@@ -224,7 +220,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const startKernel = async () => {
-    const appStore = useAppStore()
     const envStore = useEnvStore()
     const logsStore = useLogsStore()
     const profilesStore = useProfilesStore()
@@ -269,8 +264,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
             await envStore.setSystemProxy()
           }
-
-          appStore.updateTrayMenus()
         }
       },
       // end
@@ -282,14 +275,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         if (appSettingsStore.app.autoSetSystemProxy) {
           await envStore.clearSystemProxy()
         }
-
-        appStore.updateTrayMenus()
       }
     )
   }
 
   const stopKernel = async () => {
-    const appStore = useAppStore()
     const logsStore = useLogsStore()
     const appSettingsStore = useAppSettingsStore()
 
@@ -301,8 +291,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     appSettingsStore.app.kernel.running = false
 
     logsStore.clearKernelLog()
-
-    appStore.updateTrayMenus()
   }
 
   const restartKernelKeepConfig = async () => {
@@ -316,6 +304,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     await stopKernel()
     await startKernel()
   }
+
+  watch(
+    [() => config.value.mode, () => config.value.tun.enable, () => proxies.value],
+    updateTrayMenus
+  )
 
   return {
     startKernel,

@@ -1,7 +1,8 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
-import { useKernelApiStore, useAppStore } from '@/stores'
+import { updateTrayMenus } from '@/utils'
+import { useKernelApiStore } from '@/stores'
 import { SetSystemProxy, ClearSystemProxy, GetSystemProxy, GetEnv } from '@/utils/bridge'
 
 export const useEnvStore = defineStore('env', () => {
@@ -35,7 +36,6 @@ export const useEnvStore = defineStore('env', () => {
   }
 
   const setSystemProxy = async () => {
-    const appStore = useAppStore()
     const kernelApiStore = useKernelApiStore()
 
     let port = 0
@@ -52,22 +52,19 @@ export const useEnvStore = defineStore('env', () => {
     await SetSystemProxy(port)
 
     systemProxy.value = true
-    appStore.updateTrayMenus()
   }
 
   const clearSystemProxy = async () => {
-    const appStore = useAppStore()
-    
     await ClearSystemProxy()
     systemProxy.value = false
-
-    appStore.updateTrayMenus()
   }
 
   const switchSystemProxy = async (enable: boolean) => {
     if (enable) await setSystemProxy()
     else await clearSystemProxy()
   }
+
+  watch(systemProxy, updateTrayMenus)
 
   return {
     env,

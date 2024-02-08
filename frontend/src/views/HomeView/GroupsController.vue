@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { ProxyGroupType } from '@/constant'
-import { ignoredError, sleep } from '@/utils'
-import { useAppSettingsStore, useAppStore, useKernelApiStore } from '@/stores'
+import { ignoredError, sleep, updateTrayMenus } from '@/utils'
+import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
   useProxy,
   getGroupDelay,
@@ -20,7 +20,6 @@ const loading = ref(false)
 
 const { t } = useI18n()
 const { message } = useMessage()
-const appStore = useAppStore()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
@@ -175,21 +174,13 @@ onActivated(() => {
       <Switch v-model="appSettings.app.kernel.autoClose">
         {{ t('home.controller.autoClose') }}
       </Switch>
-      <Switch
-        v-model="appSettings.app.kernel.unAvailable"
-        @change="appStore.updateTrayMenus"
-        style="margin-left: 8px"
-      >
+      <Switch v-model="appSettings.app.kernel.unAvailable" style="margin-left: 8px">
         {{ t('home.controller.unAvailable') }}
       </Switch>
       <Switch v-model="appSettings.app.kernel.cardMode" style="margin-left: 8px">
         {{ t('home.controller.cardMode') }}
       </Switch>
-      <Switch
-        v-model="appSettings.app.kernel.sortByDelay"
-        @change="appStore.updateTrayMenus"
-        style="margin-left: 8px"
-      >
+      <Switch v-model="appSettings.app.kernel.sortByDelay" style="margin-left: 8px">
         {{ t('home.controller.sortBy') }}
       </Switch>
       <Button

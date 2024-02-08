@@ -1,7 +1,7 @@
 package bridge
 
 import (
-	"fmt"
+	"log"
 	"path/filepath"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -22,7 +22,7 @@ func ConvertByte2String(byte []byte) string {
 }
 
 func (a *App) AbsolutePath(path string) FlagResult {
-	fmt.Println("AbsolutePath:", path)
+	log.Printf("AbsolutePath: %s", path)
 
 	path, err := GetPath(path)
 	if err != nil {

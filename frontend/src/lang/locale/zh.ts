@@ -504,14 +504,11 @@ export default {
     fallback: '🐟 漏网之鱼'
   },
   tray: {
-    hide: '隐藏',
-    hideTip: '隐藏窗口',
-    show: '显示',
-    showTip: '显示窗口',
     restart: '重启',
     restartTip: '重启程序',
     exit: '退出',
     exitTip: '退出程序',
+    proxyGroup: '代理组',
     setSystemProxy: '设置系统代理',
     clearSystemProxy: '清除系统代理',
     tun: 'Tun模式',

@@ -67,8 +67,6 @@ appSettings.setupAppSettings().then(async () => {
     } catch (error: any) {
       message.error(error)
     }
-
-    appStore.updateTrayMenus()
   })
 
   await sleep(1000)

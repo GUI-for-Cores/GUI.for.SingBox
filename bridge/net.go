@@ -3,6 +3,7 @@ package bridge
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -39,7 +40,7 @@ func CreateHttpClient(a *App) *http.Client {
 }
 
 func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
-	fmt.Println("HttpGet:", url, headers)
+	log.Printf("HttpGet: %s %v", url, headers)
 
 	client := CreateHttpClient(a)
 
@@ -73,7 +74,7 @@ func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
 }
 
 func (a *App) Download(url string, path string, event string) FlagResult {
-	fmt.Println("Download:", url, path)
+	log.Printf("HttpGet: %s %s", url, path)
 
 	path, err := GetPath(path)
 	if err != nil {

@@ -57,7 +57,7 @@ export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function UnzipZIPFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
-export function UpdateTray(arg1:bridge.TrayContents):Promise<void>;
+export function UpdateTray(arg1:bridge.TrayContent):Promise<void>;
 
 export function UpdateTrayMenus(arg1:Array<bridge.MenuItem>):Promise<void>;
 

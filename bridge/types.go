@@ -40,11 +40,11 @@ type MenuItem struct {
 	Tooltip  string     `json:"tooltip"`
 	Event    string     `json:"event"`
 	Children []MenuItem `json:"children"`
-	Show     bool       `json:"show"`
+	Hidden   bool       `json:"hidden"`
 	Checked  bool       `json:"checked"`
 }
 
-type TrayContents struct {
+type TrayContent struct {
 	Icon    string `json:"icon"`
 	Title   string `json:"title"`
 	Tooltip string `json:"tooltip"`

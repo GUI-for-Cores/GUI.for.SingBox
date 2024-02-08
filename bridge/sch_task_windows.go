@@ -3,13 +3,13 @@
 package bridge
 
 import (
-	"fmt"
+	"log"
 	"os/exec"
 	"syscall"
 )
 
 func (a *App) QuerySchTask(taskName string) FlagResult {
-	fmt.Println("QuerySchTask:", taskName)
+	log.Printf("QuerySchTask: %s", taskName)
 
 	cmd := exec.Command("Schtasks", "/Query", "/TN", taskName, "/XML")
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -23,7 +23,7 @@ func (a *App) QuerySchTask(taskName string) FlagResult {
 }
 
 func (a *App) CreateSchTask(taskName string, xmlPath string) FlagResult {
-	fmt.Println("CreateSchTask:", taskName, xmlPath)
+	log.Printf("CreateSchTask: %s %s", taskName, xmlPath)
 
 	xmlPath, err := GetPath(xmlPath)
 	if err != nil {
@@ -42,7 +42,7 @@ func (a *App) CreateSchTask(taskName string, xmlPath string) FlagResult {
 }
 
 func (a *App) DeleteSchTask(taskName string) FlagResult {
-	fmt.Println("DeleteSchTask:", taskName)
+	log.Printf("DeleteSchTask: %s", taskName)
 
 	cmd := exec.Command("SchTasks", "/Delete", "/F", "/TN", taskName)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}

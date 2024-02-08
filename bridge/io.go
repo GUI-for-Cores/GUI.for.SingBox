@@ -5,13 +5,14 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
 func (a *App) Writefile(path string, content string) FlagResult {
-	fmt.Println("Writefile:", path)
+	log.Printf("Writefile: %s", path)
 
 	path, err := GetPath(path)
 	if err != nil {
@@ -32,7 +33,7 @@ func (a *App) Writefile(path string, content string) FlagResult {
 }
 
 func (a *App) Readfile(path string) FlagResult {
-	fmt.Println("Readfile:", path)
+	log.Printf("Readfile: %s", path)
 
 	path, err := GetPath(path)
 	if err != nil {
@@ -48,7 +49,7 @@ func (a *App) Readfile(path string) FlagResult {
 }
 
 func (a *App) Movefile(source string, target string) FlagResult {
-	fmt.Println("Movefile:", source, target)
+	log.Printf("Movefile: %s -> %s", source, target)
 
 	source, err := GetPath(source)
 	if err != nil {
@@ -71,7 +72,7 @@ func (a *App) Movefile(source string, target string) FlagResult {
 func UNUSED(x ...interface{}) {}
 
 func (a *App) Copyfile(source string, target string) FlagResult {
-	fmt.Println("Copyfile:", source, target)
+	log.Printf("Copyfile: %s -> %s", source, target)
 
 	source, err := GetPath(source)
 	if err != nil {
@@ -104,13 +105,12 @@ func (a *App) Copyfile(source string, target string) FlagResult {
 }
 
 func (a *App) Removefile(path string) FlagResult {
-	fmt.Println("RemoveFile:", path)
+	log.Printf("RemoveFile: %s", path)
+
 	path, err := GetPath(path)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
-
-	fmt.Println(path)
 
 	err = os.RemoveAll(path)
 	if err != nil {
@@ -121,7 +121,8 @@ func (a *App) Removefile(path string) FlagResult {
 }
 
 func (a *App) Makedir(path string) FlagResult {
-	fmt.Println("Makedir:", path)
+	log.Printf("Makedir: %s", path)
+
 	path, err := GetPath(path)
 	if err != nil {
 		return FlagResult{false, err.Error()}
@@ -135,7 +136,7 @@ func (a *App) Makedir(path string) FlagResult {
 }
 
 func (a *App) UnzipZIPFile(path string, output string) FlagResult {
-	fmt.Println("UnzipZIPFile:", path, output)
+	log.Printf("UnzipZIPFile: %s -> %s", path, output)
 
 	path, err := GetPath(path)
 	if err != nil {
@@ -157,7 +158,7 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 		filePath := filepath.Join(output, f.Name)
 
 		if !strings.HasPrefix(filePath, filepath.Clean(output)+string(os.PathSeparator)) {
-			fmt.Println("invalid file path")
+			log.Println("UnzipZIPFile: invalid file path")
 			return FlagResult{false, err.Error()}
 		}
 		if f.FileInfo().IsDir() {
@@ -189,7 +190,7 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 }
 
 func (a *App) UnzipGZFile(path string, output string) FlagResult {
-	fmt.Println("UnzipGZFile:", path, output)
+	log.Printf("UnzipGZFile: %s -> %s", path, output)
 
 	path, err := GetPath(path)
 	if err != nil {
@@ -228,8 +229,8 @@ func (a *App) UnzipGZFile(path string, output string) FlagResult {
 }
 
 func (a *App) FileExists(path string) FlagResult {
-	fmt.Println("FileExists:", path)
-	
+	log.Printf("FileExists: %s", path)
+
 	path, err := GetPath(path)
 	if err != nil {
 		return FlagResult{false, err.Error()}

@@ -2,7 +2,7 @@ package bridge
 
 import (
 	"bufio"
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strconv"
@@ -14,15 +14,14 @@ import (
 )
 
 func (a *App) Exec(path string, args []string, convert bool) FlagResult {
-	fmt.Println("Exec:", path, args)
+	log.Printf("Exec: %s %s", path, args)
 
 	exe_path, err := GetPath(path)
-
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
-	if a.FileExists(exe_path).Data != "true" {
+	if _, err = os.Stat(exe_path); os.IsNotExist(err) {
 		exe_path = path
 	}
 
@@ -45,15 +44,14 @@ func (a *App) Exec(path string, args []string, convert bool) FlagResult {
 }
 
 func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string) FlagResult {
-	fmt.Println("ExecBackground:", path, args)
+	log.Printf("ExecBackground: %s %s", path, args)
 
 	exe_path, err := GetPath(path)
-
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
-	if a.FileExists(exe_path).Data != "true" {
+	if _, err = os.Stat(exe_path); os.IsNotExist(err) {
 		exe_path = path
 	}
 
@@ -84,7 +82,7 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 			defer wg.Done()
 			for outScanner.Scan() {
 				text := outScanner.Text()
-				runtime.EventsEmit(a.Ctx, outEvent, ""+text)
+				runtime.EventsEmit(a.Ctx, outEvent, text)
 			}
 		}()
 
@@ -93,14 +91,14 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 			defer wg.Done()
 			for errScanner.Scan() {
 				text := errScanner.Text()
-				runtime.EventsEmit(a.Ctx, outEvent, ""+text)
+				runtime.EventsEmit(a.Ctx, outEvent, text)
 			}
 		}()
 
 		go func() {
 			wg.Wait()
 			if endEvent != "" {
-				runtime.EventsEmit(a.Ctx, endEvent, "")
+				runtime.EventsEmit(a.Ctx, endEvent)
 			}
 		}()
 	}
@@ -111,7 +109,7 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 }
 
 func (a *App) ProcessInfo(pid int32) FlagResult {
-	fmt.Println("ProcessInfo:", pid)
+	log.Printf("ProcessInfo: %d", pid)
 
 	proc, err := process.NewProcess(pid)
 	if err != nil {
@@ -127,7 +125,7 @@ func (a *App) ProcessInfo(pid int32) FlagResult {
 }
 
 func (a *App) KillProcess(pid int) FlagResult {
-	fmt.Println("KillProcess:", pid)
+	log.Printf("KillProcess: %d", pid)
 
 	process, err := os.FindProcess(pid)
 	if err != nil {

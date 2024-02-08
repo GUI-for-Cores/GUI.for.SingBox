@@ -3,8 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
-import { useAppStore } from '@/stores'
-import { debounce, APP_TITLE } from '@/utils'
+import { debounce, updateTrayMenus, APP_TITLE } from '@/utils'
 import { Theme, WindowStartState, Lang, View, Color, Colors } from '@/constant'
 import { WindowSetDarkTheme, WindowSetLightTheme, Readfile, Writefile } from '@/utils/bridge'
 
@@ -134,10 +133,17 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  watch([() => app.value.lang, () => themeMode.value], () => {
-    const appStore = useAppStore()
-    appStore.updateTrayMenus()
-  })
+  watch(
+    [
+      () => app.value.theme,
+      () => app.value.color,
+      () => app.value.lang,
+      () => app.value.kernel.running,
+      () => app.value.kernel.unAvailable,
+      () => app.value.kernel.sortByDelay
+    ],
+    updateTrayMenus
+  )
 
   return { setupAppSettings, app, themeMode }
 })

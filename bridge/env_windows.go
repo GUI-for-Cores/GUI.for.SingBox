@@ -3,7 +3,7 @@
 package bridge
 
 import (
-	"fmt"
+	"log"
 	"net"
 	"os/exec"
 	"strings"
@@ -22,9 +22,9 @@ func (a *App) GetEnv() EnvResult {
 // Maybe there is a better way
 func (a *App) SetSystemProxy(enable bool, server string) FlagResult {
 	if enable {
-		fmt.Println("SetSystemProxy:", server)
+		log.Printf("SetSystemProxy: %s", server)
 	} else {
-		fmt.Println("ClearSystemProxy:", server)
+		log.Printf("ClearSystemProxy")
 	}
 
 	REG_DWORD, ProxyServer := "0", ""
@@ -54,7 +54,7 @@ func (a *App) SetSystemProxy(enable bool, server string) FlagResult {
 }
 
 func (a *App) GetSystemProxy() FlagResult {
-	fmt.Println("GetSystemProxy:")
+	log.Printf("GetSystemProxy")
 
 	cmd := exec.Command("reg", "query", "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "/v", "ProxyEnable", "/t", "REG_DWORD")
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -87,7 +87,7 @@ func (a *App) GetSystemProxy() FlagResult {
 }
 
 func (a *App) SwitchPermissions(enable bool, path string) FlagResult {
-	fmt.Println("SwitchPermissions:", enable)
+	log.Printf("SwitchPermissions: %v", enable)
 
 	cmd := exec.Command("reg", "delete", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "/v", path, "/f")
 
@@ -106,7 +106,7 @@ func (a *App) SwitchPermissions(enable bool, path string) FlagResult {
 }
 
 func (a *App) CheckPermissions(path string) FlagResult {
-	fmt.Println("CheckPermissions:")
+	log.Printf("CheckPermissions")
 
 	cmd := exec.Command("reg", "query", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "/v", path, "/t", "REG_SZ")
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -126,6 +126,8 @@ func (a *App) CheckPermissions(path string) FlagResult {
 }
 
 func (a *App) GetInterfaces() FlagResult {
+	log.Printf("GetInterfaces")
+
 	interfaces, err := net.Interfaces()
 	if err != nil {
 		return FlagResult{false, err.Error()}
