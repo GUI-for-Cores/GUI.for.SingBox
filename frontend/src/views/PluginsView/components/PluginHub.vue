@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { APP_TITLE, ignoredError } from '@/utils'
-import { usePluginsStore, type PluginType, useAppSettingsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
+import { usePluginsStore, type PluginType, useAppSettingsStore } from '@/stores'
 
 const loading = ref(false)
 const list = ref<PluginType[]>([])

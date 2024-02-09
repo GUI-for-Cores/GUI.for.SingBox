@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { useAppSettingsStore } from '@/stores'
-import { Theme, Lang, WindowStartState, Color, KernelCacheFilePath } from '@/constant'
 import { APP_TITLE, getTaskSchXmlString } from '@/utils'
+import { useAppSettingsStore, useEnvStore } from '@/stores'
+import { Theme, Lang, WindowStartState, Color, KernelCacheFilePath } from '@/constant'
 import {
   CheckPermissions,
   SwitchPermissions,
@@ -25,6 +25,7 @@ const isTaskScheduled = ref(false)
 const { t } = useI18n()
 const { message } = useMessage()
 const appSettings = useAppSettingsStore()
+const envStore = useEnvStore()
 
 const themes = [
   {
@@ -91,8 +92,8 @@ const onPermChange = async (v: boolean) => {
     await SwitchPermissions(v)
     message.success('success')
   } catch (error: any) {
-    message.info(error)
-    console.error(error)
+    message.error(error)
+    console.log(error)
   }
 }
 
@@ -117,14 +118,14 @@ const checkSchtask = async () => {
 }
 
 const onTaskSchChange = async (v: boolean) => {
-  isTaskScheduled.value = v
+  isTaskScheduled.value = !v
   try {
     if (v) {
       await createSchTask(appSettings.app.startupDelay)
     } else {
       await DeleteSchTask(APP_TITLE)
     }
-    isTaskScheduled.value = !v
+    isTaskScheduled.value = v
   } catch (error: any) {
     console.error(error)
     message.error(error)
@@ -148,11 +149,13 @@ const createSchTask = async (delay = 30) => {
   await Removefile(xmlPath)
 }
 
-CheckPermissions().then((admin) => {
-  isAdmin.value = admin
-})
+if (envStore.env.os === 'windows') {
+  checkSchtask()
 
-checkSchtask()
+  CheckPermissions().then((admin) => {
+    isAdmin.value = admin
+  })
+}
 </script>
 
 <template>
@@ -225,14 +228,14 @@ checkSchtask()
       </div>
       <Switch v-model="appSettings.app.autoStartKernel" />
     </div>
-    <div class="settings-item">
+    <div v-if="envStore.env.os === 'windows'" class="settings-item">
       <div class="title">
         {{ t('settings.admin') }}
         <span class="tips">({{ t('settings.needRestart') }})</span>
       </div>
       <Switch v-model="isAdmin" @change="onPermChange" />
     </div>
-    <div class="settings-item">
+    <div v-if="envStore.env.os === 'windows'" class="settings-item">
       <div class="title">
         {{ t('settings.startup.name') }}
         <span class="tips">({{ t('settings.needAdmin') }})</span>

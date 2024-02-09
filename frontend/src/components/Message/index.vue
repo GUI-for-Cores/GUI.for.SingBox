@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import i18n from '@/lang'
 import { computed } from 'vue'
+
+import i18n from '@/lang'
 
 export type IconType = 'info' | 'warn' | 'error' | 'success'
 

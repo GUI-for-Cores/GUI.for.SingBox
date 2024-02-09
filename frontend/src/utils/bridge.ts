@@ -1,4 +1,4 @@
-import { sampleID } from './others'
+import { sampleID } from '@/utils'
 export * from '@wails/runtime/runtime'
 import * as App from '@wails/go/bridge/App'
 import type { TrayContent } from '@/constant'
@@ -206,7 +206,10 @@ export const GetEnv = App.GetEnv
 export const CheckPermissions = async () => {
   const { basePath, appName } = await GetEnv()
   const path = basePath + '\\' + appName
-  const { data } = await App.CheckPermissions(path)
+  const { flag, data } = await App.CheckPermissions(path)
+  if (!flag) {
+    throw data
+  }
   return data === 'RunAsAdmin'
 }
 

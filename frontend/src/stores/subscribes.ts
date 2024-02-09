@@ -261,7 +261,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     const pluginStore = usePluginsStore()
 
     proxies = await pluginStore.onSubscribeTrigger(body)
-    
+
     if (!Array.isArray(proxies)) {
       throw 'Not a valid subscription data'
     }
@@ -297,8 +297,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     s.updateTime = new Date().toLocaleString()
     s.proxies = proxies.map(({ tag, type }) => {
       // Keep the original ID value of the proxy unchanged
-      const _id = s.proxies.find((v) => v.tag === tag)?.id
-      const id = _id || sampleID()
+      const id = s.proxies.find((v) => v.tag === tag)?.id || sampleID()
       return { id, tag, type }
     })
   }
@@ -328,8 +327,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         s.updating = true
         await _doUpdateSub(s)
         needSave = true
-      } catch (error) {
-        console.error('updateSubscribes: ', s.name, error)
       } finally {
         s.updating = false
       }

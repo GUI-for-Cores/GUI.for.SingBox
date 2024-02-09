@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import useI18n from '@/lang'
 
 interface Props {

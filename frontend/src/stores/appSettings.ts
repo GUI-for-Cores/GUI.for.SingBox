@@ -101,24 +101,24 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     else WindowSetLightTheme()
   }
 
-  const updateAppSettings = (v: AppSettings) => {
-    i18n.global.locale.value = v.lang
+  const updateAppSettings = (settings: AppSettings) => {
+    i18n.global.locale.value = settings.lang
     themeMode.value =
-      v.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : v.theme
-    const { primary, secondary } = Colors[v.color]
+      settings.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : v.theme
+    const { primary, secondary } = Colors[settings.color]
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
-    document.body.style.fontFamily = v['font-family']
+    document.body.style.fontFamily = settings['font-family']
     setAppTheme(themeMode.value)
   }
 
   watch(
     app,
-    (v) => {
-      updateAppSettings(v)
+    (settings) => {
+      updateAppSettings(settings)
 
       if (!firstOpen) {
-        const lastModifiedConfig = stringify(v)
+        const lastModifiedConfig = stringify(settings)
         if (latestUserConfig !== lastModifiedConfig) {
           saveAppSettings(lastModifiedConfig).then(() => {
             latestUserConfig = lastModifiedConfig

@@ -21,15 +21,15 @@ export const useEnvStore = defineStore('env', () => {
     env.value = _env
   }
 
-  const updateSystemProxyState = async () => {
+  const updateSystemProxyStatus = async () => {
     const kernelApiStore = useKernelApiStore()
     const proxyServer = await GetSystemProxy()
 
     if (!proxyServer) {
       systemProxy.value = false
     } else {
-      const { port: _port, 'mixed-port': mixedPort } = kernelApiStore.config
-      const proxyServerList = [`127.0.0.1:${_port}`, `127.0.0.1:${mixedPort}`]
+      const { port, 'mixed-port': mixedPort } = kernelApiStore.config
+      const proxyServerList = [`127.0.0.1:${port}`, `127.0.0.1:${mixedPort}`]
       systemProxy.value = proxyServerList.includes(proxyServer)
     }
 
@@ -74,6 +74,6 @@ export const useEnvStore = defineStore('env', () => {
     setSystemProxy,
     clearSystemProxy,
     switchSystemProxy,
-    updateSystemProxyState
+    updateSystemProxyStatus
   }
 })

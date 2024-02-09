@@ -31,23 +31,23 @@ const groups = computed(() => {
 
   let result = Object.values(proxies)
     .filter((v) => v.all)
-    .map((provider) => {
-      const all = provider.all
-        .filter((v) => {
+    .map((group) => {
+      const all = group.all
+        .filter((proxy) => {
           if (
             appSettings.app.kernel.unAvailable ||
-            ['direct', 'block'].includes(v) ||
-            proxies[v].all
+            ['direct', 'block'].includes(proxy) ||
+            proxies[proxy].all
           ) {
             return true
           }
-          const history = proxies[v].history || []
+          const history = proxies[proxy].history || []
           return history && history[history.length - 1]?.delay > 0
         })
-        .map((v) => {
-          const history = proxies[v].history || []
+        .map((proxy) => {
+          const history = proxies[proxy].history || []
           const delay = history[history.length - 1]?.delay || 0
-          return { ...proxies[v], delay }
+          return { ...proxies[proxy], delay }
         })
         .sort((a, b) => {
           if (!appSettings.app.kernel.sortByDelay || a.delay === b.delay) return 0
@@ -56,18 +56,18 @@ const groups = computed(() => {
           return a.delay - b.delay
         })
 
-      const chains = [provider.now]
-      let tmp = proxies[provider.now]
+      const chains = [group.now]
+      let tmp = proxies[group.now]
       while (tmp) {
         tmp.now && chains.push(tmp.now)
         tmp = proxies[tmp.now]
       }
-      if (['GLOBAL', 'Fallback'].includes(provider.name)) {
-        provider.name = 'Fallback'
+      if (['GLOBAL', 'Fallback'].includes(group.name)) {
+        group.name = 'Fallback'
         fallback = idx
       }
       ++idx
-      return { ...provider, all, chains }
+      return { ...group, all, chains }
     })
   if (fallback >= 0) {
     result.push(result[fallback])

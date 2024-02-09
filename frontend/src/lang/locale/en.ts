@@ -97,7 +97,7 @@ export default {
       'inet4-address': 'IPV4 Prefix',
       'inet6-address': 'IPV6 Prefix',
       system: 'System',
-      gvisor: 'Gvisor',
+      gvisor: 'gVisor',
       mixed: 'Mixed',
       lwip: 'LWIP'
     },

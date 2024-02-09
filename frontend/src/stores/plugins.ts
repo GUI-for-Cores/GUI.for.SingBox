@@ -164,7 +164,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     if (plugin.type === 'Http') {
       const appSettings = useAppSettingsStore()
       const { body } = await HttpGet(plugin.url, {
-        'User-Agent': appSettings.app.userAgent  || APP_TITLE
+        'User-Agent': appSettings.app.userAgent || APP_TITLE
       })
       code = body
     }
@@ -184,9 +184,6 @@ export const usePluginsStore = defineStore('plugins', () => {
       p.updating = true
       await _doUpdatePlugin(p)
       await savePlugins()
-    } catch (error) {
-      console.error('updatePlugin: ', p.name, error)
-      throw error
     } finally {
       p.updating = false
     }
@@ -200,8 +197,6 @@ export const usePluginsStore = defineStore('plugins', () => {
         plugin.updating = true
         await _doUpdatePlugin(plugin)
         needSave = true
-      } catch (error) {
-        console.error('updatePlugins: ', plugin.name, error)
       } finally {
         plugin.updating = false
       }
@@ -210,7 +205,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   const getPluginById = (id: string) => plugins.value.find((v) => v.id === id)
-  
+
   const getPluginCodefromCache = (id: string) => PluginsCache[id]?.code
 
   const onSubscribeTrigger = async (params: string) => {
@@ -281,12 +276,12 @@ export const usePluginsStore = defineStore('plugins', () => {
       )
         continue
 
-        try {
-          const fn = new AsyncFunction(`${cache.code}; await ${fnName}()`)
-          await await fn()
-        } catch (error: any) {
-          throw `[${cache.plugin.name}] Error: ` + (error.message || error)
-        }
+      try {
+        const fn = new AsyncFunction(`${cache.code}; await ${fnName}()`)
+        await await fn()
+      } catch (error: any) {
+        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+      }
     }
     return
   }
@@ -306,7 +301,7 @@ export const usePluginsStore = defineStore('plugins', () => {
         (cache.plugin.install && !cache.plugin.installed)
       )
         continue
-        
+
       try {
         const fn = new AsyncFunction(
           `${cache.code}; return await ${fnName}(${JSON.stringify(params)})`
