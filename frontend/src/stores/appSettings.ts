@@ -104,7 +104,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const updateAppSettings = (settings: AppSettings) => {
     i18n.global.locale.value = settings.lang
     themeMode.value =
-      settings.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : v.theme
+      settings.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : settings.theme
     const { primary, secondary } = Colors[settings.color]
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
