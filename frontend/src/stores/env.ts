@@ -10,7 +10,8 @@ export const useEnvStore = defineStore('env', () => {
     appName: 'GUI.for.SingBox.exe',
     basePath: 'path/to/GUI.for.SingBox',
     os: 'windows',
-    arch: 'amd64'
+    arch: 'amd64',
+    x64Level: 0
   })
 
   const systemProxy = ref(false)

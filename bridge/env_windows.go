@@ -16,6 +16,7 @@ func (a *App) GetEnv() EnvResult {
 		BasePath: Env.BasePath,
 		OS:       Env.OS,
 		ARCH:     Env.ARCH,
+		X64Level: Env.X64Level,
 	}
 }
 

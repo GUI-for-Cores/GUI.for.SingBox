@@ -87,6 +87,7 @@ func (a *App) Download(url string, path string, event string) FlagResult {
 	}
 
 	client := CreateHttpClient(a)
+	client.Timeout = 10 * time.Minute
 
 	header := make(http.Header)
 	header.Set("User-Agent", Config.UserAgent)

@@ -117,7 +117,7 @@ const checkSchtask = async () => {
 }
 
 const onTaskSchChange = async (v: boolean) => {
-  isTaskScheduled.value = !v
+  isTaskScheduled.value = v
   try {
     if (v) {
       await createSchTask(appSettings.app.startupDelay)

@@ -5,6 +5,7 @@ export namespace bridge {
 	    basePath: string;
 	    os: string;
 	    arch: string;
+	    x64Level: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new EnvResult(source);
@@ -16,6 +17,7 @@ export namespace bridge {
 	        this.basePath = source["basePath"];
 	        this.os = source["os"];
 	        this.arch = source["arch"];
+	        this.x64Level = source["x64Level"];
 	    }
 	}
 	export class FlagResult {

@@ -3,16 +3,9 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { ignoredError } from '@/utils'
+import { ignoredError, APP_TITLE } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore } from '@/stores'
-import {
-  Download,
-  HttpGetJSON,
-  BrowserOpenURL,
-  Movefile,
-  GetEnv,
-  Removefile
-} from '@/utils/bridge'
+import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, Removefile } from '@/utils/bridge'
 
 let downloadUrl = ''
 
@@ -45,11 +38,13 @@ const downloadApp = async () => {
   try {
     const appPath = subconverter.SUBCONVERTER_PATH
 
-    const { id } = message.info('Downloading...')
+    const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
     await Download(downloadUrl, appPath + '.tmp', (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     })
+
+    message.destroy(id)
 
     const bakFile = appPath + '_' + subconverter.SUBCONVERTER_VERSION + '.bak'
 
@@ -61,9 +56,10 @@ const downloadApp = async () => {
 
     await ignoredError(Removefile, bakFile)
 
-    message.info('about.updateSuccessful')
+    message.success('about.updateSuccessful')
   } catch (error: any) {
     console.log(error)
+    message.error(error, 5_000)
   }
 
   downloading.value = false
@@ -76,7 +72,7 @@ const checkForUpdates = async (showTips = false) => {
 
   try {
     const { json } = await HttpGetJSON(subconverter.SUBCONVERTER_VERSION_API, {
-      'User-Agent': appSettings.app.userAgent
+      'User-Agent': appSettings.app.userAgent || APP_TITLE
     })
     const { os, arch } = await GetEnv()
 
@@ -108,7 +104,7 @@ checkForUpdates()
 
 <template>
   <div class="about">
-    <img src="@/assets/logo.png" draggable="false" />
+    <img src="@/assets/logo.png" style="width: 128px" draggable="false" />
     <div class="appname">sing-box-subconverer</div>
     <div class="appver">
       <Button @click="checkForUpdates(true)" :loading="loading" type="link" size="small">

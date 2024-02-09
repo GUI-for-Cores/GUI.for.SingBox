@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/klauspost/cpuid/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	R "github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
@@ -26,6 +27,7 @@ var Env = &EnvResult{
 	AppName:     "",
 	OS:          runtime.GOOS,
 	ARCH:        runtime.GOARCH,
+	X64Level:    cpuid.CPU.X64Level(),
 	FromTaskSch: false,
 }
 

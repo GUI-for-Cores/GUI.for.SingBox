@@ -4,8 +4,8 @@ import { computed, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { ignoredError } from '@/utils'
-import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
+import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
   Download,
   UnzipZIPFile,
@@ -59,8 +59,11 @@ const downloadCore = async () => {
     const { assets, name, message: msg } = json[0]
     if (msg) throw msg
 
+    const envStore = useEnvStore()
+    const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
+
     const suffix = { windows: '.zip', linux: '.gz', darwin: '.gz' }[os]
-    const assetName = `sing-box-${name}-${os}-${arch}${suffix}`
+    const assetName = `sing-box-${name}-${os}-${arch}${legacy}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName
@@ -69,11 +72,13 @@ const downloadCore = async () => {
 
     await Makedir('data/sing-box')
 
-    const { id } = message.info('Downloading...')
+    const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
     await Download(asset.browser_download_url, tmp, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     })
+
+    message.destroy(id)
 
     const fileName = await getKernelFileName() // sing-box.exe
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
@@ -89,9 +94,9 @@ const downloadCore = async () => {
       await UnzipGZFile(tmp, latestKernelFilePath)
     }
 
-    const tmp_path = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}`
-    await Movefile(tmp_path + '/' + fileName, latestKernelFilePath)
-    await Removefile(tmp_path)
+    const tmpPath = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}${legacy}`
+    await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
+    await Removefile(tmpPath)
     await Removefile(tmp)
     await ignoredError(Removefile, bakFile)
 
