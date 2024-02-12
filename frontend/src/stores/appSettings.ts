@@ -135,7 +135,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
   watch(
     [
-      () => app.value.theme,
+      themeMode,
       () => app.value.color,
       () => app.value.lang,
       () => app.value.kernel.running,
