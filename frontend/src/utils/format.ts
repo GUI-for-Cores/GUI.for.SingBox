@@ -2,13 +2,13 @@ import { useI18n } from 'vue-i18n'
 
 import i18n from '@/lang'
 
-export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes'
+export function formatBytes(bytes: number, decimals: number = 1): string {
+  if (bytes === 0) return '0 B'
 
   const k = 1024
-  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB']
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
 
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k)))
   const formattedValue = parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))
 
   return `${formattedValue} ${sizes[i]}`

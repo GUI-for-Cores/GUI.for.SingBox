@@ -5,7 +5,7 @@ import { ref, computed, onUnmounted } from 'vue'
 import type { Menu } from '@/stores'
 import { LogLevelOptions } from '@/constant'
 import { useBool, useMessage } from '@/hooks'
-import { isValidIPV4, addToRuleSet } from '@/utils'
+import { isValidIPV4, addToRuleSet, ignoredError } from '@/utils'
 import { getKernelLogsWS, updateProvidersRules } from '@/api/kernel'
 
 const logType = ref('info')
@@ -40,8 +40,8 @@ const menus: Menu[] = [
       try {
         if (type !== 'info') throw 'Not Support'
         await addToRuleSet(ruleset as any, getPayload(payload))
-        await updateProvidersRules(ruleset)
-        message.success('success')
+        await ignoredError(updateProvidersRules, ruleset)
+        message.success('common.success')
       } catch (error: any) {
         message.error(error)
         console.log(error)

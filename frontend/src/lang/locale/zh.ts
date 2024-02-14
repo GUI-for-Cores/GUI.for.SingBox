@@ -142,7 +142,7 @@ export default {
       url: '测速链接',
       filter: '过滤',
       notFound: '部分订阅或节点已丢失，请清理',
-      needToAdd: '至少添加一个节点或订阅',
+      needToAdd: '至少引用一个节点或订阅',
       sort: '查看和排序',
       builtIn: '内建',
       subscriptions: '订阅列表',
@@ -295,6 +295,8 @@ export default {
       chains: '链路',
       upload: '上行流量',
       download: '下行流量',
+      uploadSpeed: '上行速度',
+      downSpeed: '下行速度',
       time: '连接时间',
       close: '关闭连接',
       addToDirect: '添加到直连',
@@ -348,8 +350,8 @@ export default {
       dnsRules: 'DNS规则设置',
       rules: '路由规则设置'
     },
-    proxies: '使用节点',
-    use: '使用订阅',
+    proxies: '引用节点',
+    use: '引用订阅',
     noSubs: '没有可用的订阅'
   },
   profiles: {

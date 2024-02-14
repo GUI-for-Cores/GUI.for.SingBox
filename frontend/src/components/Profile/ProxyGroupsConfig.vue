@@ -254,16 +254,18 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     max-height="80"
   >
     <div class="group">
-      <Divider>{{ t('profile.proxies') }}</Divider>
-      <div v-draggable="[fields.proxies, DraggableOptions]" class="group-proxies">
-        <Button v-for="proxy in fields.proxies" :key="proxy.id" type="link" class="group-item">
-          {{ proxy.tag }}
-        </Button>
-      </div>
       <Divider>{{ t('profile.use') }}</Divider>
+      <Empty v-if="fields.use.length === 0"></Empty>
       <div v-draggable="[fields.use, DraggableOptions]" class="group-proxies">
         <Button v-for="use in fields.use" :key="use" type="link" class="group-item">
           {{ SubscribesNameMap[use] || use }}
+        </Button>
+      </div>
+      <Divider>{{ t('profile.proxies') }}</Divider>
+      <Empty v-if="fields.proxies.length === 0"></Empty>
+      <div v-draggable="[fields.proxies, DraggableOptions]" class="group-proxies">
+        <Button v-for="proxy in fields.proxies" :key="proxy.id" type="link" class="group-item">
+          {{ proxy.tag }}
         </Button>
       </div>
     </div>

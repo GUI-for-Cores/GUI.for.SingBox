@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { type CSSProperties } from 'vue'
+import { ref, computed } from 'vue'
 
 import { getValue } from '@/utils'
 import type { Menu } from '@/stores'
 
+type SortType = (a: Record<string, any>, b: Record<string, any>) => number
+
 export type Column = {
   title: string
   key: string
-  align?: CSSProperties['textAlign']
+  align?: 'center' | 'left' | 'right'
+  minWidth?: string
+  sort?: SortType
   customRender?: (v: { value: any; record: Record<string, any> }) => string
 }
 
@@ -16,15 +20,42 @@ interface Props {
   menu?: Menu[]
   columns: Column[]
   dataSource: Record<string, any>[]
+  sort?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   menu: () => []
 })
 
-defineEmits(['leftClick', 'rightClick'])
+const sortField = ref(props.sort)
+const sortReverse = ref(false)
+let sortFunc: SortType
 
 const { t } = useI18n()
+
+const handleChangeSortField = (field: string, sort: any) => {
+  if (sortField.value === field) {
+    if (!sortReverse.value) {
+      sortReverse.value = true
+      return
+    }
+    sortField.value = ''
+    sortReverse.value = false
+    return
+  }
+  if (sort) {
+    sortField.value = field
+    sortFunc = sort
+    sortReverse.value = false
+  }
+}
+
+const tableData = computed(() => {
+  if (!sortField.value || !sortFunc) return props.dataSource
+  const sorted = props.dataSource.slice().sort(sortFunc)
+  if (sortReverse.value) sorted.reverse()
+  return sorted
+})
 </script>
 
 <template>
@@ -32,27 +63,38 @@ const { t } = useI18n()
     <table>
       <thead>
         <tr>
-          <th
-            v-for="column in columns"
-            :key="column.key"
-            :style="{ textAlign: column.align || 'center' }"
-          >
-            {{ t(column.title) }}
+          <th v-for="column in columns" :key="column.key">
+            <div
+              class="title"
+              @click="handleChangeSortField(column.key, column.sort)"
+              :style="{
+                justifyContent: { left: 'flext-start', center: 'center', right: 'flex-end' }[
+                  column.align || 'left'
+                ],
+                minWidth: column.minWidth || 'auto'
+              }"
+            >
+              {{ t(column.title) }}
+              <div v-if="sortField === column.key">
+                <span v-if="sortReverse" class="title-sort"> ↑ </span>
+                <span v-else class="title-sort"> ↓ </span>
+              </div>
+            </div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="data in dataSource"
+          v-for="data in tableData"
           v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(data) }))"
           :key="data.id"
-          @click="$emit('leftClick', data)"
-          @click.right="$emit('rightClick', data)"
         >
           <td
             v-for="column in columns"
             :key="column.key"
-            :style="{ textAlign: column.align || 'center' }"
+            :style="{
+              textAlign: column.align || 'left'
+            }"
             class="user-select"
           >
             {{
@@ -82,6 +124,14 @@ table {
       th {
         padding: 8px 4px;
         white-space: nowrap;
+        cursor: pointer;
+        .title {
+          display: flex;
+          align-items: center;
+          &-sort {
+            padding: 0 4px;
+          }
+        }
       }
     }
   }

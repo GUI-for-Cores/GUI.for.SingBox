@@ -142,7 +142,7 @@ export default {
       url: 'URL',
       filter: 'Filter',
       notFound: 'Some subscriptions or proxies are missing, please clean them up',
-      needToAdd: 'Add at least one `Use` or `Proxies`',
+      needToAdd: 'References at least one proxy or subscription',
       sort: 'View and Sort',
       builtIn: 'Built-In',
       subscriptions: 'Subscriptions',
@@ -290,11 +290,13 @@ export default {
     },
     connections: {
       host: 'Host',
-      inbound: 'Inbound Mode',
+      inbound: 'Inbound',
       rule: 'Rule',
       chains: 'Chains',
       upload: 'Upload',
       download: 'Download',
+      uploadSpeed: 'Up Speed',
+      downSpeed: 'Down Speed',
       time: 'Time',
       close: 'Close',
       addToDirect: 'Add To DIRECT',
@@ -348,8 +350,8 @@ export default {
       dnsRules: 'DNS Rules',
       rules: 'Route Rules'
     },
-    proxies: 'Proxies',
-    use: 'Use',
+    proxies: 'Reference proxies',
+    use: 'Reference subscriptions',
     noSubs: 'There are no available subscriptions.'
   },
   profiles: {
