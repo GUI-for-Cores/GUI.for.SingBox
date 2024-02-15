@@ -61,6 +61,8 @@ const handleSubmit = async () => {
     path: `data/subscribes/${subscribeID}.json`,
     include: '',
     exclude: '',
+    includeProtocol: '',
+    excludeProtocol: '',
     proxyPrefix: '',
     disabled: false,
     userAgent: useragent.value || appSettingsStore.app.userAgent || APP_TITLE,

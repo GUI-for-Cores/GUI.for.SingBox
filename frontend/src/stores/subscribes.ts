@@ -30,6 +30,8 @@ export type SubscribeType = {
   path: string
   include: string
   exclude: string
+  includeProtocol: string
+  excludeProtocol: string
   proxyPrefix: string
   disabled: boolean
   proxies: { id: string; tag: string; type: string }[]
@@ -81,9 +83,11 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       path: `data/subscribes/${id}.json`,
       include: '',
       exclude: '',
+      includeProtocol: '',
+      excludeProtocol: '',
       proxyPrefix: '',
       disabled: false,
-      userAgent: APP_TITLE,
+      userAgent: '',
       proxies: []
     })
   }
@@ -271,7 +275,9 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         if ('tag' in v) {
           const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
           const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
-          return flag1 && flag2
+          const flag3 = s.includeProtocol ? new RegExp(s.includeProtocol).test(v.type) : true
+          const flag4 = s.excludeProtocol ? !new RegExp(s.excludeProtocol).test(v.type) : true
+          return flag1 && flag2 && flag3 && flag4
         }
         return false
       })

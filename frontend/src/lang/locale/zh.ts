@@ -301,7 +301,11 @@ export default {
       close: '关闭连接',
       addToDirect: '添加到直连',
       addToProxy: '添加到代理',
-      addToReject: '添加到拦截'
+      addToReject: '添加到拦截',
+      active: '活动',
+      closed: '已关闭',
+      closeAll: '关闭所有连接',
+      sort: '排序和设置显示字段'
     }
   },
   subscribe: {
@@ -313,8 +317,10 @@ export default {
     convert: '订阅转换',
     website: '官网',
     path: '保存路径',
-    include: '包含',
-    exclude: '排除',
+    include: '包括名称',
+    exclude: '排除名称',
+    includeProtocol: '包括协议',
+    excludeProtocol: '排除协议',
     proxyPrefix: '代理前缀',
     updating: '更新中',
     useragent: '用户代理',

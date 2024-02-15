@@ -9,6 +9,7 @@ interface Props {
   autoSize?: boolean
   placeholder?: string
   type?: 'number' | 'text'
+  size?: 'default' | 'small'
   editable?: boolean
   autofocus?: boolean
   width?: string
@@ -22,6 +23,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   autoSize: false,
   type: 'text',
+  size: 'default',
   editable: false,
   autofocus: false,
   width: '',
@@ -73,7 +75,7 @@ defineExpose({
 </script>
 
 <template>
-  <div :class="{ disabled, border }" class="input">
+  <div :class="{ disabled, border, [size]: true }" class="input">
     <div v-if="editable && !showEdit" @click="showInput" class="editable">
       <Icon v-if="disabled" icon="forbidden" class="disabled" />
       {{ modelValue || t('common.none') }}
@@ -131,6 +133,13 @@ defineExpose({
 .border {
   input {
     outline: 1px solid var(--primary-color);
+  }
+}
+
+.small {
+  input {
+    font-size: 12px;
+    padding: 4px 8px;
   }
 }
 </style>

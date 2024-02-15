@@ -2,6 +2,7 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { ProxyTypeOptions } from '@/constant'
 import { useBool, useMessage } from '@/hooks'
 import { type SubscribeType, useSubscribesStore, useSubconverterStore } from '@/stores'
 import { deepClone, sampleID, APP_TITLE } from '@/utils'
@@ -33,6 +34,8 @@ const sub = ref<SubscribeType>({
   path: `data/subscribes/${sampleID()}.json`,
   include: '',
   exclude: '',
+  includeProtocol: '',
+  excludeProtocol: '',
   proxyPrefix: '',
   disabled: false,
   userAgent: '',
@@ -132,6 +135,32 @@ if (props.isUpdate) {
         <Input v-model="sub.exclude" placeholder="keyword1|keyword2" auto-size class="input" />
       </div>
       <div class="form-item">
+        <div class="name">{{ t('subscribe.includeProtocol') }}</div>
+        <Input
+          v-model="sub.includeProtocol"
+          :placeholder="
+            ProxyTypeOptions.map((v) => v.label)
+              .slice(1)
+              .join('|')
+          "
+          auto-size
+          class="input"
+        />
+      </div>
+      <div class="form-item">
+        <div class="name">{{ t('subscribe.excludeProtocol') }}</div>
+        <Input
+          v-model="sub.excludeProtocol"
+          :placeholder="
+            ProxyTypeOptions.map((v) => v.label)
+              .slice(1)
+              .join('|')
+          "
+          auto-size
+          class="input"
+        />
+      </div>
+      <div class="form-item">
         <div class="name">{{ t('subscribe.proxyPrefix') }}</div>
         <Input v-model="sub.proxyPrefix" auto-size class="input" />
       </div>
@@ -172,7 +201,7 @@ if (props.isUpdate) {
   max-height: 58vh;
   .name {
     font-size: 14px;
-    padding: 8px 0;
+    padding: 8px 8px 8px 0;
     white-space: nowrap;
   }
   .input {

@@ -301,7 +301,11 @@ export default {
       close: 'Close',
       addToDirect: 'Add To DIRECT',
       addToProxy: 'Add To PROXY',
-      addToReject: 'Add To REJECT'
+      addToReject: 'Add To REJECT',
+      active: 'Active',
+      closed: 'Closed',
+      closeAll: 'Close all connections',
+      sort: 'Sorting and Setting Visibility'
     }
   },
   subscribe: {
@@ -313,8 +317,10 @@ export default {
     convert: 'Convert Subscribe',
     website: 'Website',
     path: 'Save Path',
-    include: 'Include',
-    exclude: 'Exclude',
+    include: 'Include Keywords',
+    exclude: 'Exclude Keywords',
+    includeProtocol: 'Include Protocol',
+    excludeProtocol: 'Exclude Protocol',
     proxyPrefix: 'Proxy Prefix',
     updating: 'Updating',
     useragent: 'User-Agent',

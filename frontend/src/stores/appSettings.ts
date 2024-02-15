@@ -23,6 +23,10 @@ type AppSettings = {
   autoStartKernel: boolean
   userAgent: string
   startupDelay: number
+  connections: {
+    visibility: Record<string, boolean>
+    order: string[]
+  }
   kernel: {
     branch: 'main' | 'latest'
     profile: string
@@ -57,6 +61,30 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     autoStartKernel: false,
     userAgent: APP_TITLE,
     startupDelay: 30,
+    connections: {
+      visibility: {
+        'metadata.host': true,
+        start: true,
+        download: true,
+        upload: true,
+        down: true,
+        up: true,
+        chains: true,
+        rule: true,
+        'metadata.type': true
+      },
+      order: [
+        'metadata.host',
+        'metadata.type',
+        'rule',
+        'chains',
+        'up',
+        'down',
+        'upload',
+        'download',
+        'start'
+      ]
+    },
     kernel: {
       branch: 'main',
       profile: '',
@@ -104,7 +132,11 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const updateAppSettings = (settings: AppSettings) => {
     i18n.global.locale.value = settings.lang
     themeMode.value =
-      settings.theme === Theme.Auto ? (mediaQueryList.matches ? Theme.Dark : Theme.Light) : settings.theme
+      settings.theme === Theme.Auto
+        ? mediaQueryList.matches
+          ? Theme.Dark
+          : Theme.Light
+        : settings.theme
     const { primary, secondary } = Colors[settings.color]
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
