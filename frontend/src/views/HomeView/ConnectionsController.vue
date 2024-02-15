@@ -6,8 +6,8 @@ import { useBool, useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant'
 import { useAppSettingsStore, type Menu } from '@/stores'
 import type { KernelConnectionsWS } from '@/api/kernel.schema'
-import { formatBytes, formatRelativeTime, ignoredError, addToRuleSet } from '@/utils'
-import { getKernelConnectionsWS, deleteConnection, updateProvidersRules } from '@/api/kernel'
+import { formatBytes, formatRelativeTime } from '@/utils'
+import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 
 import type { Column } from '@/components/Table/index.vue'
 

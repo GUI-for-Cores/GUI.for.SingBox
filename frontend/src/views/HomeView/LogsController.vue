@@ -2,11 +2,9 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
-import type { Menu } from '@/stores'
+import { useBool } from '@/hooks'
 import { LogLevelOptions } from '@/constant'
-import { useBool, useMessage } from '@/hooks'
-import { isValidIPV4, addToRuleSet, ignoredError } from '@/utils'
-import { getKernelLogsWS, updateProvidersRules } from '@/api/kernel'
+import { getKernelLogsWS } from '@/api/kernel'
 
 const logType = ref('info')
 const keywords = ref('')
@@ -29,29 +27,7 @@ const filteredLogs = computed(() => {
   })
 })
 
-const menus: Menu[] = [
-  ['home.connections.addToDirect', 'direct'],
-  ['home.connections.addToProxy', 'proxy'],
-  ['home.connections.addToReject', 'reject']
-].map(([label, ruleset]) => {
-  return {
-    label,
-    handler: async ({ type, payload }: any) => {
-      try {
-        if (type !== 'info') throw 'Not Support'
-        await addToRuleSet(ruleset as any, getPayload(payload))
-        await ignoredError(updateProvidersRules, ruleset)
-        message.success('common.success')
-      } catch (error: any) {
-        message.error(error)
-        console.log(error)
-      }
-    }
-  }
-})
-
 const { t } = useI18n()
-const { message } = useMessage()
 const [pause, togglePause] = useBool(false)
 
 const handleReset = () => {
@@ -60,20 +36,6 @@ const handleReset = () => {
 }
 
 const handleClear = () => logs.value.splice(0)
-
-const getPayload = (str = '') => {
-  const regex = /([a-zA-Z0-9.-]+(?=:))/g
-  const matches = str.match(regex)
-  if (matches && matches.length >= 2) {
-    if (isValidIPV4(matches[1])) {
-      return 'IP-CIDR,' + matches[1] + '/32'
-    }
-
-    return 'DOMAIN,' + matches[1]
-  }
-
-  throw 'GetPayload Error'
-}
 
 const onLogs = (data: any) => {
   pause.value || logs.value.unshift(data)
@@ -100,7 +62,7 @@ onUnmounted(disconnect)
       {{ t('common.clear') }}
     </Button>
   </div>
-  <div class="logs" v-if="filteredLogs.length">
+  <div class="logs">
     <div v-for="(log, i) in filteredLogs" :key="i" class="log user-select">
       <span class="type">{{ log.type }}</span> {{ log.payload }}
     </div>
