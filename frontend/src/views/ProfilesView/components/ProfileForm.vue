@@ -138,9 +138,7 @@ if (props.isUpdate) {
     </div>
 
     <div v-show="currentStep === 5" class="step6">
-      <DnsConfig v-model="profile.dnsConfig" 
-      :proxy-groups="profile.proxyGroupsConfig"
-      />
+      <DnsConfig v-model="profile.dnsConfig" :proxy-groups="profile.proxyGroupsConfig" />
     </div>
 
     <div v-show="currentStep === 6" class="step7">

@@ -106,7 +106,12 @@ const handleSubmit = async () => {
   </div>
   <div class="form-item">
     <div class="name">{{ t('subscribe.useragent') }}</div>
-    <Input v-model="useragent" auto-size :placeholder="appSettingsStore.app.userAgent" style="width: 80%" />
+    <Input
+      v-model="useragent"
+      auto-size
+      :placeholder="appSettingsStore.app.userAgent"
+      style="width: 80%"
+    />
   </div>
 
   <div class="form-action">

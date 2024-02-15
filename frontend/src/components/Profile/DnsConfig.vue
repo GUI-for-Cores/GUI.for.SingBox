@@ -7,7 +7,7 @@ import { type ProfileType } from '@/stores'
 import { DomainStrategyOptions, FinalDnsOptions } from '@/constant'
 
 interface Props {
-  modelValue: ProfileType['dnsConfig'],
+  modelValue: ProfileType['dnsConfig']
   proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
@@ -23,7 +23,7 @@ const proxyOptions = computed(() => [
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag })),
   { label: 'direct', value: 'direct' },
   { label: 'block', value: 'block' },
-  { label:  t('kernel.dns.default'), value: '' }
+  { label: t('kernel.dns.default'), value: '' }
 ])
 
 watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
@@ -53,26 +53,17 @@ watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: tru
     </div>
     <div class="form-item">
       {{ t('kernel.dns.final-dns') }}
-      <Select
-        v-model="fields['final-dns']"
-        :options="FinalDnsOptions"
-      />
+      <Select v-model="fields['final-dns']" :options="FinalDnsOptions" />
     </div>
     <div class="form-item">
       {{ t('kernel.dns.remote-dns-detour') }}
-      <Select
-        v-model="fields['remote-dns-detour']"
-        :options="proxyOptions"
-      />
+      <Select v-model="fields['remote-dns-detour']" :options="proxyOptions" />
     </div>
     <div class="form-item">
       {{ t('kernel.dns.strategy.name') }}
-      <Select
-        v-model="fields['strategy']"
-        :options="DomainStrategyOptions"
-      />
+      <Select v-model="fields['strategy']" :options="DomainStrategyOptions" />
     </div>
-  
+
     <div class="form-item">
       Fake-IP
       <Switch v-model="fields['fakeip']" />

@@ -356,7 +356,7 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
       try {
         const subStr = await Readfile(sub.path)
         const subProxies = JSON.parse(subStr)
-        
+
         // let subProxies = JSON.parse(subStr)
         // subProxies = sub.proxies
         //   .map((proxy) => {

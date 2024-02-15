@@ -286,7 +286,7 @@ export default {
       autoClose: '自动断开连接',
       unAvailable: '展示不可用节点',
       cardMode: '卡片模式',
-      sortBy: '按延迟排序'    
+      sortBy: '按延迟排序'
     },
     connections: {
       host: '主机',

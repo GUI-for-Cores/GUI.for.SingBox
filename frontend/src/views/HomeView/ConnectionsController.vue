@@ -95,7 +95,7 @@ const columns = computed(() =>
         sort: (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
         customRender: ({ value }) => formatRelativeTime(value)
       }
-      ] as Column[]
+    ] as Column[]
   ).sort(
     (a, b) =>
       appSettingsStore.app.connections.order.indexOf(a.key) -

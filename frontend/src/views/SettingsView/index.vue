@@ -35,7 +35,6 @@ const { t } = useI18n()
       <ComponentsView />
     </template>
 
-
     <template #extra>
       <Button @click="showSubConvert = true" type="text">
         {{ t('router.subconverter') }}

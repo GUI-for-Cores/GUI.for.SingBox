@@ -22,8 +22,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits(['update:modelValue'])
 
-
-
 const lang = { json, javascript }[props.lang]()
 
 const appSettings = useAppSettingsStore()
@@ -42,7 +40,6 @@ const onChange = debounce((e: any) => {
   <div class="code-viewer">
     <CodeMirror
       :modelValue="modelValue"
-
       :lang="lang"
       :readonly="!editable"
       :extensions="extensions"

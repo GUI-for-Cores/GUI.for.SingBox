@@ -79,7 +79,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         :border="false"
       />
     </Card>
-    <Card title='Fake-IP' class="card-item">
+    <Card title="Fake-IP" class="card-item">
       <Switch v-model="kernelApiStore.config.fakeip" @change="onFakeIpChange" />
     </Card>
   </div>

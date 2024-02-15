@@ -114,7 +114,7 @@ export default {
       'remote-dns-detour': 'Remote DNS Detour',
       'final-dns': 'Fallback DNS',
       'fakeip-dns': 'Fake-IP DNS',
-      'block': 'BLOCK',
+      block: 'BLOCK',
       default: 'Default',
       strategy: {
         name: 'Strategy',
@@ -209,7 +209,7 @@ export default {
         INBOUND: 'INBOUND',
         OUTBOUND: 'OUTBOUND',
         'FAKE-IP': 'FAKE-IP',
-        'INLINE': 'INLINE'
+        INLINE: 'INLINE'
       }
     },
     name: 'sing-box',
@@ -311,7 +311,7 @@ export default {
   subscribe: {
     http: 'HTTP',
     file: 'FILE',
-    manual: "MANUAL",
+    manual: 'MANUAL',
     name: 'Name',
     url: 'Url',
     convert: 'Convert Subscribe',
@@ -370,7 +370,7 @@ export default {
   ruleset: {
     http: 'HTTP',
     file: 'FILE',
-    manual: "MANUAL",
+    manual: 'MANUAL',
     format: {
       name: 'Format',
       source: 'Source',
@@ -510,7 +510,7 @@ export default {
     direct: '🎯 Direct',
     block: '🛑 Block',
     fallback: '🐟 Fallback'
-  },  
+  },
   tray: {
     restart: 'Restart',
     restartTip: 'Restart App',

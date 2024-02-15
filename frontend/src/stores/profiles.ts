@@ -41,8 +41,8 @@ export type ProfileType = {
     interface_name: string
     mtu: number
     'strict-route': boolean
-    'endpoint-independent-nat': boolean,
-    'inet4-address': string,
+    'endpoint-independent-nat': boolean
+    'inet4-address': string
     'inet6-address': string
   }
   dnsConfig: {
@@ -71,7 +71,7 @@ export type ProfileType = {
     }[]
     url: string
     interval: number
-    tolerance: number,
+    tolerance: number
     filter: string
   }[]
   rulesConfig: {
@@ -81,9 +81,9 @@ export type ProfileType = {
     proxy: string
     invert: boolean
     'ruleset-name': string
-    'ruleset-format': string,
+    'ruleset-format': string
     'download-detour': string
-  }[],
+  }[]
   dnsRulesConfig: {
     id: string
     type: string
@@ -92,7 +92,7 @@ export type ProfileType = {
     invert: boolean
     'disable-cache': boolean
     'ruleset-name': string
-    'ruleset-format': string,
+    'ruleset-format': string
     'download-detour': string
   }[]
 }
