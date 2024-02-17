@@ -38,7 +38,9 @@ export default {
     run: '运行',
     refresh: '刷新',
     confirm: '确定',
-    selectAll: '全选'
+    selectAll: '全选',
+    http: '远程下载',
+    file: '本地文件'
   },
   kernel: {
     port: 'HTTP(s)代理端口',
@@ -63,7 +65,7 @@ export default {
     direct: '直连',
     ruleDesp: '按照规则文件分流',
     globalDesp: '仅走Global规则集',
-    directDesp: '所有流量直连',
+    directDesp: '直接连接所有流量',
     'keep-alive-interval': 'TCP Keep Alive 间隔',
     'find-process-mode': '进程匹配模式',
     'external-controller-tls': 'RESTful Web API监听地址(HTTPS)',
@@ -289,6 +291,12 @@ export default {
       sortBy: '按延迟排序'
     },
     connections: {
+      type: '类型',
+      process: '进程',
+      processPath: '进程路径',
+      sniffHost: '嗅探域名',
+      sourceIP: '源地址',
+      remoteDestination: '目标地址',
       host: '主机',
       inbound: '入站模式',
       rule: '匹配规则',
@@ -309,11 +317,10 @@ export default {
     }
   },
   subscribe: {
-    http: '远程下载',
-    file: '本地文件',
     manual: '手动管理',
     name: '名称',
-    url: '链接',
+    url: '远程链接',
+    localPath: '本地路径',
     convert: '订阅转换',
     website: '官网',
     path: '保存路径',
@@ -338,7 +345,7 @@ export default {
     proxyCount: '代理数量',
     editProxies: '编辑节点',
     proxies: {
-      type: '类型',
+      type: '协议',
       name: '名称',
       add: '添加代理'
     }
@@ -368,8 +375,6 @@ export default {
     start: '使用此配置启动/重启'
   },
   ruleset: {
-    http: '远程下载',
-    file: '本地文件',
     manual: '手动管理',
     format: {
       name: '文件格式',
@@ -378,7 +383,7 @@ export default {
     },
     rulesetType: '规则集类型',
     name: '名称',
-    url: '链接',
+    url: '远程链接',
     path: '保存路径',
     interval: '更新间隔',
     updating: '更新中'
@@ -397,13 +402,11 @@ export default {
     'on::subscribe': '更新订阅时',
     name: '名称',
     description: '描述',
-    url: '地址',
+    url: '远程地址',
     install: '需要安装',
     installed: '已安装',
     path: '保存路径',
     type: '类型',
-    http: 'HTTP',
-    file: 'FILE',
     menus: '菜单',
     menuKey: '菜单名称',
     menuValue: '触发方法名'

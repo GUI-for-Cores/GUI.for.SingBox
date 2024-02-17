@@ -2,9 +2,9 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
-import { useAppSettingsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
+import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
 import { debounce, deepClone, ignoredError, isValidSubJson, APP_TITLE } from '@/utils'
 
 export type PluginType = {
@@ -208,7 +208,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const getPluginCodefromCache = (id: string) => PluginsCache[id]?.code
 
-  const onSubscribeTrigger = async (params: string) => {
+  const onSubscribeTrigger = async (params: string, subscription: SubscribeType) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnSubscribe]
 
     let result = params
@@ -242,7 +242,9 @@ export const usePluginsStore = defineStore('plugins', () => {
       }
 
       try {
-        const fn = new AsyncFunction(`${cache.code}; return await ${fnName}(${result})`)
+        const fn = new AsyncFunction(
+          `${cache.code}; return await ${fnName}(${result}, ${JSON.stringify(subscription)})`
+        )
         result = await fn(result)
       } catch (error: any) {
         throw `[${cache.plugin.name}] Error: ` + (error.message || error)
@@ -278,7 +280,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       try {
         const fn = new AsyncFunction(`${cache.code}; await ${fnName}()`)
-        await await fn()
+        await fn()
       } catch (error: any) {
         throw `[${cache.plugin.name}] Error: ` + (error.message || error)
       }
@@ -286,7 +288,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return
   }
 
-  const onGenerateTrigger = async (params: Record<string, any>) => {
+  const onGenerateTrigger = async (params: Record<string, any>, profile: ProfileType) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnGenerate]
     if (observers.length === 0) return params
 
@@ -304,7 +306,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       try {
         const fn = new AsyncFunction(
-          `${cache.code}; return await ${fnName}(${JSON.stringify(params)})`
+          `${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`
         )
         params = await fn()
       } catch (error: any) {

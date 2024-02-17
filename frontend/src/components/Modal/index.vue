@@ -79,7 +79,7 @@ provide('submit', handleSubmit)
       </div>
       <div v-if="footer" class="action">
         <slot name="action" />
-        <Button v-if="cancel" @click="handleCancel">{{ t(cancelText) }}</Button>
+        <Button v-if="cancel" @click="handleCancel" type="text">{{ t(cancelText) }}</Button>
         <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
       </div>
     </div>

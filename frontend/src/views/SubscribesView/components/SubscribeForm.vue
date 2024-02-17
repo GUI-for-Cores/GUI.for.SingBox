@@ -88,8 +88,8 @@ if (props.isUpdate) {
       <Radio
         v-model="sub.type"
         :options="[
-          { label: 'subscribe.http', value: 'Http' },
-          { label: 'subscribe.file', value: 'File' },
+          { label: 'common.http', value: 'Http' },
+          { label: 'common.file', value: 'File' },
           { label: 'subscribe.manual', value: 'Manual' }
         ]"
       />
@@ -103,7 +103,9 @@ if (props.isUpdate) {
       <Input v-model="sub.name" auto-size autofocus class="input" />
     </div>
     <div v-show="!isManual()" class="form-item">
-      <div class="name">{{ t('subscribe.url') }} *</div>
+      <div class="name">
+        {{ t(sub.type === 'Http' ? 'subscribe.url' : 'subscribe.localPath') }} *
+      </div>
       <Input
         v-model="sub.url"
         :placeholder="sub.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.json'"
@@ -138,11 +140,7 @@ if (props.isUpdate) {
         <div class="name">{{ t('subscribe.includeProtocol') }}</div>
         <Input
           v-model="sub.includeProtocol"
-          :placeholder="
-            ProxyTypeOptions.map((v) => v.label)
-              .slice(1)
-              .join('|')
-          "
+          :placeholder="ProxyTypeOptions.map((v) => v.label).join('|')"
           auto-size
           class="input"
         />
@@ -151,11 +149,7 @@ if (props.isUpdate) {
         <div class="name">{{ t('subscribe.excludeProtocol') }}</div>
         <Input
           v-model="sub.excludeProtocol"
-          :placeholder="
-            ProxyTypeOptions.map((v) => v.label)
-              .slice(1)
-              .join('|')
-          "
+          :placeholder="ProxyTypeOptions.map((v) => v.label).join('|')"
           auto-size
           class="input"
         />
@@ -172,7 +166,7 @@ if (props.isUpdate) {
       </div>
       <div class="form-item">
         <div class="name">{{ t('subscribe.useragent') }}</div>
-        <div style="display: flex; align-items: center; width: 80%">
+        <div style="display: flex; align-items: center; width: 77%">
           <Input v-model="sub.userAgent" :placeholder="APP_TITLE" auto-size style="width: 100%" />
           <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')">
             <Icon icon="reset" fill="var(--primary-btn-color)" />
@@ -205,7 +199,7 @@ if (props.isUpdate) {
     white-space: nowrap;
   }
   .input {
-    width: 80%;
+    width: 77%;
   }
   .row {
     display: flex;

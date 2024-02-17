@@ -264,7 +264,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
     const pluginStore = usePluginsStore()
 
-    proxies = await pluginStore.onSubscribeTrigger(body)
+    proxies = await pluginStore.onSubscribeTrigger(body, s)
 
     if (!Array.isArray(proxies)) {
       throw 'Not a valid subscription data'

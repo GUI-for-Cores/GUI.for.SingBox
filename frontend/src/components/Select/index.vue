@@ -5,11 +5,13 @@ interface Props {
   modelValue: string
   options: { label: string; value: string }[]
   border?: boolean
+  size?: 'default' | 'small'
 }
 
 withDefaults(defineProps<Props>(), {
   options: () => [],
-  border: true
+  border: true,
+  size: 'default'
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -23,7 +25,7 @@ const handleChange = (e: any) => {
 </script>
 
 <template>
-  <div :class="{ border }" class="select">
+  <div :class="{ border, [size]: true }" class="select">
     <select :value="modelValue" @change="($event) => handleChange($event)">
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ t(o.label) }}
@@ -49,12 +51,19 @@ const handleChange = (e: any) => {
     background: transparent;
     color: var(--select-color);
     option {
-      background: var(--select-bg);
+      background: var(--select-option-bg);
     }
   }
 }
 
 .border {
   border: 1px solid var(--primary-color);
+}
+
+.small {
+  font-size: 12px;
+  select {
+    padding: 3px;
+  }
 }
 </style>

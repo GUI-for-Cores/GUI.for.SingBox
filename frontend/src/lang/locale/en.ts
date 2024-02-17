@@ -38,7 +38,9 @@ export default {
     run: 'Run',
     refresh: 'Refresh',
     confirm: 'Confirm',
-    selectAll: 'Select All'
+    selectAll: 'Select All',
+    http: 'Remote',
+    file: 'Local'
   },
   kernel: {
     port: 'HTTP(s) Port',
@@ -61,9 +63,9 @@ export default {
     rule: 'Rule',
     global: 'Global',
     direct: 'Direct',
-    ruleDesp: 'By rules file',
-    globalDesp: 'Use Global group',
-    directDesp: 'Direct connection',
+    ruleDesp: 'Route traffic based on rules',
+    globalDesp: 'Only follow the Global group',
+    directDesp: 'Directly connect all traffic',
     'keep-alive-interval': 'Keep Alive Interval',
     'find-process-mode': 'Find Process Mode',
     'external-controller-tls': 'External Controller Tls',
@@ -289,14 +291,20 @@ export default {
       sortBy: 'Sort By Delay'
     },
     connections: {
+      type: 'Type',
+      process: 'Process',
+      processPath: 'Process Path',
+      sniffHost: 'Sniff Host',
+      sourceIP: 'Source',
+      remoteDestination: 'Destination',
       host: 'Host',
       inbound: 'Inbound',
       rule: 'Rule',
       chains: 'Chains',
       upload: 'Upload',
       download: 'Download',
-      uploadSpeed: 'Up Speed',
-      downSpeed: 'Down Speed',
+      uploadSpeed: 'UL Speed',
+      downSpeed: 'DL Speed',
       time: 'Time',
       close: 'Close',
       addToDirect: 'Add To DIRECT',
@@ -309,11 +317,10 @@ export default {
     }
   },
   subscribe: {
-    http: 'HTTP',
-    file: 'FILE',
     manual: 'MANUAL',
     name: 'Name',
-    url: 'Url',
+    url: 'Remote Url',
+    localPath: 'Local Path',
     convert: 'Convert Subscribe',
     website: 'Website',
     path: 'Save Path',
@@ -331,14 +338,14 @@ export default {
     upload: 'Upload',
     total: 'Total',
     expire: 'Expire',
-    subtype: 'Subscribe Type',
+    subtype: 'Subscription Type',
     website: 'Website',
     empty: 'The subscription list is empty. Please {action} a subscription first.',
     enterLink: 'Enter subscription link',
     proxyCount: 'Proxy Count',
     editProxies: 'Edit Proxies',
     proxies: {
-      type: 'Type',
+      type: 'Protocol',
       name: 'Name',
       add: 'Add Proxy'
     }
@@ -368,8 +375,6 @@ export default {
     start: 'Start/Restart with this Profile'
   },
   ruleset: {
-    http: 'HTTP',
-    file: 'FILE',
     manual: 'MANUAL',
     format: {
       name: 'Format',
@@ -378,7 +383,7 @@ export default {
     },
     rulesetType: 'Ruleset Type',
     name: 'Name',
-    url: 'Url',
+    url: 'Remote Url',
     path: 'Save Path',
     interval: 'Interval',
     updating: 'Updating'
@@ -397,13 +402,11 @@ export default {
     'on::subscribe': 'on::subscribe',
     name: 'Name',
     description: 'Description',
-    url: 'URL',
-    install: 'Requires installation',
+    url: 'Remote Url',
+    install: 'Installation required',
     installed: 'Installed',
-    path: 'Path',
+    path: 'Save Path',
     type: 'Type',
-    http: 'HTTP',
-    file: 'FILE',
     menus: 'Menus',
     menuKey: 'Menu Title',
     menuValue: 'Trigger function name'

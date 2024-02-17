@@ -96,8 +96,8 @@ if (props.isUpdate) {
       <Radio
         v-model="ruleset.type"
         :options="[
-          { label: 'ruleset.http', value: 'Http' },
-          { label: 'ruleset.file', value: 'File' },
+          { label: 'common.http', value: 'Http' },
+          { label: 'common.file', value: 'File' },
           { label: 'ruleset.manual', value: 'Manual' }
         ]"
       />
@@ -160,7 +160,7 @@ if (props.isUpdate) {
     white-space: nowrap;
   }
   .input {
-    width: 80%;
+    width: 78%;
   }
 }
 </style>

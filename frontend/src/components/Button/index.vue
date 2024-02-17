@@ -48,7 +48,6 @@ withDefaults(defineProps<Props>(), {
 .normal {
   color: var(--btn-normal-color);
   background-color: var(--btn-normal-bg);
-  border: 1px solid gray;
   &:hover {
     color: var(--btn-normal-hover-color);
     border-color: var(--btn-normal-hover-border-color);

@@ -84,8 +84,8 @@ if (props.isUpdate) {
       <Radio
         v-model="plugin.type"
         :options="[
-          { label: 'plugin.http', value: 'Http' },
-          { label: 'plugin.file', value: 'File' }
+          { label: 'common.http', value: 'Http' },
+          { label: 'common.file', value: 'File' }
         ]"
       />
     </div>
@@ -162,7 +162,7 @@ if (props.isUpdate) {
 }
 .form-item {
   .input {
-    width: 80%;
+    width: 78%;
   }
 }
 .flex-start {

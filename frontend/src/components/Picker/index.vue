@@ -57,32 +57,32 @@ const handleSelectAll = () => {
 
 <template>
   <div class="picker">
-    <Card :title="title">
-      <div class="options">
-        <div v-for="(o, i) in options" :key="i" @click="handleSelect(o.value)" class="item">
-          <span>{{ o.label }}</span>
-          <Icon
-            v-show="isSelected(o.value)"
-            style="flex-shrink: 0"
-            icon="selected"
-            fill="var(--primary-color)"
-          />
-        </div>
-      </div>
+    <div class="title">{{ title }}</div>
 
-      <div class="form-action">
-        <Button v-if="type === 'multi'" @click="handleSelectAll" type="text" size="small">
-          {{ t('common.selectAll') }}
-        </Button>
-        <Button type="text" size="small" class="mr-auto">
-          {{ selected.size }} / {{ options.length }}
-        </Button>
-        <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
-        <Button @click="handleConfirm" size="small" type="primary">
-          {{ t('common.confirm') }}
-        </Button>
+    <div class="options">
+      <div v-for="(o, i) in options" :key="i" @click="handleSelect(o.value)" class="item">
+        <span>{{ o.label }}</span>
+        <Icon
+          v-show="isSelected(o.value)"
+          style="flex-shrink: 0"
+          icon="selected"
+          fill="var(--primary-color)"
+        />
       </div>
-    </Card>
+    </div>
+
+    <div class="form-action">
+      <Button v-if="type === 'multi'" @click="handleSelectAll" type="text" size="small">
+        {{ t('common.selectAll') }}
+      </Button>
+      <Button type="text" size="small" class="mr-auto">
+        {{ selected.size }} / {{ options.length }}
+      </Button>
+      <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
+      <Button @click="handleConfirm" size="small" type="primary">
+        {{ t('common.confirm') }}
+      </Button>
+    </div>
   </div>
 </template>
 
@@ -90,9 +90,16 @@ const handleSelectAll = () => {
 .picker {
   min-width: 340px;
   max-width: 60%;
+  padding: 8px;
   background: var(--picker-bg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
+
+  .title {
+    font-weight: bold;
+    padding: 8px 4px;
+  }
+
   .options {
     max-height: 300px;
     overflow: auto;

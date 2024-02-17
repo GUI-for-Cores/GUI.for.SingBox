@@ -97,9 +97,9 @@ const tableColumns = computed(() => {
             class="user-select"
           >
             {{
-              column.customRender
+              (column.customRender
                 ? column.customRender({ value: getValue(data, column.key), record: data })
-                : getValue(data, column.key)
+                : getValue(data, column.key)) || '-'
             }}
           </td>
         </tr>

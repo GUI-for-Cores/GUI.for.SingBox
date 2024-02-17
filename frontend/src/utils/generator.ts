@@ -482,8 +482,8 @@ const generateRouteConfig = async (profile: ProfileType) => {
   return route
 }
 
-export const generateConfig = async (profile: ProfileType) => {
-  profile = deepClone(profile)
+export const generateConfig = async (originalProfile: ProfileType) => {
+ const profile = deepClone(originalProfile)
 
   const config: Record<string, any> = {
     log: { level: profile.generalConfig['log-level'], timestamp: true },
@@ -535,7 +535,7 @@ export const generateConfig = async (profile: ProfileType) => {
   }
 
   const pluginsStore = usePluginsStore()
-  return await pluginsStore.onGenerateTrigger(config)
+  return await pluginsStore.onGenerateTrigger(config, originalProfile)
 }
 
 export const generateConfigFile = async (profile: ProfileType) => {

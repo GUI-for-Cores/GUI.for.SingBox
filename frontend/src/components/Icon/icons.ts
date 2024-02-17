@@ -32,7 +32,8 @@ const icons = [
   'messageWarn',
   'messageInfo',
   'pause',
-  'play'
+  'play',
+  'clear'
 ] as const
 
 export default icons
