@@ -118,13 +118,12 @@ if (props.isUpdate) {
         v-model="plugin.path"
         placeholder="data/plugins/plugin-{filename}.js"
         auto-size
-        autofocus
         class="input"
       />
     </div>
     <div class="form-item">
       {{ t('plugin.description') }}
-      <Input v-model="plugin.description" auto-size autofocus class="input" />
+      <Input v-model="plugin.description" auto-size class="input" />
     </div>
     <Divider>
       <Button @click="toggleShowMore" type="text" size="small">

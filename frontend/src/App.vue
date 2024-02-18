@@ -19,6 +19,7 @@ const rulesetsStore = Stores.useRulesetsStore()
 const appSettings = Stores.useAppSettingsStore()
 const kernelApiStore = Stores.useKernelApiStore()
 const subscribesStore = Stores.useSubscribesStore()
+const scheduledTasksStore = Stores.useScheduledTasksStore()
 
 const { message } = useMessage()
 const { picker } = usePicker()
@@ -45,13 +46,16 @@ EventsOn('launchArgs', async (args: string[]) => {
   }
 })
 
+window.addEventListener('beforeunload', scheduledTasksStore.removeScheduledTasks)
+
 appSettings.setupAppSettings().then(async () => {
   await Promise.all([
     ignoredError(envStore.setupEnv),
     ignoredError(profilesStore.setupProfiles),
     ignoredError(subscribesStore.setupSubscribes),
     ignoredError(rulesetsStore.setupRulesets),
-    ignoredError(pluginsStore.setupPlugins)
+    ignoredError(pluginsStore.setupPlugins),
+    ignoredError(scheduledTasksStore.setupScheduledTasks)
   ])
 
   kernelApiStore.updateKernelStatus().then(async (running) => {

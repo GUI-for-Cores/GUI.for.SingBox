@@ -247,7 +247,8 @@ export default {
     about: '关于',
     subconverter: '订阅转换',
     profiles: '配置',
-    kernel: '内核'
+    kernel: '内核',
+    scheduledtasks: '计划任务'
   },
   home: {
     mode: '代理模式',
@@ -420,6 +421,25 @@ export default {
     update: '更新列表',
     updateSuccess: '列表更新成功',
     total: '插件数量为'
+  },
+  scheduledtask: {
+    name: '名称',
+    type: '任务类型',
+    script: '脚本代码',
+    subscriptions: '订阅列表',
+    rulesets: '规则集列表',
+    plugins: '插件列表',
+    cron: '表达式',
+    cronTips: '秒 分 时 日 月 星期',
+    lastTime: '上次执行时间',
+    'update::subscription': '更新订阅',
+    'update::ruleset': '更新规则集',
+    'update::plugin': '更新插件',
+    'run::plugin': '运行插件',
+    'run::script': '运行脚本'
+  },
+  scheduledtasks: {
+    empty: '计划任务列表为空，请先{action}计划任务。'
   },
   settings: {
     general: '通用',

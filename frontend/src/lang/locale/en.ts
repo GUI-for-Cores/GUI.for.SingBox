@@ -247,7 +247,8 @@ export default {
     subconverter: 'Subconverter',
     about: 'About',
     profiles: 'Profiles',
-    kernel: 'Kernel'
+    kernel: 'Kernel',
+    scheduledtasks: 'ScheduledTasks'
   },
   home: {
     mode: 'Proxy Mode',
@@ -420,6 +421,25 @@ export default {
     update: 'Update List',
     updateSuccess: 'updated successfully',
     total: 'Number of plug-ins'
+  },
+  scheduledtask: {
+    name: 'Name',
+    type: 'Type',
+    script: 'Script',
+    subscriptions: 'Subscriptions',
+    rulesets: 'Rulesets',
+    plugins: 'Plugins',
+    cron: 'Cron',
+    cronTips: 'Seconds Minutes Hours "Day of month" Month "Day of week"',
+    lastTime: 'Last Time',
+    'update::subscription': 'update::subscription',
+    'update::ruleset': 'update::ruleset',
+    'update::plugin': 'update::plugin',
+    'run::plugin': 'run::plugin',
+    'run::script': 'run::script'
+  },
+  scheduledtasks: {
+    empty: 'The scheduled task list is empty. Please {action} a scheduled task first.'
   },
   settings: {
     general: 'General',

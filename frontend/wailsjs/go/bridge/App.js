@@ -6,6 +6,10 @@ export function AbsolutePath(arg1) {
   return window['go']['bridge']['App']['AbsolutePath'](arg1);
 }
 
+export function AddScheduledTask(arg1, arg2) {
+  return window['go']['bridge']['App']['AddScheduledTask'](arg1, arg2);
+}
+
 export function CheckPermissions(arg1) {
   return window['go']['bridge']['App']['CheckPermissions'](arg1);
 }
@@ -84,6 +88,10 @@ export function QuerySchTask(arg1) {
 
 export function Readfile(arg1) {
   return window['go']['bridge']['App']['Readfile'](arg1);
+}
+
+export function RemoveScheduledTask(arg1) {
+  return window['go']['bridge']['App']['RemoveScheduledTask'](arg1);
 }
 
 export function Removefile(arg1) {

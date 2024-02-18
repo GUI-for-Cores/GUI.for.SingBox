@@ -6,6 +6,7 @@ import SettingsView from '@/views/SettingsView/index.vue'
 import ProfilesView from '@/views/ProfilesView/index.vue'
 import RulesetsView from '@/views/RulesetsView/index.vue'
 import PluginsView from '@/views/PluginsView/index.vue'
+import ScheduledTasksView from '@/views/ScheduledTasksView/index.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -46,6 +47,14 @@ const routes: RouteRecordRaw[] = [
     component: PluginsView,
     meta: {
       name: 'router.plugins'
+    }
+  },
+  {
+    path: '/scheduledtasks',
+    name: 'ScheduledTasksView',
+    component: ScheduledTasksView,
+    meta: {
+      name: 'router.scheduledtasks'
     }
   },
   {

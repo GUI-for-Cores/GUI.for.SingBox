@@ -70,6 +70,8 @@ const checkForUpdates = async (showTips = false) => {
 
   loading.value = true
 
+  await subconverter.ensureInitialized()
+
   try {
     const { json } = await HttpGetJSON(subconverter.SUBCONVERTER_VERSION_API, {
       'User-Agent': appSettings.app.userAgent || APP_TITLE

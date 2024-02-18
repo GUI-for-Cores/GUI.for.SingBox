@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
-import { debounce, updateTrayMenus, APP_TITLE } from '@/utils'
+import { debounce, updateTrayMenus, APP_TITLE, deepClone } from '@/utils'
 import { Theme, WindowStartState, Lang, View, Color, Colors } from '@/constant'
 import { WindowSetDarkTheme, WindowSetLightTheme, Readfile, Writefile } from '@/utils/bridge'
 
@@ -16,6 +16,7 @@ type AppSettings = {
   subscribesView: View
   rulesetsView: View
   pluginsView: View
+  scheduledtasksView: View
   windowStartState: WindowStartState
   exitOnClose: boolean
   closeKernelOnExit: boolean
@@ -54,6 +55,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     subscribesView: View.Grid,
     rulesetsView: View.Grid,
     pluginsView: View.Grid,
+    scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
     exitOnClose: false,
     closeKernelOnExit: true,
@@ -115,7 +117,14 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const setupAppSettings = async () => {
     try {
       const b = await Readfile('data/user.yaml')
+
+      const defaultSettings = deepClone(app.value)
+
       app.value = Object.assign(app.value, parse(b))
+
+      if (app.value.connections.order.length !== defaultSettings.connections.order.length) {
+        app.value.connections = defaultSettings.connections
+      }
     } catch (error) {
       firstOpen = false
       console.log(error)

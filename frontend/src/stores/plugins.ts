@@ -75,13 +75,16 @@ export const usePluginsStore = defineStore('plugins', () => {
     plugins.value = parse(data)
 
     for (let i = 0; i < plugins.value.length; i++) {
-      const { id, triggers, path } = plugins.value[i]
+      const { id, triggers, path, menus } = plugins.value[i]
       const code = await ignoredError(Readfile, path)
       if (code) {
         PluginsCache[id] = { plugin: plugins.value[i], code }
         triggers.forEach((trigger) => {
           PluginsTriggerMap[trigger].observers.push(id)
         })
+      }
+      if(menus === undefined) {
+        plugins.value[i].menus = {}
       }
     }
   }

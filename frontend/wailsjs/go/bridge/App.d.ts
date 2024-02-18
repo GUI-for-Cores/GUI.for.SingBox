@@ -5,6 +5,8 @@ import {options} from '../models';
 
 export function AbsolutePath(arg1:string):Promise<bridge.FlagResult>;
 
+export function AddScheduledTask(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+
 export function CheckPermissions(arg1:string):Promise<bridge.FlagResult>;
 
 export function Copyfile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
@@ -44,6 +46,8 @@ export function ProcessInfo(arg1:number):Promise<bridge.FlagResult>;
 export function QuerySchTask(arg1:string):Promise<bridge.FlagResult>;
 
 export function Readfile(arg1:string):Promise<bridge.FlagResult>;
+
+export function RemoveScheduledTask(arg1:number):Promise<void>;
 
 export function Removefile(arg1:string):Promise<bridge.FlagResult>;
 

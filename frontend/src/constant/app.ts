@@ -6,6 +6,8 @@ export const RulesetsFilePath = 'data/rulesets.yaml'
 
 export const PluginsFilePath = 'data/plugins.yaml'
 
+export const ScheduledTasksFilePath = 'data/scheduledtasks.yaml'
+
 export enum WindowStartState {
   Normal = 0,
   // Maximised = 1,
@@ -98,3 +100,19 @@ export type TrayContent = {
   title?: string
   tooltip?: string
 }
+
+export enum ScheduledTasksType {
+  UpdateSubscription = 'update::subscription',
+  UpdateRuleset = 'update::ruleset',
+  UpdatePlugin = 'update::plugin',
+  RunPlugin = 'run::plugin',
+  RunScript = 'run::script'
+}
+
+export const ScheduledTaskOptions = [
+  { label: 'scheduledtask.update::subscription', value: ScheduledTasksType.UpdateSubscription },
+  { label: 'scheduledtask.update::ruleset', value: ScheduledTasksType.UpdateRuleset },
+  { label: 'scheduledtask.update::plugin', value: ScheduledTasksType.UpdatePlugin },
+  { label: 'scheduledtask.run::plugin', value: ScheduledTasksType.RunPlugin },
+  { label: 'scheduledtask.run::script', value: ScheduledTasksType.RunScript }
+]

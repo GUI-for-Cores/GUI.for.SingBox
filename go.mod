@@ -12,6 +12,7 @@ require (
 require (
 	github.com/energye/systray v1.0.2
 	github.com/klauspost/cpuid/v2 v2.2.6
+	github.com/robfig/cron/v3 v3.0.1
 	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )

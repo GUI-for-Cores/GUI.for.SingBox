@@ -72,6 +72,7 @@ func main() {
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
 			bridge.CreateTray(app, icon, assets)
+			bridge.InitScheduledTasks()
 		},
 		Bind: []interface{}{
 			app,
