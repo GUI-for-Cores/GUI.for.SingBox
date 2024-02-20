@@ -7,12 +7,11 @@ import type { Menu } from '@/stores'
 interface Props {
   position: { x: number; y: number }
   menuList: Menu[]
-  modelValue?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), { modelValue: false })
+const model = defineModel<boolean>({ default: false })
 
-const emits = defineEmits(['update:modelValue'])
+const props = defineProps<Props>()
 
 const hoverItemKey = ref('s')
 
@@ -21,7 +20,7 @@ const { t } = useI18n()
 const handleClick = (fn: Menu) => {
   fn.handler?.()
   hoverItemKey.value = ''
-  emits('update:modelValue', false)
+  model.value = false
 }
 
 const menuPosition = computed(() => ({
@@ -31,7 +30,7 @@ const menuPosition = computed(() => ({
 
 const onClick = () => {
   hoverItemKey.value = ''
-  emits('update:modelValue', false)
+  model.value = false
 }
 
 onMounted(() => document.addEventListener('click', onClick))
@@ -39,7 +38,7 @@ onUnmounted(() => document.removeEventListener('click', onClick))
 </script>
 
 <template>
-  <div v-show="modelValue" :style="menuPosition" class="menu">
+  <div v-show="model" :style="menuPosition" class="menu">
     <template v-for="menu in menuList">
       <Divider v-if="menu.separator" :key="menu.label + '_divider'">{{ t(menu.label) }}</Divider>
 

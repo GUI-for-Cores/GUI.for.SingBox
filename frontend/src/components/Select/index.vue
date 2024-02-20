@@ -2,11 +2,12 @@
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  modelValue: string
   options: { label: string; value: string }[]
   border?: boolean
   size?: 'default' | 'small'
 }
+
+const model = defineModel<string>()
 
 withDefaults(defineProps<Props>(), {
   options: () => [],
@@ -14,19 +15,14 @@ withDefaults(defineProps<Props>(), {
   size: 'default'
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
+const emits = defineEmits(['change'])
 
 const { t } = useI18n()
-
-const handleChange = (e: any) => {
-  emits('update:modelValue', e.target.value)
-  emits('change', e.target.value)
-}
 </script>
 
 <template>
   <div :class="{ border, [size]: true }" class="select">
-    <select :value="modelValue" @change="($event) => handleChange($event)">
+    <select v-model="model" @change="emits('change', model)">
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ t(o.label) }}
       </option>

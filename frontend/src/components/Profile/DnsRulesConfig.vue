@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { deepClone, sampleID, isValidInlineRuleJson } from '@/utils'
@@ -8,20 +8,16 @@ import { type ProfileType, useRulesetsStore, type RuleSetType } from '@/stores'
 import { DnsRulesTypeOptions, DraggableOptions, RulesetFormatOptions } from '@/constant'
 
 interface Props {
-  modelValue: ProfileType['dnsRulesConfig']
   dnsConfig: ProfileType['dnsConfig']
   proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: () => []
-})
+const props = defineProps<Props>()
 
-const emits = defineEmits(['update:modelValue'])
+const rules = defineModel<ProfileType['dnsRulesConfig']>({ default: [] })
 
 let updateRuleId = 0
 const showModal = ref(false)
-const rules = ref(deepClone(props.modelValue))
 
 const fields = ref({
   id: sampleID(),
@@ -129,8 +125,6 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
   }
   return ruleStr
 }
-
-watch(rules, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
 
 <template>

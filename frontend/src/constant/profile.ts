@@ -4,13 +4,13 @@ import { ProxyGroup, FinalDnsType } from '@/constant'
 import i18n from '@/lang'
 const { t } = i18n.global
 
-export const GeneralConfigDefaults: ProfileType['generalConfig'] = {
+export const GeneralConfigDefaults = (): ProfileType['generalConfig'] => ({
   mode: 'rule',
   'mixed-port': 20122,
   'allow-lan': false,
   'log-level': 'info',
   'interface-name': 'Auto'
-}
+})
 
 export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   port: 0,
@@ -31,7 +31,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   'sniff-override-destination': false
 })
 
-export const TunConfigDefaults: ProfileType['tunConfig'] = {
+export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   enable: false,
   stack: 'System',
   'auto-route': true,
@@ -41,35 +41,33 @@ export const TunConfigDefaults: ProfileType['tunConfig'] = {
   'endpoint-independent-nat': false,
   'inet4-address': '172.19.0.1/30',
   'inet6-address': 'fdfe:dcba:9876::1/126'
-}
+})
 
-export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => {
-  return {
-    enable: true,
-    fakeip: false,
-    strategy: '',
-    'local-dns': 'https://223.5.5.5/dns-query',
-    'remote-dns': 'tls://8.8.8.8',
-    'resolver-dns': '223.5.5.5',
-    'remote-resolver-dns': '8.8.8.8',
-    'final-dns': FinalDnsType.Remote,
-    'remote-dns-detour': t('outbound.select'),
-    'fake-ip-range-v4': '198.18.0.1/16',
-    'fake-ip-range-v6': 'fc00::/18',
-    'fake-ip-filter': [
-      '.lan',
-      '.localdomain',
-      '.example',
-      '.invalid',
-      '.localhost',
-      '.test',
-      '.local',
-      '.home.arpa',
-      '.msftconnecttest.com',
-      '.msftncsi.com'
-    ]
-  }
-}
+export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
+  enable: true,
+  fakeip: false,
+  strategy: '',
+  'local-dns': 'https://223.5.5.5/dns-query',
+  'remote-dns': 'tls://8.8.8.8',
+  'resolver-dns': '223.5.5.5',
+  'remote-resolver-dns': '8.8.8.8',
+  'final-dns': FinalDnsType.Remote,
+  'remote-dns-detour': t('outbound.select'),
+  'fake-ip-range-v4': '198.18.0.1/16',
+  'fake-ip-range-v6': 'fc00::/18',
+  'fake-ip-filter': [
+    '.lan',
+    '.localdomain',
+    '.example',
+    '.invalid',
+    '.localhost',
+    '.test',
+    '.local',
+    '.home.arpa',
+    '.msftconnecttest.com',
+    '.msftncsi.com'
+  ]
+})
 
 export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] => {
   const id1 = sampleID()

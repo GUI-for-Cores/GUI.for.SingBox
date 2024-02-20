@@ -2,17 +2,17 @@
 import { ref, watch } from 'vue'
 
 interface Props {
-  modelValue: Record<string, string>
   placeholder?: [string, string]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const model = defineModel<Record<string, string>>({ default: {} })
+
+withDefaults(defineProps<Props>(), {
   placeholder: () => ['key', 'value']
 })
-const emits = defineEmits(['update:modelValue'])
 
-const keys = ref(Object.keys(props.modelValue))
-const values = ref(Object.values(props.modelValue))
+const keys = ref(Object.keys(model.value))
+const values = ref(Object.values(model.value))
 
 const handleDel = (i: number) => {
   keys.value.splice(i, 1)
@@ -34,7 +34,7 @@ watch(
       },
       {} as Record<string, string>
     )
-    emits('update:modelValue', obj)
+    model.value = obj
   },
   { deep: true }
 )
@@ -42,7 +42,7 @@ watch(
 
 <template>
   <div class="kv-editor">
-    <div v-for="(key, i) in keys" :key="i" class="item">
+    <div v-for="(key, i) in keys" :key="key + i" class="item">
       <Input v-model="keys[i]" :placeholder="placeholder[0]" />
       <Button @click="handleDel(i)" type="text" class="ml-4" size="small"> × </Button>
       <Input v-model="values[i]" :placeholder="placeholder[1]" />

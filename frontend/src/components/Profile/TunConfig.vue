@@ -1,29 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone } from '@/utils'
-import { StackOptions, TunConfigDefaults } from '@/constant'
 import { type ProfileType } from '@/stores'
+import { StackOptions, TunConfigDefaults } from '@/constant'
 
-interface Props {
-  modelValue: ProfileType['tunConfig']
-}
-
-const props = withDefaults(defineProps<Props>(), {})
-
-const emits = defineEmits(['update:modelValue'])
-
-const fields = ref(deepClone(props.modelValue))
+const fields = defineModel<ProfileType['tunConfig']>({ default: TunConfigDefaults() })
 
 const { t } = useI18n()
-
-if (fields.value['inet4-address'] === undefined)
-  fields.value['inet4-address'] = TunConfigDefaults['inet4-address']
-if (fields.value['inet6-address'] === undefined)
-  fields.value['inet6-address'] = TunConfigDefaults['inet6-address']
-
-watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
 
 <template>

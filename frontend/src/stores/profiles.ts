@@ -4,7 +4,7 @@ import { parse, stringify } from 'yaml'
 
 import { debounce } from '@/utils'
 import { Readfile, Writefile } from '@/utils/bridge'
-import { ProfilesFilePath, ProxyGroup, FinalDnsType } from '@/constant'
+import { ProfilesFilePath, ProxyGroup, FinalDnsType, TunConfigDefaults } from '@/constant'
 
 export type ProfileType = {
   id: string
@@ -103,6 +103,16 @@ export const useProfilesStore = defineStore('profiles', () => {
   const setupProfiles = async () => {
     const data = await Readfile(ProfilesFilePath)
     profiles.value = parse(data)
+
+    for (let i = 0; i < profiles.value.length; ++i) {
+      const profile = profiles.value[i]
+      if (profile.tunConfig['inet4-address'] === undefined) {
+        profiles.value[i].tunConfig['inet4-address'] = TunConfigDefaults()['inet4-address']
+      }
+      if (profile.tunConfig['inet6-address'] === undefined) {
+        profiles.value[i].tunConfig['inet6-address'] = TunConfigDefaults()['inet6-address']
+      }
+    }
   }
 
   const saveProfiles = debounce(async () => {

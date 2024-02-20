@@ -1,26 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone } from '@/utils'
 import { type ProfileType } from '@/stores'
-import { ModeOptions, LogLevelOptions } from '@/constant'
+import { ModeOptions, LogLevelOptions, GeneralConfigDefaults } from '@/constant'
 
 import InterfaceSelect from '@/components/Profile/InterfaceSelect.vue'
 
-interface Props {
-  modelValue: ProfileType['generalConfig']
-}
-
-const props = withDefaults(defineProps<Props>(), {})
-
-const emits = defineEmits(['update:modelValue'])
-
-const fields = ref(deepClone(props.modelValue))
+const fields = defineModel<ProfileType['generalConfig']>({ default: GeneralConfigDefaults() })
 
 const { t } = useI18n()
-
-watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
 
 <template>

@@ -1,35 +1,30 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  modelValue: string[]
   options?: { label: string; value: string }[]
   size?: 'default' | 'small'
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const model = defineModel<string[]>({ default: [] })
+
+withDefaults(defineProps<Props>(), {
   options: () => [],
   size: 'default'
 })
 
-const emits = defineEmits(['update:modelValue'])
-
-const selected = ref(new Set(props.modelValue))
-
 const { t } = useI18n()
 
-const isActive = (val: string) => selected.value.has(val)
+const isActive = (val: string) => model.value.includes(val)
 
 const handleSelect = (val: string) => {
-  if (isActive(val)) {
-    selected.value.delete(val)
+  const idx = model.value.findIndex((v) => v === val)
+  if (idx !== -1) {
+    model.value.splice(idx, 1)
   } else {
-    selected.value.add(val)
+    model.value.push(val)
   }
 }
-
-watch(selected, (val) => emits('update:modelValue', Array.from(val)), { deep: true })
 </script>
 
 <template>

@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
-import { deepClone } from '@/utils'
 import { DraggableOptions } from '@/constant'
 
 interface Props {
-  modelValue: string[]
   placeholder?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {})
+defineProps<Props>()
+
+const list = defineModel<string[]>({ default: [] })
 
 const value = ref('')
-const list = ref(deepClone(props.modelValue))
 const inputRef = ref()
-
-const emits = defineEmits(['update:modelValue'])
 
 const handleAdd = () => {
   if (!value.value) return
@@ -25,8 +22,6 @@ const handleAdd = () => {
 }
 
 const handleDel = (i: number) => list.value.splice(i, 1)
-
-watch(list, (v) => emits('update:modelValue', v), { immediate: true })
 </script>
 
 <template>

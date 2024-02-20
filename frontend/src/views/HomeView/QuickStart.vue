@@ -34,9 +34,9 @@ const handleSubmit = async () => {
   const profile: ProfileType = {
     id: profileID,
     name: profileID,
-    generalConfig: Defaults.GeneralConfigDefaults,
+    generalConfig: Defaults.GeneralConfigDefaults(),
     advancedConfig: Defaults.AdvancedConfigDefaults(),
-    tunConfig: Defaults.TunConfigDefaults,
+    tunConfig: Defaults.TunConfigDefaults(),
     dnsConfig: Defaults.DnsConfigDefaults(),
     proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
     rulesConfig: Defaults.RulesConfigDefaults(),

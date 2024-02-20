@@ -299,7 +299,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     s.upload = Number(upload)
     s.download = Number(download)
     s.total = Number(total)
-    s.expire = expire !== '0' ? new Date(Number(expire) * 1000).toLocaleString() : ''
+    s.expire = Number(expire) ? new Date(Number(expire) * 1000).toLocaleString() : ''
     s.updateTime = new Date().toLocaleString()
     s.proxies = proxies.map(({ tag, type }) => {
       // Keep the original ID value of the proxy unchanged

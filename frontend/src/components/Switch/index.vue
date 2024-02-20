@@ -1,39 +1,38 @@
 <script setup lang="ts">
 interface Props {
-  modelValue?: boolean
   size?: 'default' | 'small'
   border?: 'default' | 'square'
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
+withDefaults(defineProps<Props>(), {
   size: 'default',
   border: 'default'
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
+const model = defineModel<boolean>()
+
+const emits = defineEmits(['change'])
 
 const toggle = () => {
-  const state = !props.modelValue
-  emits('update:modelValue', state)
-  emits('change', state)
+  model.value = !model.value
+  emits('change', model.value)
 }
 </script>
 
 <template>
   <div
     @click="toggle"
-    :style="{ 'justify-content': !modelValue ? 'flex-start' : 'flex-end' }"
-    :class="[size, border, modelValue ? 'on' : 'off']"
+    :style="{ 'justify-content': !model ? 'flex-start' : 'flex-end' }"
+    :class="[size, border, model ? 'on' : 'off']"
     class="switch"
   >
-    <div v-if="$slots.default && !modelValue" class="slot">
+    <div v-if="$slots.default && !model" class="slot">
       <slot />
     </div>
 
     <div class="dot"></div>
 
-    <div v-if="$slots.default && modelValue" class="slot">
+    <div v-if="$slots.default && model" class="slot">
       <slot />
     </div>
   </div>

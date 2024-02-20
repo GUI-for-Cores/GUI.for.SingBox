@@ -301,10 +301,10 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       inet4_address = ''
     }
     if (inet4_address === undefined) {
-      inet4_address = TunConfigDefaults['inet4-address']
+      inet4_address = TunConfigDefaults()['inet4-address']
     }
     if (inet6_address === undefined) {
-      inet6_address = TunConfigDefaults['inet6-address']
+      inet6_address = TunConfigDefaults()['inet6-address']
     }
 
     inbounds.push({

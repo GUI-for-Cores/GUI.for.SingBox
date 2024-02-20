@@ -1,33 +1,25 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 import { GetInterfaces } from '@/utils/bridge'
 
 interface Props {
-  modelValue: string
   border?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const model = defineModel<string>()
+
+withDefaults(defineProps<Props>(), {
   border: true
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
+const emits = defineEmits(['change'])
 
-const value = ref(props.modelValue)
 const options = ref<any>([])
 
 const onChange = (val: string) => {
-  emits('update:modelValue', val)
   emits('change', val)
 }
-
-watch(
-  () => props.modelValue,
-  (v) => {
-    value.value = v
-  }
-)
 
 GetInterfaces().then((res) => {
   options.value = [
@@ -41,7 +33,7 @@ GetInterfaces().then((res) => {
 </script>
 
 <template>
-  <Select v-model="value" @change="onChange" :options="options" :border="border" />
+  <Select v-model="model" @change="onChange" :options="options" :border="border" />
 </template>
 
 <style lang="less" scoped></style>

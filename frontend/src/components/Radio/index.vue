@@ -2,21 +2,18 @@
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  modelValue: string | number | boolean
   options: { label: string; value: string | number | boolean }[]
   size?: 'default' | 'small'
 }
+
+const model = defineModel<string | number | boolean>()
 
 withDefaults(defineProps<Props>(), {
   options: () => [],
   size: 'default'
 })
 
-const emits = defineEmits(['update:modelValue'])
-
 const { t } = useI18n()
-
-const handleChange = (val: string | number | boolean) => emits('update:modelValue', val)
 </script>
 
 <template>
@@ -24,8 +21,8 @@ const handleChange = (val: string | number | boolean) => emits('update:modelValu
     <div
       v-for="o in options"
       :key="o.value.toString()"
-      @click="handleChange(o.value)"
-      :class="{ active: o.value === modelValue }"
+      @click="model = o.value"
+      :class="{ active: o.value === model }"
       class="radio-button"
     >
       {{ t(o.label) }}

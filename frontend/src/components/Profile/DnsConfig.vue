@@ -1,21 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone } from '@/utils'
 import { type ProfileType } from '@/stores'
-import { DomainStrategyOptions, FinalDnsOptions } from '@/constant'
+import { DomainStrategyOptions, FinalDnsOptions, DnsConfigDefaults } from '@/constant'
 
 interface Props {
-  modelValue: ProfileType['dnsConfig']
   proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
-const props = withDefaults(defineProps<Props>(), {})
-
-const emits = defineEmits(['update:modelValue'])
-
-const fields = ref(deepClone(props.modelValue))
+const fields = defineModel<ProfileType['dnsConfig']>({ default: DnsConfigDefaults() })
+const props = defineProps<Props>()
 
 const { t } = useI18n()
 
@@ -26,7 +21,6 @@ const proxyOptions = computed(() => [
   { label: t('kernel.dns.default'), value: '' }
 ])
 
-watch(fields, (v) => emits('update:modelValue', v), { immediate: true, deep: true })
 </script>
 
 <template>

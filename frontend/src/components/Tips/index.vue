@@ -4,14 +4,14 @@ import { ref, watch, nextTick } from 'vue'
 
 interface Props {
   position: { x: number; y: number }
-  modelValue?: boolean
   message?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
   message: ''
 })
+
+const model = defineModel<boolean>()
 
 const domRef = ref<HTMLElement>()
 const fixedPosition = ref({ x: 0, y: 0 })
@@ -37,7 +37,7 @@ watch(
 
 <template>
   <div
-    v-show="modelValue"
+    v-show="model"
     :style="{ left: fixedPosition.x + 'px', top: fixedPosition.y + 'px' }"
     ref="domRef"
     class="tips"

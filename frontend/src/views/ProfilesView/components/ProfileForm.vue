@@ -42,9 +42,9 @@ const stepItems = [
 const profile = ref<ProfileType>({
   id: sampleID(),
   name: '',
-  generalConfig: Defaults.GeneralConfigDefaults,
+  generalConfig: Defaults.GeneralConfigDefaults(),
   advancedConfig: Defaults.AdvancedConfigDefaults(),
-  tunConfig: Defaults.TunConfigDefaults,
+  tunConfig: Defaults.TunConfigDefaults(),
   dnsConfig: Defaults.DnsConfigDefaults(),
   proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
   rulesConfig: Defaults.RulesConfigDefaults(),
