@@ -102,7 +102,7 @@ const handleSubmit = async () => {
 <template>
   <div class="form-item">
     <div>{{ t('subscribe.url') }} *</div>
-    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 76%" />
+    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 80%" />
   </div>
   <div class="form-item">
     <div class="name">{{ t('subscribe.useragent') }}</div>
