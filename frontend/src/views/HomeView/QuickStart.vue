@@ -65,7 +65,7 @@ const handleSubmit = async () => {
     excludeProtocol: '',
     proxyPrefix: '',
     disabled: false,
-    userAgent: useragent.value || appSettingsStore.app.userAgent || APP_TITLE,
+    userAgent: '',
     proxies: []
   }
 
@@ -101,8 +101,8 @@ const handleSubmit = async () => {
 
 <template>
   <div class="form-item">
-    <div class="name">{{ t('subscribe.url') }} *</div>
-    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 80%" />
+    <div>{{ t('subscribe.url') }} *</div>
+    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 76%" />
   </div>
   <div class="form-item">
     <div class="name">{{ t('subscribe.useragent') }}</div>

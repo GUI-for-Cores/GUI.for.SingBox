@@ -310,12 +310,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
   const updateSubscribe = async (id: string) => {
     const s = subscribes.value.find((v) => v.id === id)
-    if (!s) return
-    if (s.disabled) return
+    if (!s) throw id + ' Not Found'
+    if (s.disabled) throw s.name + ' Disabled'
     try {
       s.updating = true
       await _doUpdateSub(s)
       await saveSubscribes()
+      return `Subscription [${s.name}] updated successfully.`
     } catch (error) {
       console.error('updateSubscribe: ', s.name, error)
       throw error

@@ -140,28 +140,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
 </script>
 
 <template>
-  <div v-if="subscribeStore.subscribes.length !== 0" class="header">
-    <Radio
-      v-model="appSettingsStore.app.subscribesView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
-      ]"
-    />
-    <Button
-      @click="handleUpdateSubs"
-      :disable="noUpdateNeeded"
-      :type="noUpdateNeeded ? 'text' : 'link'"
-      style="margin-left: auto"
-    >
-      {{ t('common.updateAll') }}
-    </Button>
-    <Button @click="handleAddSub" type="primary">
-      {{ t('common.add') }}
-    </Button>
-  </div>
-
-  <div v-else class="empty">
+  <div v-if="subscribeStore.subscribes.length === 0" class="grid-list-empty">
     <Empty>
       <template #description>
         <I18nT keypath="subscribes.empty" tag="p" scope="global">
@@ -173,10 +152,30 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
     </Empty>
   </div>
 
+  <div v-else class="grid-list-header"> 
+    <Radio
+      v-model="appSettingsStore.app.subscribesView"
+      :options="[
+        { label: 'common.grid', value: View.Grid },
+        { label: 'common.list', value: View.List }
+      ]"
+      class="mr-auto"
+    />
+    <Button
+      @click="handleUpdateSubs"
+      :disable="noUpdateNeeded"
+      :type="noUpdateNeeded ? 'text' : 'link'"
+    >
+      {{ t('common.updateAll') }}
+    </Button>
+    <Button @click="handleAddSub" type="primary">
+      {{ t('common.add') }}
+    </Button>
+  </div>
+
   <div
     v-draggable="[subscribeStore.subscribes, { ...DraggableOptions, onUpdate: onSortUpdate }]"
-    :class="appSettingsStore.app.subscribesView"
-    class="subscribes"
+    :class="'grid-list-' + appSettingsStore.app.subscribesView"
   >
     <Card
       v-for="s in subscribeStore.subscribes"
@@ -184,7 +183,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       :title="s.name"
       :disabled="s.disabled"
       v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
-      class="subscribe"
+      class="item"
     >
       <template #title-prefix>
         <Tag v-if="s.updating" color="cyan">
@@ -329,46 +328,9 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
 </template>
 
 <style lang="less" scoped>
-.header {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  z-index: 9;
-}
-
-.empty {
-  text-align: center;
-  height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.subscribes {
-  flex: 1;
-  margin-top: 8px;
-  overflow-y: auto;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.grid {
-  .subscribe {
-    position: relative;
-    display: inline-block;
-    width: calc(33.333333% - 16px);
-    margin: 8px;
-
-    .traffic-diagram {
-      position: absolute;
-      top: 40px;
-      right: 12px;
-    }
-  }
-}
-.list {
-  .subscribe {
-    margin: 8px;
-  }
+.traffic-diagram {
+  position: absolute;
+  top: 40px;
+  right: 12px;
 }
 </style>

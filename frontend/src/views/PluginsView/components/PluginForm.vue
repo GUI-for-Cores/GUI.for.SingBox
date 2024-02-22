@@ -58,11 +58,11 @@ const handleSubmit = async () => {
       await ignoredError(pluginsStore.reloadPlugin, plugin.value)
       pluginsStore.updatePluginTrigger(plugin.value)
     }
+    handleCancel()
   } catch (error: any) {
     console.error(error)
     message.error(error)
   }
-  handleCancel()
   loading.value = true
 }
 
@@ -90,17 +90,17 @@ if (props.isUpdate) {
       />
     </div>
     <div class="form-item">
-      {{ t('plugin.install') }}
+      <div class="name">{{ t('plugin.install') }}</div>
       <Switch v-model="plugin.install" />
     </div>
     <div class="form-item">
       <div style="padding-right: 8px">
-        {{ t('plugin.trigger') }}
+        <div class="name">{{ t('plugin.trigger') }}</div>
       </div>
       <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions" />
     </div>
     <div class="form-item">
-      {{ t('plugin.name') }} *
+      <div class="name">{{ t('plugin.name') }} *</div>
       <Input v-model="plugin.name" auto-size autofocus class="input" />
     </div>
     <div v-show="plugin.type === 'Http'" class="form-item">
@@ -113,7 +113,7 @@ if (props.isUpdate) {
       />
     </div>
     <div class="form-item">
-      {{ t('plugin.path') }} *
+      <div class="name">{{ t('plugin.path') }} *</div>
       <Input
         v-model="plugin.path"
         placeholder="data/plugins/plugin-{filename}.js"
@@ -122,7 +122,7 @@ if (props.isUpdate) {
       />
     </div>
     <div class="form-item">
-      {{ t('plugin.description') }}
+      <div class="name">{{ t('plugin.description') }}</div>
       <Input v-model="plugin.description" auto-size class="input" />
     </div>
     <Divider>
@@ -158,6 +158,11 @@ if (props.isUpdate) {
   padding: 0 8px;
   overflow-y: auto;
   max-height: 58vh;
+  .name {
+    font-size: 14px;
+    padding: 8px 0;
+    white-space: nowrap;
+  }
 }
 .form-item {
   .input {

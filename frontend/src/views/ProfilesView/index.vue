@@ -144,7 +144,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 </script>
 
 <template>
-  <div v-if="profilesStore.profiles.length === 0" class="empty">
+  <div v-if="profilesStore.profiles.length === 0" class="grid-list-empty">
     <Empty>
       <template #description>
         <I18nT keypath="profiles.empty" tag="p" scope="global">
@@ -156,14 +156,14 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
     </Empty>
   </div>
 
-  <div v-else class="header">
+  <div v-else class="grid-list-header">
     <Radio
       v-model="appSettingsStore.app.profilesView"
       :options="[
         { label: 'common.grid', value: View.Grid },
         { label: 'common.list', value: View.List }
       ]"
-      style="margin-right: auto"
+      class="mr-auto"
     />
     <Button @click="handleAddProfile" type="primary">
       {{ t('common.add') }}
@@ -172,8 +172,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 
   <div
     v-draggable="[profilesStore.profiles, { ...DraggableOptions, onUpdate: onSortUpdate }]"
-    :class="appSettingsStore.app.profilesView"
-    class="profiles"
+    :class="'grid-list-' + appSettingsStore.app.profilesView"
   >
     <Card
       v-for="p in profilesStore.profiles"
@@ -188,7 +187,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
           children: v.children?.map((vv) => ({ ...vv, handler: () => vv.handler?.(p.id) }))
         }))
       "
-      class="profile"
+      class="item"
     >
       <template v-if="appSettingsStore.app.profilesView === View.Grid" #extra>
         <Dropdown :trigger="['hover', 'click']">
@@ -254,40 +253,4 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
   </Modal>
 </template>
 
-<style lang="less" scoped>
-.header {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  z-index: 9;
-}
-
-.empty {
-  text-align: center;
-  height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profiles {
-  flex: 1;
-  margin-top: 8px;
-  overflow-y: auto;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.grid {
-  .profile {
-    display: inline-block;
-    width: calc(33.333333% - 16px);
-    margin: 8px;
-  }
-}
-.list {
-  .profile {
-    margin: 8px;
-  }
-}
-</style>
+<style lang="less" scoped></style>

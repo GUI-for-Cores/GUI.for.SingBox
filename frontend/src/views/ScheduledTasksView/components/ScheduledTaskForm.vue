@@ -98,12 +98,12 @@ if (props.isUpdate) {
       />
     </div>
     <div class="form-item">
-      <div style="padding-right: 16px">{{ t('scheduledtask.type') }}</div>
+      <div class="name" style="padding-right: 16px">{{ t('scheduledtask.type') }}</div>
       <Radio v-model="task.type" :options="ScheduledTaskOptions" />
     </div>
 
     <div v-if="task.type === ScheduledTasksType.UpdateSubscription">
-      <div class="form-item-title">{{ t('scheduledtask.subscriptions') }}</div>
+      <div class="name form-item-title">{{ t('scheduledtask.subscriptions') }}</div>
       <div class="task-list">
         <Card
           v-for="s in subscribesStore.subscribes"
@@ -119,7 +119,7 @@ if (props.isUpdate) {
     </div>
 
     <div v-else-if="task.type === ScheduledTasksType.UpdateRuleset">
-      <div class="form-item-title">{{ t('scheduledtask.rulesets') }}</div>
+      <div class="name form-item-title">{{ t('scheduledtask.rulesets') }}</div>
       <div class="task-list">
         <Card
           v-for="r in rulesetsStore.rulesets"
@@ -135,7 +135,7 @@ if (props.isUpdate) {
     </div>
 
     <div v-else-if="task.type === ScheduledTasksType.UpdatePlugin">
-      <div class="form-item-title">{{ t('scheduledtask.plugins') }}</div>
+      <div class="name form-item-title">{{ t('scheduledtask.plugins') }}</div>
       <div class="task-list">
         <Card
           v-for="p in pluginsStore.plugins"
@@ -151,7 +151,7 @@ if (props.isUpdate) {
     </div>
 
     <div v-else-if="task.type === ScheduledTasksType.RunPlugin">
-      <div class="form-item-title">{{ t('scheduledtask.plugins') }}</div>
+      <div class="name form-item-title">{{ t('scheduledtask.plugins') }}</div>
       <div class="task-list">
         <Card
           v-for="p in pluginsStore.plugins"
@@ -168,7 +168,7 @@ if (props.isUpdate) {
     </div>
 
     <div v-else-if="task.type === ScheduledTasksType.RunScript">
-      <div class="form-item-title">{{ t('scheduledtask.script') }}</div>
+      <div class="name form-item-title">{{ t('scheduledtask.script') }}</div>
       <CodeViewer v-model="task.script" editable lang="javascript" />
     </div>
   </div>
@@ -191,6 +191,11 @@ if (props.isUpdate) {
   padding: 0 8px;
   overflow-y: auto;
   max-height: 58vh;
+  .name {
+    font-size: 14px;
+    padding: 8px 0;
+    white-space: nowrap;
+  }
   .input {
     width: 80%;
   }

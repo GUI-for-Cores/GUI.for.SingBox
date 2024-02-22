@@ -102,14 +102,14 @@ if (props.isUpdate) {
   <div class="title" style="--wails-draggable: drag">{{ t(stepItems[currentStep].title) }}</div>
 
   <div class="form">
-    <div v-show="currentStep === 0" class="step1">
+    <div v-show="currentStep === 0">
       <div class="form-item">
         <div class="name">{{ t('profile.name') }} *</div>
-        <Input v-model="profile.name" auto-size autofocus style="flex: 1; margin-left: 8px" />
+        <Input v-model="profile.name" auto-size autofocus class="flex-1 ml-8" />
       </div>
     </div>
 
-    <div v-show="currentStep === 1" class="step2">
+    <div v-show="currentStep === 1">
       <GeneralConfig v-model="profile.generalConfig" />
       <Divider>
         <Button type="text" size="small" @click="toggleAdvancedSetting">
@@ -121,15 +121,15 @@ if (props.isUpdate) {
       </div>
     </div>
 
-    <div v-show="currentStep === 2" class="step3">
+    <div v-show="currentStep === 2">
       <TunConfig v-model="profile.tunConfig" />
     </div>
 
-    <div v-show="currentStep === 3" class="step4">
+    <div v-show="currentStep === 3">
       <ProxyGroupsConfig v-model="profile.proxyGroupsConfig" />
     </div>
 
-    <div v-show="currentStep === 4" class="step5">
+    <div v-show="currentStep === 4">
       <RulesConfig
         v-model="profile.rulesConfig"
         :proxy-groups="profile.proxyGroupsConfig"
@@ -137,11 +137,11 @@ if (props.isUpdate) {
       />
     </div>
 
-    <div v-show="currentStep === 5" class="step6">
+    <div v-show="currentStep === 5">
       <DnsConfig v-model="profile.dnsConfig" :proxy-groups="profile.proxyGroupsConfig" />
     </div>
 
-    <div v-show="currentStep === 6" class="step7">
+    <div v-show="currentStep === 6">
       <DnsRulesConfig
         v-model="profile.dnsRulesConfig"
         :dns-config="profile.dnsConfig"

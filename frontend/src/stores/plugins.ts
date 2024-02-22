@@ -181,12 +181,13 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const updatePlugin = async (id: string) => {
     const p = plugins.value.find((v) => v.id === id)
-    if (!p) return
-    if (p.disabled) return
+    if (!p) throw id + ' Not Found'
+    if (p.disabled) throw p.name + ' Disabled'
     try {
       p.updating = true
       await _doUpdatePlugin(p)
       await savePlugins()
+      return `Plugin [${p.name}] updated successfully.`
     } finally {
       p.updating = false
     }
@@ -322,16 +323,18 @@ export const usePluginsStore = defineStore('plugins', () => {
     return params as Record<string, any>
   }
 
-  const manualTrigger = async (plugin: PluginType, event: PluginManualEvent) => {
+  const manualTrigger = async (id: string, event: PluginManualEvent) => {
+    const plugin = getPluginById(id)
+    if (!plugin) throw id + ' Not Found'
     const cache = PluginsCache[plugin.id]
 
-    if (!cache) throw `[${plugin.name}]: Missing source code`
-    if (cache.plugin.disabled) throw `[${plugin.name}]: Plugin disabled`
+    if (!cache) throw `${plugin.name} is Missing source code`
+    if (cache.plugin.disabled) throw `${plugin.name} Disabled`
     try {
-      const fn = new AsyncFunction(`${cache.code}; await ${event}()`)
-      await fn()
+      const fn = new AsyncFunction(`${cache.code}; return await ${event}()`)
+      return await fn()
     } catch (error: any) {
-      throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+      throw `${cache.plugin.name} Error: ` + (error.message || error)
     }
   }
 

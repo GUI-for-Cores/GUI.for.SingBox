@@ -174,21 +174,16 @@ onActivated(() => {
       <Switch v-model="appSettings.app.kernel.autoClose">
         {{ t('home.controller.autoClose') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.unAvailable" style="margin-left: 8px">
+      <Switch v-model="appSettings.app.kernel.unAvailable" class="ml-8">
         {{ t('home.controller.unAvailable') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.cardMode" style="margin-left: 8px">
+      <Switch v-model="appSettings.app.kernel.cardMode" class="ml-8">
         {{ t('home.controller.cardMode') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.sortByDelay" style="margin-left: 8px">
+      <Switch v-model="appSettings.app.kernel.sortByDelay" class="ml-8">
         {{ t('home.controller.sortBy') }}
       </Switch>
-      <Button
-        @click="expandAll"
-        v-tips="'home.overview.expandAll'"
-        type="text"
-        style="margin-left: auto"
-      >
+      <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" class="ml-auto">
         <Icon icon="expand" />
       </Button>
       <Button @click="collapseAll" v-tips="'home.overview.collapseAll'" type="text">

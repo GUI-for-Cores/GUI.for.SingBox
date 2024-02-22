@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue'
 
 import { debounce } from '@/utils'
 import { ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
-import { useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'
+import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
 import {
   Readfile,
   Writefile,
@@ -40,15 +40,30 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const initScheduledTasks = async () => {
     removeScheduledTasks()
 
-    scheduledtasks.value.forEach(async (task) => {
-      if (task.disabled) return
-      const taskID = await AddScheduledTask(task.cron, task.id)
-      ScheduledTasksEvents.push(task.id)
+    const logsStore = useLogsStore()
+
+    scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {
+      if (disabled) return
+      const taskID = await AddScheduledTask(cron, id)
+      ScheduledTasksEvents.push(id)
       ScheduledTasksIDs.push(taskID)
-      EventsOn(task.id, () => {
+
+      EventsOn(id, async () => {
+        const task = getScheduledTaskById(id)
+        if (!task) return
+
         task.lastTime = new Date().toLocaleString()
-        editScheduledTask(task.id, task)
-        getTaskFn(task.id)()
+        editScheduledTask(id, task)
+
+        const startTime = Date.now()
+        const result = await getTaskFn(task)()
+
+        logsStore.recordScheduledTasksLog({
+          name: task.name,
+          startTime,
+          endTime: Date.now(),
+          result
+        })
       })
     })
   }
@@ -60,47 +75,44 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     ScheduledTasksIDs.splice(0)
   }
 
-  const getTaskFn = (id: string) => {
-    const task = getScheduledTaskById(id)
+  const withOutput = (list: string[], fn: (id: string) => Promise<string>) => {
+    return async () => {
+      const output = []
+      for (const id of list) {
+        try {
+          const res = await fn(id)
+          output.push(res)
+        } catch (error: any) {
+          output.push(error.message || error)
+        }
+      }
+      return output
+    }
+  }
 
-    if (!task) return () => 0
-
+  const getTaskFn = (task: ScheduledTaskType) => {
     switch (task.type) {
       case ScheduledTasksType.UpdateSubscription: {
         const subscribesStore = useSubscribesStore()
-        return async () => {
-          for (const id of task.subscriptions) {
-            await subscribesStore.updateSubscribe(id)
-          }
-        }
+        return withOutput(task.subscriptions, subscribesStore.updateSubscribe)
       }
       case ScheduledTasksType.UpdateRuleset: {
         const rulesetsStore = useRulesetsStore()
-        return async () => {
-          for (const id of task.rulesets) {
-            await rulesetsStore.updateRuleset(id)
-          }
-        }
+        return withOutput(task.rulesets, rulesetsStore.updateRuleset)
       }
       case ScheduledTasksType.UpdatePlugin: {
         const pluginsStores = usePluginsStore()
-        return async () => {
-          for (const id of task.plugins) {
-            await pluginsStores.updatePlugin(id)
-          }
-        }
+        return withOutput(task.plugins, pluginsStores.updatePlugin)
       }
       case ScheduledTasksType.RunPlugin: {
         const pluginsStores = usePluginsStore()
-        return async () =>
-          task.plugins.forEach((id) => {
-            const plugin = pluginsStores.getPluginById(id)
-            plugin && pluginsStores.manualTrigger(plugin, 'onTask' as any)
-          })
+        return withOutput(task.plugins, async (id: string) =>
+          pluginsStores.manualTrigger(id, 'onTask' as any)
+        )
       }
       case ScheduledTasksType.RunScript: {
         const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
-        return new AsyncFunction(task.script)
+        return withOutput([task.script], (script: string) => new AsyncFunction(script)())
       }
     }
   }

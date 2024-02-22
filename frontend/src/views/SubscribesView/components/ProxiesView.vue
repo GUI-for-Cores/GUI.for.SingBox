@@ -137,10 +137,6 @@ const onEditEnd = async () => {
     proxy = JSON.parse(details.value)
 
     if (typeof proxy !== 'object') throw 'wrong format'
-
-    if (sub.value.proxies.find((v) => v.tag === proxy.tag)) {
-      throw 'A proxy with the same tag already exists.'
-    }
   } catch (error: any) {
     console.log(error)
     message.error(error.message || error)
@@ -196,8 +192,7 @@ const getProxyByTag = async (tag: string) => {
         v-model="keywords"
         size="small"
         :placeholder="t('subscribes.proxies.name')"
-        class="ml-8"
-        style="flex: 1"
+        class="ml-8 flex-1"
       />
       <Button @click="resetForm" size="small" class="ml-8">
         {{ t('common.reset') }}
@@ -207,9 +202,9 @@ const getProxyByTag = async (tag: string) => {
       </Button>
     </div>
 
-    <Empty v-if="filteredProxies.length === 0" class="empty" />
+    <Empty v-if="filteredProxies.length === 0" class="flex-1" />
 
-    <div v-else v-draggable="[sub.proxies, { ...DraggableOptions }]" class="proxies">
+    <div v-else v-draggable="[sub.proxies, DraggableOptions]" class="proxies">
       <Card
         v-for="proxy in filteredProxies"
         :key="proxy.tag"
@@ -220,7 +215,7 @@ const getProxyByTag = async (tag: string) => {
         {{ proxy.type }}
       </Card>
     </div>
-    <div class="action">
+    <div class="form-action">
       <Button @click="handleCancel" :disable="loading">
         {{ t('common.cancel') }}
       </Button>
@@ -252,23 +247,12 @@ const getProxyByTag = async (tag: string) => {
   height: 100%;
 }
 .form {
-  position: sticky;
-  top: 0;
-  z-index: 9;
   display: flex;
   align-items: center;
-  background-color: var(--modal-bg);
-  backdrop-filter: blur(2px);
   .label {
     padding: 0 8px;
     font-size: 12px;
   }
-}
-.empty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .proxies {
   margin-top: 8px;
@@ -280,19 +264,5 @@ const getProxyByTag = async (tag: string) => {
     width: calc(25% - 4px);
     margin: 2px;
   }
-}
-
-.ml-8 {
-  margin-left: 8px;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-
-.action {
-  display: flex;
-  margin-top: 8px;
-  justify-content: flex-end;
 }
 </style>

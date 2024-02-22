@@ -56,7 +56,7 @@ const tableData = computed(() => {
 })
 
 const tableColumns = computed(() => {
-  return props.columns.filter((column) => !!column.hidden)
+  return props.columns.filter((column) => !column.hidden)
 })
 </script>
 
@@ -94,12 +94,12 @@ const tableColumns = computed(() => {
             v-for="column in tableColumns"
             :key="column.key"
             :style="{ textAlign: column.align || 'left' }"
-            class="user-select"
+            class="select-text"
           >
             {{
               (column.customRender
                 ? column.customRender({ value: getValue(data, column.key), record: data })
-                : getValue(data, column.key)) || '-'
+                : getValue(data, column.key)) ?? '-'
             }}
           </td>
         </tr>

@@ -91,7 +91,7 @@ const handleSelectAll = () => {
   min-width: 340px;
   max-width: 60%;
   padding: 8px;
-  background: var(--picker-bg);
+  background: var(--modal-bg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 
@@ -120,9 +120,5 @@ const handleSelectAll = () => {
       background: var(--table-tr-even-bg);
     }
   }
-}
-
-.mr-auto {
-  margin-right: auto;
 }
 </style>

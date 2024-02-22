@@ -3,8 +3,16 @@ import { defineStore } from 'pinia'
 
 const MAX_LINES = 9000
 
+type TaskLogType = {
+  name: string
+  startTime: number
+  endTime: number
+  result: string[]
+}
+
 export const useLogsStore = defineStore('logs', () => {
   const kernelLogs = ref<string[]>([])
+  const scheduledtasksLogs = ref<TaskLogType[]>([])
 
   const regExp = /\+0800 \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (.*)/
   const recordKernelLog = (msg: string) => {
@@ -15,9 +23,21 @@ export const useLogsStore = defineStore('logs', () => {
     }
   }
 
+  const recordScheduledTasksLog = (log: TaskLogType) => scheduledtasksLogs.value.unshift(log)
+
+  const isTasksLogEmpty = computed(() => scheduledtasksLogs.value.length === 0)
+
   const isEmpty = computed(() => kernelLogs.value.length === 0)
 
   const clearKernelLog = () => kernelLogs.value.splice(0)
 
-  return { recordKernelLog, clearKernelLog, kernelLogs, isEmpty }
+  return {
+    recordKernelLog,
+    clearKernelLog,
+    kernelLogs,
+    isEmpty,
+    scheduledtasksLogs,
+    isTasksLogEmpty,
+    recordScheduledTasksLog
+  }
 })

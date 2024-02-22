@@ -38,11 +38,90 @@ a {
 .form-action {
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
-.user-select {
+.ml-4 {
+  margin-left: 4px !important;
+}
+
+.ml-8 {
+  margin-left: 8px !important;
+}
+
+.mt-8 {
+  margin-top: 8px !important;
+}
+
+.mb-8 {
+  margin-bottom: 8px !important;
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+.ml-auto {
+  margin-left: auto !important;
+}
+
+.mr-auto {
+  margin-right: auto !important;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.select-text {
   user-select: text;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.grid-list-grid {
+  flex: 1;
+  margin-top: 8px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  .item {
+    display: inline-block;
+    width: calc(33.333333% - 16px);
+    margin: 8px;
+  }
+}
+
+.grid-list-list {
+  flex: 1;
+  margin-top: 8px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  .item {
+    margin: 8px;
+  }
+}
+
+.grid-list-header {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 9;
+}
+
+.grid-list-empty {
+  text-align: center;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 ::-webkit-scrollbar {

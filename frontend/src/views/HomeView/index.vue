@@ -254,15 +254,6 @@ watch(showController, (v) => {
   background-color: var(--card-bg);
   padding: 2px 8px;
   border-radius: 8px;
-  .ml-4 {
-    margin-left: 4px;
-  }
-  .ml-8 {
-    margin-left: 8px;
-  }
-  .ml-auto {
-    margin-left: auto;
-  }
 }
 
 .controller {

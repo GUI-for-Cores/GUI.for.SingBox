@@ -30,11 +30,6 @@ const filteredLogs = computed(() => {
 const { t } = useI18n()
 const [pause, togglePause] = useBool(false)
 
-const handleReset = () => {
-  logType.value = 'info'
-  keywords.value = ''
-}
-
 const handleClear = () => logs.value.splice(0)
 
 const onLogs = (data: any) => {
@@ -47,39 +42,64 @@ onUnmounted(disconnect)
 </script>
 
 <template>
-  <div class="form">
-    <span class="label"> {{ t('kernel.log-level') }}: </span>
-    <Select v-model="logType" :options="LogLevelOptions" :border="false" />
-    <span class="label"> {{ t('common.keywords') }}: </span>
-    <Input v-model="keywords" :border="false" style="margin-right: 8px" />
-    <Button @click="handleReset" type="primary">
-      {{ t('common.reset') }}
-    </Button>
-    <Button @click="togglePause" type="normal" style="margin-left: auto">
-      {{ pause ? t('common.resume') : t('common.pause') }}
-    </Button>
-    <Button @click="handleClear" type="normal">
-      {{ t('common.clear') }}
-    </Button>
-  </div>
-  <div class="logs">
-    <div v-for="(log, i) in filteredLogs" :key="i" class="log user-select">
-      <span class="type">{{ log.type }}</span> {{ log.payload }}
+  <div class="logs-view">
+    <div class="form">
+      <span class="label">
+        {{ t('kernel.log-level') }}
+        :
+      </span>
+      <Select v-model="logType" :options="LogLevelOptions" size="small" />
+      <Input
+        v-model="keywords"
+        size="small"
+        :placeholder="t('common.keywords')"
+        class="ml-8 flex-1"
+      />
+      <Button @click="togglePause" type="text" size="small" class="ml-8">
+        <Icon :icon="pause ? 'play' : 'pause'" fill="var(--color)" />
+      </Button>
+      <Button @click="handleClear" v-tips="'common.clear'" size="small" type="text">
+        <Icon icon="clear" fill="var(--color)" />
+      </Button>
+    </div>
+
+    <Empty v-if="filteredLogs.length === 0" class="flex-1" />
+
+    <div v-else class="logs">
+      <div
+        v-for="(log, i) in filteredLogs"
+        :key="i"
+        class="log select-text"
+      >
+        <span class="type">{{ log.type }}</span> {{ log.payload }}
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.log {
-  font-size: 12px;
-  padding: 2px 4px;
-  margin: 4px 0;
-  background: var(--card-bg);
-  &:hover {
-    color: #fff;
-    background: var(--primary-color);
-    .type {
+.logs-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.logs {
+  margin-top: 8px;
+  flex: 1;
+  overflow-y: auto;
+
+  .log {
+    font-size: 12px;
+    padding: 2px 4px;
+    margin: 4px 0;
+    background: var(--card-bg);
+    &:hover {
       color: #fff;
+      background: var(--primary-color);
+      .type {
+        color: #fff;
+      }
     }
   }
 }
