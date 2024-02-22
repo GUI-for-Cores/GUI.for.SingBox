@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { nextTick, onMounted, ref } from 'vue'
 
+import useI18n from '@/lang'
 import { debounce } from '@/utils'
 
-interface Props {
+export interface Props {
   modelValue: string | number
   autoSize?: boolean
   placeholder?: string
@@ -37,7 +37,7 @@ const emits = defineEmits(['update:modelValue', 'submit'])
 const showEdit = ref(false)
 const inputRef = ref<HTMLElement>()
 
-const { t } = useI18n()
+const { t } = useI18n.global
 
 const onInput = debounce((e: any) => {
   let val = e.target.value

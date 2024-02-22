@@ -14,9 +14,8 @@ const model = defineModel<boolean>()
 const emits = defineEmits(['change'])
 
 const toggle = () => {
-  const inv_value = !model.value
-  model.value = inv_value
-  emits('change', inv_value)
+  model.value = !model.value
+  emits('change', !model.value)
 }
 </script>
 

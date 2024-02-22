@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import * as Stores from '@/stores'
 import { EventsOn } from '@/utils/bridge'
 import { ignoredError, sampleID, sleep } from '@/utils'
-import { useMessage, usePicker, useConfirm } from '@/hooks'
+import { useMessage, usePicker, useConfirm, usePrompt } from '@/hooks'
 
 import SplashView from '@/views/SplashView.vue'
 import { NavigationBar, MainPage, TitleBar } from '@/components'
@@ -24,9 +24,12 @@ const scheduledTasksStore = Stores.useScheduledTasksStore()
 const { message } = useMessage()
 const { picker } = usePicker()
 const { confirm } = useConfirm()
+const { prompt } = usePrompt()
+
 window.Plugins.message = message
 window.Plugins.picker = picker
 window.Plugins.confirm = confirm
+window.Plugins.prompt = prompt
 
 EventsOn('launchArgs', async (args: string[]) => {
   const url = new URL(args[0])
