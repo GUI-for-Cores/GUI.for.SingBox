@@ -217,11 +217,11 @@ const generateDnsConfig = async (profile: ProfileType) => {
       },
       ...(profile.dnsConfig.fakeip
         ? [
-            {
-              tag: 'fakeip-dns',
-              address: 'fakeip'
-            }
-          ]
+          {
+            tag: 'fakeip-dns',
+            address: 'fakeip'
+          }
+        ]
         : []),
       {
         tag: 'block',
@@ -423,7 +423,7 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
         )
         .flat()
     )
-    return outbounds
+    return outbounds.length === 0 ? ["direct"] : outbounds;
   }
 
   groups.forEach((group) => {
@@ -483,7 +483,7 @@ const generateRouteConfig = async (profile: ProfileType) => {
 }
 
 export const generateConfig = async (originalProfile: ProfileType) => {
- const profile = deepClone(originalProfile)
+  const profile = deepClone(originalProfile)
 
   const config: Record<string, any> = {
     log: { level: profile.generalConfig['log-level'], timestamp: true },
