@@ -217,11 +217,11 @@ const generateDnsConfig = async (profile: ProfileType) => {
       },
       ...(profile.dnsConfig.fakeip
         ? [
-          {
-            tag: 'fakeip-dns',
-            address: 'fakeip'
-          }
-        ]
+            {
+              tag: 'fakeip-dns',
+              address: 'fakeip'
+            }
+          ]
         : []),
       {
         tag: 'block',
@@ -423,7 +423,7 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
         )
         .flat()
     )
-    return outbounds.length === 0 ? ["direct"] : outbounds;
+    return outbounds.length === 0 ? ['direct'] : outbounds
   }
 
   groups.forEach((group) => {
