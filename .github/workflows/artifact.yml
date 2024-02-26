@@ -58,3 +58,4 @@ jobs:
         with:
           name: ${{ env.FILE_NAME }}
           path: ./build/bin/${{ env.FILE_NAME }}
+          retention-days: 5
