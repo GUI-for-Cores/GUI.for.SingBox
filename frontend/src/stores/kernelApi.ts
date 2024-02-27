@@ -246,37 +246,45 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     loading.value = true
 
-    const pid = await ExecBackground(
-      kernelFilePath,
-      ['run', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
-      // stdout
-      async (out: string) => {
-        logsStore.recordKernelLog(out)
-        if (out.toLowerCase().includes('sing-box started')) {
-          loading.value = false
-          appSettingsStore.app.kernel.pid = pid
-          appSettingsStore.app.kernel.running = true
-
-          await refreshConfig()
-          await refreshProviderProxies()
-
-          // Automatically set system proxy, but the priority is lower than tun mode
-          if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
-            await envStore.setSystemProxy()
-          }
-        }
-      },
-      // end
-      async () => {
+    const onOut = async (out: string, pid: number) => {
+      logsStore.recordKernelLog(out)
+      if (out.toLowerCase().includes('sing-box started')) {
         loading.value = false
-        appSettingsStore.app.kernel.pid = 0
-        appSettingsStore.app.kernel.running = false
+        appSettingsStore.app.kernel.pid = pid
+        appSettingsStore.app.kernel.running = true
 
-        if (appSettingsStore.app.autoSetSystemProxy) {
-          await envStore.clearSystemProxy()
+        await Promise.all([refreshConfig(), refreshProviderProxies()])
+
+        // Automatically set system proxy, but the priority is lower than tun mode
+        if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
+          await envStore.setSystemProxy()
         }
       }
-    )
+    }
+
+    const onEnd = async () => {
+      loading.value = false
+      appSettingsStore.app.kernel.pid = 0
+      appSettingsStore.app.kernel.running = false
+
+      if (appSettingsStore.app.autoSetSystemProxy) {
+        await envStore.clearSystemProxy()
+      }
+    }
+
+    try {
+      const pid = await ExecBackground(
+        kernelFilePath,
+        ['run', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
+        // stdout
+        (out: string) => onOut(out, pid),
+        // end
+        onEnd
+      )
+    } catch (error) {
+      loading.value = false
+      throw error
+    }
   }
 
   const stopKernel = async () => {

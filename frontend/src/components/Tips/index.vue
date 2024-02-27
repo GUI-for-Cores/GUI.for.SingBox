@@ -59,5 +59,6 @@ watch(
   min-width: 90px;
   text-align: center;
   font-size: 12px;
+  white-space: pre-wrap;
 }
 </style>
