@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import * as Stores from '@/stores'
 import { EventsOn } from '@/utils/bridge'
 import { ignoredError, sampleID, sleep } from '@/utils'
-import { useMessage, usePicker, useConfirm, usePrompt } from '@/hooks'
+import { useMessage, usePicker, useConfirm, usePrompt, useAlert  } from '@/hooks'
 
 import SplashView from '@/views/SplashView.vue'
 import { NavigationBar, MainPage, TitleBar } from '@/components'
@@ -25,11 +25,13 @@ const { message } = useMessage()
 const { picker } = usePicker()
 const { confirm } = useConfirm()
 const { prompt } = usePrompt()
+const { alert } = useAlert()
 
 window.Plugins.message = message
 window.Plugins.picker = picker
 window.Plugins.confirm = confirm
 window.Plugins.prompt = prompt
+window.Plugins.alert = alert
 
 EventsOn('launchArgs', async (args: string[]) => {
   const url = new URL(args[0])
@@ -63,6 +65,10 @@ appSettings.setupAppSettings().then(async () => {
     ignoredError(scheduledTasksStore.setupScheduledTasks)
   ])
 
+  await sleep(1000)
+
+  loading.value = false
+
   kernelApiStore.updateKernelStatus().then(async (running) => {
     kernelApiStore.statusLoading = false
     try {
@@ -77,10 +83,6 @@ appSettings.setupAppSettings().then(async () => {
       message.error(error)
     }
   })
-
-  await sleep(1000)
-
-  loading.value = false
 
   try {
     await pluginsStore.onStartupTrigger()

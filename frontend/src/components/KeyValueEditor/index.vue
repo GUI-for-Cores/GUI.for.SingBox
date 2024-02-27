@@ -42,7 +42,7 @@ watch(
 
 <template>
   <div class="kv-editor">
-    <div v-for="(key, i) in keys" :key="key + i" class="item">
+    <div v-for="(key, i) in keys" :key="i" class="item">
       <Input v-model="keys[i]" :placeholder="placeholder[0]" />
       <Button @click="handleDel(i)" type="text" class="ml-4" size="small"> × </Button>
       <Input v-model="values[i]" :placeholder="placeholder[1]" />
