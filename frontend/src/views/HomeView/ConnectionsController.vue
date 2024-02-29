@@ -102,7 +102,7 @@ const columns = computed(() =>
         minWidth: '90px',
         hidden: !appSettingsStore.app.connections.visibility['up'],
         sort: (a, b) => b.upload - b.up - (a.upload - a.up),
-        customRender: ({ value, record }) => formatBytes((record.upload - value) / 1000) + '/s'
+        customRender: ({ value, record }) => formatBytes(record.upload - value) + '/s'
       },
       {
         title: 'home.connections.downSpeed',
@@ -111,7 +111,7 @@ const columns = computed(() =>
         minWidth: '90px',
         hidden: !appSettingsStore.app.connections.visibility['down'],
         sort: (a, b) => b.download - b.down - (a.download - a.down),
-        customRender: ({ value, record }) => formatBytes((record.download - value) / 1000) + '/s'
+        customRender: ({ value, record }) => formatBytes(record.download - value) + '/s'
       },
       {
         title: 'home.connections.upload',

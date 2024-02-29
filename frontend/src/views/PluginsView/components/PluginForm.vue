@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useBool, useMessage } from '@/hooks'
 import { PluginsTriggerOptions } from '@/constant'
-import { usePluginsStore, type PluginType } from '@/stores'
 import { deepClone, ignoredError, sampleID } from '@/utils'
+import { usePluginsStore, type PluginType } from '@/stores'
 
 interface Props {
   id?: string
@@ -18,11 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const loading = ref(false)
-
 const oldPluginTriggers = ref()
-
 const pluginID = sampleID()
-
 const plugin = ref<PluginType>({
   id: pluginID,
   name: '',
@@ -32,6 +29,7 @@ const plugin = ref<PluginType>({
   path: `data/plugins/plugin-${pluginID}.js`,
   triggers: [],
   menus: {},
+  configuration: [],
   disabled: false,
   install: false,
   installed: false
@@ -63,7 +61,63 @@ const handleSubmit = async () => {
     console.error(error)
     message.error(error)
   }
-  loading.value = true
+  loading.value = false
+}
+
+const handleAddParam = async () => {
+  plugin.value.configuration.push({
+    id: sampleID(),
+    title: '',
+    description: '',
+    key: '',
+    component: '',
+    value: [],
+    options: []
+  })
+}
+
+const handleDelParam = (index: number) => {
+  plugin.value.configuration.splice(index, 1)
+}
+
+const hasOption = (component: string) => {
+  return (
+    component !== 'InputList' && ['CheckBox', 'InputList', 'Radio', 'Select'].includes(component)
+  )
+}
+
+const onComponentChange = (component: string, index: number) => {
+  switch (component) {
+    case 'CheckBox':
+    case 'InputList': {
+      plugin.value.configuration[index].value = []
+      plugin.value.configuration[index].options = []
+      break
+    }
+    case 'CodeViewer':
+    case 'Input':
+    case 'Radio':
+    case 'Select': {
+      plugin.value.configuration[index].value = ''
+      break
+    }
+    case 'KeyValueEditor': {
+      plugin.value.configuration[index].value = {}
+      break
+    }
+    case 'Switch': {
+      plugin.value.configuration[index].value = false
+      break
+    }
+  }
+  plugin.value.configuration[index].component = component as any
+}
+
+const getOptions = (val: string[]) => {
+  return val.map((v) => {
+    const arr = v.split(',')
+    return { label: arr[0], value: arr[1] || arr[0] }
+  })
 }
 
 if (props.isUpdate) {
@@ -138,6 +192,65 @@ if (props.isUpdate) {
           :placeholder="[t('plugin.menuKey'), t('plugin.menuValue')]"
         />
       </div>
+      <Divider>{{ t('plugin.configuration') }}</Divider>
+      <template v-for="(conf, index) in plugin.configuration" :key="conf.id">
+        <Card v-if="conf.component" :title="conf.component" class="mb-8">
+          <template #extra>
+            <Button @click="handleDelParam(index)" size="small" type="text">
+              {{ t('common.delete') }}
+            </Button>
+          </template>
+          <div class="form-item">
+            <div class="name">{{ t('plugin.confName') }}</div>
+            <Input v-model="conf.title" placeholder="title" />
+          </div>
+          <div class="form-item">
+            <div class="name">{{ t('plugin.confDescription') }}</div>
+            <Input v-model="conf.description" placeholder="description" />
+          </div>
+          <div class="form-item">
+            <div class="name">{{ t('plugin.confKey') }}</div>
+            <Input v-model="conf.key" placeholder="key" />
+          </div>
+          <div class="form-item" :class="{ 'flex-start': conf.value.length !== 0 }">
+            <div class="name">{{ t('plugin.confDefault') }}</div>
+            <Component
+              :is="conf.component"
+              v-model="conf.value"
+              :options="getOptions(conf.options)"
+              editable
+            />
+          </div>
+          <div
+            v-if="hasOption(conf.component)"
+            :class="{ 'flex-start': conf.options.length !== 0 }"
+            class="form-item"
+          >
+            <div class="name">{{ t('plugin.options') }}</div>
+            <InputList v-model="conf.options" />
+          </div>
+        </Card>
+        <div v-else class="form-item">
+          <Select
+            @change="(val: string) => onComponentChange(val, index)"
+            :options="[
+              { label: 'CheckBox', value: 'CheckBox' },
+              { label: 'CodeViewer', value: 'CodeViewer' },
+              { label: 'Input', value: 'Input' },
+              { label: 'InputList', value: 'InputList' },
+              { label: 'KeyValueEditor', value: 'KeyValueEditor' },
+              { label: 'Radio', value: 'Radio' },
+              { label: 'Select', value: 'Select' },
+              { label: 'Switch', value: 'Switch' }
+            ]"
+            placeholder="plugin.selectComponent"
+          />
+          <Button @click="handleDelParam(index)" size="small" type="text">
+            {{ t('common.delete') }}
+          </Button>
+        </div>
+      </template>
+      <Button @click="handleAddParam" type="primary" size="small" class="w-full">+</Button>
     </div>
   </div>
   <div class="form-action">
@@ -169,6 +282,7 @@ if (props.isUpdate) {
     width: 78%;
   }
 }
+
 .flex-start {
   align-items: flex-start;
 }

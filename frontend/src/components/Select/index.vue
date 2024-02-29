@@ -5,9 +5,10 @@ interface Props {
   options: { label: string; value: string }[]
   border?: boolean
   size?: 'default' | 'small'
+  placeholder?: string
 }
 
-const model = defineModel<string>()
+const model = defineModel<string>({ default: '' })
 
 withDefaults(defineProps<Props>(), {
   options: () => [],
@@ -23,6 +24,7 @@ const { t } = useI18n()
 <template>
   <div :class="{ border, [size]: true }" class="select">
     <select v-model="model" @change="emits('change', model)">
+      <option v-if="placeholder" value="">{{ t(placeholder) }}</option>
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ t(o.label) }}
       </option>
