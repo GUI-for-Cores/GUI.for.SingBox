@@ -38,6 +38,7 @@ type AppSettings = {
     cardMode: boolean
     sortByDelay: boolean
   }
+  pluginSettings: Record<string, Record<string, any>>
 }
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
@@ -106,7 +107,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       unAvailable: true,
       cardMode: true,
       sortByDelay: false
-    }
+    },
+    pluginSettings: {}
   })
 
   const saveAppSettings = debounce((config: string) => {

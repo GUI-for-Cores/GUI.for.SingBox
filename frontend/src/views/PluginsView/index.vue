@@ -11,10 +11,12 @@ import { usePluginsStore, useAppSettingsStore, type PluginType, type Menu } from
 import PluginForm from './components/PluginForm.vue'
 import PluginView from './components/PluginView.vue'
 import PluginHub from './components/PluginHub.vue'
+import PluginConfiguration from './components/PluginConfiguration.vue'
 
 const showPluginForm = ref(false)
 const showPluginView = ref(false)
 const showPluginHub = ref(false)
+const showPluginConfiguration = ref(false)
 const pluginTitle = ref('')
 const pluginFormID = ref()
 const pluginFormIsUpdate = ref(false)
@@ -32,6 +34,15 @@ const menuList: Menu[] = [
         console.log(error)
         message.error(error)
       }
+    }
+  },
+  {
+    label: 'plugins.configuration',
+    handler: async (id: string) => {
+      const plugin = pluginsStore.getPluginById(id)
+      if (!plugin) return
+      pluginFormID.value = plugin.id
+      showPluginConfiguration.value = true
     }
   }
 ]
@@ -86,33 +97,6 @@ const handleDeletePlugin = async (p: PluginType) => {
   }
 }
 
-const generateMenus = (p: PluginType) => {
-  const builtInMenus: Menu[] = menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))
-
-  if (Object.keys(p.menus).length !== 0) {
-    builtInMenus.push({
-      label: '',
-      separator: true
-    })
-  }
-
-  const pluginMenus: Menu[] = Object.entries(p.menus).map(([title, fn]) => ({
-    label: title,
-    handler: async () => {
-      try {
-        p.running = true
-        await pluginsStore.manualTrigger(p.id, fn as any)
-      } catch (error: any) {
-        message.error(error)
-      } finally {
-        p.running = false
-      }
-    }
-  }))
-
-  return builtInMenus.concat(...pluginMenus)
-}
-
 const handleDisablePlugin = async (p: PluginType) => {
   try {
     p.disabled = !p.disabled
@@ -154,6 +138,33 @@ const handleOnRun = async (p: PluginType) => {
     message.error(error)
   }
   p.running = false
+}
+
+const generateMenus = (p: PluginType) => {
+  const builtInMenus: Menu[] = menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))
+
+  if (Object.keys(p.menus).length !== 0) {
+    builtInMenus.push({
+      label: '',
+      separator: true
+    })
+  }
+
+  const pluginMenus: Menu[] = Object.entries(p.menus).map(([title, fn]) => ({
+    label: title,
+    handler: async () => {
+      try {
+        p.running = true
+        await pluginsStore.manualTrigger(p.id, fn as any)
+      } catch (error: any) {
+        message.error(error)
+      } finally {
+        p.running = false
+      }
+    }
+  }))
+
+  return builtInMenus.concat(...pluginMenus)
 }
 
 const noUpdateNeeded = computed(() => pluginsStore.plugins.every((v) => v.disabled))
@@ -364,6 +375,16 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   >
     <PluginHub />
   </Modal>
+
+  <Modal
+    v-model:open="showPluginConfiguration"
+    title="plugins.configuration"
+    :footer="false"
+    max-height="90"
+    max-width="60"
+  >
+    <PluginConfiguration :id="pluginFormID" />
+  </Modal>
 </template>
 
 <style lang="less" scoped>
@@ -372,6 +393,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .action {
   display: flex;
   margin-top: 4px;

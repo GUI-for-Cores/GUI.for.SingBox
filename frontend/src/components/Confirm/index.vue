@@ -3,7 +3,7 @@ import useI18n from '@/lang'
 
 interface Props {
   title: string
-  message: string
+  message: string | Record<string, any>
   cancel?: boolean
 }
 

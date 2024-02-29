@@ -5,9 +5,10 @@ import { DraggableOptions } from '@/constant'
 
 interface Props {
   placeholder?: string
+  autofocus?: boolean
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), { autofocus: true })
 
 const list = defineModel<string[]>({ default: [] })
 
@@ -41,7 +42,7 @@ const handleDel = (i: number) => list.value.splice(i, 1)
         @keydown.enter="handleAdd"
         type="text"
         auto-size
-        autofocus
+        :autofocus="autofocus"
         style="width: 100%"
       />
       <Button @click="handleAdd" type="primary">+</Button>
