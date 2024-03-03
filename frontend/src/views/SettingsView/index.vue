@@ -6,7 +6,6 @@ import AboutView from '@/views/AboutView.vue'
 import subconverter from '@/views/Subconverter.vue'
 import GeneralSetting from './components/GeneralSetting.vue'
 import KernelView from '@/views/KernelView/index.vue'
-import ComponentsView from '@/views/ComponentsView.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
@@ -29,10 +28,6 @@ const { t } = useI18n()
 
     <template #kernel>
       <KernelView />
-    </template>
-
-    <template #components>
-      <ComponentsView />
     </template>
 
     <template #extra>

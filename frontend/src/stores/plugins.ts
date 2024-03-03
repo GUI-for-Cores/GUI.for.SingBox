@@ -5,7 +5,7 @@ import { parse, stringify } from 'yaml'
 import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
-import { debounce, deepClone, ignoredError, isValidSubJson, APP_TITLE } from '@/utils'
+import { debounce, deepClone, ignoredError, APP_TITLE } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -245,20 +245,13 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const getPluginCodefromCache = (id: string) => PluginsCache[id]?.code
 
-  const onSubscribeTrigger = async (params: string, subscription: SubscribeType) => {
+  const onSubscribeTrigger = async (
+    proxies: Record<string, any>[],
+    subscription: SubscribeType
+  ) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnSubscribe]
 
-    let result = params
-
-    if (isValidSubJson(result)) {
-      result = JSON.parse(result).outbounds ?? []
-    } else {
-      try {
-        result = JSON.parse(result)
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    let result = proxies
 
     for (let i = 0; i < observers.length; i++) {
       const pluginId = observers[i]
@@ -272,17 +265,12 @@ export const usePluginsStore = defineStore('plugins', () => {
       )
         continue
 
-      if (typeof result !== 'string') {
-        result = JSON.stringify(result)
-      } else {
-        result = `\`${result}\``
-      }
-
       const configuration = getUserConfiguration(cache.plugin)
       try {
-        const fn = new AsyncFunction(
-          `const Plugin = ${JSON.stringify(configuration)}; ${cache.code}; return await ${fnName}(${result}, ${JSON.stringify(subscription)})`
-        )
+        const fn = new AsyncFunction(`const Plugin = ${JSON.stringify(configuration)};
+          ${cache.code};
+          return await ${fnName}(${JSON.stringify(result)}, ${JSON.stringify(subscription)})
+        `) as <T>(params: T) => Promise<T>
         result = await fn(result)
       } catch (error: any) {
         throw `[${cache.plugin.name}] Error: ` + (error.message || error)
@@ -293,11 +281,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       }
     }
 
-    if (typeof result === 'string') {
-      result = JSON.parse(result)
-    }
-
-    return result as unknown as Record<string, any>[]
+    return result
   }
 
   const noParamsTrigger = async (trigger: PluginTrigger) => {

@@ -12,7 +12,7 @@ import {
   AbsolutePath
 } from '@/utils/bridge'
 import { SubscribesFilePath } from '@/constant'
-import { deepClone, debounce, sampleID, APP_TITLE } from '@/utils'
+import { deepClone, debounce, sampleID, APP_TITLE, isValidSubJson } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'
 
 export type SubscribeType = {
@@ -262,13 +262,19 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
     }
 
+    if (isValidSubJson(body)) {
+      proxies = JSON.parse(body).outbounds ?? []
+    } else {
+      try {
+        proxies = JSON.parse(body)
+      } catch (error) {
+        throw 'Not a valid subscription file'
+      }
+    }
+
     const pluginStore = usePluginsStore()
 
-    proxies = await pluginStore.onSubscribeTrigger(body, s)
-
-    if (!Array.isArray(proxies)) {
-      throw 'Not a valid subscription data'
-    }
+    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
 
     if (s.type !== 'Manual') {
       proxies = proxies.filter((v: any) => {
