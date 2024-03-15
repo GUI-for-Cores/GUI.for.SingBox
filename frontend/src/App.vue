@@ -2,11 +2,14 @@
 import { ref } from 'vue'
 
 import * as Stores from '@/stores'
-import { EventsOn } from '@/utils/bridge'
+import { EventsOn } from '@/bridge'
 import { ignoredError, sampleID, sleep } from '@/utils'
-import { useMessage, usePicker, useConfirm, usePrompt, useAlert  } from '@/hooks'
+import { useMessage, usePicker, useConfirm, usePrompt, useAlert } from '@/hooks'
 
+import AboutView from '@/views/AboutView.vue'
+import SubConverter from '@/views/SubConverter.vue'
 import SplashView from '@/views/SplashView.vue'
+import CommandView from './views/CommandView.vue'
 import { NavigationBar, MainPage, TitleBar } from '@/components'
 
 const loading = ref(true)
@@ -102,6 +105,26 @@ appSettings.setupAppSettings().then(async () => {
     </div>
   </template>
 
+  <Modal
+    v-model:open="appStore.showSubconverter"
+    :cancel="false"
+    :submit="false"
+    mask-closable
+    min-width="50"
+  >
+    <SubConverter />
+  </Modal>
+
+  <Modal
+    v-model:open="appStore.showAbout"
+    :cancel="false"
+    :submit="false"
+    mask-closable
+    min-width="50"
+  >
+    <AboutView />
+  </Modal>
+
   <Menu
     v-model="appStore.menuShow"
     :position="appStore.menuPosition"
@@ -113,6 +136,8 @@ appSettings.setupAppSettings().then(async () => {
     :position="appStore.tipsPosition"
     :message="appStore.tipsMessage"
   />
+
+  <CommandView />
 </template>
 
 <style scoped>

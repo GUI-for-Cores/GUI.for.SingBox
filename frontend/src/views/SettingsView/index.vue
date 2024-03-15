@@ -2,22 +2,20 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import AboutView from '@/views/AboutView.vue'
-import subconverter from '@/views/Subconverter.vue'
-import GeneralSetting from './components/GeneralSetting.vue'
+import { useAppStore } from '@/stores'
+
 import KernelView from '@/views/KernelView/index.vue'
+import GeneralSetting from './components/GeneralSetting.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
   { key: 'kernel', tab: 'router.kernel' }
-  // { key: 'components', tab: 'router.components' }
 ]
 
-const showSubConvert = ref(false)
-const showAbout = ref(false)
 const activeKey = ref(settings[0].key)
 
 const { t } = useI18n()
+const appStore = useAppStore()
 </script>
 
 <template>
@@ -31,22 +29,15 @@ const { t } = useI18n()
     </template>
 
     <template #extra>
-      <Button @click="showSubConvert = true" type="text">
+      <Button @click="appStore.showSubconverter = true" type="text">
         {{ t('router.subconverter') }}
       </Button>
 
-      <Button @click="showAbout = true" type="text">
+      <Button @click="appStore.showAbout = true" type="text">
         {{ t('router.about') }}
       </Button>
     </template>
   </Tabs>
-
-  <Modal v-model:open="showSubConvert" :cancel="false" :submit="false" min-width="50" mask-closable>
-    <subconverter />
-  </Modal>
-  <Modal v-model:open="showAbout" :cancel="false" :submit="false" min-width="50" mask-closable>
-    <AboutView />
-  </Modal>
 </template>
 
 <style lang="less" scoped></style>

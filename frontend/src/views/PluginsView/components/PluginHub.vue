@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { APP_TITLE, ignoredError } from '@/utils'
-import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
+import { HttpGet, Readfile, Writefile } from '@/bridge'
+import { APP_TITLE, APP_VERSION, ignoredError } from '@/utils'
 import { usePluginsStore, type PluginType, useAppSettingsStore } from '@/stores'
 
 const loading = ref(false)
@@ -12,7 +12,7 @@ const list = ref<PluginType[]>([])
 const cacheFile = 'data/.cache/plugin-list.json'
 const hubUrl =
   'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json'
-const gfsUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json'
+const gfcUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfc.json'
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -21,10 +21,10 @@ const appSettings = useAppSettingsStore()
 
 const updateList = async () => {
   loading.value = true
-  const userAgent = appSettings.app.userAgent || APP_TITLE
+  const userAgent = appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION
   try {
     const { body: body1 } = await HttpGet(hubUrl, { 'User-Agent': userAgent })
-    const { body: body2 } = await HttpGet(gfsUrl, { 'User-Agent': userAgent })
+    const { body: body2 } = await HttpGet(gfcUrl, { 'User-Agent': userAgent })
     const list1 = JSON.parse(body1)
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]

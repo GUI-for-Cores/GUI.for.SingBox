@@ -322,7 +322,7 @@ onUnmounted(disconnect)
         :key="column"
         class="field-item"
       >
-      <span class="font-bold">{{ t(columnTitleMap[column] || column) }}</span>
+        <span class="font-bold">{{ t(columnTitleMap[column] || column) }}</span>
         <Switch v-model="appSettingsStore.app.connections.visibility[column]" class="ml-auto" />
       </Card>
     </div>

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { ClipboardSetText } from '@/utils/bridge'
+import { ClipboardSetText } from '@/bridge'
 import { DraggableOptions, View } from '@/constant'
 import { debounce, deepClone, generateConfig, sampleID } from '@/utils'
 import {

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import { debounce } from '@/utils'
-import { Readfile, Writefile } from '@/utils/bridge'
+import { Readfile, Writefile } from '@/bridge'
 import { ProfilesFilePath, ProxyGroup, FinalDnsType, TunConfigDefaults } from '@/constant'
 
 export type ProfileType = {

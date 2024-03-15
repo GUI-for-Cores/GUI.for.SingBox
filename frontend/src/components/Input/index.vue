@@ -18,6 +18,8 @@ export interface Props {
   disabled?: boolean
   border?: boolean
   delay?: number
+  pl?: string
+  pr?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,7 +31,9 @@ const props = withDefaults(defineProps<Props>(), {
   width: '',
   disabled: false,
   border: true,
-  delay: 0
+  delay: 0,
+  pl: '8px',
+  pr: '8px'
 })
 
 const emits = defineEmits(['update:modelValue', 'submit'])
@@ -86,7 +90,7 @@ defineExpose({
       :value="modelValue"
       :placeholder="placeholder"
       :type="type"
-      :style="width && 'width: ' + width"
+      :style="{ width, paddingLeft: pl, paddingRight: pr }"
       :disabled="disabled"
       @input="($event) => onInput($event)"
       @blur="onSubmit"

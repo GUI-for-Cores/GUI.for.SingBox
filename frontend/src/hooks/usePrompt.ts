@@ -12,7 +12,7 @@ const createPrompt = (
     const dom = document.createElement('div')
     dom.style.cssText = `
       position: fixed;
-      z-index: 9999;
+      z-index: 99999;
       top: 84px;
       left: 0;
       right: 0;

@@ -3,8 +3,8 @@ import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
+import { Readfile, Writefile } from '@/bridge'
 import { deepClone, ignoredError } from '@/utils'
-import { Readfile, Writefile } from '@/utils/bridge'
 import { usePluginsStore, type PluginType } from '@/stores'
 
 interface Props {

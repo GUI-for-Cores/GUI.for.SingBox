@@ -5,7 +5,7 @@ import { ref, computed } from 'vue'
 import { useMessage } from '@/hooks'
 import { ignoredError, APP_TITLE } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore } from '@/stores'
-import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, Removefile } from '@/utils/bridge'
+import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, Removefile } from '@/bridge'
 
 let downloadUrl = ''
 
@@ -42,6 +42,9 @@ const downloadApp = async () => {
 
     await Download(downloadUrl, appPath + '.tmp', (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
+    }).catch((err) => {
+      message.destroy(id)
+      throw err
     })
 
     message.destroy(id)

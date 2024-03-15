@@ -12,7 +12,7 @@ import {
   RemoveScheduledTask,
   EventsOn,
   EventsOff
-} from '@/utils/bridge'
+} from '@/bridge'
 
 export type ScheduledTaskType = {
   id: string

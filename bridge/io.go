@@ -3,7 +3,6 @@ package bridge
 import (
 	"archive/zip"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -14,12 +13,9 @@ import (
 func (a *App) Writefile(path string, content string) FlagResult {
 	log.Printf("Writefile: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
 
-	err = os.MkdirAll(filepath.Dir(path), os.ModePerm)
+	err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
@@ -35,10 +31,7 @@ func (a *App) Writefile(path string, content string) FlagResult {
 func (a *App) Readfile(path string) FlagResult {
 	log.Printf("Readfile: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
 
 	b, err := os.ReadFile(path)
 	if err != nil {
@@ -51,17 +44,10 @@ func (a *App) Readfile(path string) FlagResult {
 func (a *App) Movefile(source string, target string) FlagResult {
 	log.Printf("Movefile: %s -> %s", source, target)
 
-	source, err := GetPath(source)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	source = GetPath(source)
+	target = GetPath(target)
 
-	target, err = GetPath(target)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-
-	err = os.Rename(source, target)
+	err := os.Rename(source, target)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
@@ -74,17 +60,9 @@ func UNUSED(x ...interface{}) {}
 func (a *App) Copyfile(source string, target string) FlagResult {
 	log.Printf("Copyfile: %s -> %s", source, target)
 
-	source, err := GetPath(source)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	source = GetPath(source)
+	target = GetPath(target)
 
-	target, err = GetPath(target)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-	fmt.Println("Copyfile:", source, target)
-	
 	src, err := os.Open(source)
 	if err != nil {
 		return FlagResult{false, err.Error()}
@@ -107,12 +85,9 @@ func (a *App) Copyfile(source string, target string) FlagResult {
 func (a *App) Removefile(path string) FlagResult {
 	log.Printf("RemoveFile: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
 
-	err = os.RemoveAll(path)
+	err := os.RemoveAll(path)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
@@ -123,12 +98,9 @@ func (a *App) Removefile(path string) FlagResult {
 func (a *App) Makedir(path string) FlagResult {
 	log.Printf("Makedir: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
 
-	err = os.MkdirAll(path, os.ModePerm)
+	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
@@ -138,15 +110,8 @@ func (a *App) Makedir(path string) FlagResult {
 func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 	log.Printf("UnzipZIPFile: %s -> %s", path, output)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-
-	output, err = GetPath(output)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
+	output = GetPath(output)
 
 	archive, err := zip.OpenReader(path)
 	if err != nil {
@@ -192,15 +157,8 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 func (a *App) UnzipGZFile(path string, output string) FlagResult {
 	log.Printf("UnzipGZFile: %s -> %s", path, output)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-
-	output, err = GetPath(output)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
+	output = GetPath(output)
 
 	gzipFile, err := os.Open(path)
 	if err != nil {
@@ -231,11 +189,9 @@ func (a *App) UnzipGZFile(path string, output string) FlagResult {
 func (a *App) FileExists(path string) FlagResult {
 	log.Printf("FileExists: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-	_, err = os.Stat(path)
+	path = GetPath(path)
+
+	_, err := os.Stat(path)
 	if err == nil {
 		return FlagResult{true, "true"}
 	} else if os.IsNotExist(err) {

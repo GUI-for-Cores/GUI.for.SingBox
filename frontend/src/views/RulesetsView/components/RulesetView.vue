@@ -4,7 +4,7 @@ import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { deepClone, ignoredError, isValidInlineRuleJson } from '@/utils'
-import { Readfile, Writefile } from '@/utils/bridge'
+import { Readfile, Writefile } from '@/bridge'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
 
 interface Props {

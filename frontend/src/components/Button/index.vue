@@ -105,15 +105,6 @@ withDefaults(defineProps<Props>(), {
   font-size: 16px;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .rotation {
   margin: 1px 2px 0 0;
   animation: rotate 2s infinite linear;

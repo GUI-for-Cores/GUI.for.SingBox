@@ -14,38 +14,26 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func CreateHttpClient(a *App) *http.Client {
-	systemProxy := a.GetSystemProxy()
-	if systemProxy.Flag && len(systemProxy.Data) > 0 {
-		if !strings.HasPrefix(systemProxy.Data, "http") {
-			systemProxy.Data = "http://" + systemProxy.Data
+func getProxy(_proxy string) func(*http.Request) (*url.URL, error) {
+	proxy := http.ProxyFromEnvironment
+
+	if _proxy != "" {
+		if !strings.HasPrefix(_proxy, "http") {
+			_proxy = "http://" + _proxy
 		}
-		proxyUrl, err := url.Parse(systemProxy.Data)
+		proxyUrl, err := url.Parse(_proxy)
 		if err == nil {
-			return &http.Client{
-				Timeout: 15 * time.Second,
-				Transport: &http.Transport{
-					Proxy: http.ProxyURL(proxyUrl),
-				},
-			}
+			proxy = http.ProxyURL(proxyUrl)
 		}
 	}
 
-	return &http.Client{
-		Timeout: 15 * time.Second,
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		},
-	}
+	return proxy
 }
 
-func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
-	log.Printf("HttpGet: %s %v", url, headers)
-
-	client := CreateHttpClient(a)
+func (a *App) HttpGet(url string, headers map[string]string, proxy string) HTTPResult {
+	log.Printf("HttpGet: %s %v %v", url, headers, proxy)
 
 	header := make(http.Header)
-
 	header.Set("User-Agent", Config.UserAgent)
 
 	for key, value := range headers {
@@ -58,6 +46,13 @@ func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
 	}
 
 	req.Header = header
+
+	client := &http.Client{
+		Timeout: 15 * time.Second,
+		Transport: &http.Transport{
+			Proxy: getProxy(proxy),
+		},
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -73,21 +68,54 @@ func (a *App) HttpGet(url string, headers map[string]string) HTTPResult {
 	return HTTPResult{true, resp.Header, string(b)}
 }
 
-func (a *App) Download(url string, path string, event string) FlagResult {
-	log.Printf("HttpGet: %s %s", url, path)
+func (a *App) HttpPost(url string, headers map[string]string, body string, proxy string) HTTPResult {
+	log.Printf("HttpPost: %s %v %v", url, headers, body)
 
-	path, err := GetPath(path)
+	header := make(http.Header)
+	header.Set("User-Agent", Config.UserAgent)
+	header.Set("Content-Type", "application/json; charset=UTF-8")
+
+	for key, value := range headers {
+		header.Set(key, value)
+	}
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(body))
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	req.Header = header
+
+	client := &http.Client{
+		Timeout: 15 * time.Second,
+		Transport: &http.Transport{
+			Proxy: getProxy(proxy),
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+	defer resp.Body.Close()
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	return HTTPResult{true, resp.Header, string(b)}
+}
+
+func (a *App) Download(url string, path string, event string, proxy string) FlagResult {
+	log.Printf("Download: %s %s %s", url, path, proxy)
+
+	path = GetPath(path)
+
+	err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
-
-	err = os.MkdirAll(filepath.Dir(path), os.ModePerm)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-
-	client := CreateHttpClient(a)
-	client.Timeout = 10 * time.Minute
 
 	header := make(http.Header)
 	header.Set("User-Agent", Config.UserAgent)
@@ -98,6 +126,13 @@ func (a *App) Download(url string, path string, event string) FlagResult {
 	}
 
 	req.Header = header
+
+	client := &http.Client{
+		Timeout: 10 * time.Minute,
+		Transport: &http.Transport{
+			Proxy: getProxy(proxy),
+		},
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {

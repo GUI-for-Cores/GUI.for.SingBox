@@ -160,6 +160,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
   <Modal
     v-model:open="showLogs"
     :submit="false"
+    mask-closable
     cancel-text="common.close"
     title="scheduledtasks.logs"
     width="90"

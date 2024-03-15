@@ -6,18 +6,14 @@ import { useMessage } from '@/hooks'
 import { APP_TITLE, getTaskSchXmlString } from '@/utils'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import { Theme, Lang, WindowStartState, Color, KernelCacheFilePath } from '@/constant'
+import { BrowserOpenURL, GetEnv, Writefile, Removefile, FileExists } from '@/bridge'
 import {
-  CheckPermissions,
-  SwitchPermissions,
-  BrowserOpenURL,
-  GetEnv,
-  Writefile,
   QuerySchTask,
   CreateSchTask,
   DeleteSchTask,
-  Removefile,
-  FileExists
-} from '@/utils/bridge'
+  CheckPermissions,
+  SwitchPermissions
+} from '@/utils'
 
 const isAdmin = ref(false)
 const isTaskScheduled = ref(false)
@@ -54,6 +50,10 @@ const colors = [
   {
     label: 'settings.color.pink',
     value: Color.Pink
+  },
+  {
+    label: 'settings.color.red',
+    value: Color.Red
   },
   {
     label: 'settings.color.skyblue',
@@ -142,7 +142,7 @@ const onStartupDelayChange = async (delay: number) => {
 }
 
 const createSchTask = async (delay = 30) => {
-  const xmlPath = 'data/tasksch.xml'
+  const xmlPath = 'data/.cache/tasksch.xml'
   const xmlContent = await getTaskSchXmlString(delay)
   await Writefile(xmlPath, xmlContent)
   await CreateSchTask(APP_TITLE, xmlPath)
@@ -248,6 +248,10 @@ if (envStore.env.os === 'windows') {
           />
         </template>
       </div>
+    </div>
+    <div class="settings-item">
+      <div class="title">{{ t('settings.addToMenu') }}</div>
+      <Switch v-model="appSettings.app.addPluginToMenu" />
     </div>
     <div class="settings-item">
       <div class="title">{{ t('settings.userAgent.name') }}</div>

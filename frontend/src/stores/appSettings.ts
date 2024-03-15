@@ -5,7 +5,7 @@ import { parse, stringify } from 'yaml'
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, deepClone } from '@/utils'
 import { Theme, WindowStartState, Lang, View, Color, Colors } from '@/constant'
-import { WindowSetDarkTheme, WindowSetLightTheme, Readfile, Writefile } from '@/utils/bridge'
+import { WindowSetDarkTheme, WindowSetLightTheme, Readfile, Writefile } from '@/bridge'
 
 type AppSettings = {
   lang: Lang
@@ -38,6 +38,7 @@ type AppSettings = {
     cardMode: boolean
     sortByDelay: boolean
   }
+  addPluginToMenu: boolean
   pluginSettings: Record<string, Record<string, any>>
 }
 
@@ -108,6 +109,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       cardMode: true,
       sortByDelay: false
     },
+    addPluginToMenu: false,
     pluginSettings: {}
   })
 
@@ -191,6 +193,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       themeMode,
       () => app.value.color,
       () => app.value.lang,
+      () => app.value.addPluginToMenu,
       () => app.value.kernel.running,
       () => app.value.kernel.unAvailable,
       () => app.value.kernel.sortByDelay

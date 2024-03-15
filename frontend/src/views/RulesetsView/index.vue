@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { Removefile, Writefile } from '@/utils/bridge'
+import { Removefile, Writefile } from '@/bridge'
 import { debounce, formatRelativeTime, ignoredError } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
 import { DraggableOptions, View, EmptyRuleSet, RulesetFormat } from '@/constant'

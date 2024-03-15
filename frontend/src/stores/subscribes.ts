@@ -2,15 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import {
-  Readfile,
-  Writefile,
-  HttpGet,
-  FileExists,
-  Removefile,
-  Exec,
-  AbsolutePath
-} from '@/utils/bridge'
+import { Readfile, Writefile, HttpGet, FileExists, Removefile, Exec, AbsolutePath } from '@/bridge'
 import { SubscribesFilePath } from '@/constant'
 import { deepClone, debounce, sampleID, APP_TITLE, isValidSubJson } from '@/utils'
 import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'

@@ -66,11 +66,7 @@ onUnmounted(disconnect)
     <Empty v-if="filteredLogs.length === 0" class="flex-1" />
 
     <div v-else class="logs">
-      <div
-        v-for="(log, i) in filteredLogs"
-        :key="i"
-        class="log select-text"
-      >
+      <div v-for="(log, i) in filteredLogs" :key="i" class="log select-text">
         <span class="type">{{ log.type }}</span> {{ log.payload }}
       </div>
     </div>

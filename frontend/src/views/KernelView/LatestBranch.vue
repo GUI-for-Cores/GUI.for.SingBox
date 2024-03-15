@@ -16,7 +16,7 @@ import {
   GetEnv,
   Makedir,
   UnzipGZFile
-} from '@/utils/bridge'
+} from '@/bridge'
 
 const latestUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases'
 const localVersion = ref('')
@@ -76,6 +76,9 @@ const downloadCore = async () => {
 
     await Download(asset.browser_download_url, tmp, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
+    }).catch((err) => {
+      message.destroy(id)
+      throw err
     })
 
     message.destroy(id)

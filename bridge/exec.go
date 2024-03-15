@@ -13,20 +13,21 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func (a *App) Exec(path string, args []string, convert bool) FlagResult {
+func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 	log.Printf("Exec: %s %s", path, args)
 
-	exe_path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	exe_path := GetPath(path)
 
-	if _, err = os.Stat(exe_path); os.IsNotExist(err) {
+	if _, err := os.Stat(exe_path); os.IsNotExist(err) {
 		exe_path = path
 	}
 
 	cmd := exec.Command(exe_path, args...)
 	HideExecWindow(cmd)
+	// cmd.Env = os.Environ()
+	for key, value := range options.Env {
+		cmd.Env = append(cmd.Env, key+"="+value)
+	}
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -34,7 +35,7 @@ func (a *App) Exec(path string, args []string, convert bool) FlagResult {
 	}
 
 	output := ""
-	if convert {
+	if options.Convert {
 		output = ConvertByte2String(out)
 	} else {
 		output = string(out)
@@ -43,20 +44,23 @@ func (a *App) Exec(path string, args []string, convert bool) FlagResult {
 	return FlagResult{true, output}
 }
 
-func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string) FlagResult {
+func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string, options ExecOptions) FlagResult {
 	log.Printf("ExecBackground: %s %s", path, args)
 
-	exe_path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	exe_path := GetPath(path)
 
-	if _, err = os.Stat(exe_path); os.IsNotExist(err) {
+	if _, err := os.Stat(exe_path); os.IsNotExist(err) {
 		exe_path = path
 	}
 
 	cmd := exec.Command(exe_path, args...)
 	HideExecWindow(cmd)
+	// cmd.Env = os.Environ()
+	for key, value := range options.Env {
+		cmd.Env = append(cmd.Env, key+"="+value)
+	}
+
+	log.Printf("%v", cmd.Env)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

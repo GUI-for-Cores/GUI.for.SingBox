@@ -198,7 +198,14 @@ watch(showController, (v) => {
     </template>
   </div>
 
-  <Modal v-model:open="showApiLogs" :submit="false" width="90" height="90" title="Logs">
+  <Modal
+    v-model:open="showApiLogs"
+    :submit="false"
+    mask-closable
+    width="90"
+    height="90"
+    title="Logs"
+  >
     <LogsController />
   </Modal>
 
@@ -223,6 +230,7 @@ watch(showController, (v) => {
     :submit="false"
     width="90"
     height="90"
+    mask-closable
   >
     <KernelLogs />
   </Modal>

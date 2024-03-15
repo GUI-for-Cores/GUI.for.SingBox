@@ -20,7 +20,6 @@ const proxyOptions = computed(() => [
   { label: 'block', value: 'block' },
   { label: t('kernel.dns.default'), value: '' }
 ])
-
 </script>
 
 <template>

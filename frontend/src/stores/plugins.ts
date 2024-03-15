@@ -1,11 +1,11 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
+import { computed, ref, watch } from 'vue'
 
-import { HttpGet, Readfile, Writefile } from '@/utils/bridge'
+import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
-import { debounce, deepClone, ignoredError, APP_TITLE } from '@/utils'
+import { APP_TITLE, debounce, deepClone, ignoredError, updateTrayMenus } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -40,6 +40,7 @@ export type PluginType = {
   install: boolean
   installed: boolean
   // Not Config
+  key?: string
   updating?: boolean
   loading?: boolean
   running?: boolean
@@ -146,6 +147,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   const savePlugins = debounce(async () => {
     const p = deepClone(plugins.value)
     for (let i = 0; i < p.length; i++) {
+      delete p[i].key
       delete p[i].updating
       delete p[i].loading
       delete p[i].running
@@ -273,11 +275,11 @@ export const usePluginsStore = defineStore('plugins', () => {
         `) as <T>(params: T) => Promise<T>
         result = await fn(result)
       } catch (error: any) {
-        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+        throw `${cache.plugin.name} : ` + (error.message || error)
       }
 
       if (!Array.isArray(result)) {
-        throw `[${cache.plugin.name}] Error: Wrong result`
+        throw `${cache.plugin.name} : Wrong result`
       }
     }
 
@@ -307,7 +309,7 @@ export const usePluginsStore = defineStore('plugins', () => {
         )
         await fn()
       } catch (error: any) {
-        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+        throw `${cache.plugin.name} : ` + (error.message || error)
       }
     }
     return
@@ -336,10 +338,10 @@ export const usePluginsStore = defineStore('plugins', () => {
         )
         params = await fn()
       } catch (error: any) {
-        throw `[${cache.plugin.name}] Error: ` + (error.message || error)
+        throw `${cache.plugin.name} : ` + (error.message || error)
       }
 
-      if (!params) throw `[${cache.plugin.name}] Error: Wrong result`
+      if (!params) throw `${cache.plugin.name} : Wrong result`
     }
 
     return params as Record<string, any>
@@ -360,9 +362,27 @@ export const usePluginsStore = defineStore('plugins', () => {
       )
       return await fn()
     } catch (error: any) {
-      throw `${cache.plugin.name} Error: ` + (error.message || error)
+      throw `${cache.plugin.name} : ` + (error.message || error)
     }
   }
+
+  const _watchDisabled = computed(() =>
+    plugins.value
+      .map((v) => v.disabled)
+      .sort()
+      .join()
+  )
+
+  const _watchMenus = computed(() =>
+    plugins.value
+      .map((v) => Object.entries(v.menus).map((v) => v[0] + v[1]))
+      .sort()
+      .join()
+  )
+
+  watch([_watchMenus, _watchDisabled], () => {
+    updateTrayMenus()
+  })
 
   return {
     plugins,

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { Removefile } from '@/utils/bridge'
+import { Removefile } from '@/bridge'
 import { debounce, ignoredError } from '@/utils'
 import { DraggableOptions, PluginManualEvent, PluginTrigger, View } from '@/constant'
 import { usePluginsStore, useAppSettingsStore, type PluginType, type Menu } from '@/stores'
@@ -34,15 +34,6 @@ const menuList: Menu[] = [
         console.log(error)
         message.error(error)
       }
-    }
-  },
-  {
-    label: 'plugins.configuration',
-    handler: async (id: string) => {
-      const plugin = pluginsStore.getPluginById(id)
-      if (!plugin) return
-      pluginFormID.value = plugin.id
-      showPluginConfiguration.value = true
     }
   }
 ]
@@ -143,6 +134,16 @@ const handleOnRun = async (p: PluginType) => {
 const generateMenus = (p: PluginType) => {
   const builtInMenus: Menu[] = menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))
 
+  if (p.configuration.length) {
+    builtInMenus.push({
+      label: 'plugins.configuration',
+      handler: async () => {
+        pluginFormID.value = p.id
+        showPluginConfiguration.value = true
+      }
+    })
+  }
+
   if (Object.keys(p.menus).length !== 0) {
     builtInMenus.push({
       label: '',
@@ -217,7 +218,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   >
     <Card
       v-for="p in pluginsStore.plugins"
-      :key="p.id"
+      :key="p.id + p.key"
       :title="p.name"
       :disabled="p.disabled"
       v-menu="generateMenus(p)"

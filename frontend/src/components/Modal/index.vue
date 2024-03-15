@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { computed, provide } from 'vue'
 
-import { WindowFullscreen, WindowIsFullscreen, WindowUnfullscreen } from '@/utils/bridge'
+import { WindowFullscreen, WindowIsFullscreen, WindowUnfullscreen } from '@/bridge'
 
 interface Props {
   open: boolean

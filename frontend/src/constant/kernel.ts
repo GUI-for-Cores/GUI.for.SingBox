@@ -1,4 +1,4 @@
-import { GetEnv } from '@/utils/bridge'
+import { GetEnv } from '@/bridge'
 
 export enum ProxyGroup {
   Select = 'selector',

@@ -35,6 +35,7 @@ export enum Color {
   Default = 'default',
   Orange = 'orange',
   Pink = 'pink',
+  Red = 'red',
   Skyblue = 'skyblue'
 }
 
@@ -50,6 +51,10 @@ export const Colors = {
   [Color.Pink]: {
     primary: 'pink',
     secondary: '#f1768b'
+  },
+  [Color.Red]: {
+    primary: 'red',
+    secondary: '#f76363'
   },
   [Color.Skyblue]: {
     primary: 'skyblue',

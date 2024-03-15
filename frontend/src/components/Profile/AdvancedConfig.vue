@@ -7,7 +7,6 @@ import { DomainStrategyOptions, AdvancedConfigDefaults } from '@/constant'
 const fields = defineModel<ProfileType['advancedConfig']>({ default: AdvancedConfigDefaults() })
 
 const { t } = useI18n()
-
 </script>
 
 <template>

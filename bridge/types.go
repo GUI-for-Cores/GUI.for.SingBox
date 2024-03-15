@@ -19,6 +19,11 @@ type EnvResult struct {
 	X64Level    int    `json:"x64Level"`
 }
 
+type ExecOptions struct {
+	Convert bool              `json:"convert"`
+	Env     map[string]string `json:"env"`
+}
+
 type FlagResult struct {
 	Flag bool   `json:"flag"`
 	Data string `json:"data"`

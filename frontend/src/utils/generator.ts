@@ -1,4 +1,4 @@
-import { Readfile, Writefile } from '@/utils/bridge'
+import { Readfile, Writefile } from '@/bridge'
 import { deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'

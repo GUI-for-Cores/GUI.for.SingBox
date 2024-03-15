@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import { deepClone } from '@/utils/others'
 import type { KernelApiConfig, Proxy } from '@/api/kernel.schema'
-import { ProcessInfo, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/utils/bridge'
+import { ProcessInfo, KillProcess, ExecBackground, GetInterfaces, Readfile } from '@/bridge'
 import {
   KernelWorkDirectory,
   getKernelFileName,
@@ -255,8 +255,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
         await Promise.all([refreshConfig(), refreshProviderProxies()])
 
-        // Automatically set system proxy, but the priority is lower than tun mode
-        if (!config.value.tun.enable && appSettingsStore.app.autoSetSystemProxy) {
+        if (config.value.tun.enable) {
+          if (envStore.systemProxy) {
+            updateConfig('tun', false)
+          }
+        } else if (appSettingsStore.app.autoSetSystemProxy) {
           await envStore.setSystemProxy()
         }
       }
@@ -288,6 +291,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const stopKernel = async () => {
+    const envStore = useEnvStore()
     const logsStore = useLogsStore()
     const appSettingsStore = useAppSettingsStore()
 
@@ -297,6 +301,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     appSettingsStore.app.kernel.pid = 0
     appSettingsStore.app.kernel.running = false
+
+    if (appSettingsStore.app.autoSetSystemProxy) {
+      await envStore.clearSystemProxy()
+    }
 
     logsStore.clearKernelLog()
   }

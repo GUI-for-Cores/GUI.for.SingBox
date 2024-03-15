@@ -7,13 +7,13 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
-func GetPath(path string) (string, error) {
+func GetPath(path string) string {
 	if filepath.IsAbs(path) {
-		return path, nil
+		return path
 	}
 	path = filepath.Join(Env.BasePath, path)
 	path = filepath.Clean(path)
-	return path, nil
+	return path
 }
 
 func ConvertByte2String(byte []byte) string {
@@ -24,10 +24,7 @@ func ConvertByte2String(byte []byte) string {
 func (a *App) AbsolutePath(path string) FlagResult {
 	log.Printf("AbsolutePath: %s", path)
 
-	path, err := GetPath(path)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	path = GetPath(path)
 
 	return FlagResult{true, path}
 }

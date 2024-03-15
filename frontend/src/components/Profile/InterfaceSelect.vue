@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import { GetInterfaces } from '@/utils/bridge'
+import { GetInterfaces } from '@/bridge'
 
 interface Props {
   border?: boolean
@@ -25,7 +25,7 @@ GetInterfaces().then((res) => {
   options.value = [
     {
       label: 'common.auto',
-      value: 'Auto'
+      value: ''
     },
     ...res.map((v) => ({ label: v, value: v }))
   ]

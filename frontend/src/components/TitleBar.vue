@@ -12,7 +12,7 @@ import {
   WindowSetSize,
   WindowCenter,
   WindowReloadApp
-} from '@/utils/bridge'
+} from '@/bridge'
 
 const isPinned = ref(false)
 const isFullScreen = ref(false)

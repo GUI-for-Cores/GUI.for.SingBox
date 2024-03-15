@@ -3,6 +3,7 @@ import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
+import { deepClone, sampleID } from '@/utils'
 import { usePluginsStore, useAppSettingsStore, type PluginConfiguration } from '@/stores'
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const key = ref(sampleID())
 const settings = ref<Record<string, any>>({})
 const configuration = ref<PluginConfiguration[]>([])
 
@@ -34,20 +36,22 @@ const getOptions = (val: string[]) => {
   })
 }
 
-const handleRestoreConfiguration = () => {
+const handleRestoreConfiguration = (showMessage = false) => {
   settings.value = {}
-  configuration.value.forEach(({ key, value }) => (settings.value[key] = value))
-  message.success('common.success')
+  configuration.value.forEach(({ key, value }) => (settings.value[key] = deepClone(value)))
+  key.value = sampleID()
+  showMessage && message.success('common.success')
 }
 
 const p = pluginsStore.getPluginById(props.id)
 if (p) {
   configuration.value = p.configuration
-  settings.value = appSettingsStore.app.pluginSettings[p.id]
-  // Fill with default value
-  if (!settings.value) {
-    settings.value = {}
-    configuration.value.forEach(({ key, value }) => (settings.value[key] = value))
+  const _settings = appSettingsStore.app.pluginSettings[p.id]
+  if (_settings) {
+    settings.value = deepClone(_settings)
+  } else {
+    // Fill with default value
+    handleRestoreConfiguration()
   }
 }
 </script>
@@ -63,6 +67,7 @@ if (p) {
       <div class="mb-8" style="font-size: 12px">{{ conf.description }}</div>
       <Component
         v-model="settings[conf.key]"
+        :key="key"
         :is="conf.component"
         :options="getOptions(conf.options)"
         :autofocus="false"
@@ -71,7 +76,7 @@ if (p) {
     </Card>
   </div>
   <div class="form-action">
-    <Button @click="handleRestoreConfiguration" type="link">{{ t('plugin.restore') }}</Button>
+    <Button @click="handleRestoreConfiguration(true)" type="link">{{ t('plugin.restore') }}</Button>
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button @click="handleSubmit" type="primary">
       {{ t('common.save') }}

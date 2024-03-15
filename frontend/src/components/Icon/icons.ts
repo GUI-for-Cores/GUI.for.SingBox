@@ -33,7 +33,8 @@ const icons = [
   'messageInfo',
   'pause',
   'play',
-  'clear'
+  'clear',
+  'drag'
 ] as const
 
 export default icons

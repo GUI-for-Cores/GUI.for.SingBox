@@ -3,9 +3,9 @@ import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useBool, useMessage } from '@/hooks'
-import { PluginsTriggerOptions } from '@/constant'
 import { deepClone, ignoredError, sampleID } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
+import { PluginsTriggerOptions, DraggableOptions } from '@/constant'
 
 interface Props {
   id?: string
@@ -46,6 +46,8 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     if (props.isUpdate) {
+      // Refresh the key to re-render the view
+      plugin.value.key = sampleID()
       await pluginsStore.editPlugin(props.id, plugin.value)
       if (plugin.value.triggers.sort().join('') !== oldPluginTriggers.value) {
         pluginsStore.updatePluginTrigger(plugin.value)
@@ -193,63 +195,69 @@ if (props.isUpdate) {
         />
       </div>
       <Divider>{{ t('plugin.configuration') }}</Divider>
-      <template v-for="(conf, index) in plugin.configuration" :key="conf.id">
-        <Card v-if="conf.component" :title="conf.component" class="mb-8">
-          <template #extra>
+      <div v-draggable="[plugin.configuration, { ...DraggableOptions, handle: '.drag' }]">
+        <template v-for="(conf, index) in plugin.configuration" :key="conf.id">
+          <Card v-if="conf.component" :title="conf.component" class="mb-8">
+            <template #title-prefix>
+              <Icon icon="drag" class="drag" style="cursor: move" />
+              <div class="ml-8">{{ index + 1 }}、</div>
+            </template>
+            <template #extra>
+              <Button @click="handleDelParam(index)" size="small" type="text">
+                {{ t('common.delete') }}
+              </Button>
+            </template>
+            <div class="form-item">
+              <div class="name">{{ t('plugin.confName') }}</div>
+              <Input v-model="conf.title" placeholder="title" />
+            </div>
+            <div class="form-item">
+              <div class="name">{{ t('plugin.confDescription') }}</div>
+              <Input v-model="conf.description" placeholder="description" />
+            </div>
+            <div class="form-item">
+              <div class="name">{{ t('plugin.confKey') }}</div>
+              <Input v-model="conf.key" placeholder="key" />
+            </div>
+            <div class="form-item" :class="{ 'flex-start': conf.value.length !== 0 }">
+              <div class="name">{{ t('plugin.confDefault') }}</div>
+              <Component
+                :is="conf.component"
+                v-model="conf.value"
+                :options="getOptions(conf.options)"
+                editable
+              />
+            </div>
+            <div
+              v-if="hasOption(conf.component)"
+              :class="{ 'flex-start': conf.options.length !== 0 }"
+              class="form-item"
+            >
+              <div class="name">{{ t('plugin.options') }}</div>
+              <InputList v-model="conf.options" />
+            </div>
+          </Card>
+          <div v-else class="form-item">
+            <Select
+              @change="(val: string) => onComponentChange(val, index)"
+              :options="[
+                { label: 'CheckBox', value: 'CheckBox' },
+                { label: 'CodeViewer', value: 'CodeViewer' },
+                { label: 'Input', value: 'Input' },
+                { label: 'InputList', value: 'InputList' },
+                { label: 'KeyValueEditor', value: 'KeyValueEditor' },
+                { label: 'Radio', value: 'Radio' },
+                { label: 'Select', value: 'Select' },
+                { label: 'Switch', value: 'Switch' }
+              ]"
+              placeholder="plugin.selectComponent"
+            />
             <Button @click="handleDelParam(index)" size="small" type="text">
               {{ t('common.delete') }}
             </Button>
-          </template>
-          <div class="form-item">
-            <div class="name">{{ t('plugin.confName') }}</div>
-            <Input v-model="conf.title" placeholder="title" />
           </div>
-          <div class="form-item">
-            <div class="name">{{ t('plugin.confDescription') }}</div>
-            <Input v-model="conf.description" placeholder="description" />
-          </div>
-          <div class="form-item">
-            <div class="name">{{ t('plugin.confKey') }}</div>
-            <Input v-model="conf.key" placeholder="key" />
-          </div>
-          <div class="form-item" :class="{ 'flex-start': conf.value.length !== 0 }">
-            <div class="name">{{ t('plugin.confDefault') }}</div>
-            <Component
-              :is="conf.component"
-              v-model="conf.value"
-              :options="getOptions(conf.options)"
-              editable
-            />
-          </div>
-          <div
-            v-if="hasOption(conf.component)"
-            :class="{ 'flex-start': conf.options.length !== 0 }"
-            class="form-item"
-          >
-            <div class="name">{{ t('plugin.options') }}</div>
-            <InputList v-model="conf.options" />
-          </div>
-        </Card>
-        <div v-else class="form-item">
-          <Select
-            @change="(val: string) => onComponentChange(val, index)"
-            :options="[
-              { label: 'CheckBox', value: 'CheckBox' },
-              { label: 'CodeViewer', value: 'CodeViewer' },
-              { label: 'Input', value: 'Input' },
-              { label: 'InputList', value: 'InputList' },
-              { label: 'KeyValueEditor', value: 'KeyValueEditor' },
-              { label: 'Radio', value: 'Radio' },
-              { label: 'Select', value: 'Select' },
-              { label: 'Switch', value: 'Switch' }
-            ]"
-            placeholder="plugin.selectComponent"
-          />
-          <Button @click="handleDelParam(index)" size="small" type="text">
-            {{ t('common.delete') }}
-          </Button>
-        </div>
-      </template>
+        </template>
+      </div>
       <Button @click="handleAddParam" type="primary" size="small" class="w-full">+</Button>
     </div>
   </div>

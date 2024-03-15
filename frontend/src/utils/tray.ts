@@ -1,16 +1,9 @@
 import i18n from '@/lang'
 import { Theme, type MenuItem, Color, Lang } from '@/constant'
-import { debounce, sampleID } from '@/utils'
+import { debounce, exitApp, handleChangeMode, handleUseProxy, sampleID } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
-import {
-  RestartApp,
-  EventsOn,
-  EventsOff,
-  ExitApp,
-  UpdateTray,
-  UpdateTrayMenus
-} from '@/utils/bridge'
+import { Notify, RestartApp, EventsOn, EventsOff, UpdateTray, UpdateTrayMenus } from '@/bridge'
 
 const menuEvents: string[] = []
 
@@ -41,64 +34,11 @@ const generateUniqueEventsForMenu = (menus: MenuItem[]) => {
   return menus.map(processMenu)
 }
 
-const handleUseProxy = async (group: any, proxy: any) => {
-  if (group.type !== 'Selector' || group.now === proxy.name) return
-  const promises: Promise<null>[] = []
-  const appSettings = useAppSettingsStore()
-  const kernelApiStore = useKernelApiStore()
-  if (appSettings.app.kernel.autoClose) {
-    const { connections } = await getConnections()
-    promises.push(
-      ...(connections || [])
-        .filter((v) => v.chains.includes(group.name))
-        .map((v) => deleteConnection(v.id))
-    )
-  }
-  await useProxy(group.name, proxy.name)
-  await Promise.all(promises)
-  await kernelApiStore.refreshProviderProxies()
-}
-
-const handleChangeMode = async (mode: string) => {
-  const kernelApiStore = useKernelApiStore()
-
-  if (mode === kernelApiStore.config.mode) return
-
-  kernelApiStore.patchConfig('mode', mode)
-
-  const { connections } = await getConnections()
-  const promises = (connections || []).map((v) => deleteConnection(v.id))
-  await Promise.all(promises)
-}
-
-export const exitApp = async () => {
-  const envStore = useEnvStore()
-  const pluginsStore = usePluginsStore()
-  const appSettings = useAppSettingsStore()
-  const kernelApiStore = useKernelApiStore()
-
-  if (appSettings.app.kernel.running && appSettings.app.closeKernelOnExit) {
-    await kernelApiStore.stopKernel()
-    if (appSettings.app.autoSetSystemProxy) {
-      envStore.clearSystemProxy()
-    }
-  }
-
-  setTimeout(ExitApp, 3_000)
-
-  try {
-    await pluginsStore.onShutdownTrigger()
-  } catch (error: any) {
-    window.Plugins.message.error(error)
-  }
-
-  ExitApp()
-}
-
 const getTrayMenus = () => {
   const envStore = useEnvStore()
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
+  const pluginsStore = usePluginsStore()
 
   const { proxies } = kernelApiStore
 
@@ -151,6 +91,33 @@ const getTrayMenus = () => {
         }
       })
   })()
+
+  let pluginMenus: MenuItem[] = []
+  let pluginMenusHidden = !appSettings.app.addPluginToMenu
+
+  if (!pluginMenusHidden) {
+    const filtered = pluginsStore.plugins.filter(
+      (plugin) => Object.keys(plugin.menus).length && !plugin.disabled
+    )
+    pluginMenusHidden = filtered.length === 0
+    pluginMenus = filtered.map(({ id, name, menus }) => {
+      return {
+        type: 'item',
+        text: name,
+        children: Object.entries(menus).map(([text, event]) => {
+          return {
+            type: 'item',
+            text,
+            event: () => {
+              pluginsStore.manualTrigger(id, event as any).catch((err: any) => {
+                Notify('Error', err.message || err)
+              })
+            }
+          }
+        })
+      }
+    })
+  }
 
   const trayMenus: MenuItem[] = [
     {
@@ -310,6 +277,12 @@ const getTrayMenus = () => {
             },
             {
               type: 'item',
+              text: 'settings.color.red',
+              checked: appSettings.app.color === Color.Red,
+              event: () => (appSettings.app.color = Color.Red)
+            },
+            {
+              type: 'item',
               text: 'settings.color.skyblue',
               checked: appSettings.app.color === Color.Skyblue,
               event: () => (appSettings.app.color = Color.Skyblue)
@@ -335,6 +308,12 @@ const getTrayMenus = () => {
           ]
         }
       ]
+    },
+    {
+      type: 'item',
+      text: 'tray.plugins',
+      hidden: pluginMenusHidden,
+      children: pluginMenus
     },
     {
       type: 'separator'

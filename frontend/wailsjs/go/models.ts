@@ -20,6 +20,20 @@ export namespace bridge {
 	        this.x64Level = source["x64Level"];
 	    }
 	}
+	export class ExecOptions {
+	    convert: boolean;
+	    env: {[key: string]: string};
+	
+	    static createFrom(source: any = {}) {
+	        return new ExecOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.convert = source["convert"];
+	        this.env = source["env"];
+	    }
+	}
 	export class FlagResult {
 	    flag: boolean;
 	    data: string;

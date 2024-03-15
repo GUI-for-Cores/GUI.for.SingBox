@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { Exec, FileExists } from '@/utils/bridge'
-import { GetEnv } from '@/utils/bridge'
+import { Exec, FileExists } from '@/bridge'
+import { GetEnv } from '@/bridge'
 
 export const useSubconverterStore = defineStore('subconverter', () => {
   const SUBCONVERTER_URL = 'https://github.com/GUI-for-Cores/sing-box-subconverter-offline'
