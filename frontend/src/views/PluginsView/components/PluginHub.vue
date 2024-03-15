@@ -12,7 +12,7 @@ const list = ref<PluginType[]>([])
 const cacheFile = 'data/.cache/plugin-list.json'
 const hubUrl =
   'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json'
-const gfcUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfc.json'
+const gfsUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json'
 
 const { t } = useI18n()
 const { message } = useMessage()
@@ -24,7 +24,7 @@ const updateList = async () => {
   const userAgent = appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION
   try {
     const { body: body1 } = await HttpGet(hubUrl, { 'User-Agent': userAgent })
-    const { body: body2 } = await HttpGet(gfcUrl, { 'User-Agent': userAgent })
+    const { body: body2 } = await HttpGet(gfsUrl, { 'User-Agent': userAgent })
     const list1 = JSON.parse(body1)
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]
