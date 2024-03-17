@@ -3,10 +3,16 @@ import { ref, computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { Removefile } from '@/bridge'
 import { debounce, ignoredError } from '@/utils'
+import { Removefile, BrowserOpenURL } from '@/bridge'
 import { DraggableOptions, PluginManualEvent, PluginTrigger, View } from '@/constant'
-import { usePluginsStore, useAppSettingsStore, type PluginType, type Menu } from '@/stores'
+import {
+  usePluginsStore,
+  useAppSettingsStore,
+  useEnvStore,
+  type PluginType,
+  type Menu
+} from '@/stores'
 
 import PluginForm from './components/PluginForm.vue'
 import PluginView from './components/PluginView.vue'
@@ -35,12 +41,20 @@ const menuList: Menu[] = [
         message.error(error)
       }
     }
+  },
+  {
+    label: 'common.openFile',
+    handler: async (id: string) => {
+      const plugin = pluginsStore.getPluginById(id)
+      BrowserOpenURL(envStore.env.basePath + '/' + plugin!.path)
+    }
   }
 ]
 
 const { t } = useI18n()
 const { message } = useMessage()
 
+const envStore = useEnvStore()
 const pluginsStore = usePluginsStore()
 const appSettingsStore = useAppSettingsStore()
 
@@ -225,6 +239,13 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       class="item"
     >
       <template #title-prefix>
+        <div
+          v-show="p.status !== 0"
+          :class="{ 0: '', 1: 'running', 2: 'stopped' }[p.status]"
+          class="status"
+        >
+          ●
+        </div>
         <Tag v-if="p.updating" color="cyan">
           {{ t('plugins.updating') }}
         </Tag>
@@ -360,8 +381,8 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     v-model:open="showPluginView"
     :title="pluginTitle"
     :footer="false"
-    max-height="80"
-    width="80"
+    max-height="90"
+    width="90"
   >
     <PluginView :id="pluginFormID" />
   </Modal>
@@ -402,5 +423,17 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     margin-left: -4px;
     padding-left: 4px;
   }
+}
+
+.status {
+  padding-right: 4px;
+}
+
+.running {
+  color: greenyellow;
+}
+
+.stopped {
+  color: red;
 }
 </style>

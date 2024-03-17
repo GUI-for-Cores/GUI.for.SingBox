@@ -60,8 +60,6 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 		cmd.Env = append(cmd.Env, key+"="+value)
 	}
 
-	log.Printf("%v", cmd.Env)
-
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return FlagResult{false, err.Error()}

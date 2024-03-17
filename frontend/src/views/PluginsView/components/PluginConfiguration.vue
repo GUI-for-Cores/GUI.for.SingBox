@@ -76,7 +76,9 @@ if (p) {
     </Card>
   </div>
   <div class="form-action">
-    <Button @click="handleRestoreConfiguration(true)" type="link">{{ t('plugin.restore') }}</Button>
+    <Button @click="handleRestoreConfiguration(true)" type="link" class="mr-auto">
+      {{ t('plugin.restore') }}
+    </Button>
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button @click="handleSubmit" type="primary">
       {{ t('common.save') }}

@@ -101,13 +101,13 @@ provide('submit', handleSubmit)
   z-index: 999;
 
   .modal {
-    padding-top: 16px;
     display: flex;
     flex-direction: column;
     background-color: var(--modal-bg);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
     .title {
-      padding: 0 16px 16px 16px;
+      padding: 16px;
       font-size: 14px;
       font-weight: bold;
     }

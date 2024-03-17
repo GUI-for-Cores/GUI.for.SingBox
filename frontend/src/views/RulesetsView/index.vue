@@ -3,11 +3,17 @@ import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { Removefile, Writefile } from '@/bridge'
+import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
 import { debounce, formatRelativeTime, ignoredError } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
 import { DraggableOptions, View, EmptyRuleSet, RulesetFormat } from '@/constant'
-import { type RuleSetType, type Menu, useRulesetsStore, useAppSettingsStore } from '@/stores'
+import {
+  type RuleSetType,
+  type Menu,
+  useRulesetsStore,
+  useAppSettingsStore,
+  useEnvStore
+} from '@/stores'
 
 import RulesetForm from './components/RulesetForm.vue'
 import RulesetView from './components/RulesetView.vue'
@@ -25,6 +31,13 @@ const menuList: Menu[] = [
     handler: (id: string) => handleEditRulesetList(id)
   },
   {
+    label: 'common.openFile',
+    handler: (id: string) => {
+      const ruleset = rulesetsStore.getRulesetById(id)
+      BrowserOpenURL(envStore.env.basePath + '/' + ruleset!.path)
+    }
+  },
+  {
     label: 'common.clear',
     handler: (id: string) => handleClearRuleset(id)
   }
@@ -32,6 +45,7 @@ const menuList: Menu[] = [
 
 const { t } = useI18n()
 const { message } = useMessage()
+const envStore = useEnvStore()
 const rulesetsStore = useRulesetsStore()
 const appSettingsStore = useAppSettingsStore()
 

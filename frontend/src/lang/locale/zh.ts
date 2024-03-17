@@ -40,7 +40,8 @@ export default {
     confirm: '确定',
     selectAll: '全选',
     http: '远程下载',
-    file: '本地文件'
+    file: '本地文件',
+    openFile: '打开文件'
   },
   kernel: {
     port: 'HTTP(s)代理端口',
@@ -366,7 +367,9 @@ export default {
     },
     proxies: '引用节点',
     use: '引用订阅',
-    noSubs: '没有可用的订阅'
+    noSubs: '没有可用的订阅',
+    group: '代理组详情',
+    rule: '规则详情'
   },
   profiles: {
     shouldStop: '当前配置正在使用，无法删除',
@@ -439,6 +442,7 @@ export default {
     rulesets: '规则集列表',
     plugins: '插件列表',
     cron: '表达式',
+    notification: '任务完成通知',
     cronTips: '秒 分 时 日 月 星期',
     lastTime: '上次执行时间',
     'update::subscription': '更新订阅',

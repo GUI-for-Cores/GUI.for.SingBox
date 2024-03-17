@@ -133,7 +133,7 @@ const handleUseProfile = async (p: ProfileType) => {
   }
 }
 
-const onProfileFormEnd = async () => {
+const onEditProfileEnd = async () => {
   const { running, profile } = appSettingsStore.app.kernel
   if (running && profile === profileID.value) {
     await kernelApiStore.restartKernel()
@@ -245,7 +245,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
   <Modal
     v-model:open="showForm"
     :footer="false"
-    @ok="onProfileFormEnd"
+    @ok="onEditProfileEnd"
     min-width="70"
     max-height="90"
   >

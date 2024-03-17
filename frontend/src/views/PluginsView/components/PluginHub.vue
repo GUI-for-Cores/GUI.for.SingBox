@@ -121,8 +121,4 @@ getList()
   display: flex;
   align-items: center;
 }
-
-.ml-auto {
-  margin-left: auto;
-}
 </style>

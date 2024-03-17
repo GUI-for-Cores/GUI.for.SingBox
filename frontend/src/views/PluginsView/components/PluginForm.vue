@@ -26,6 +26,7 @@ const plugin = ref<PluginType>({
   description: '',
   type: 'Http',
   url: '',
+  status: 0,
   path: `data/plugins/plugin-${pluginID}.js`,
   triggers: [],
   menus: {},

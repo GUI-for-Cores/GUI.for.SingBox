@@ -34,6 +34,7 @@ const task = ref<ScheduledTaskType>({
   plugins: [],
   script: '',
   cron: '',
+  notification: false,
   disabled: false,
   lastTime: ''
 })
@@ -100,6 +101,10 @@ if (props.isUpdate) {
     <div class="form-item">
       <div class="name" style="padding-right: 16px">{{ t('scheduledtask.type') }}</div>
       <Radio v-model="task.type" :options="ScheduledTaskOptions" />
+    </div>
+    <div class="form-item">
+      <div class="name">{{ t('scheduledtask.notification') }}</div>
+      <Switch v-model="task.notification" />
     </div>
 
     <div v-if="task.type === ScheduledTasksType.UpdateSubscription">

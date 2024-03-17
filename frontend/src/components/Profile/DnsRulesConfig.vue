@@ -53,7 +53,7 @@ const { t } = useI18n()
 const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
-const handleAddRule = () => {
+const handleAdd = () => {
   updateRuleId = -1
   fields.value = {
     id: sampleID(),
@@ -69,6 +69,8 @@ const handleAddRule = () => {
   showModal.value = true
 }
 
+defineExpose({ handleAdd })
+
 const handleDeleteRule = (index: number) => {
   rules.value.splice(index, 1)
 }
@@ -83,7 +85,7 @@ const handleAddEnd = () => {
   if (updateRuleId !== -1) {
     rules.value[updateRuleId] = fields.value
   } else {
-    rules.value.push(fields.value)
+    rules.value.unshift(fields.value)
   }
 }
 
@@ -145,13 +147,15 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
         </div>
       </Card>
     </div>
-
-    <div style="display: flex; justify-content: center">
-      <Button type="link" @click="handleAddRule">{{ t('common.add') }}</Button>
-    </div>
   </div>
 
-  <Modal v-model:open="showModal" @ok="handleAddEnd" max-width="80" max-height="80">
+  <Modal
+    v-model:open="showModal"
+    @ok="handleAddEnd"
+    title="profile.rule"
+    max-width="80"
+    max-height="80"
+  >
     <div class="form-item">
       {{ t('kernel.rules.type.name') }}
       <Select v-model="fields.type" :options="DnsRulesTypeOptions" />

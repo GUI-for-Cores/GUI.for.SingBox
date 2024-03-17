@@ -109,7 +109,7 @@ onUnmounted(disconnect)
   background-color: var(--modal-bg);
   backdrop-filter: blur(2px);
   .label {
-    padding: 0 8px;
+    padding-right: 8px;
     font-size: 12px;
   }
 }

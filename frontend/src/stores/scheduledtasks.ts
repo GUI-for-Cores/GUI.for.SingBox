@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
+import i18n from '@/lang'
+import { Notify } from '@/bridge'
 import { debounce } from '@/utils'
 import { ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
 import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
@@ -23,6 +25,7 @@ export type ScheduledTaskType = {
   plugins: string[]
   script: string
   cron: string
+  notification: boolean
   disabled: boolean
   lastTime: string
 }
@@ -40,6 +43,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const initScheduledTasks = async () => {
     removeScheduledTasks()
 
+    const { t } = i18n.global
     const logsStore = useLogsStore()
 
     scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {
@@ -57,6 +61,8 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
 
         const startTime = Date.now()
         const result = await getTaskFn(task)()
+
+        task.notification && Notify(task.name, result.join('\n'))
 
         logsStore.recordScheduledTasksLog({
           name: task.name,

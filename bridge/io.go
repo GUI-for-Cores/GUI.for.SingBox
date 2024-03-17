@@ -124,7 +124,7 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 
 		if !strings.HasPrefix(filePath, filepath.Clean(output)+string(os.PathSeparator)) {
 			log.Println("UnzipZIPFile: invalid file path")
-			return FlagResult{false, err.Error()}
+			return FlagResult{false, "invalid file path"}
 		}
 		if f.FileInfo().IsDir() {
 			os.MkdirAll(filePath, os.ModePerm)

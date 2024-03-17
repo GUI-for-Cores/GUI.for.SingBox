@@ -50,7 +50,7 @@ const { t } = useI18n()
 const { message } = useMessage()
 const subscribesStore = useSubscribesStore()
 
-const handleAddGroup = () => {
+const handleAdd = () => {
   updateGroupId = -1
   fields.value = {
     id: sampleID(),
@@ -65,6 +65,8 @@ const handleAddGroup = () => {
   }
   showModal.value = true
 }
+
+defineExpose({ handleAdd })
 
 const handleDeleteGroup = (index: number) => {
   const name = groups.value[index].tag
@@ -125,8 +127,8 @@ const handleAddEnd = () => {
   const { id, tag, type } = fields.value
   // Add
   if (updateGroupId === -1) {
-    groups.value.push(fields.value)
-    proxyGroup.value[0].proxies.push({ id, tag, type })
+    groups.value.unshift(fields.value)
+    proxyGroup.value[0].proxies.unshift({ id, tag, type })
     return
   }
   // Update
@@ -231,10 +233,6 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     </Card>
   </div>
 
-  <div style="display: flex; justify-content: center">
-    <Button type="link" @click="handleAddGroup">{{ t('common.add') }}</Button>
-  </div>
-
   <Modal
     v-model:open="showSortModal"
     :title="t('kernel.proxyGroups.sort')"
@@ -260,7 +258,13 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     </div>
   </Modal>
 
-  <Modal v-model:open="showModal" @ok="handleAddEnd" max-width="80" max-height="80">
+  <Modal
+    v-model:open="showModal"
+    @ok="handleAddEnd"
+    title="profile.group"
+    max-width="80"
+    max-height="80"
+  >
     <div class="form-item">
       {{ t('kernel.proxyGroups.name') }}
       <Input v-model="fields.tag" autofocus />
