@@ -3,6 +3,7 @@ export default {
     grid: '网格',
     list: '列表',
     add: '添加',
+    added: '已添加',
     more: '更多',
     edit: '编辑',
     clear: '清理',

@@ -3,6 +3,7 @@ export default {
     grid: 'Grid',
     list: 'List',
     add: 'Add',
+    added: 'Added',
     more: 'More',
     edit: 'Edit',
     clear: 'Clear',
