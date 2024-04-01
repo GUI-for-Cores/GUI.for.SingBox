@@ -38,8 +38,12 @@ withDefaults(defineProps<Props>(), {})
   background-color: var(--card-bg);
   padding: 0 8px 8px 8px;
   border-radius: 8px;
+  transition:
+    box-shadow 0.4s,
+    background-color 0.4s;
   &:hover {
     background-color: var(--card-hover-bg);
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.06);
   }
   &:active {
     background-color: var(--card-active-bg);

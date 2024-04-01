@@ -37,12 +37,8 @@ const setupKernelApi = () => {
 
   if (profile) {
     const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20123'
-    // TODO: tls
-    if (controller.startsWith(':')) {
-      base = 'http://127.0.0.1' + controller
-    } else {
-      base = 'http://' + controller
-    }
+    const [, port = 20123] = controller.split(':')
+    base = `ws://127.0.0.1:${port}`
     bearer = profile.advancedConfig.secret
   }
 
@@ -58,11 +54,8 @@ const setupKernelWSApi = () => {
 
   if (profile) {
     const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20123'
-    if (controller.startsWith(':')) {
-      base = 'ws://127.0.0.1' + controller
-    } else {
-      base = 'ws://' + controller
-    }
+    const [, port = 20123] = controller.split(':')
+    base = `http://127.0.0.1:${port}`
     bearer = profile.advancedConfig.secret
   }
 
@@ -90,16 +83,16 @@ export const useProxy = (group: string, proxy: string) => {
   return request.put<null>(Api.Proxies + '/' + group, { name: proxy })
 }
 
-export const getGroupDelay = (group: string) => {
+export const getGroupDelay = (group: string, url: string) => {
   return request.get<Record<string, number>>(Api.GroupDelay.replace('{0}', group), {
-    url: 'https://www.gstatic.com/generate_204',
+    url,
     timeout: 5000
   })
 }
 
-export const getProxyDelay = (proxy: string) => {
+export const getProxyDelay = (proxy: string, url: string) => {
   return request.get<Record<string, number>>(Api.ProxyDelay.replace('{0}', proxy), {
-    url: 'https://www.gstatic.com/generate_204',
+    url,
     timeout: 5000
   })
 }
@@ -121,7 +114,7 @@ type KernelWSOptions = {
 }
 
 export const getKernelWS = ({ onConnections, onTraffic, onMemory }: KernelWSOptions) => {
-  return websockets.connect([
+  return websockets.createWS([
     { name: 'Connections', url: Api.Connections, cb: onConnections },
     { name: 'Traffic', url: Api.Traffic, cb: onTraffic },
     { name: 'Memory', url: Api.Memory, cb: onMemory }
@@ -129,11 +122,11 @@ export const getKernelWS = ({ onConnections, onTraffic, onMemory }: KernelWSOpti
 }
 
 export const getKernelLogsWS = (onLogs: (data: any) => void) => {
-  return websockets.connect([
+  return websockets.createWS([
     { name: 'Logs', url: Api.Logs, cb: onLogs, params: { level: 'debug' } }
   ])
 }
 
 export const getKernelConnectionsWS = (onConnections: (data: KernelConnectionsWS) => void) => {
-  return websockets.connect([{ name: 'Connections', url: Api.Connections, cb: onConnections }])
+  return websockets.createWS([{ name: 'Connections', url: Api.Connections, cb: onConnections }])
 }

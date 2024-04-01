@@ -6,8 +6,14 @@ import { useBool, useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant'
 import { useAppSettingsStore, type Menu } from '@/stores'
 import type { KernelConnectionsWS } from '@/api/kernel.schema'
-import { formatBytes, formatRelativeTime } from '@/utils'
 import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
+import {
+  formatBytes,
+  formatRelativeTime,
+  addToRuleSet,
+  ignoredError,
+  setIntervalImmediately
+} from '@/utils'
 
 import type { Column } from '@/components/Table/index.vue'
 
@@ -246,9 +252,13 @@ const handleClearClosedConns = () => {
   disconnectedData.value.splice(0)
 }
 
-const disconnect = getKernelConnectionsWS(onConnections)
+const { connect, disconnect } = getKernelConnectionsWS(onConnections)
+const timer = setIntervalImmediately(connect, 1000)
 
-onUnmounted(disconnect)
+onUnmounted(() => {
+  clearInterval(timer)
+  disconnect()
+})
 </script>
 
 <template>
@@ -301,6 +311,7 @@ onUnmounted(disconnect)
     v-model:open="showDetails"
     :submit="false"
     cancel-text="common.close"
+    title="home.connections.details"
     max-height="90"
     max-width="90"
     mask-closable

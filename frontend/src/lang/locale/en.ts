@@ -286,10 +286,12 @@ export default {
     },
     controller: {
       name: 'Controller',
-      autoClose: 'Auto-close Connections',
-      unAvailable: 'Show UnAvailable Proxies',
+      autoClose: 'Auto-close',
+      unAvailable: 'Show UnAvailable',
       cardMode: 'Card Mode',
-      sortBy: 'Sort By Delay'
+      sortBy: 'Sort By Delay',
+      delay: 'Delay test URL',
+      delayUrl: 'Please enter the delayed test URL'
     },
     connections: {
       type: 'Type',
@@ -314,7 +316,8 @@ export default {
       active: 'Active',
       closed: 'Closed',
       closeAll: 'Close all connections',
-      sort: 'Sorting and Setting Visibility'
+      sort: 'Sorting and Setting Visibility',
+      details: 'Connection Details'
     }
   },
   subscribe: {
@@ -474,7 +477,8 @@ export default {
       orange: 'Orange',
       pink: 'Pink',
       red: 'Red',
-      skyblue: 'Skyblue'
+      skyblue: 'Skyblue',
+      green: 'Green'
     },
     fontFamily: 'Font-Family',
     resetFont: 'Reset Font-Family',

@@ -66,6 +66,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         v-model="kernelApiStore.config.tun.stack"
         :options="StackOptions"
         :border="false"
+        auto-size
         @change="conStackChange"
       />
     </Card>
@@ -77,6 +78,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         v-model="kernelApiStore.config['interface-name']"
         @change="onInterfaceChange"
         :border="false"
+        auto-size
       />
     </Card>
     <Card title="Fake-IP" class="card-item">
@@ -90,6 +92,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding-bottom: 16px;
   .card-item {
     width: 24%;
   }

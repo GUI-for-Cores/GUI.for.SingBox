@@ -36,7 +36,8 @@ export enum Color {
   Orange = 'orange',
   Pink = 'pink',
   Red = 'red',
-  Skyblue = 'skyblue'
+  Skyblue = 'skyblue',
+  Green = 'green'
 }
 
 export const Colors = {
@@ -59,6 +60,10 @@ export const Colors = {
   [Color.Skyblue]: {
     primary: 'skyblue',
     secondary: '#0ca4e2'
+  },
+  [Color.Green]: {
+    primary: 'green',
+    secondary: '#008000'
   }
 }
 
@@ -72,8 +77,7 @@ export enum PluginTrigger {
   OnSubscribe = 'on::subscribe',
   OnGenerate = 'on::generate',
   OnStartup = 'on::startup',
-  OnShutdown = 'on::shutdown',
-  OnUpdateRuleset = 'on::update::ruleset'
+  OnShutdown = 'on::shutdown'
 }
 
 export enum PluginManualEvent {

@@ -6,7 +6,7 @@ import { useBool } from '@/hooks'
 import { getKernelWS } from '@/api/kernel'
 import { useKernelApiStore } from '@/stores'
 import { ModeOptions } from '@/constant/kernel'
-import { formatBytes, handleChangeMode } from '@/utils'
+import { formatBytes, handleChangeMode, setIntervalImmediately } from '@/utils'
 
 import ConnectionsController from './ConnectionsController.vue'
 
@@ -50,9 +50,13 @@ const onMemory = (data: any) => {
   statistics.value.inuse = data.inuse
 }
 
-const disconnect = getKernelWS({ onConnections, onTraffic, onMemory })
+const { connect, disconnect } = getKernelWS({ onConnections, onTraffic, onMemory })
+const timer = setIntervalImmediately(connect, 3000)
 
-onUnmounted(disconnect)
+onUnmounted(() => {
+  clearInterval(timer)
+  disconnect()
+})
 </script>
 
 <template>
@@ -130,6 +134,9 @@ onUnmounted(disconnect)
     justify-content: space-between;
     &-card {
       width: calc(100% / 4 - 8px);
+      &:nth-child(3) {
+        cursor: pointer;
+      }
       .detail {
         padding: 4px 0;
         font-size: 12px;
@@ -151,6 +158,7 @@ onUnmounted(disconnect)
       margin-left: 8px;
       flex: 1;
       .mode-card {
+        cursor: pointer;
         &:nth-child(3) {
           margin: 12px 0;
         }

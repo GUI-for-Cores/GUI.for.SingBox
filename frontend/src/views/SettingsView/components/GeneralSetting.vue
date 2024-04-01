@@ -58,6 +58,10 @@ const colors = [
   {
     label: 'settings.color.skyblue',
     value: Color.Skyblue
+  },
+  {
+    label: 'settings.color.green',
+    value: Color.Green
   }
 ]
 
@@ -149,6 +153,11 @@ const createSchTask = async (delay = 30) => {
   await Removefile(xmlPath)
 }
 
+const onThemeClick = (e: MouseEvent) => {
+  document.documentElement.style.setProperty('--x', e.clientX + 'px')
+  document.documentElement.style.setProperty('--y', e.clientY + 'px')
+}
+
 if (envStore.env.os === 'windows') {
   checkSchtask()
 
@@ -164,7 +173,7 @@ if (envStore.env.os === 'windows') {
       <div class="title">
         {{ t('settings.theme.name') }}
       </div>
-      <Radio v-model="appSettings.app.theme" :options="themes" />
+      <Radio v-model="appSettings.app.theme" @click="onThemeClick" :options="themes" />
     </div>
     <div class="settings-item">
       <div class="title">

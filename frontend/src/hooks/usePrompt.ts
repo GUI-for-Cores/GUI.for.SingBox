@@ -3,12 +3,12 @@ import { render, createVNode } from 'vue'
 import PromptComp from '@/components/Prompt/index.vue'
 import { type Props as InputProps } from '@/components/Input/index.vue'
 
-const createPrompt = (
+const createPrompt = <T>(
   title: string,
   initialValue: string | number = '',
   props: Partial<InputProps> = {}
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
       position: fixed;

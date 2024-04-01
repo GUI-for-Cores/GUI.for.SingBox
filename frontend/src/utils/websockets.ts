@@ -17,30 +17,41 @@ export class WebSockets {
     this.beforeConnect = options.beforeConnect || (() => 0)
   }
 
-  public connect(urls: URLType[]) {
+  public createWS(urls: URLType[]) {
     this.beforeConnect()
-    const wsMap: Record<string, WebSocket> = {}
+
+    const wsMap: Record<string, { ready: boolean; close: () => void; open: () => void }> = {}
+
     urls.forEach(({ name, url, params = {}, cb }) => {
-      try {
-        const usp = new URLSearchParams()
-        Object.assign(params, { token: this.bearer })
-        Object.entries(params).forEach(([key, value]) => {
-          usp.set(key, value)
-        })
-        const query = usp.toString()
-        if (query) {
-          url += '?' + query
-        }
+      const usp = new URLSearchParams()
+
+      Object.assign(params, { token: this.bearer })
+
+      Object.entries(params).forEach(([key, value]) => usp.set(key, value))
+
+      const query = usp.toString()
+
+      query && (url += '?' + query)
+
+      const open = () => {
+        if (!wsMap[name].ready) return
         const ws = new WebSocket(this.base + url)
         ws.onmessage = (e) => cb(JSON.parse(e.data))
-        ws.onerror = () => delete wsMap[name]
-        ws.onclose = () => delete wsMap[name]
-        wsMap[name] = ws
-      } catch (e: any) {
-        console.log(e)
+        ws.onerror = () => (wsMap[name].ready = true)
+        ws.onclose = () => (wsMap[name].ready = true)
+        wsMap[name].close = () => {
+          ws.close()
+          wsMap[name].ready = true
+        }
+        wsMap[name].ready = false
       }
+
+      wsMap[name] = { ready: true, open, close: () => (wsMap[name].ready = false) }
     })
 
-    return () => Object.values(wsMap).forEach((ws) => ws.close())
+    return {
+      connect: () => Object.values(wsMap).forEach((ws) => ws.open()),
+      disconnect: () => Object.values(wsMap).forEach((ws) => ws.close())
+    }
   }
 }

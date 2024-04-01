@@ -1,3 +1,6 @@
+import { useAppSettingsStore } from '@/stores'
+import { APP_TITLE, APP_VERSION } from '@/utils'
+
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
 export const debounce = (fn: (...args: any) => any, wait: number) => {
@@ -39,4 +42,14 @@ export const getValue = (obj: Record<string, any>, expr: string) => {
   return expr.split('.').reduce((value, key) => {
     return value[key]
   }, obj)
+}
+
+export const getUserAgent = () => {
+  const appSettings = useAppSettingsStore()
+  return appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION
+}
+
+export const setIntervalImmediately = (func: () => void, interval: number) => {
+  func()
+  return setInterval(func, interval)
 }

@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
-import i18n from '@/lang'
 import { Notify } from '@/bridge'
 import { debounce } from '@/utils'
 import { ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
@@ -43,7 +42,6 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const initScheduledTasks = async () => {
     removeScheduledTasks()
 
-    const { t } = i18n.global
     const logsStore = useLogsStore()
 
     scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {

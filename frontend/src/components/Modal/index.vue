@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { computed, provide } from 'vue'
 
-import { WindowFullscreen, WindowIsFullscreen, WindowUnfullscreen } from '@/bridge'
+import { toggleFullScreen } from '@/utils'
 
 interface Props {
   open: boolean
@@ -41,11 +41,6 @@ const { t } = useI18n()
 
 const emits = defineEmits(['update:open', 'ok'])
 
-const toggleFullScreen = async () => {
-  const isFull = await WindowIsFullscreen()
-  isFull ? WindowUnfullscreen() : WindowFullscreen()
-}
-
 const handleSubmit = () => {
   emits('update:open', false)
   emits('ok')
@@ -69,24 +64,44 @@ provide('submit', handleSubmit)
 </script>
 
 <template>
-  <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
-    <div :style="contentStyle" class="modal" style="--wails-draggable: false">
-      <div v-if="title" @dblclick="toggleFullScreen" class="title" style="--wails-draggable: drag">
-        {{ t(title) }}
-      </div>
-      <div class="content">
-        <slot />
-      </div>
-      <div v-if="footer" class="action">
-        <slot name="action" />
-        <Button v-if="cancel" @click="handleCancel" type="text">{{ t(cancelText) }}</Button>
-        <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
+  <Transition name="modal" :duration="200">
+    <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
+      <div :style="contentStyle" class="modal" style="--wails-draggable: false">
+        <div
+          v-if="title"
+          @dblclick="toggleFullScreen"
+          class="title"
+          style="--wails-draggable: drag"
+        >
+          {{ t(title) }}
+        </div>
+        <div class="content">
+          <slot />
+        </div>
+        <div v-if="footer" class="action">
+          <slot name="action" />
+          <Button v-if="cancel" @click="handleCancel" type="text">{{ t(cancelText) }}</Button>
+          <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style lang="less" scoped>
+.modal-enter-active .modal,
+.modal-leave-active .modal {
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+}
+
+.modal-enter-from .modal,
+.modal-leave-to .modal {
+  opacity: 0;
+  transform: scale(0);
+}
+
 .mask {
   position: fixed;
   top: 0;

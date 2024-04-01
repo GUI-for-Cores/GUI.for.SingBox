@@ -80,10 +80,6 @@ const PluginsTriggerMap: {
   [PluginTrigger.OnShutdown]: {
     fnName: 'onShutdown',
     observers: []
-  },
-  [PluginTrigger.OnUpdateRuleset]: {
-    fnName: 'onUpdateRuleset',
-    observers: []
   }
 }
 
@@ -306,9 +302,13 @@ export const usePluginsStore = defineStore('plugins', () => {
       const metadata = getPluginMetadata(cache.plugin)
       try {
         const fn = new AsyncFunction(
-          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; await ${fnName}()`
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`
         )
-        await fn()
+        const exitCode = await fn()
+        if (exitCode !== undefined && exitCode !== cache.plugin.status) {
+          cache.plugin.status = exitCode
+          editPlugin(cache.plugin.id, cache.plugin)
+        }
       } catch (error: any) {
         throw `${cache.plugin.name} : ` + (error.message || error)
       }

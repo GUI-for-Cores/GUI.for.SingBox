@@ -3,9 +3,9 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { ignoredError, APP_TITLE } from '@/utils'
-import { useAppSettingsStore, useSubconverterStore } from '@/stores'
-import { Download, HttpGetJSON, BrowserOpenURL, Movefile, GetEnv, Removefile } from '@/bridge'
+import { ignoredError } from '@/utils'
+import { useSubconverterStore } from '@/stores'
+import { Download, HttpGet, BrowserOpenURL, Movefile, GetEnv, Removefile } from '@/bridge'
 
 let downloadUrl = ''
 
@@ -14,7 +14,6 @@ const downloading = ref(false)
 const { t } = useI18n()
 const { message } = useMessage()
 
-const appSettings = useAppSettingsStore()
 const subconverter = useSubconverterStore()
 
 const remoteVersion = ref(subconverter.SUBCONVERTER_VERSION)
@@ -40,7 +39,7 @@ const downloadApp = async () => {
 
     const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
-    await Download(downloadUrl, appPath + '.tmp', (progress, total) => {
+    await Download(downloadUrl, appPath + '.tmp', {}, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     }).catch((err) => {
       message.destroy(id)
@@ -76,12 +75,10 @@ const checkForUpdates = async (showTips = false) => {
   await subconverter.ensureInitialized()
 
   try {
-    const { json } = await HttpGetJSON(subconverter.SUBCONVERTER_VERSION_API, {
-      'User-Agent': appSettings.app.userAgent || APP_TITLE
-    })
+    const { body } = await HttpGet(subconverter.SUBCONVERTER_VERSION_API)
     const { os, arch } = await GetEnv()
 
-    const { tag_name, assets, message: msg } = json
+    const { tag_name, assets, message: msg } = body
     if (msg) throw msg
 
     const suffix = { windows: '.exe', linux: '', darwin: '' }[os]

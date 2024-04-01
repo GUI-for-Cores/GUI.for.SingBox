@@ -290,7 +290,9 @@ export default {
       autoClose: '自动断开连接',
       unAvailable: '展示不可用节点',
       cardMode: '卡片模式',
-      sortBy: '按延迟排序'
+      sortBy: '按延迟排序',
+      delay: '延迟测试URL',
+      delayUrl: '请输入延迟测试URL'
     },
     connections: {
       type: '类型',
@@ -315,7 +317,8 @@ export default {
       active: '活动',
       closed: '已关闭',
       closeAll: '关闭所有连接',
-      sort: '排序和设置显示字段'
+      sort: '排序和设置显示字段',
+      details: '连接详情'
     }
   },
   subscribe: {
@@ -475,7 +478,8 @@ export default {
       orange: '橘色',
       pink: '粉色',
       red: '红色',
-      skyblue: '天蓝色'
+      skyblue: '天蓝色',
+      green: '绿色'
     },
     fontFamily: '字体',
     resetFont: '重置字体',

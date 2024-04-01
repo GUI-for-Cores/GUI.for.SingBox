@@ -188,11 +188,15 @@ watch(showController, (v) => {
       </div>
 
       <div ref="controllerRef" :class="{ expanded: showController }" class="controller">
-        <Divider style="margin: 0 12px">
-          <Button @click="showController = false" type="text" size="small">
-            <Icon icon="close" />
-          </Button>
-        </Divider>
+        <Button
+          v-show="showController"
+          class="close-controller"
+          @click="showController = false"
+          type="text"
+          size="small"
+        >
+          <Icon icon="close" />
+        </Button>
         <GroupsController />
       </div>
     </template>
@@ -209,7 +213,12 @@ watch(showController, (v) => {
     <LogsController />
   </Modal>
 
-  <Modal v-model:open="showQuickStart" :title="t('subscribes.enterLink')" :footer="false">
+  <Modal
+    v-model:open="showQuickStart"
+    :title="t('subscribes.enterLink')"
+    :footer="false"
+    mask-closable
+  >
     <QuickStart />
   </Modal>
 
@@ -269,6 +278,7 @@ watch(showController, (v) => {
   width: 100%;
   height: 100%;
   top: 100%;
+  padding-bottom: 32px;
   overflow-y: auto;
   transition: all 0.4s;
 }
@@ -277,12 +287,23 @@ watch(showController, (v) => {
   top: 0;
 }
 
+.close-controller {
+  position: fixed;
+  z-index: 999;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  border-radius: 8px;
+  background-color: var(--card-bg);
+}
+
 .profiles {
-  margin-bottom: 16px;
+  padding-bottom: 16px;
   display: flex;
   max-width: 90%;
   overflow-x: hidden;
   &-card {
+    cursor: pointer;
     display: flex;
     flex-shrink: 0;
     align-items: center;

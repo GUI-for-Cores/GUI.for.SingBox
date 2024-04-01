@@ -7,9 +7,21 @@ body {
   user-select: none;
 }
 
-body,
-div {
-  transition: background-color 0.4s;
+@keyframes clip {
+  from {
+    clip-path: circle(0% at var(--x) var(--y));
+  }
+  to {
+    clip-path: circle(100% at var(--x) var(--y));
+  }
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: clip 0.5s ease-in;
 }
 
 div,

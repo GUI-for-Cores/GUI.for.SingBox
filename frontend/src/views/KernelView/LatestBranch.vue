@@ -9,7 +9,7 @@ import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
   Download,
   UnzipZIPFile,
-  HttpGetJSON,
+  HttpGet,
   Exec,
   Movefile,
   Removefile,
@@ -51,12 +51,10 @@ const updateRemoteVersion = async (showTips = false) => {
 const downloadCore = async () => {
   downloadLoading.value = true
   try {
-    const { json } = await HttpGetJSON(latestUrl, {
-      'User-Agent': appSettings.app.userAgent
-    })
+    const { body } = await HttpGet<Record<string, any>>(latestUrl)
     const { os, arch } = await GetEnv()
 
-    const { assets, name, message: msg } = json[0]
+    const { assets, name, message: msg } = body[0]
     if (msg) throw msg
 
     const envStore = useEnvStore()
@@ -74,7 +72,7 @@ const downloadCore = async () => {
 
     const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
-    await Download(asset.browser_download_url, tmp, (progress, total) => {
+    await Download(asset.browser_download_url, tmp, {}, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     }).catch((err) => {
       message.destroy(id)
@@ -143,10 +141,8 @@ const getLocalVersion = async (showTips = false) => {
 const getRemoteVersion = async (showTips = false) => {
   remoteVersionLoading.value = true
   try {
-    const { json } = await HttpGetJSON(latestUrl, {
-      'User-Agent': appSettings.app.userAgent
-    })
-    const { name } = json[0]
+    const { body } = await HttpGet<Record<string, any>>(latestUrl)
+    const { name } = body[0]
     return name as string
   } catch (error: any) {
     console.log(error)

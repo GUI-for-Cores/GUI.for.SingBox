@@ -98,12 +98,16 @@ defineExpose({
       autocomplete="off"
       ref="inputRef"
     />
+    <slot name="extra" />
   </div>
 </template>
 
 <style lang="less" scoped>
 .input {
+  display: flex;
+  align-items: center;
   .editable {
+    cursor: pointer;
     line-height: 30px;
     overflow: hidden;
     white-space: nowrap;
@@ -124,6 +128,7 @@ defineExpose({
     margin: 1px;
   }
   .auto-size {
+    flex: 1;
     width: calc(100% - 2px);
   }
 }

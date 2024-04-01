@@ -33,7 +33,7 @@ const handleCancel = () => {
 
 <template>
   <div class="confirm">
-    <div class="title">{{ title }}</div>
+    <div class="title">{{ t(title) }}</div>
     <Input
       v-model="value"
       v-bind="props.props"

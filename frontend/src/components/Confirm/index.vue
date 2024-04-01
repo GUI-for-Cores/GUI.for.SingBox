@@ -7,7 +7,7 @@ interface Props {
   cancel?: boolean
 }
 
-withDefaults(defineProps<Props>(), { cancel: true })
+const props = withDefaults(defineProps<Props>(), { cancel: true })
 
 const emits = defineEmits(['confirm', 'cancel', 'finish'])
 
@@ -22,12 +22,19 @@ const handleCancel = () => {
   emits('cancel')
   emits('finish')
 }
+
+const getMessage = () => {
+  if (typeof props.message === 'string') {
+    return t(props.message)
+  }
+  return props.message
+}
 </script>
 
 <template>
   <div class="confirm">
     <div class="title">{{ title }}</div>
-    <div class="message select-text">{{ message }}</div>
+    <div class="message select-text">{{ getMessage() }}</div>
     <div class="form-action">
       <Button v-if="cancel" @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
       <Button @click="handleConfirm" size="small" type="primary">

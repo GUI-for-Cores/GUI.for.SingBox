@@ -2,7 +2,7 @@
 import { ref, inject, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, sampleID } from '@/utils'
+import { deepClone, sampleID, toggleFullScreen } from '@/utils'
 import { useMessage, useBool } from '@/hooks'
 import * as Defaults from '@/constant/profile'
 import { type ProfileType, useProfilesStore } from '@/stores'
@@ -99,7 +99,7 @@ if (props.isUpdate) {
 </script>
 
 <template>
-  <div class="header" style="--wails-draggable: drag">
+  <div @dblclick="toggleFullScreen" class="header" style="--wails-draggable: drag">
     <div class="header-title">{{ t(stepItems[currentStep].title) }}</div>
     <Button v-show="[3, 4, 6].includes(currentStep)" @click="handleAdd" type="link" class="ml-auto">
       {{ t('common.add') }}
@@ -158,13 +158,18 @@ if (props.isUpdate) {
   </div>
 
   <div class="form-action">
-    <Button @click="handleCancel" type="text">{{ t('common.cancel') }}</Button>
     <Button @click="handlePrevStep" :disable="currentStep == 0" type="text">
       {{ t('common.prevStep') }}
     </Button>
-    <Button @click="handleNextStep" :disable="!profile.name || currentStep == 6" type="text">
+    <Button
+      @click="handleNextStep"
+      :disable="!profile.name || currentStep == 6"
+      type="text"
+      class="mr-auto"
+    >
       {{ t('common.nextStep') }}
     </Button>
+    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button @click="handleSave" :disable="!profile.name" type="primary">
       {{ t('common.save') }}
     </Button>
