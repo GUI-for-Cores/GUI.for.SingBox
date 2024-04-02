@@ -56,7 +56,6 @@ const handleSubmit = async () => {
     expire: '',
     updateTime: '',
     type: 'Http',
-    convert: true,
     website: '',
     path: `data/subscribes/${subscribeID}.json`,
     include: '',

@@ -7,7 +7,6 @@ import { ignoredError, sampleID, sleep } from '@/utils'
 import { useMessage, usePicker, useConfirm, usePrompt, useAlert } from '@/hooks'
 
 import AboutView from '@/views/AboutView.vue'
-import SubConverter from '@/views/SubConverter.vue'
 import SplashView from '@/views/SplashView.vue'
 import CommandView from './views/CommandView.vue'
 import { NavigationBar, MainPage, TitleBar } from '@/components'
@@ -104,16 +103,6 @@ appSettings.setupAppSettings().then(async () => {
       <MainPage />
     </div>
   </template>
-
-  <Modal
-    v-model:open="appStore.showSubconverter"
-    :cancel="false"
-    :submit="false"
-    mask-closable
-    min-width="50"
-  >
-    <SubConverter />
-  </Modal>
 
   <Modal
     v-model:open="appStore.showAbout"

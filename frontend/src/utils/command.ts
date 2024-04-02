@@ -226,11 +226,6 @@ export const getCommands = () => {
           handler: ExitApp
         },
         {
-          label: 'router.subconverter',
-          cmd: 'Sub Converter',
-          handler: () => (appStore.showSubconverter = true)
-        },
-        {
           label: 'router.about',
           cmd: 'About APP',
           handler: () => (appStore.showAbout = true)

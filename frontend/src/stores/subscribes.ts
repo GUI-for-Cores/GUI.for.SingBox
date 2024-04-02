@@ -2,10 +2,17 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { Readfile, Writefile, HttpGet, FileExists, Removefile, Exec, AbsolutePath } from '@/bridge'
 import { SubscribesFilePath } from '@/constant'
-import { deepClone, debounce, sampleID, APP_TITLE, isValidSubJson } from '@/utils'
-import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'
+import { usePluginsStore } from '@/stores'
+import { Readfile, Writefile, HttpGet } from '@/bridge'
+import {
+  deepClone,
+  debounce,
+  sampleID,
+  isValidSubJson,
+  getUserAgent,
+  isValidSubYAML
+} from '@/utils'
 
 export type SubscribeType = {
   id: string
@@ -16,7 +23,6 @@ export type SubscribeType = {
   expire: string
   updateTime: string
   type: 'Http' | 'File' | 'Manual'
-  convert: true
   url: string
   website: string
   path: string
@@ -69,7 +75,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       expire: '',
       updateTime: '',
       type: 'Http',
-      convert: true,
       url: url,
       website: '',
       path: `data/subscribes/${id}.json`,
@@ -108,69 +113,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
   }
 
-  const convertSub = async (path: string, subconverter: string, workDir: string) => {
-    const tmpFile = workDir + '/tmp.json'
-    try {
-      await Exec(subconverter, ['--path', path, '--out', await AbsolutePath(tmpFile)])
-      if (await FileExists(tmpFile)) {
-        return await Readfile(tmpFile)
-      }
-    } finally {
-      Removefile(tmpFile)
-    }
-    return ''
-  }
-
-  const downloadSub = async (
-    url: string,
-    userAgent: string,
-    subconverter: string,
-    workDir: string
-  ) => {
-    const tmpFile = workDir + '/tmp.json'
-    try {
-      const out = await Exec(subconverter, [
-        '--url',
-        url.split(/[ |]/).join('\n'),
-        '--ua',
-        userAgent,
-        '--out',
-        await AbsolutePath(tmpFile)
-      ])
-      if (await FileExists(tmpFile)) {
-        const body = await Readfile(tmpFile)
-        const outs = out.trim().split('\n')
-        const header = outs.length > 0 ? outs[outs.length - 1] : ''
-        try {
-          return { header: JSON.parse(header), body: body }
-        } catch (e) {
-          return { header: '', body: body }
-        }
-      }
-    } finally {
-      Removefile(tmpFile)
-    }
-    return { header: '', body: '' }
-  }
-
-  const downloadSubFallback = async (url: string, userAgent: string) => {
-    // if (s.convert) {
-    //   const converterUrl =
-    //     'https://sing-box-subscribe.vercel.app/config/url=' + url + '/&ua=' + userAgent
-    //   const { body: b } = await HttpGet(converterUrl, {
-    //     'User-Agent': userAgent
-    //   })
-
-    //   const { header: h } = await HttpGet(url, {
-    //     'User-Agent': userAgent
-    //   })
-    //   return {header: h, body: b}
-    // }
-    return await HttpGet(url, {
-      'User-Agent': userAgent
-    })
-  }
-
   const _doUpdateSub = async (s: SubscribeType) => {
     const pattern = /upload=(\d*); download=(\d*); total=(\d*); expire=(\d*)/
     let userInfo = 'upload=0; download=0; total=0; expire=0'
@@ -178,122 +120,66 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     let proxies: Record<string, any>[] = []
 
     if (s.type === 'Manual') {
-      if (s.path.length == 0) {
-        throw 'Subscription file path is empty'
-      }
-      if (await FileExists(s.path)) {
-        body = await Readfile(s.path)
+      body = await Readfile(s.path)
+    }
+
+    if (s.type === 'File') {
+      body = await Readfile(s.url)
+    }
+
+    if (s.type === 'Http') {
+      const { header: h, body: b } = await HttpGet(s.url, {
+        'User-Agent': s.userAgent || getUserAgent()
+      })
+
+      h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
+      if (typeof b !== 'string') {
+        body = JSON.stringify(b)
       } else {
-        body = '[]'
-      }
-    } else if (s.type === 'File') {
-      if (await FileExists(s.url)) {
-        if (s.convert) {
-          const subconverter = useSubconverterStore()
-          await subconverter.ensureInitialized()
-          if (subconverter.SUBCONVERTER_EXISTS) {
-            try {
-              body = await convertSub(
-                s.url,
-                subconverter.SUBCONVERTER_PATH,
-                subconverter.SUBCONVERTER_DIR
-              )
-            } catch (error) {
-              console.error('UpdateSub', error)
-            }
-          }
-        }
-        if (body.length == 0) {
-          body = await Readfile(s.url)
-        }
-      } else if (s.url === s.path) {
-        body = '[]'
-      } else {
-        throw 'Subscription file not exist'
-      }
-    } else if (s.type === 'Http') {
-      const appSettings = useAppSettingsStore()
-      const userAgent = s.userAgent || appSettings.app.userAgent || APP_TITLE
-
-      let header: any = {}
-
-      if (s.convert) {
-        const subconverter = useSubconverterStore()
-        await subconverter.ensureInitialized()
-        if (subconverter.SUBCONVERTER_EXISTS) {
-          try {
-            const { header: h, body: b } = await downloadSub(
-              s.url,
-              userAgent,
-              subconverter.SUBCONVERTER_PATH,
-              subconverter.SUBCONVERTER_DIR
-            )
-            body = b
-            header = h
-          } catch (error) {
-            console.error('UpdateSub', error)
-          }
-        }
-      }
-
-      if (body.length == 0) {
-        const { header: h, body: b } = await downloadSubFallback(s.url, userAgent)
         body = b
-        header = h
-      }
-
-      for (const headerKey of Object.keys(header)) {
-        if (headerKey.toLowerCase() === 'subscription-userinfo') {
-          if (Array.isArray(header[headerKey])) {
-            userInfo = header[headerKey][0]
-          } else {
-            userInfo = header[headerKey]
-          }
-          break
-        }
       }
     }
 
     if (isValidSubJson(body)) {
-      proxies = JSON.parse(body).outbounds ?? []
+      proxies = JSON.parse(body).outbounds
+    } else if (isValidSubYAML(body)) {
+      proxies = parse(body).proxies
     } else {
-      try {
-        proxies = JSON.parse(body)
-      } catch (error) {
-        throw 'Not a valid subscription file'
-      }
+      throw 'Not a valid subscription data'
     }
 
     const pluginStore = usePluginsStore()
 
-    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
-
     if (s.type !== 'Manual') {
       proxies = proxies.filter((v: any) => {
-        if ('tag' in v) {
-          const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
-          const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
-          const flag3 = s.includeProtocol ? new RegExp(s.includeProtocol).test(v.type) : true
-          const flag4 = s.excludeProtocol ? !new RegExp(s.excludeProtocol).test(v.type) : true
-          return flag1 && flag2 && flag3 && flag4
-        }
-        return false
+        const name_tag = v.tag || v.name
+        const flag1 = s.include ? new RegExp(s.include).test(name_tag) : true
+        const flag2 = s.exclude ? !new RegExp(s.exclude).test(name_tag) : true
+        const flag3 = s.includeProtocol ? new RegExp(s.includeProtocol).test(v.type) : true
+        const flag4 = s.excludeProtocol ? !new RegExp(s.excludeProtocol).test(v.type) : true
+        return flag1 && flag2 && flag3 && flag4
       })
 
       if (s.proxyPrefix) {
-        proxies = proxies.map((v) => ({
-          ...v,
-          tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
-        }))
+        proxies = proxies.map((v) => {
+          const name_tag = v.name ? 'name' : 'tag'
+          return {
+            ...v,
+            [name_tag]: v[name_tag].startsWith(s.proxyPrefix)
+              ? v[name_tag]
+              : s.proxyPrefix + v[name_tag]
+          }
+        })
       }
     }
+
+    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
 
     await Writefile(s.path, JSON.stringify(proxies, null, 2))
 
     const match = userInfo.match(pattern) || [0, 0, 0, 0, 0]
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_, upload = 0, download = 0, total = 0, expire = 0] = match
+    const [, upload = 0, download = 0, total = 0, expire = 0] = match
     s.upload = Number(upload)
     s.download = Number(download)
     s.total = Number(total)

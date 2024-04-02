@@ -29,10 +29,6 @@ const appStore = useAppStore()
     </template>
 
     <template #extra>
-      <Button @click="appStore.showSubconverter = true" type="text">
-        {{ t('router.subconverter') }}
-      </Button>
-
       <Button @click="appStore.showAbout = true" type="text">
         {{ t('router.about') }}
       </Button>

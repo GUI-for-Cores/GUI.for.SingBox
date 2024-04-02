@@ -247,7 +247,6 @@ export default {
     debug: '调试',
     components: '组件预览',
     about: '关于',
-    subconverter: '订阅转换',
     profiles: '配置',
     kernel: '内核',
     scheduledtasks: '计划任务'
@@ -327,7 +326,6 @@ export default {
     name: '名称',
     url: '远程链接',
     localPath: '本地路径',
-    convert: '订阅转换',
     website: '官网',
     path: '保存路径',
     include: '包括名称',
