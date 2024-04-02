@@ -49,7 +49,6 @@ const handleSubmit = async () => {
   const subscribe: SubscribeType = {
     id: subscribeID,
     name: subscribeID,
-    useInternal: false,
     url: url.value,
     upload: 0,
     download: 0,
@@ -57,7 +56,6 @@ const handleSubmit = async () => {
     expire: '',
     updateTime: '',
     type: 'Http',
-    convert: true,
     website: '',
     path: `data/subscribes/${subscribeID}.json`,
     include: '',

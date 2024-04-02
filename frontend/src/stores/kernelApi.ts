@@ -161,7 +161,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       config.value['mixed-port'] = 0
       config.value['socks-port'] = 0
       let inbound_tun: any = null
-      latestConfig.inbounds.forEach((inbound: any) => {
+      latestConfig.inbounds?.forEach((inbound: any) => {
         if (inbound.type == 'tun') inbound_tun = inbound
         else if (inbound.type == 'mixed') config.value['mixed-port'] = inbound.listen_port
         else if (inbound.type == 'http') config.value.port = inbound.listen_port
@@ -174,12 +174,12 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       try {
         config.value.mode = (await getConfigs()).mode
       } catch (e) {
-        config.value.mode = latestConfig.experimental.clash_api.default_mode
+        config.value.mode = latestConfig.experimental?.clash_api.default_mode
       }
 
-      config.value.fakeip = latestConfig.dns.fakeip.enabled
-      if (latestConfig.route.auto_detect_interface) config.value['interface-name'] = 'Auto'
-      else if (latestConfig.route.default_interface)
+      config.value.fakeip = latestConfig.dns?.fakeip.enabled
+      if (latestConfig.route?.auto_detect_interface) config.value['interface-name'] = 'Auto'
+      else if (latestConfig.route?.default_interface)
         config.value['interface-name'] = latestConfig.route.default_interface
       if (inbound_tun) {
         const stack = StackOptions.filter((s) => s.value.toLowerCase() === inbound_tun.stack)

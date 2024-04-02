@@ -2,13 +2,13 @@ on:
   # Allow running the workflow manually
   workflow_dispatch:
   # Run the workflow when a push is made
-  push:
-    branches:
-      - main
-  # Run the workflow when a pull request is made
-  pull_request:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
+  # # Run the workflow when a pull request is made
+  # pull_request:
+  #   branches:
+  #     - main
 
 jobs:
   Build:

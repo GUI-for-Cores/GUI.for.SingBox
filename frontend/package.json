@@ -32,7 +32,7 @@
     "@types/node": "^20.12.2",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/runtime-core": "^3.4.21",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.57.0",

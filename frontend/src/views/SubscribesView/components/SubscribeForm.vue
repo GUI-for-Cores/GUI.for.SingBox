@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { ProxyTypeOptions } from '@/constant'
 import { useBool, useMessage } from '@/hooks'
-import { type SubscribeType, useSubscribesStore, useSubconverterStore } from '@/stores'
+import { type SubscribeType, useSubscribesStore } from '@/stores'
 import { deepClone, sampleID, getUserAgent } from '@/utils'
 
 interface Props {
@@ -22,14 +22,12 @@ const loading = ref(false)
 const sub = ref<SubscribeType>({
   id: sampleID(),
   name: '',
-  useInternal: false,
   upload: 0,
   download: 0,
   total: 0,
   expire: '',
   updateTime: '',
   type: 'Http',
-  convert: true,
   url: '',
   website: '',
   path: `data/subscribes/${sampleID()}.json`,
@@ -47,7 +45,6 @@ const { t } = useI18n()
 const { message } = useMessage()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
-const subconverterStore = useSubconverterStore()
 
 const handleCancel = inject('cancel') as any
 
@@ -94,14 +91,6 @@ if (props.isUpdate) {
           { label: 'subscribe.manual', value: 'Manual' }
         ]"
       />
-    </div>
-    <!-- <div class="form-item">
-      <div class="name">{{ t('subscribe.useInternal') }}</div>
-      <Switch v-model="sub.useInternal" />
-    </div> -->
-    <div v-show="sub.type !== 'Manual' && subconverterStore.SUBCONVERTER_EXISTS" class="form-item">
-      <div class="name">{{ t('subscribe.convert') }}</div>
-      <Switch v-model="sub.convert" />
     </div>
     <div class="form-item">
       <div class="name">{{ t('subscribe.name') }} *</div>

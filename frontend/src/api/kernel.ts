@@ -38,7 +38,6 @@ const setupKernelApi = () => {
   if (profile) {
     const controller = profile.advancedConfig['external-controller'] || '127.0.0.1:20123'
     const [, port = 20123] = controller.split(':')
-    // TODO: tls
     base = `http://127.0.0.1:${port}`
     bearer = profile.advancedConfig.secret
   }

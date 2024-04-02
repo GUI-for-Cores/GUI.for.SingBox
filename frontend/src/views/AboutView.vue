@@ -3,7 +3,6 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { useAppSettingsStore } from '@/stores'
 import {
   Download,
   HttpGet,

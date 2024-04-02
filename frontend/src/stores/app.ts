@@ -26,7 +26,6 @@ export const useAppStore = defineStore('app', () => {
   })
 
   const showAbout = ref(false)
-  const showSubconverter = ref(false)
 
   return {
     menuShow,
@@ -35,7 +34,6 @@ export const useAppStore = defineStore('app', () => {
     tipsShow,
     tipsMessage,
     tipsPosition,
-    showAbout,
-    showSubconverter
+    showAbout
   }
 })

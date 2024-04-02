@@ -363,6 +363,7 @@ onActivated(() => {
     flex-wrap: wrap;
     margin-top: 4px;
     .proxy {
+      cursor: pointer;
       width: calc(20% - 8px);
       margin: 4px 4px;
       .delay {

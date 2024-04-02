@@ -3,6 +3,7 @@ export default {
     grid: '网格',
     list: '列表',
     add: '添加',
+    added: '已添加',
     more: '更多',
     edit: '编辑',
     clear: '清理',
@@ -246,7 +247,6 @@ export default {
     debug: '调试',
     components: '组件预览',
     about: '关于',
-    subconverter: '订阅转换',
     profiles: '配置',
     kernel: '内核',
     scheduledtasks: '计划任务'
@@ -326,7 +326,6 @@ export default {
     name: '名称',
     url: '远程链接',
     localPath: '本地路径',
-    convert: '订阅转换',
     website: '官网',
     path: '保存路径',
     include: '包括名称',
@@ -337,7 +336,6 @@ export default {
     updating: '更新中',
     useragent: '用户代理',
     resetUserAgent: '重置用户代理',
-    useInternal: '使用订阅内的代理组和分流规则',
     healthCheck: {
       name: '健康检查',
       interval: '时间间隔(秒)',

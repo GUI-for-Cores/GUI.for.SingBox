@@ -202,6 +202,11 @@ export const getCommands = () => {
               label: 'settings.color.skyblue',
               cmd: 'Skyblue',
               handler: () => (appSettings.app.color = Color.Skyblue)
+            },
+            {
+              label: 'settings.color.green',
+              cmd: 'Green',
+              handler: () => (appSettings.app.color = Color.Green)
             }
           ]
         },
@@ -219,11 +224,6 @@ export const getCommands = () => {
           label: 'tray.exitTip',
           cmd: 'Exit APP',
           handler: ExitApp
-        },
-        {
-          label: 'router.subconverter',
-          cmd: 'Sub Converter',
-          handler: () => (appStore.showSubconverter = true)
         },
         {
           label: 'router.about',
