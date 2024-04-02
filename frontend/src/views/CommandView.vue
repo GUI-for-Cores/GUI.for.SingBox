@@ -96,7 +96,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   <div v-show="showCommandPanel" class="command-view">
     <div class="input-view">
       <Icon icon="arrowRight" class="command-arrow" />
-      <Input ref="inputRef" v-model="userInput" :disabled="loading" autofocus pl="22px" />
+      <Input ref="inputRef" v-model="userInput" :disabled="loading" autofocus pl="24px" />
       <Icon v-show="loading" icon="loading" class="rotation" />
     </div>
     <div class="commands">
@@ -129,29 +129,30 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   z-index: 9999;
   top: 40px;
   left: 50%;
-  padding: 4px;
   border-radius: 4px;
   min-width: 50%;
   transform: translateX(-50%);
   background: var(--modal-bg);
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .input-view {
-  padding: 6px 0;
+  padding: 6px;
   position: relative;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.06);
+  z-index: 9;
 }
 
 .command-arrow {
   position: absolute;
   top: 13px;
-  left: 8px;
+  left: 12px;
 }
 
 .commands {
   overflow-y: auto;
   max-height: calc(100vh - 130px);
+  padding: 8px;
 }
 
 .no-cmds {

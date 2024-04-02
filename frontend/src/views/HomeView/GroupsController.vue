@@ -2,8 +2,8 @@
 import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
 import { ProxyGroupType } from '@/constant'
+import { useMessage, usePrompt } from '@/hooks'
 import { ignoredError, sleep } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
@@ -20,6 +20,7 @@ const loading = ref(false)
 
 const { t } = useI18n()
 const { message } = useMessage()
+const { prompt } = usePrompt()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
@@ -120,7 +121,10 @@ const isLoading = (group: string) => loadingSet.value.has(group)
 const handleGroupDelay = async (group: string) => {
   loadingSet.value.add(group)
   try {
-    await getGroupDelay(group)
+    await getGroupDelay(
+      group,
+      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204'
+    )
     await kernelApiStore.refreshProviderProxies()
   } catch (error: any) {
     message.error(error)
@@ -130,7 +134,10 @@ const handleGroupDelay = async (group: string) => {
 
 const handleProxyDelay = async (proxy: string) => {
   try {
-    const { delay } = await getProxyDelay(proxy)
+    const { delay } = await getProxyDelay(
+      proxy,
+      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204'
+    )
     const _proxy = kernelApiStore.proxies[proxy]
     _proxy.history.push({ delay })
   } catch (error: any) {
@@ -144,6 +151,22 @@ const handleRefresh = async () => {
   await ignoredError(kernelApiStore.refreshProviderProxies)
   await sleep(500)
   loading.value = false
+}
+
+const handleChangeTestUrl = async () => {
+  try {
+    const url = await prompt<string>(
+      'home.controller.delayUrl',
+      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
+      {
+        placeholder: 'https://www.gstatic.com/generate_204'
+      }
+    )
+    appSettings.app.kernel.testUrl = url
+    message.success('common.success')
+  } catch (error: any) {
+    message.info(error)
+  }
 }
 
 const locateGroup = (group: any, chain: string) => {
@@ -183,6 +206,9 @@ onActivated(() => {
       <Switch v-model="appSettings.app.kernel.sortByDelay" class="ml-8">
         {{ t('home.controller.sortBy') }}
       </Switch>
+      <Button @click="handleChangeTestUrl" type="primary" size="small" class="ml-8">
+        {{ t('home.controller.delay') }}
+      </Button>
       <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" class="ml-auto">
         <Icon icon="expand" />
       </Button>
@@ -217,7 +243,9 @@ onActivated(() => {
         <span> :: </span>
         <template v-for="(chain, index) in group.chains" :key="chain">
           <span v-if="index !== 0" style="color: gray"> / </span>
-          <Button @click.stop="locateGroup(group, chain)" type="text" size="small">{{ chain }}</Button>
+          <Button @click.stop="locateGroup(group, chain)" type="text" size="small">{{
+            chain
+          }}</Button>
         </template>
       </div>
       <div class="action">
@@ -238,43 +266,58 @@ onActivated(() => {
         </Button>
       </div>
     </div>
-    <div v-show="isExpanded(group.name)" class="body">
-      <template v-if="appSettings.app.kernel.cardMode">
-        <Card
-          v-for="proxy in group.all"
-          :title="proxy.name"
-          :selected="proxy.name === group.now"
-          :key="proxy.name"
-          @click="handleUseProxy(group, proxy)"
-          class="proxy"
-        >
-          <Button
-            @click.stop="handleProxyDelay(proxy.name)"
-            :style="{ color: delayColor(proxy.delay) }"
-            type="text"
-            class="delay"
+    <Transition name="expand">
+      <div v-if="isExpanded(group.name)" class="body">
+        <template v-if="appSettings.app.kernel.cardMode">
+          <Card
+            v-for="proxy in group.all"
+            :title="proxy.name"
+            :selected="proxy.name === group.now"
+            :key="proxy.name"
+            @click="handleUseProxy(group, proxy)"
+            class="proxy"
           >
-            {{ proxy.delay && proxy.delay + 'ms' }}
-          </Button>
-          <div class="type">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
-        </Card>
-      </template>
-      <template v-else>
-        <div
-          v-for="proxy in group.all"
-          v-tips.fast="proxy.name"
-          @click="handleUseProxy(group, proxy)"
-          :key="proxy.name"
-          :style="{ background: delayColor(proxy.delay) }"
-          :class="{ selected: proxy.name === group.now }"
-          class="proxy-square"
-        ></div>
-      </template>
-    </div>
+            <Button
+              @click.stop="handleProxyDelay(proxy.name)"
+              :style="{ color: delayColor(proxy.delay) }"
+              type="text"
+              class="delay"
+            >
+              {{ proxy.delay && proxy.delay + 'ms' }}
+            </Button>
+            <div class="type">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
+          </Card>
+        </template>
+        <template v-else>
+          <div
+            v-for="proxy in group.all"
+            v-tips.fast="proxy.name"
+            @click="handleUseProxy(group, proxy)"
+            :key="proxy.name"
+            :style="{ background: delayColor(proxy.delay) }"
+            :class="{ selected: proxy.name === group.now }"
+            class="proxy-square"
+          ></div>
+        </template>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style lang="less" scoped>
+.expand-enter-active,
+.expand-leave-active {
+  transform-origin: top;
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  transform: scaleY(0);
+}
+
 .groups {
   margin: 8px;
 

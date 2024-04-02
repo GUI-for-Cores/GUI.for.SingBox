@@ -286,10 +286,12 @@ export default {
     },
     controller: {
       name: 'Controller',
-      autoClose: 'Auto-close Connections',
-      unAvailable: 'Show UnAvailable Proxies',
+      autoClose: 'Auto-close',
+      unAvailable: 'Show UnAvailable',
       cardMode: 'Card Mode',
-      sortBy: 'Sort By Delay'
+      sortBy: 'Sort By Delay',
+      delay: 'Delay test URL',
+      delayUrl: 'Please enter the delayed test URL'
     },
     connections: {
       type: 'Type',
@@ -314,7 +316,8 @@ export default {
       active: 'Active',
       closed: 'Closed',
       closeAll: 'Close all connections',
-      sort: 'Sorting and Setting Visibility'
+      sort: 'Sorting and Setting Visibility',
+      details: 'Connection Details'
     }
   },
   subscribe: {
@@ -332,7 +335,13 @@ export default {
     proxyPrefix: 'Proxy Prefix',
     updating: 'Updating',
     useragent: 'User-Agent',
-    resetUserAgent: 'Reset User-Agent'
+    resetUserAgent: 'Reset User-Agent',
+    useInternal: 'Use internal proxy-groups and rules',
+    healthCheck: {
+      name: 'Health Check',
+      interval: 'interval(s)',
+      url: 'url'
+    }
   },
   subscribes: {
     download: 'Download',
@@ -368,7 +377,8 @@ export default {
     use: 'Reference subscriptions',
     noSubs: 'There are no available subscriptions.',
     group: 'Group Details',
-    rule: 'Rule Details'
+    rule: 'Rule Details',
+    auto: 'This configuration is managed by subscription and will be overwritten when the subscription is updated!\nIf you want to modify this profile, please use the plugin system.'
   },
   profiles: {
     shouldStop: 'Unable to delete, this profile is in use.',
@@ -474,7 +484,8 @@ export default {
       orange: 'Orange',
       pink: 'Pink',
       red: 'Red',
-      skyblue: 'Skyblue'
+      skyblue: 'Skyblue',
+      green: 'Green'
     },
     fontFamily: 'Font-Family',
     resetFont: 'Reset Font-Family',

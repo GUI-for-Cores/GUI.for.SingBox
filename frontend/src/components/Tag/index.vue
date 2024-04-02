@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  color?: 'cyan' | 'green' | 'red' | 'default'
+  color?: 'cyan' | 'green' | 'red' | 'default' | 'primary'
   size?: 'small' | 'default'
 }
 
@@ -40,8 +40,13 @@ withDefaults(defineProps<Props>(), {
 }
 .default {
   color: #3d3d3d;
-  background-color: #fafafa;
+  background-color: #ffffff;
   border: 1px solid #898989;
+}
+.primary {
+  color: var(--btn-primary-color);
+  background-color: var(--primary-color);
+  border: 1px solid var(--secondary-color);
 }
 
 .small {

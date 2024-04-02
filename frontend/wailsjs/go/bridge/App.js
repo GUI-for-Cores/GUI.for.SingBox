@@ -14,8 +14,8 @@ export function Copyfile(arg1, arg2) {
   return window['go']['bridge']['App']['Copyfile'](arg1, arg2);
 }
 
-export function Download(arg1, arg2, arg3, arg4) {
-  return window['go']['bridge']['App']['Download'](arg1, arg2, arg3, arg4);
+export function Download(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['bridge']['App']['Download'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function Exec(arg1, arg2, arg3) {
@@ -42,12 +42,20 @@ export function GetInterfaces() {
   return window['go']['bridge']['App']['GetInterfaces']();
 }
 
+export function HttpDelete(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['HttpDelete'](arg1, arg2, arg3);
+}
+
 export function HttpGet(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['HttpGet'](arg1, arg2, arg3);
 }
 
 export function HttpPost(arg1, arg2, arg3, arg4) {
   return window['go']['bridge']['App']['HttpPost'](arg1, arg2, arg3, arg4);
+}
+
+export function HttpPut(arg1, arg2, arg3, arg4) {
+  return window['go']['bridge']['App']['HttpPut'](arg1, arg2, arg3, arg4);
 }
 
 export function KillProcess(arg1) {
@@ -104,6 +112,10 @@ export function UpdateTray(arg1) {
 
 export function UpdateTrayMenus(arg1) {
   return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
+}
+
+export function Upload(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function Writefile(arg1, arg2) {

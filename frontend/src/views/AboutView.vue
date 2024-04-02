@@ -6,7 +6,7 @@ import { useMessage } from '@/hooks'
 import { useAppSettingsStore } from '@/stores'
 import {
   Download,
-  HttpGetJSON,
+  HttpGet,
   BrowserOpenURL,
   Movefile,
   GetEnv,
@@ -34,8 +34,6 @@ const needUpdate = computed(() => APP_VERSION !== remoteVersion.value)
 const { t } = useI18n()
 const { message } = useMessage()
 
-const appSettings = useAppSettingsStore()
-
 const downloadApp = async () => {
   if (loading.value || downloading.value) return
 
@@ -53,7 +51,7 @@ const downloadApp = async () => {
 
     const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
-    await Download(downloadUrl, appName + '.tmp', (progress, total) => {
+    await Download(downloadUrl, appName + '.tmp', undefined, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
     }).catch((err) => {
       message.destroy(id)
@@ -84,12 +82,10 @@ const checkForUpdates = async (showTips = false) => {
   loading.value = true
 
   try {
-    const { json } = await HttpGetJSON(APP_VERSION_API, {
-      'User-Agent': appSettings.app.userAgent
-    })
+    const { body } = await HttpGet<Record<string, any>>(APP_VERSION_API)
     const { os, arch } = await GetEnv()
 
-    const { tag_name, assets, message: msg } = json
+    const { tag_name, assets, message: msg } = body
     if (msg) throw msg
 
     const suffix = { windows: '.exe', linux: '', darwin: '' }[os]

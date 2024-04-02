@@ -6,6 +6,7 @@ interface Props {
   border?: boolean
   size?: 'default' | 'small'
   placeholder?: string
+  autoSize?: boolean
 }
 
 const model = defineModel<string>({ default: '' })
@@ -13,7 +14,8 @@ const model = defineModel<string>({ default: '' })
 withDefaults(defineProps<Props>(), {
   options: () => [],
   border: true,
-  size: 'default'
+  size: 'default',
+  autoSize: false
 })
 
 const emits = defineEmits(['change'])
@@ -22,7 +24,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div :class="{ border, [size]: true }" class="select">
+  <div :class="{ border, [size]: true, 'auto-size': autoSize }" class="select">
     <select v-model="model" @change="emits('change', model)">
       <option v-if="placeholder" value="">{{ t(placeholder) }}</option>
       <option v-for="o in options" :key="o.value" :value="o.value">
@@ -52,6 +54,10 @@ const { t } = useI18n()
       background: var(--select-option-bg);
     }
   }
+}
+
+.auto-size {
+  width: 100%;
 }
 
 .border {

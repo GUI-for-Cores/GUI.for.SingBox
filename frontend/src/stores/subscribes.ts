@@ -2,14 +2,22 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
+import { usePluginsStore, useSubconverterStore } from '@/stores'
 import { Readfile, Writefile, HttpGet, FileExists, Removefile, Exec, AbsolutePath } from '@/bridge'
 import { SubscribesFilePath } from '@/constant'
-import { deepClone, debounce, sampleID, APP_TITLE, isValidSubJson } from '@/utils'
-import { useAppSettingsStore, useSubconverterStore, usePluginsStore } from '@/stores'
+import {
+  deepClone,
+  debounce,
+  sampleID,
+  isValidSubJson,
+  getUserAgent,
+  // restoreProfile
+} from '@/utils'
 
 export type SubscribeType = {
   id: string
   name: string
+  useInternal: boolean
   upload: number
   download: number
   total: number
@@ -63,6 +71,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     await addSubscribe({
       id: id,
       name: name,
+      useInternal: false,
       upload: 0,
       download: 0,
       total: 0,
@@ -212,8 +221,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         throw 'Subscription file not exist'
       }
     } else if (s.type === 'Http') {
-      const appSettings = useAppSettingsStore()
-      const userAgent = s.userAgent || appSettings.app.userAgent || APP_TITLE
+      const userAgent = s.userAgent || getUserAgent()
 
       let header: any = {}
 
@@ -266,8 +274,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
     const pluginStore = usePluginsStore()
 
-    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
-
     if (s.type !== 'Manual') {
       proxies = proxies.filter((v: any) => {
         if ('tag' in v) {
@@ -279,31 +285,52 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         }
         return false
       })
-
-      if (s.proxyPrefix) {
-        proxies = proxies.map((v) => ({
-          ...v,
-          tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
-        }))
-      }
     }
 
-    await Writefile(s.path, JSON.stringify(proxies, null, 2))
+    const TagIdMap: Record<string, string> = {}
+    const IdTagMap: Record<string, string> = {}
+
+    proxies.forEach((proxy) => {
+      // Keep the original ID value of the proxy unchanged
+      proxy.__id__ = s.proxies.find((v) => v.tag === proxy.tag)?.id || sampleID()
+      TagIdMap[proxy.tag] = proxy.__id__
+
+      if (s.proxyPrefix) {
+        proxy.tag = proxy.tag.startsWith(s.proxyPrefix) ? proxy.tag : s.proxyPrefix + proxy.tag
+      }
+    })
+
+    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
+
+    proxies.forEach((proxy: any) => {
+      IdTagMap[proxy.__id__] = proxy.tag
+    })
 
     const match = userInfo.match(pattern) || [0, 0, 0, 0, 0]
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_, upload = 0, download = 0, total = 0, expire = 0] = match
+    const [, upload = 0, download = 0, total = 0, expire = 0] = match
     s.upload = Number(upload)
     s.download = Number(download)
     s.total = Number(total)
     s.expire = Number(expire) ? new Date(Number(expire) * 1000).toLocaleString() : ''
     s.updateTime = new Date().toLocaleString()
-    s.proxies = proxies.map(({ tag, type }) => {
-      // Keep the original ID value of the proxy unchanged
-      const id = s.proxies.find((v) => v.tag === tag)?.id || sampleID()
-      return { id, tag, type }
-    })
+    s.proxies = proxies.map(({ tag, type, __id__ }) => ({ id: __id__, tag, type }))
+
+    // if (s.useInternal) {
+    //   const profilesStore = useProfilesStore()
+    //   const profile = profilesStore.getProfileById(s.id)
+    //   const _profile = restoreProfile(config, s.id, TagIdMap, IdTagMap)
+    //   if (profile) {
+    //     profilesStore.editProfile(profile.id, _profile)
+    //   } else {
+    //     _profile.name = s.name
+    //     profilesStore.addProfile(_profile)
+    //   }
+    // }
+
+    proxies.forEach((proxy) => delete proxy.__id__)
+    await Writefile(s.path, JSON.stringify(proxies, null, 2))
   }
 
   const updateSubscribe = async (id: string) => {

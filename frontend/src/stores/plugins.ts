@@ -3,9 +3,9 @@ import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { HttpGet, Readfile, Writefile } from '@/bridge'
+import { debounce, deepClone, ignoredError, updateTrayMenus } from '@/utils'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
-import { APP_TITLE, debounce, deepClone, ignoredError, updateTrayMenus } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -79,10 +79,6 @@ const PluginsTriggerMap: {
   },
   [PluginTrigger.OnShutdown]: {
     fnName: 'onShutdown',
-    observers: []
-  },
-  [PluginTrigger.OnUpdateRuleset]: {
-    fnName: 'onUpdateRuleset',
     observers: []
   }
 }
@@ -201,10 +197,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
 
     if (plugin.type === 'Http') {
-      const appSettings = useAppSettingsStore()
-      const { body } = await HttpGet(plugin.url, {
-        'User-Agent': appSettings.app.userAgent || APP_TITLE
-      })
+      const { body } = await HttpGet(plugin.url)
       code = body
     }
 
@@ -306,9 +299,13 @@ export const usePluginsStore = defineStore('plugins', () => {
       const metadata = getPluginMetadata(cache.plugin)
       try {
         const fn = new AsyncFunction(
-          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; await ${fnName}()`
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`
         )
-        await fn()
+        const exitCode = await fn()
+        if (exitCode !== undefined && exitCode !== cache.plugin.status) {
+          cache.plugin.status = exitCode
+          editPlugin(cache.plugin.id, cache.plugin)
+        }
       } catch (error: any) {
         throw `${cache.plugin.name} : ` + (error.message || error)
       }
@@ -362,7 +359,7 @@ export const usePluginsStore = defineStore('plugins', () => {
         `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${event}()`
       )
       const exitCode = await fn()
-      if (exitCode !== undefined) {
+      if (exitCode !== undefined && exitCode !== plugin.status) {
         plugin.status = exitCode
         editPlugin(id, plugin)
       }

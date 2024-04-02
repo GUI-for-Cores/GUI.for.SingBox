@@ -56,7 +56,7 @@ type TrayContent struct {
 	Tooltip string `json:"tooltip"`
 }
 
-type DownloadTracker struct {
+type WriteTracker struct {
 	Total          int64
 	Progress       int64
 	ProgressChange string

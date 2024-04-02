@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useBool, useMessage } from '@/hooks'
 import { deepClone, ignoredError, sampleID } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
-import { PluginsTriggerOptions, DraggableOptions } from '@/constant'
+import { PluginsTriggerOptions, DraggableOptions, PluginTrigger } from '@/constant'
 
 interface Props {
   id?: string
@@ -24,11 +24,11 @@ const plugin = ref<PluginType>({
   id: pluginID,
   name: '',
   description: '',
-  type: 'Http',
+  type: 'File',
   url: '',
   status: 0,
   path: `data/plugins/plugin-${pluginID}.js`,
-  triggers: [],
+  triggers: [PluginTrigger.OnManual],
   menus: {},
   configuration: [],
   disabled: false,

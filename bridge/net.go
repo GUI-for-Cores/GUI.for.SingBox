@@ -1,11 +1,11 @@
 package bridge
 
 import (
-	"fmt"
+	"bytes"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,35 +14,16 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func getProxy(_proxy string) func(*http.Request) (*url.URL, error) {
-	proxy := http.ProxyFromEnvironment
-
-	if _proxy != "" {
-		if !strings.HasPrefix(_proxy, "http") {
-			_proxy = "http://" + _proxy
-		}
-		proxyUrl, err := url.Parse(_proxy)
-		if err == nil {
-			proxy = http.ProxyURL(proxyUrl)
-		}
+func NewHTTPRequest(method string, url string, headers map[string]string, body string, proxy string) HTTPResult {
+	req, err := http.NewRequest(method, url, strings.NewReader(body))
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
 	}
 
-	return proxy
-}
-
-func (a *App) HttpGet(url string, headers map[string]string, proxy string) HTTPResult {
-	log.Printf("HttpGet: %s %v %v", url, headers, proxy)
-
 	header := make(http.Header)
-	header.Set("User-Agent", Config.UserAgent)
 
 	for key, value := range headers {
 		header.Set(key, value)
-	}
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return HTTPResult{false, nil, err.Error()}
 	}
 
 	req.Header = header
@@ -50,7 +31,7 @@ func (a *App) HttpGet(url string, headers map[string]string, proxy string) HTTPR
 	client := &http.Client{
 		Timeout: 15 * time.Second,
 		Transport: &http.Transport{
-			Proxy: getProxy(proxy),
+			Proxy: GetProxy(proxy),
 		},
 	}
 
@@ -68,102 +49,149 @@ func (a *App) HttpGet(url string, headers map[string]string, proxy string) HTTPR
 	return HTTPResult{true, resp.Header, string(b)}
 }
 
-func (a *App) HttpPost(url string, headers map[string]string, body string, proxy string) HTTPResult {
-	log.Printf("HttpPost: %s %v %v", url, headers, body)
-
-	header := make(http.Header)
-	header.Set("User-Agent", Config.UserAgent)
-	header.Set("Content-Type", "application/json; charset=UTF-8")
-
-	for key, value := range headers {
-		header.Set(key, value)
-	}
-
-	req, err := http.NewRequest("POST", url, strings.NewReader(body))
-	if err != nil {
-		return HTTPResult{false, nil, err.Error()}
-	}
-
-	req.Header = header
-
-	client := &http.Client{
-		Timeout: 15 * time.Second,
-		Transport: &http.Transport{
-			Proxy: getProxy(proxy),
-		},
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return HTTPResult{false, nil, err.Error()}
-	}
-	defer resp.Body.Close()
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return HTTPResult{false, nil, err.Error()}
-	}
-
-	return HTTPResult{true, resp.Header, string(b)}
+func (a *App) HttpGet(url string, header map[string]string, proxy string) HTTPResult {
+	log.Printf("HttpGet: %s %v %v", url, header, proxy)
+	return NewHTTPRequest("GET", url, header, "", proxy)
 }
 
-func (a *App) Download(url string, path string, event string, proxy string) FlagResult {
-	log.Printf("Download: %s %s %s", url, path, proxy)
+func (a *App) HttpPost(url string, header map[string]string, body string, proxy string) HTTPResult {
+	log.Printf("HttpPost: %s %v %v", url, header, body)
+	return NewHTTPRequest("POST", url, header, body, proxy)
+}
 
-	path = GetPath(path)
+func (a *App) HttpDelete(url string, header map[string]string, proxy string) HTTPResult {
+	log.Printf("HttpDelete: %s %v", url, header)
+	return NewHTTPRequest("DELETE", url, header, "", proxy)
+}
 
-	err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+func (a *App) HttpPut(url string, header map[string]string, body string, proxy string) HTTPResult {
+	log.Printf("HttpPut: %s %v %v", url, header, body)
+	return NewHTTPRequest("PUT", url, header, body, proxy)
+}
 
-	header := make(http.Header)
-	header.Set("User-Agent", Config.UserAgent)
+func (a *App) Download(url string, path string, headers map[string]string, event string, proxy string) HTTPResult {
+	log.Printf("Download: %s %s %v, %s", url, path, headers, proxy)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		return HTTPResult{false, nil, err.Error()}
 	}
+
+	header := make(http.Header)
 
 	req.Header = header
 
 	client := &http.Client{
 		Timeout: 10 * time.Minute,
 		Transport: &http.Transport{
-			Proxy: getProxy(proxy),
+			Proxy: GetProxy(proxy),
 		},
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		return HTTPResult{false, nil, err.Error()}
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return FlagResult{true, fmt.Sprintf("Code: %d", resp.StatusCode)}
+	path = GetPath(path)
+
+	err = os.MkdirAll(filepath.Dir(path), os.ModePerm)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
 	}
 
 	file, err := os.Create(path)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		return HTTPResult{false, nil, err.Error()}
 	}
 	defer file.Close()
 
-	reader := io.TeeReader(resp.Body, &DownloadTracker{Total: resp.ContentLength, ProgressChange: event, App: a})
+	reader := io.TeeReader(resp.Body, &WriteTracker{Total: resp.ContentLength, ProgressChange: event, App: a})
 
 	_, err = io.Copy(file, reader)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		return HTTPResult{false, nil, err.Error()}
 	}
 
-	return FlagResult{true, "Success"}
+	return HTTPResult{true, resp.Header, "Success"}
 }
 
-func (dt *DownloadTracker) Write(p []byte) (n int, err error) {
-	dt.Progress += int64(len(p))
-	if dt.ProgressChange != "" {
-		runtime.EventsEmit(dt.App.Ctx, dt.ProgressChange, dt.Progress, dt.Total)
+func (a *App) Upload(url string, path string, headers map[string]string, event string, proxy string) HTTPResult {
+	log.Printf("Upload: %s %s %v %s", url, path, headers, proxy)
+
+	path = GetPath(path)
+
+	file, err := os.Open(path)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+	defer file.Close()
+
+	fileStat, err := file.Stat()
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	part, err := writer.CreateFormFile("file", path)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	reader := io.TeeReader(file, &WriteTracker{Total: fileStat.Size(), ProgressChange: event, App: a})
+
+	_, err = io.Copy(part, reader)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	err = writer.Close()
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	header := make(http.Header)
+
+	for key, value := range headers {
+		header.Set(key, value)
+	}
+
+	req.Header = header
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{
+		Timeout: 10 * time.Minute,
+		Transport: &http.Transport{
+			Proxy: GetProxy(proxy),
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+	defer resp.Body.Close()
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return HTTPResult{false, nil, err.Error()}
+	}
+
+	return HTTPResult{true, resp.Header, string(b)}
+}
+
+func (wt *WriteTracker) Write(p []byte) (n int, err error) {
+	wt.Progress += int64(len(p))
+	if wt.ProgressChange != "" {
+		runtime.EventsEmit(wt.App.Ctx, wt.ProgressChange, wt.Progress, wt.Total)
 	}
 	return
 }

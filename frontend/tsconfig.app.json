@@ -4,10 +4,14 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@wails/*": ["./wailsjs/*"]
-    }
+    },
+    "types": [
+      "@types/dom-view-transitions"
+    ]
   }
 }

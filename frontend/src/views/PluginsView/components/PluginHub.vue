@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
+import { ignoredError } from '@/utils'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
-import { APP_TITLE, APP_VERSION, ignoredError } from '@/utils'
-import { usePluginsStore, type PluginType, useAppSettingsStore } from '@/stores'
+import { usePluginsStore, type PluginType } from '@/stores'
 
 const loading = ref(false)
 const list = ref<PluginType[]>([])
@@ -17,18 +17,16 @@ const gfsUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/
 const { t } = useI18n()
 const { message } = useMessage()
 const pluginsStore = usePluginsStore()
-const appSettings = useAppSettingsStore()
 
 const updateList = async () => {
   loading.value = true
-  const userAgent = appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION
   try {
-    const { body: body1 } = await HttpGet(hubUrl, { 'User-Agent': userAgent })
-    const { body: body2 } = await HttpGet(gfsUrl, { 'User-Agent': userAgent })
+    const { body: body1 } = await HttpGet<string>(hubUrl)
+    const { body: body2 } = await HttpGet<string>(gfsUrl)
     const list1 = JSON.parse(body1)
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]
-    await Writefile(cacheFile, JSON.stringify([...list1, ...list2]))
+    await Writefile(cacheFile, JSON.stringify(list.value))
     message.success('plugins.updateSuccess')
   } catch (error: any) {
     message.error(error)
@@ -49,6 +47,9 @@ const getList = async () => {
 const handleAddPlugin = async (plugin: PluginType) => {
   try {
     await pluginsStore.addPlugin(plugin)
+    // Try to autoload the plugin
+    await ignoredError(pluginsStore.reloadPlugin, plugin)
+    pluginsStore.updatePluginTrigger(plugin)
     const { id } = message.info('plugins.updating')
     await pluginsStore.updatePlugin(plugin.id)
     message.update(id, 'common.success', 'success')

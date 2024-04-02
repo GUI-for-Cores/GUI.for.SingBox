@@ -1,3 +1,6 @@
+import { useAppSettingsStore } from '@/stores'
+import { APP_TITLE } from '@/utils'
+
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
 export const debounce = (fn: (...args: any) => any, wait: number) => {
@@ -39,4 +42,42 @@ export const getValue = (obj: Record<string, any>, expr: string) => {
   return expr.split('.').reduce((value, key) => {
     return value[key]
   }, obj)
+}
+
+export const getUserAgent = () => {
+  const appSettings = useAppSettingsStore()
+  return appSettings.app.userAgent || APP_TITLE
+}
+
+export const setIntervalImmediately = (func: () => void, interval: number) => {
+  func()
+  return setInterval(func, interval)
+}
+
+const isPlainObject = (obj: any) => {
+  return typeof obj === 'object' && Object.prototype.toString.call(obj) === '[object Object]'
+}
+
+export const deepAssign = (...args: any[]) => {
+  const len = args.length
+  let target = args[0]
+  if (!isPlainObject(target)) {
+    target = {}
+  }
+  for (let i = 1; i < len; i++) {
+    const source = args[i]
+    if (isPlainObject(source)) {
+      for (const s in source) {
+        if (s === '__proto__' || target === source[s]) {
+          continue
+        }
+        if (isPlainObject(source[s])) {
+          target[s] = deepAssign(target[s], source[s])
+        } else {
+          target[s] = source[s]
+        }
+      }
+    }
+  }
+  return target
 }

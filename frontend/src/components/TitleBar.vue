@@ -85,7 +85,11 @@ const menus: Menu[] = [
       <Button @click.stop="toggleFullScreen" type="text">
         <Icon :icon="isFullScreen ? 'maximize2' : 'maximize'" />
       </Button>
-      <Button @click.stop="closeWindow" type="text">
+      <Button
+        @click.stop="closeWindow"
+        :class="{ 'hover-red': appSettingsStore.app.exitOnClose }"
+        type="text"
+      >
         <Icon icon="close" />
       </Button>
     </div>
@@ -152,5 +156,9 @@ const menus: Menu[] = [
   .appname {
     font-size: 12px;
   }
+}
+
+.hover-red:hover {
+  background: rgba(255, 0, 0, 0.6);
 }
 </style>

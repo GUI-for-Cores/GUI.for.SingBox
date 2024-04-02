@@ -5,6 +5,7 @@ import { ref, computed, onUnmounted } from 'vue'
 import { useBool } from '@/hooks'
 import { LogLevelOptions } from '@/constant'
 import { getKernelLogsWS } from '@/api/kernel'
+import { setIntervalImmediately } from '@/utils'
 
 const logType = ref('info')
 const keywords = ref('')
@@ -36,9 +37,13 @@ const onLogs = (data: any) => {
   pause.value || logs.value.unshift(data)
 }
 
-const disconnect = getKernelLogsWS(onLogs)
+const { connect, disconnect } = getKernelLogsWS(onLogs)
+const timer = setIntervalImmediately(connect, 1000)
 
-onUnmounted(disconnect)
+onUnmounted(() => {
+  clearInterval(timer)
+  disconnect()
+})
 </script>
 
 <template>

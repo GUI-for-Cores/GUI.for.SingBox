@@ -290,7 +290,9 @@ export default {
       autoClose: '自动断开连接',
       unAvailable: '展示不可用节点',
       cardMode: '卡片模式',
-      sortBy: '按延迟排序'
+      sortBy: '按延迟排序',
+      delay: '延迟测试URL',
+      delayUrl: '请输入延迟测试URL'
     },
     connections: {
       type: '类型',
@@ -315,7 +317,8 @@ export default {
       active: '活动',
       closed: '已关闭',
       closeAll: '关闭所有连接',
-      sort: '排序和设置显示字段'
+      sort: '排序和设置显示字段',
+      details: '连接详情'
     }
   },
   subscribe: {
@@ -333,7 +336,13 @@ export default {
     proxyPrefix: '代理前缀',
     updating: '更新中',
     useragent: '用户代理',
-    resetUserAgent: '重置用户代理'
+    resetUserAgent: '重置用户代理',
+    useInternal: '使用订阅内的代理组和分流规则',
+    healthCheck: {
+      name: '健康检查',
+      interval: '时间间隔(秒)',
+      url: '测试链接'
+    }
   },
   subscribes: {
     download: '下行流量',
@@ -369,7 +378,8 @@ export default {
     use: '引用订阅',
     noSubs: '没有可用的订阅',
     group: '代理组详情',
-    rule: '规则详情'
+    rule: '规则详情',
+    auto: '此配置由订阅接管，更新订阅时会被覆盖！\n如果你想修改此配置，请使用插件系统。'
   },
   profiles: {
     shouldStop: '当前配置正在使用，无法删除',
@@ -475,7 +485,8 @@ export default {
       orange: '橘色',
       pink: '粉色',
       red: '红色',
-      skyblue: '天蓝色'
+      skyblue: '天蓝色',
+      green: '绿色'
     },
     fontFamily: '字体',
     resetFont: '重置字体',

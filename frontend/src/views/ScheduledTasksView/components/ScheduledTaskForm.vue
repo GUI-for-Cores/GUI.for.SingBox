@@ -109,6 +109,7 @@ if (props.isUpdate) {
 
     <div v-if="task.type === ScheduledTasksType.UpdateSubscription">
       <div class="name form-item-title">{{ t('scheduledtask.subscriptions') }}</div>
+      <Empty v-if="subscribesStore.subscribes.length === 0" />
       <div class="task-list">
         <Card
           v-for="s in subscribesStore.subscribes"
@@ -125,6 +126,7 @@ if (props.isUpdate) {
 
     <div v-else-if="task.type === ScheduledTasksType.UpdateRuleset">
       <div class="name form-item-title">{{ t('scheduledtask.rulesets') }}</div>
+      <Empty v-if="rulesetsStore.rulesets.length === 0" />
       <div class="task-list">
         <Card
           v-for="r in rulesetsStore.rulesets"
@@ -141,6 +143,7 @@ if (props.isUpdate) {
 
     <div v-else-if="task.type === ScheduledTasksType.UpdatePlugin">
       <div class="name form-item-title">{{ t('scheduledtask.plugins') }}</div>
+      <Empty v-if="pluginsStore.plugins.length === 0" />
       <div class="task-list">
         <Card
           v-for="p in pluginsStore.plugins"
@@ -157,6 +160,7 @@ if (props.isUpdate) {
 
     <div v-else-if="task.type === ScheduledTasksType.RunPlugin">
       <div class="name form-item-title">{{ t('scheduledtask.plugins') }}</div>
+      <Empty v-if="pluginsStore.plugins.length === 0" />
       <div class="task-list">
         <Card
           v-for="p in pluginsStore.plugins"

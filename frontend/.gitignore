@@ -27,5 +27,7 @@ coverage
 *.sln
 *.sw?
 
+*.tsbuildinfo
+
 package.json.md5
 components.d.ts

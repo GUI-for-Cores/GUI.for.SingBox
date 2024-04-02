@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { ProxyTypeOptions } from '@/constant'
 import { useBool, useMessage } from '@/hooks'
 import { type SubscribeType, useSubscribesStore, useSubconverterStore } from '@/stores'
-import { deepClone, sampleID, APP_TITLE } from '@/utils'
+import { deepClone, sampleID, getUserAgent } from '@/utils'
 
 interface Props {
   id?: string
@@ -22,6 +22,7 @@ const loading = ref(false)
 const sub = ref<SubscribeType>({
   id: sampleID(),
   name: '',
+  useInternal: false,
   upload: 0,
   download: 0,
   total: 0,
@@ -94,6 +95,10 @@ if (props.isUpdate) {
         ]"
       />
     </div>
+    <!-- <div class="form-item">
+      <div class="name">{{ t('subscribe.useInternal') }}</div>
+      <Switch v-model="sub.useInternal" />
+    </div> -->
     <div v-show="sub.type !== 'Manual' && subconverterStore.SUBCONVERTER_EXISTS" class="form-item">
       <div class="name">{{ t('subscribe.convert') }}</div>
       <Switch v-model="sub.convert" />
@@ -166,12 +171,13 @@ if (props.isUpdate) {
       </div>
       <div class="form-item">
         <div class="name">{{ t('subscribe.useragent') }}</div>
-        <div style="display: flex; align-items: center; width: 77%">
-          <Input v-model="sub.userAgent" :placeholder="APP_TITLE" auto-size style="width: 100%" />
-          <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')">
-            <Icon icon="reset" fill="var(--primary-btn-color)" />
-          </Button>
-        </div>
+        <Input v-model="sub.userAgent" :placeholder="getUserAgent()" auto-size>
+          <template #extra>
+            <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')">
+              <Icon icon="reset" fill="var(--primary-btn-color)" />
+            </Button>
+          </template>
+        </Input>
       </div>
     </div>
   </div>

@@ -49,7 +49,7 @@ const toggle = () => {
   border-radius: 24px;
   transition: all 0.2s;
   font-size: 12px;
-  color: #fff;
+  color: var(--card-color);
   .dot {
     width: 18px;
     height: 18px;
@@ -77,6 +77,7 @@ const toggle = () => {
 }
 
 .on {
+  color: #fff;
   background-color: var(--switch-on-bg);
   .dot {
     background-color: var(--switch-on-dot-bg);

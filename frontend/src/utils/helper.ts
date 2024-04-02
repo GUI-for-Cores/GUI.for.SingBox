@@ -1,6 +1,13 @@
-import { Exec, ExitApp, GetEnv } from '@/bridge'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore, usePluginsStore } from '@/stores'
+import {
+  Exec,
+  ExitApp,
+  GetEnv,
+  WindowFullscreen,
+  WindowIsFullscreen,
+  WindowUnfullscreen
+} from '@/bridge'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -238,4 +245,9 @@ export const exitApp = async () => {
   }
 
   ExitApp()
+}
+
+export const toggleFullScreen = async () => {
+  const isFull = await WindowIsFullscreen()
+  isFull ? WindowUnfullscreen() : WindowFullscreen()
 }
