@@ -185,7 +185,11 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     s.total = Number(total)
     s.expire = Number(expire) ? new Date(Number(expire) * 1000).toLocaleString() : ''
     s.updateTime = new Date().toLocaleString()
-    s.proxies = proxies.map(({ tag, type, __id__ }) => ({ id: __id__, tag, type }))
+    s.proxies = proxies.map(({ tag, type }) => {
+      // Keep the original ID value of the proxy unchanged
+      const id = s.proxies.find((v) => v.tag === tag)?.id || sampleID()
+      return { id, tag, type }
+    })
   }
 
   const updateSubscribe = async (id: string) => {
