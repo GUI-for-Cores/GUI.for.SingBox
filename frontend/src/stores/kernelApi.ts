@@ -278,7 +278,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     try {
       const pid = await ExecBackground(
         kernelFilePath,
-        ['run', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
+        ['run', '--disable-color', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
         // stdout
         (out: string) => onOut(out, pid),
         // end
