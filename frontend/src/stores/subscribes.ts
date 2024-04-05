@@ -153,11 +153,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
     const pluginStore = usePluginsStore()
 
+    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
+
     if (s.type !== 'Manual') {
       proxies = proxies.filter((v: any) => {
-        const name_tag = v.tag || v.name
-        const flag1 = s.include ? new RegExp(s.include).test(name_tag) : true
-        const flag2 = s.exclude ? !new RegExp(s.exclude).test(name_tag) : true
+        const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
+        const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
         const flag3 = s.includeProtocol ? new RegExp(s.includeProtocol).test(v.type) : true
         const flag4 = s.excludeProtocol ? !new RegExp(s.excludeProtocol).test(v.type) : true
         return flag1 && flag2 && flag3 && flag4
@@ -165,18 +166,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
       if (s.proxyPrefix) {
         proxies = proxies.map((v) => {
-          const name_tag = v.name ? 'name' : 'tag'
           return {
             ...v,
-            [name_tag]: v[name_tag].startsWith(s.proxyPrefix)
-              ? v[name_tag]
-              : s.proxyPrefix + v[name_tag]
+            tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
           }
         })
       }
     }
-
-    proxies = await pluginStore.onSubscribeTrigger(proxies, s)
 
     await Writefile(s.path, JSON.stringify(proxies, null, 2))
 
