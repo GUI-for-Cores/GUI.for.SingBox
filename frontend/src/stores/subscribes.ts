@@ -11,7 +11,8 @@ import {
   sampleID,
   isValidSubJson,
   getUserAgent,
-  isValidSubYAML
+  isValidSubYAML,
+  isValidBase64
 } from '@/utils'
 
 export type SubscribeType = {
@@ -144,6 +145,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       proxies = JSON.parse(body).outbounds
     } else if (isValidSubYAML(body)) {
       proxies = parse(body).proxies
+    } else if (isValidBase64(body)) {
+      proxies = [{ base64: body }]
     } else {
       throw 'Not a valid subscription data'
     }
