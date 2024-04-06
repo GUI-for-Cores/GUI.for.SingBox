@@ -94,7 +94,9 @@ const handleUpdatePlugin = async (s: PluginType) => {
 
 const handleDeletePlugin = async (p: PluginType) => {
   try {
-    await ignoredError(Removefile, p.path)
+    if (p.path.startsWith('data')) {
+      await ignoredError(Removefile, p.path)
+    }
     await pluginsStore.deletePlugin(p.id)
   } catch (error: any) {
     console.error('handleDeletePlugin: ', error)

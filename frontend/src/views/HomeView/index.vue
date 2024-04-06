@@ -206,40 +206,36 @@ watch(showController, (v) => {
     v-model:open="showApiLogs"
     :submit="false"
     mask-closable
+    title="Logs"
     width="90"
     height="90"
-    title="Logs"
+    cancel-text="common.close"
   >
     <LogsController />
   </Modal>
 
-  <Modal
-    v-model:open="showQuickStart"
-    :title="t('subscribes.enterLink')"
-    :footer="false"
-    mask-closable
-  >
+  <Modal v-model:open="showQuickStart" :footer="false" mask-closable title="subscribes.enterLink">
     <QuickStart />
   </Modal>
 
   <Modal
     v-model:open="showSettings"
-    :title="t('home.overview.settings')"
     :submit="false"
-    cancel-text="common.close"
-    width="90"
     mask-closable
+    cancel-text="common.close"
+    title="home.overview.settings"
+    width="90"
   >
     <CommonController />
   </Modal>
 
   <Modal
     v-model:open="showKernelLogs"
-    :title="t('home.overview.viewlog')"
     :submit="false"
     width="90"
     height="90"
     mask-closable
+    title="home.overview.viewlog"
   >
     <KernelLogs />
   </Modal>

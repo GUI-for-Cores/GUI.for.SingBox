@@ -10,7 +10,6 @@ import {
   WindowSetAlwaysOnTop,
   WindowHide,
   WindowSetSize,
-  WindowCenter,
   WindowReloadApp
 } from '@/bridge'
 
@@ -46,7 +45,6 @@ const menus: Menu[] = [
     handler: async () => {
       WindowUnfullscreen()
       await WindowSetSize(800, 540)
-      WindowCenter()
       isFullScreen.value = false
     }
   },
