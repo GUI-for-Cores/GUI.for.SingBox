@@ -428,7 +428,7 @@ export default {
     confKey: 'Key',
     confDefault: 'Default',
     options: 'Options',
-    restore: 'Restore to default'
+    restore: 'Reset to default'
   },
   plugins: {
     updating: 'Updating',
