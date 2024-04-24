@@ -336,6 +336,7 @@ export default {
     updating: '更新中',
     useragent: '用户代理',
     resetUserAgent: '重置用户代理',
+    inSecure: '跳过证书验证',
     healthCheck: {
       name: '健康检查',
       interval: '时间间隔(秒)',

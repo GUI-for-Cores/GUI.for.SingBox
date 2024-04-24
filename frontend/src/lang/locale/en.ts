@@ -335,6 +335,7 @@ export default {
     updating: 'Updating',
     useragent: 'User-Agent',
     resetUserAgent: 'Reset User-Agent',
+    inSecure: 'InsecureSkipVerify',
     healthCheck: {
       name: 'Health Check',
       interval: 'interval(s)',
