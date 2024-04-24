@@ -63,11 +63,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Channel
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: MathieuSoysal/replace-string-in-file@v1.1.0
         with:
-          find: "Dev"
-          replace: "Stable"
-          include: "frontend/.env"
+          file: frontend/.env
+          old-string: Dev
+          new-string: Stable
 
       - name: Set up Go
         uses: actions/setup-go@v4
