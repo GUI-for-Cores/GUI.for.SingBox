@@ -2,10 +2,10 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ProxyTypeOptions } from '@/constant'
 import { useBool, useMessage } from '@/hooks'
-import { type SubscribeType, useSubscribesStore } from '@/stores'
 import { deepClone, sampleID, getUserAgent } from '@/utils'
+import { type SubscribeType, useSubscribesStore } from '@/stores'
+import { ProxyTypeOptions, DefaultExcludeProtocols } from '@/constant'
 
 interface Props {
   id?: string
@@ -34,7 +34,7 @@ const sub = ref<SubscribeType>({
   include: '',
   exclude: '',
   includeProtocol: '',
-  excludeProtocol: '',
+  excludeProtocol: DefaultExcludeProtocols,
   proxyPrefix: '',
   disabled: false,
   inSecure: false,

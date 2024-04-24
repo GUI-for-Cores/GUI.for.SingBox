@@ -2,9 +2,9 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { SubscribesFilePath } from '@/constant'
 import { usePluginsStore } from '@/stores'
 import { Readfile, Writefile, HttpGet } from '@/bridge'
+import { SubscribesFilePath, DefaultExcludeProtocols } from '@/constant'
 import {
   deepClone,
   debounce,
@@ -83,7 +83,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       include: '',
       exclude: '',
       includeProtocol: '',
-      excludeProtocol: '',
+      excludeProtocol: DefaultExcludeProtocols,
       proxyPrefix: '',
       disabled: false,
       inSecure: false,

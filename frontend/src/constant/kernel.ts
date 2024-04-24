@@ -333,3 +333,5 @@ export const EmptyRuleSet = {
   version: 1,
   rules: []
 }
+
+export const DefaultExcludeProtocols = 'direct|reject|selector|urltest|block|dns'

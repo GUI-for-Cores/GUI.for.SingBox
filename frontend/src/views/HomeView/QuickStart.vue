@@ -61,7 +61,7 @@ const handleSubmit = async () => {
     include: '',
     exclude: '',
     includeProtocol: '',
-    excludeProtocol: '',
+    excludeProtocol: Defaults.DefaultExcludeProtocols,
     proxyPrefix: '',
     disabled: false,
     inSecure: false,
