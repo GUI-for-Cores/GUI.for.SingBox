@@ -1,7 +1,6 @@
 import i18n from '@/lang'
 import { Theme, type MenuItem, Color, Lang } from '@/constant'
 import { debounce, exitApp, handleChangeMode, handleUseProxy, sampleID } from '@/utils'
-import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import { Notify, RestartApp, EventsOn, EventsOff, UpdateTray, UpdateTrayMenus } from '@/bridge'
 

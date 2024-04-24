@@ -10,8 +10,8 @@ import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 import {
   formatBytes,
   formatRelativeTime,
-  addToRuleSet,
-  ignoredError,
+  // addToRuleSet,
+  // ignoredError,
   setIntervalImmediately
 } from '@/utils'
 

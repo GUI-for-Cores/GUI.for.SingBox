@@ -43,7 +43,6 @@ export const useEnvStore = defineStore('env', () => {
 
   const setSystemProxy = async () => {
     const kernelApiStore = useKernelApiStore()
-    const envStore = useEnvStore()
 
     let port = 0
     let proxyType = 0 // 0: Mixed    1: Http    2: Socks
