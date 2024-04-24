@@ -62,6 +62,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set Channel
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "Dev"
+          replace: "Stable"
+          include: "frontend/.env"
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
