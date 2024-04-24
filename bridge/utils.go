@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -43,11 +44,34 @@ func ConvertByte2String(byte []byte) string {
 func (a *App) AbsolutePath(path string) FlagResult {
 	log.Printf("AbsolutePath: %s", path)
 
-	if filepath.IsAbs(path) {
-		return FlagResult{true, path}
-	}
-
 	path = GetPath(path)
 
 	return FlagResult{true, path}
+}
+
+func (a *App) GetEnv() EnvResult {
+	return EnvResult{
+		AppName:  Env.AppName,
+		BasePath: Env.BasePath,
+		OS:       Env.OS,
+		ARCH:     Env.ARCH,
+		X64Level: Env.X64Level,
+	}
+}
+
+func (a *App) GetInterfaces() FlagResult {
+	log.Printf("GetInterfaces")
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	var interfaceNames []string
+
+	for _, inter := range interfaces {
+		interfaceNames = append(interfaceNames, inter.Name)
+	}
+
+	return FlagResult{true, strings.Join(interfaceNames, "|")}
 }

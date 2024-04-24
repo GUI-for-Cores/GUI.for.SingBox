@@ -3,13 +3,15 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
 import { useMessage } from '@/hooks'
+import { useEnvStore } from '@/stores'
 import {
   Download,
   HttpGet,
   BrowserOpenURL,
   Movefile,
-  GetEnv,
   RestartApp,
+  UnzipZIPFile,
+  Makedir,
   Removefile
 } from '@/bridge'
 import {
@@ -18,8 +20,7 @@ import {
   PROJECT_URL,
   TG_GROUP,
   TG_CHANNEL,
-  APP_VERSION_API,
-  ignoredError
+  APP_VERSION_API
 } from '@/utils'
 
 let downloadUrl = ''
@@ -32,6 +33,7 @@ const needUpdate = computed(() => APP_VERSION !== remoteVersion.value)
 
 const { t } = useI18n()
 const { message } = useMessage()
+const envStore = useEnvStore()
 
 const downloadApp = async () => {
   if (loading.value || downloading.value) return
@@ -43,27 +45,35 @@ const downloadApp = async () => {
 
   downloading.value = true
 
+  const { appName, os } = envStore.env
+
+  if (os === 'darwin') {
+    message.error('Updates not supported')
+    return
+  }
+
+  const tmpFile = 'data/.cache/gui.zip'
+
   try {
-    const { appName } = await GetEnv()
-
-    const bakFile = appName + '_' + APP_VERSION + '.bak'
-
     const { id } = message.info('Downloading...', 10 * 60 * 1_000)
 
-    await Download(downloadUrl, appName + '.tmp', undefined, (progress, total) => {
+    await Makedir('data/.cache')
+
+    await Download(downloadUrl, tmpFile, {}, (progress, total) => {
       message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
-    }).catch((err) => {
+    }).finally(() => {
       message.destroy(id)
-      throw err
     })
 
-    message.destroy(id)
+    await Movefile(appName, appName + '.bak')
 
-    await Movefile(appName, bakFile)
+    await UnzipZIPFile(tmpFile, '.')
 
-    await Movefile(appName + '.tmp', appName)
+    const suffix = { windows: '.exe', linux: '' }[os]
 
-    await ignoredError(Removefile, bakFile)
+    await Movefile(APP_TITLE + suffix, appName)
+
+    await Removefile(tmpFile)
 
     needRestart.value = true
     message.success('about.updateSuccessfulRestart')
@@ -82,13 +92,12 @@ const checkForUpdates = async (showTips = false) => {
 
   try {
     const { body } = await HttpGet<Record<string, any>>(APP_VERSION_API)
-    const { os, arch } = await GetEnv()
 
     const { tag_name, assets, message: msg } = body
     if (msg) throw msg
 
-    const suffix = { windows: '.exe', linux: '', darwin: '' }[os]
-    const assetName = `GUI.for.SingBox-${os}-${arch}${suffix}`
+    const { os, arch } = envStore.env
+    const assetName = `GUI.for.SingBox-${os}-${arch}.zip`
 
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName

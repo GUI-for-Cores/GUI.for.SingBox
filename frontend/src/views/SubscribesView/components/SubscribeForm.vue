@@ -37,6 +37,7 @@ const sub = ref<SubscribeType>({
   excludeProtocol: '',
   proxyPrefix: '',
   disabled: false,
+  inSecure: false,
   userAgent: '',
   proxies: []
 })
@@ -167,6 +168,10 @@ if (props.isUpdate) {
             </Button>
           </template>
         </Input>
+      </div>
+      <div class="form-item">
+        <div class="name">{{ t('subscribe.inSecure') }}</div>
+        <Switch v-model="sub.inSecure" />
       </div>
     </div>
   </div>

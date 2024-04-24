@@ -92,7 +92,7 @@ const menus: Menu[] = [
       </Button>
     </div>
   </div>
-  <div v-else class="placeholder" style="--wails-draggable: drag">
+  <div v-else-if="envStore.env.os === 'darwin'" class="placeholder" style="--wails-draggable: drag">
     <div
       :style="{
         color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)'
@@ -108,7 +108,6 @@ const menus: Menu[] = [
 
 <style lang="less" scoped>
 .titlebar {
-  user-select: none;
   display: flex;
   padding: 4px 12px;
   align-items: center;
@@ -116,7 +115,6 @@ const menus: Menu[] = [
 .logo {
   width: 24px;
   height: 24px;
-  user-select: none;
 }
 .appname {
   font-size: 14px;
@@ -146,7 +144,6 @@ const menus: Menu[] = [
   }
 }
 .placeholder {
-  user-select: none;
   height: 40px;
   display: flex;
   align-items: center;

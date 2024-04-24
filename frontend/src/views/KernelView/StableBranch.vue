@@ -15,7 +15,8 @@ import {
   Removefile,
   GetEnv,
   Makedir,
-  UnzipGZFile
+  UnzipGZFile,
+  AbsolutePath
 } from '@/bridge'
 
 const releaseUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
@@ -99,7 +100,10 @@ const downloadCore = async () => {
     await Movefile(tmpPath + '/' + fileName, kernelFilePath)
     await Removefile(tmpPath)
     await Removefile(tmp)
-    await ignoredError(Removefile, bakFile)
+
+    if (['darwin', 'linux'].includes(os)) {
+      await ignoredError(Exec, 'chmod', ['+x', await AbsolutePath(kernelFilePath)])
+    }
 
     downloadSuccessful.value = true
 

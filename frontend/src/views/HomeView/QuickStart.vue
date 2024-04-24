@@ -64,6 +64,7 @@ const handleSubmit = async () => {
     excludeProtocol: '',
     proxyPrefix: '',
     disabled: false,
+    inSecure: false,
     userAgent: '',
     proxies: []
   }

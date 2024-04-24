@@ -1,4 +1,4 @@
-//go:build darwin
+//go:build linux
 
 package bridge
 
@@ -25,7 +25,7 @@ func (a *App) ExitApp() {
 }
 
 func (a *App) RestartApp() FlagResult {
-	exePath := Env.BasePath + "\\" + Env.AppName
+	exePath := Env.BasePath + "/" + Env.AppName
 
 	cmd := exec.Command(exePath)
 

@@ -5,6 +5,7 @@ package bridge
 import (
 	"embed"
 	"log"
+	"os"
 	"os/exec"
 	"syscall"
 
@@ -79,6 +80,7 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 func (a *App) ExitApp() {
 	systray.Quit()
 	runtime.Quit(a.Ctx)
+	os.Exit(0)
 }
 
 func (a *App) RestartApp() FlagResult {

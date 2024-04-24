@@ -20,9 +20,7 @@ const transformRequest = (header: Record<string, string>, body: any) => {
       break
     }
     case 'application/x-www-form-urlencoded': {
-      const usp = new URLSearchParams()
-      Object.entries(body).forEach(([key, value]: any) => usp.append(key, value))
-      body = usp.toString()
+      body = new URLSearchParams(body).toString()
       break
     }
   }
@@ -48,14 +46,17 @@ export const Download = async (
   headers: HttpHeader = {},
   progress?: RequestProgressCallback
 ) => {
-  const proxy = await GetSystemProxy()
+  const Proxy = await GetSystemProxy()
   const { header: _header } = transformRequest(headers, null)
 
   const event = progress ? sampleID() : ''
 
   progress && EventsOn(event, progress)
 
-  const { flag, header, body } = await App.Download(url, path, _header, event, proxy)
+  const { flag, header, body } = await App.Download(url, path, _header, event, {
+    Proxy,
+    Insecure: false
+  })
 
   progress && EventsOff(event)
 
@@ -70,14 +71,17 @@ export const Upload = async (
   headers: HttpHeader = {},
   progress?: RequestProgressCallback
 ) => {
-  const proxy = await GetSystemProxy()
+  const Proxy = await GetSystemProxy()
   const { header: _header } = transformRequest(headers, null)
 
   const event = progress ? sampleID() : ''
 
   progress && EventsOn(event, progress)
 
-  const { flag, header, body } = await App.Upload(url, path, _header, event, proxy)
+  const { flag, header, body } = await App.Upload(url, path, _header, event, {
+    Proxy,
+    Insecure: false
+  })
 
   progress && EventsOff(event)
 
@@ -86,11 +90,15 @@ export const Upload = async (
   return transformResponse(header, body)
 }
 
-export const HttpGet = async <T = any>(url: string, headers: HttpHeader = {}) => {
-  const proxy = await GetSystemProxy()
+export const HttpGet = async <T = any>(url: string, headers: HttpHeader = {}, options = {}) => {
+  const Proxy = await GetSystemProxy()
   const { header: _header } = transformRequest(headers, null)
 
-  const { flag, header, body } = await App.HttpGet(url, _header, proxy)
+  const { flag, header, body } = await App.HttpGet(url, _header, {
+    Proxy,
+    Insecure: false,
+    ...options
+  })
   if (!flag) {
     throw body
   }
@@ -99,10 +107,14 @@ export const HttpGet = async <T = any>(url: string, headers: HttpHeader = {}) =>
 }
 
 export const HttpPost = async <T = any>(url: string, headers: HttpHeader = {}, body = {}) => {
-  const proxy = await GetSystemProxy()
+  const Proxy = await GetSystemProxy()
   const { header: _header, body: bodyStr } = transformRequest(headers, body)
 
-  const { flag, header, body: _body } = await App.HttpPost(url, _header, bodyStr, proxy)
+  const {
+    flag,
+    header,
+    body: _body
+  } = await App.HttpPost(url, _header, bodyStr, { Proxy, Insecure: false })
   if (!flag) {
     throw _body
   }
@@ -111,10 +123,14 @@ export const HttpPost = async <T = any>(url: string, headers: HttpHeader = {}, b
 }
 
 export const HttpDelete = async <T = any>(url: string, headers: HttpHeader = {}) => {
-  const proxy = await GetSystemProxy()
+  const Proxy = await GetSystemProxy()
   const { header: _header } = transformRequest(headers, null)
 
-  const { flag, header, body: _body } = await App.HttpDelete(url, _header, proxy)
+  const {
+    flag,
+    header,
+    body: _body
+  } = await App.HttpDelete(url, _header, { Proxy, Insecure: false })
   if (!flag) {
     throw _body
   }
@@ -123,10 +139,14 @@ export const HttpDelete = async <T = any>(url: string, headers: HttpHeader = {})
 }
 
 export const HttpPut = async <T = any>(url: string, headers: HttpHeader = {}, body = {}) => {
-  const proxy = await GetSystemProxy()
+  const Proxy = await GetSystemProxy()
   const { header: _header, body: bodyStr } = transformRequest(headers, body)
 
-  const { flag, header, body: _body } = await App.HttpPut(url, _header, bodyStr, proxy)
+  const {
+    flag,
+    header,
+    body: _body
+  } = await App.HttpPut(url, _header, bodyStr, { Proxy, Insecure: false })
   if (!flag) {
     throw _body
   }

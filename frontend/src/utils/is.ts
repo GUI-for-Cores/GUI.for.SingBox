@@ -52,3 +52,5 @@ export const isValidInlineRuleJson = (str: string) => {
     return false
   }
 }
+
+export const isNumber = (v: any) => typeof v === 'number'

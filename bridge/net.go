@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"bytes"
+	"crypto/tls"
 	"io"
 	"log"
 	"mime/multipart"
@@ -14,7 +15,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func NewHTTPRequest(method string, url string, headers map[string]string, body string, proxy string) HTTPResult {
+func NewHTTPRequest(method string, url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
 	req, err := http.NewRequest(method, url, strings.NewReader(body))
 	if err != nil {
 		return HTTPResult{false, nil, err.Error()}
@@ -31,7 +32,10 @@ func NewHTTPRequest(method string, url string, headers map[string]string, body s
 	client := &http.Client{
 		Timeout: 15 * time.Second,
 		Transport: &http.Transport{
-			Proxy: GetProxy(proxy),
+			Proxy: GetProxy(options.Proxy),
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: options.Insecure,
+			},
 		},
 	}
 
@@ -49,28 +53,28 @@ func NewHTTPRequest(method string, url string, headers map[string]string, body s
 	return HTTPResult{true, resp.Header, string(b)}
 }
 
-func (a *App) HttpGet(url string, header map[string]string, proxy string) HTTPResult {
-	log.Printf("HttpGet: %s %v %v", url, header, proxy)
-	return NewHTTPRequest("GET", url, header, "", proxy)
+func (a *App) HttpGet(url string, header map[string]string, options RequestOptions) HTTPResult {
+	log.Printf("HttpGet: %s %v %v", url, header, options)
+	return NewHTTPRequest("GET", url, header, "", options)
 }
 
-func (a *App) HttpPost(url string, header map[string]string, body string, proxy string) HTTPResult {
+func (a *App) HttpPost(url string, header map[string]string, body string, options RequestOptions) HTTPResult {
 	log.Printf("HttpPost: %s %v %v", url, header, body)
-	return NewHTTPRequest("POST", url, header, body, proxy)
+	return NewHTTPRequest("POST", url, header, body, options)
 }
 
-func (a *App) HttpDelete(url string, header map[string]string, proxy string) HTTPResult {
+func (a *App) HttpDelete(url string, header map[string]string, options RequestOptions) HTTPResult {
 	log.Printf("HttpDelete: %s %v", url, header)
-	return NewHTTPRequest("DELETE", url, header, "", proxy)
+	return NewHTTPRequest("DELETE", url, header, "", options)
 }
 
-func (a *App) HttpPut(url string, header map[string]string, body string, proxy string) HTTPResult {
+func (a *App) HttpPut(url string, header map[string]string, body string, options RequestOptions) HTTPResult {
 	log.Printf("HttpPut: %s %v %v", url, header, body)
-	return NewHTTPRequest("PUT", url, header, body, proxy)
+	return NewHTTPRequest("PUT", url, header, body, options)
 }
 
-func (a *App) Download(url string, path string, headers map[string]string, event string, proxy string) HTTPResult {
-	log.Printf("Download: %s %s %v, %s", url, path, headers, proxy)
+func (a *App) Download(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
+	log.Printf("Download: %s %s %v, %v", url, path, headers, options)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -84,7 +88,10 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 	client := &http.Client{
 		Timeout: 10 * time.Minute,
 		Transport: &http.Transport{
-			Proxy: GetProxy(proxy),
+			Proxy: GetProxy(options.Proxy),
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: options.Insecure,
+			},
 		},
 	}
 
@@ -117,8 +124,8 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 	return HTTPResult{true, resp.Header, "Success"}
 }
 
-func (a *App) Upload(url string, path string, headers map[string]string, event string, proxy string) HTTPResult {
-	log.Printf("Upload: %s %s %v %s", url, path, headers, proxy)
+func (a *App) Upload(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
+	log.Printf("Upload: %s %s %v %v", url, path, headers, options)
 
 	path = GetPath(path)
 
@@ -170,7 +177,10 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 	client := &http.Client{
 		Timeout: 10 * time.Minute,
 		Transport: &http.Transport{
-			Proxy: GetProxy(proxy),
+			Proxy: GetProxy(options.Proxy),
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: options.Insecure,
+			},
 		},
 	}
 

@@ -8,6 +8,9 @@ export const PluginsFilePath = 'data/plugins.yaml'
 
 export const ScheduledTasksFilePath = 'data/scheduledtasks.yaml'
 
+export const DefaultFontFamily =
+  'system-ui, "Microsoft YaHei UI", "Source Han Sans CN", "Twemoji Mozilla", sans-serif'
+
 export enum WindowStartState {
   Normal = 0,
   // Maximised = 1,
@@ -55,7 +58,7 @@ export const Colors = {
   },
   [Color.Red]: {
     primary: 'red',
-    secondary: '#f76363'
+    secondary: '#9e0404'
   },
   [Color.Skyblue]: {
     primary: 'skyblue',
@@ -63,7 +66,7 @@ export const Colors = {
   },
   [Color.Green]: {
     primary: 'green',
-    secondary: '#008000'
+    secondary: '#025f02'
   }
 }
 

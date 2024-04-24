@@ -33,6 +33,7 @@ export type SubscribeType = {
   excludeProtocol: string
   proxyPrefix: string
   disabled: boolean
+  inSecure: boolean
   proxies: { id: string; tag: string; type: string }[]
   userAgent: string
   // Not Config
@@ -85,6 +86,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       excludeProtocol: '',
       proxyPrefix: '',
       disabled: false,
+      inSecure: false,
       userAgent: '',
       proxies: []
     })
@@ -115,7 +117,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   }
 
   const _doUpdateSub = async (s: SubscribeType) => {
-    const pattern = /upload=(\d*); download=(\d*); total=(\d*); expire=(\d*)/
+    const pattern = /upload=(\d*);\s*download=(\d*);\s*total=(\d*);\s*expire=(\d*)/
     let userInfo = 'upload=0; download=0; total=0; expire=0'
     let body = ''
     let proxies: Record<string, any>[] = []
@@ -129,9 +131,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (s.type === 'Http') {
-      const { header: h, body: b } = await HttpGet(s.url, {
-        'User-Agent': s.userAgent || getUserAgent()
-      })
+      const { header: h, body: b } = await HttpGet(
+        s.url,
+        {
+          'User-Agent': s.userAgent || getUserAgent()
+        },
+        { Insecure: s.inSecure }
+      )
 
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
       if (typeof b !== 'string') {

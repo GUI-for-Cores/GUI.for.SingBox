@@ -263,15 +263,15 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
         <div>
           {{ t('subscribes.upload') }}
           :
-          {{ s.upload ? formatBytes(s.upload) : '--' }}
+          {{ s.upload ? formatBytes(s.upload, 2) : '--' }}
           /
           {{ t('subscribes.download') }}
           :
-          {{ s.download ? formatBytes(s.download) : '--' }}
+          {{ s.download ? formatBytes(s.download, 2) : '--' }}
           /
           {{ t('subscribes.total') }}
           :
-          {{ s.total ? formatBytes(s.total) : '--' }}
+          {{ s.total ? formatBytes(s.total, 2) : '--' }}
         </div>
         <div>
           {{ t('subscribes.expire') }}

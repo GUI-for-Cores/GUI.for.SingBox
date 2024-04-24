@@ -3,9 +3,9 @@ import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { HttpGet, Readfile, Writefile } from '@/bridge'
-import { debounce, deepClone, ignoredError, updateTrayMenus } from '@/utils'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
+import { debounce, deepClone, ignoredError, updateTrayMenus, isNumber } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -302,7 +302,7 @@ export const usePluginsStore = defineStore('plugins', () => {
           `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`
         )
         const exitCode = await fn()
-        if (exitCode !== undefined && exitCode !== cache.plugin.status) {
+        if (isNumber(exitCode) && exitCode !== cache.plugin.status) {
           cache.plugin.status = exitCode
           editPlugin(cache.plugin.id, cache.plugin)
         }
@@ -359,7 +359,7 @@ export const usePluginsStore = defineStore('plugins', () => {
         `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${event}()`
       )
       const exitCode = await fn()
-      if (exitCode !== undefined && exitCode !== plugin.status) {
+      if (isNumber(exitCode) && exitCode !== plugin.status) {
         plugin.status = exitCode
         editPlugin(id, plugin)
       }

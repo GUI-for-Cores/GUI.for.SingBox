@@ -29,8 +29,12 @@ export const useEnvStore = defineStore('env', () => {
     if (!proxyServer) {
       systemProxy.value = false
     } else {
-      const { port, 'mixed-port': mixedPort } = kernelApiStore.config
-      const proxyServerList = [`127.0.0.1:${port}`, `127.0.0.1:${mixedPort}`]
+      const { port, 'mixed-port': mixedPort, 'socks-port': socksPort } = kernelApiStore.config
+      const proxyServerList = [
+        `127.0.0.1:${port}`,
+        `127.0.0.1:${mixedPort}`,
+        `127.0.0.1:${socksPort}`
+      ]
       systemProxy.value = proxyServerList.includes(proxyServer)
     }
 
@@ -39,19 +43,26 @@ export const useEnvStore = defineStore('env', () => {
 
   const setSystemProxy = async () => {
     const kernelApiStore = useKernelApiStore()
+    const envStore = useEnvStore()
 
     let port = 0
+    let proxyType = 0 // 0: Mixed    1: Http    2: Socks
     const { port: _port, 'socks-port': socksPort, 'mixed-port': mixedPort } = kernelApiStore.config
 
     if (mixedPort) {
       port = mixedPort
+      proxyType = 0
     } else if (_port) {
       port = _port
-    } else if (socksPort) throw 'home.overview.notSupportSocks'
+      proxyType = 1
+    } else if (socksPort) {
+      port = socksPort
+      proxyType = 2
+    }
 
     if (!port) throw 'home.overview.needPort'
 
-    await SetSystemProxy(true, '127.0.0.1:' + port)
+    await SetSystemProxy(true, '127.0.0.1:' + port, proxyType)
 
     systemProxy.value = true
   }

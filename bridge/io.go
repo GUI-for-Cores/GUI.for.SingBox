@@ -55,39 +55,38 @@ func (a *App) Movefile(source string, target string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
-func UNUSED(x ...interface{}) {}
-
-func (a *App) Copyfile(source string, target string) FlagResult {
-	log.Printf("Copyfile: %s -> %s", source, target)
-
-	source = GetPath(source)
-	target = GetPath(target)
-
-	src, err := os.Open(source)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-	defer src.Close()
-
-	dest, err := os.Create(target)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-	defer dest.Close()
-	nBytes, err := io.Copy(dest, src)
-	UNUSED(nBytes)
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-	return FlagResult{true, "Success"}
-}
-
 func (a *App) Removefile(path string) FlagResult {
 	log.Printf("RemoveFile: %s", path)
 
 	path = GetPath(path)
 
 	err := os.RemoveAll(path)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, "Success"}
+}
+
+func (a *App) Copyfile(src string, dst string) FlagResult {
+	log.Printf("Copyfile: %s -> %s", src, dst)
+
+	src = GetPath(src)
+	dst = GetPath(dst)
+
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
