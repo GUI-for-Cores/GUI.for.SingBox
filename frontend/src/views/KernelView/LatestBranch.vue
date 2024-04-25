@@ -15,7 +15,6 @@ import {
   Removefile,
   GetEnv,
   Makedir,
-  UnzipGZFile,
   AbsolutePath
 } from '@/bridge'
 
@@ -61,7 +60,7 @@ const downloadCore = async () => {
     const envStore = useEnvStore()
     const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
 
-    const suffix = { windows: '.zip', linux: '.gz', darwin: '.gz' }[os]
+    const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
     const assetName = `sing-box-${name}-${os}-${arch}${legacy}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
@@ -86,19 +85,29 @@ const downloadCore = async () => {
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 
     const latestKernelFilePath = KernelWorkDirectory + '/' + latestFileName
-    const bakFile = latestKernelFilePath + '.bak'
 
-    await ignoredError(Movefile, latestKernelFilePath, bakFile)
+    await ignoredError(Movefile, latestKernelFilePath, latestKernelFilePath + '.bak')
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
+      const tmpPath = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}${legacy}`
+      await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
+      await Removefile(tmpPath)
     } else {
-      await UnzipGZFile(tmp, latestKernelFilePath)
+      const extractDir = 'data/.cache/latest'
+      await Makedir(extractDir)
+      await Exec('tar', [
+        'xzvf',
+        await AbsolutePath(tmp),
+        '-C',
+        await AbsolutePath(extractDir),
+        '--strip-components',
+        '1'
+      ])
+      await Movefile(extractDir + '/' + fileName, latestKernelFilePath)
+      await Removefile(extractDir)
     }
 
-    const tmpPath = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}${legacy}`
-    await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
-    await Removefile(tmpPath)
     await Removefile(tmp)
 
     if (['darwin', 'linux'].includes(os)) {
