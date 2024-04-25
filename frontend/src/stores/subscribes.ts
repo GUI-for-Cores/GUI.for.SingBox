@@ -161,6 +161,10 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
     proxies = await pluginStore.onSubscribeTrigger(proxies, s)
 
+    if (proxies.some((proxy) => proxy.name && !proxy.tag)) {
+      throw 'You need to install the [Sing-Box 订阅转换] plugin first'
+    }
+
     if (s.type !== 'Manual') {
       proxies = proxies.filter((v: any) => {
         const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
