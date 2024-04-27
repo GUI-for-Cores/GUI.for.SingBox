@@ -8,13 +8,8 @@
 ## Preview
 
 <div align="center">
-  <img src="docs/imgs/preview1.png" width="600" height="380">
-  <br/>
-  <img src="docs/imgs/preview2.png" width="400" height="250">
-  <img src="docs/imgs/preview3.png" width="400" height="250">
-  <br/>
-  <img src="docs/imgs/preview4.png" width="400" height="250">
-  <img src="docs/imgs/preview5.png" width="400" height="250">
+  <img src="docs/imgs/light.png">
+  <img src="docs/imgs/dark.png">
 </div>
 
 ## Document
