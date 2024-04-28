@@ -168,7 +168,8 @@ export default {
         'consistent-hashing': 'consistent-hashing',
         'round-robin': 'round-robin'
       },
-      empty: '该订阅分组内没有可用节点'
+      empty: '该订阅分组内没有可用节点',
+      noSubs: '订阅列表为空'
     },
     rules: {
       payload: '载荷',

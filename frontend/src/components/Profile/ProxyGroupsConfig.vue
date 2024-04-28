@@ -302,7 +302,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
         class="group-title"
       >
         {{ t(group.name) }}
-        <div style="margin-left: auto; margin-right: 8px">{{ group.proxies.length }}</div>
+        <div class="ml-auto mr-8">{{ group.proxies.length }}</div>
         <Icon
           :class="{ 'rotate-z': isExpanded(group.id) }"
           icon="arrowRight"
@@ -310,7 +310,14 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
         />
       </Button>
       <div v-show="isExpanded(group.id)" class="group-proxies">
-        <Empty v-if="group.proxies.length === 0" :description="t('kernel.proxyGroups.empty')" />
+        <Empty
+          v-if="group.proxies.length === 0"
+          :description="
+            group.id === 'Subscribes'
+              ? t('kernel.proxyGroups.noSubs')
+              : t('kernel.proxyGroups.empty')
+          "
+        />
         <template v-else>
           <div v-for="proxy in group.proxies" :key="proxy.id" class="group-item">
             <Button

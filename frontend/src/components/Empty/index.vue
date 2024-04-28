@@ -12,8 +12,9 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div class="empty">
     <Icon icon="empty" />
-    <slot v-if="$slots.description" name="description"></slot>
-    <div v-else class="desc">{{ description }}</div>
+    <slot name="description">
+      <div class="desc">{{ description }}</div>
+    </slot>
   </div>
 </template>
 
