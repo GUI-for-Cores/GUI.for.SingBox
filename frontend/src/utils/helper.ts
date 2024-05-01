@@ -1,7 +1,7 @@
+import { ignoredError, APP_TITLE } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore, usePluginsStore } from '@/stores'
 import { Exec, ExitApp, WindowFullscreen, WindowIsFullscreen, WindowUnfullscreen } from '@/bridge'
-import { ignoredError } from './others'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -277,8 +277,8 @@ export const getTaskSchXmlString = async (delay = 30) => {
   const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
-    <Description>GUI.for.SingBox at startup</Description>
-    <URI>\\GUI.for.SingBox</URI>
+    <Description>${APP_TITLE} at startup</Description>
+    <URI>\\${APP_TITLE}</URI>
   </RegistrationInfo>
   <Triggers>
     <LogonTrigger>

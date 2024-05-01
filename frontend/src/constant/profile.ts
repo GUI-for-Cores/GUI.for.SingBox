@@ -9,7 +9,7 @@ export const GeneralConfigDefaults = (): ProfileType['generalConfig'] => ({
   'mixed-port': 20122,
   'allow-lan': false,
   'log-level': 'info',
-  'interface-name': 'Auto'
+  'interface-name': ''
 })
 
 export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({

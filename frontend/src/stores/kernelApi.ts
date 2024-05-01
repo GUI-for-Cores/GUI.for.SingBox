@@ -205,18 +205,28 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     return pid && (await ProcessInfo(pid)).startsWith('sing-box')
   }
 
-  const updateKernelStatus = async () => {
+  const updateKernelState = async () => {
+    const envStore = useEnvStore()
     const appSettingsStore = useAppSettingsStore()
 
-    const running = await ignoredError(isKernelRunning, appSettingsStore.app.kernel.pid)
-
-    appSettingsStore.app.kernel.running = !!running
+    appSettingsStore.app.kernel.running = !!(await ignoredError(
+      isKernelRunning,
+      appSettingsStore.app.kernel.pid
+    ))
 
     if (!appSettingsStore.app.kernel.running) {
       appSettingsStore.app.kernel.pid = 0
     }
 
-    return appSettingsStore.app.kernel.running
+    statusLoading.value = false
+
+    if (appSettingsStore.app.kernel.running) {
+      await refreshConfig()
+      await refreshProviderProxies()
+      await envStore.updateSystemProxyStatus()
+    } else if (appSettingsStore.app.autoStartKernel) {
+      await startKernel()
+    }
   }
 
   const startKernel = async () => {
@@ -330,7 +340,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     startKernel,
     stopKernel,
     restartKernel,
-    updateKernelStatus,
+    updateKernelState,
     loading,
     statusLoading,
     config,

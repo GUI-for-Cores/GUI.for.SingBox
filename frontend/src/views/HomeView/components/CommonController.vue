@@ -4,8 +4,6 @@ import { useI18n } from 'vue-i18n'
 import { StackOptions } from '@/constant'
 import { useKernelApiStore } from '@/stores'
 
-import InterfaceSelect from '@/components/Profile/InterfaceSelect.vue'
-
 const { t } = useI18n()
 const kernelApiStore = useKernelApiStore()
 

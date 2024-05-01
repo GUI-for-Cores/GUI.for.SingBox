@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
-import { debounce, updateTrayMenus, APP_TITLE, deepClone } from '@/utils'
+import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
 import { Readfile, Writefile, WindowSetSystemDefaultTheme } from '@/bridge'
 import { Theme, WindowStartState, Lang, View, Color, Colors, DefaultFontFamily } from '@/constant'
 
@@ -121,20 +121,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   }, 1500)
 
   const setupAppSettings = async () => {
-    try {
-      const b = await Readfile('data/user.yaml')
+    const data = await ignoredError(Readfile, 'data/user.yaml')
+    data && (app.value = Object.assign(app.value, parse(data)))
 
-      const defaultSettings = deepClone(app.value)
-
-      app.value = Object.assign(app.value, parse(b))
-
-      if (app.value.connections.order.length !== defaultSettings.connections.order.length) {
-        app.value.connections = defaultSettings.connections
-      }
-    } catch (error) {
-      firstOpen = false
-      console.log(error)
-    }
+    firstOpen = !!data
 
     updateAppSettings(app.value)
   }

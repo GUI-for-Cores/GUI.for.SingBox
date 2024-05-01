@@ -5,7 +5,7 @@ import { computed, ref, watch } from 'vue'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
-import { debounce, deepClone, ignoredError, updateTrayMenus, isNumber } from '@/utils'
+import { debounce, ignoredError, updateTrayMenus, isNumber, omitArray } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -80,6 +80,10 @@ const PluginsTriggerMap: {
   [PluginTrigger.OnShutdown]: {
     fnName: 'onShutdown',
     observers: []
+  },
+  [PluginTrigger.OnReady]: {
+    fnName: 'onReady',
+    observers: []
   }
 }
 
@@ -95,12 +99,21 @@ const getPluginMetadata = (plugin: PluginType) => {
   return { ...plugin, ...configuration }
 }
 
+const isPluginUnavailable = (cache: any) => {
+  return (
+    !cache ||
+    !cache.plugin ||
+    cache.plugin.disabled ||
+    (cache.plugin.install && !cache.plugin.installed)
+  )
+}
+
 export const usePluginsStore = defineStore('plugins', () => {
   const plugins = ref<PluginType[]>([])
 
   const setupPlugins = async () => {
-    const data = await Readfile(PluginsFilePath)
-    plugins.value = parse(data)
+    const data = await ignoredError(Readfile, PluginsFilePath)
+    data && (plugins.value = parse(data))
 
     for (let i = 0; i < plugins.value.length; i++) {
       const { id, triggers, path, menus, configuration } = plugins.value[i]
@@ -142,13 +155,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   const savePlugins = debounce(async () => {
-    const p = deepClone(plugins.value)
-    for (let i = 0; i < p.length; i++) {
-      delete p[i].key
-      delete p[i].updating
-      delete p[i].loading
-      delete p[i].running
-    }
+    const p = omitArray(plugins.value, ['key', 'updating', 'loading', 'running'])
     await Writefile(PluginsFilePath, stringify(p))
   }, 100)
 
@@ -253,13 +260,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const pluginId = observers[i]
       const cache = PluginsCache[pluginId]
 
-      if (
-        !cache ||
-        !cache.plugin ||
-        cache.plugin.disabled ||
-        (cache.plugin.install && !cache.plugin.installed)
-      )
-        continue
+      if (isPluginUnavailable(cache)) continue
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
@@ -288,13 +289,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const pluginId = observers[i]
       const cache = PluginsCache[pluginId]
 
-      if (
-        !cache ||
-        !cache.plugin ||
-        cache.plugin.disabled ||
-        (cache.plugin.install && !cache.plugin.installed)
-      )
-        continue
+      if (isPluginUnavailable(cache)) continue
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
@@ -321,13 +316,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const pluginId = observers[i]
       const cache = PluginsCache[pluginId]
 
-      if (
-        !cache ||
-        !cache.plugin ||
-        cache.plugin.disabled ||
-        (cache.plugin.install && !cache.plugin.installed)
-      )
-        continue
+      if (isPluginUnavailable(cache)) continue
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
@@ -402,6 +391,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     onGenerateTrigger,
     onStartupTrigger: () => noParamsTrigger(PluginTrigger.OnStartup),
     onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown),
+    onReadyTrigger: () => noParamsTrigger(PluginTrigger.OnReady),
     manualTrigger,
     updatePluginTrigger,
     getPluginCodefromCache

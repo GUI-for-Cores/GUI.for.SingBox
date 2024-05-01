@@ -54,14 +54,8 @@ export class Request {
     }
 
     if (['GET'].includes(options.method)) {
-      const usp = new URLSearchParams()
-      Object.entries(options.body || {}).forEach(([key, value]) => {
-        usp.set(key, value)
-      })
-      const query = usp.toString()
-      if (query) {
-        url += '?' + query
-      }
+      const query = new URLSearchParams(options.body || {}).toString()
+      query && (url += '?' + query)
     }
 
     if (['POST', 'PUT', 'PATCH'].includes(options.method)) {

@@ -80,13 +80,15 @@ export enum PluginTrigger {
   OnSubscribe = 'on::subscribe',
   OnGenerate = 'on::generate',
   OnStartup = 'on::startup',
-  OnShutdown = 'on::shutdown'
+  OnShutdown = 'on::shutdown',
+  OnReady = 'on::ready'
 }
 
 export enum PluginManualEvent {
   OnInstall = 'onInstall',
   OnUninstall = 'onUninstall',
-  OnRun = 'onRun'
+  OnRun = 'onRun',
+  OnTask = 'onTask'
 }
 
 export const PluginsTriggerOptions = [
@@ -94,7 +96,8 @@ export const PluginsTriggerOptions = [
   { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
   { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
   { label: 'plugin.on::startup', value: PluginTrigger.OnStartup },
-  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown }
+  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
+  { label: 'plugin.on::ready', value: PluginTrigger.OnReady }
 ]
 
 export type MenuItem = {

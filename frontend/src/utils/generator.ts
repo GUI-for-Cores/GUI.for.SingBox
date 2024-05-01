@@ -474,7 +474,7 @@ const generateRouteConfig = async (profile: ProfileType) => {
   }
 
   const interface_name = profile.generalConfig['interface-name']
-  if (interface_name == 'Auto') {
+  if (interface_name == '') {
     route['auto_detect_interface'] = true
   } else {
     route['default_interface'] = interface_name

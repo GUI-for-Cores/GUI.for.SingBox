@@ -414,6 +414,7 @@ export default {
     'on::shutdown': '关闭APP时',
     'on::generate': '生成配置时',
     'on::subscribe': '更新订阅时',
+    'on::ready': 'APP就绪后',
     name: '名称',
     description: '描述',
     url: '远程地址',

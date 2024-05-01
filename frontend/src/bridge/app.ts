@@ -11,11 +11,7 @@ export const UpdateTrayMenus = App.UpdateTrayMenus
 
 export const UpdateTray = async (tray: TrayContent) => {
   const { icon = '', title = '', tooltip = '' } = tray
-  await App.UpdateTray({
-    icon,
-    title,
-    tooltip
-  })
+  await App.UpdateTray({ icon, title, tooltip })
 }
 
 export const AddScheduledTask = async (cron: string, event: string) => {

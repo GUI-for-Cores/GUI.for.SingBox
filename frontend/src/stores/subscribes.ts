@@ -6,13 +6,14 @@ import { usePluginsStore } from '@/stores'
 import { Readfile, Writefile, HttpGet } from '@/bridge'
 import { SubscribesFilePath, DefaultExcludeProtocols } from '@/constant'
 import {
-  deepClone,
   debounce,
   sampleID,
   isValidSubJson,
   getUserAgent,
   isValidSubYAML,
-  isValidBase64
+  isValidBase64,
+  ignoredError,
+  omitArray
 } from '@/utils'
 
 export type SubscribeType = {
@@ -44,15 +45,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   const subscribes = ref<SubscribeType[]>([])
 
   const setupSubscribes = async () => {
-    const data = await Readfile(SubscribesFilePath)
-    subscribes.value = parse(data)
+    const data = await ignoredError(Readfile, SubscribesFilePath)
+    data && (subscribes.value = parse(data))
   }
 
   const saveSubscribes = debounce(async () => {
-    const s = deepClone(subscribes.value)
-    for (let i = 0; i < s.length; i++) {
-      delete s[i].updating
-    }
+    const s = omitArray(subscribes.value, ['updating'])
     await Writefile(SubscribesFilePath, stringify(s))
   }, 500)
 

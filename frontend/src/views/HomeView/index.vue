@@ -6,12 +6,12 @@ import { APP_TITLE, sleep } from '@/utils'
 import { useMessage, useBool } from '@/hooks'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore, useEnvStore } from '@/stores'
 
-import QuickStart from './QuickStart.vue'
-import OverView from './OverView.vue'
-import KernelLogs from './KernelLogs.vue'
-import LogsController from './LogsController.vue'
-import GroupsController from './GroupsController.vue'
-import CommonController from './CommonController.vue'
+import QuickStart from './components/QuickStart.vue'
+import OverView from './components/OverView.vue'
+import KernelLogs from './components/KernelLogs.vue'
+import LogsController from './components/LogsController.vue'
+import GroupsController from './components/GroupsController.vue'
+import CommonController from './components/CommonController.vue'
 
 const kernelLoading = ref(false)
 const showController = ref(false)

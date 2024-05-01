@@ -55,6 +55,15 @@ EventsOn('launchArgs', async (args: string[]) => {
   }
 })
 
+let startupResolve: (value: unknown) => void
+const startupPromise = new Promise((resolve) => (startupResolve = resolve))
+
+EventsOn('onStartup', async () => {
+  console.log('OnStartup')
+  await startupPromise
+  pluginsStore.onStartupTrigger().catch(message.error)
+})
+
 EventsOn('beforeClose', async () => {
   if (appSettings.app.exitOnClose) {
     exitApp()
@@ -69,38 +78,25 @@ window.addEventListener('beforeunload', scheduledTasksStore.removeScheduledTasks
 
 appSettings.setupAppSettings().then(async () => {
   await Promise.all([
-    ignoredError(envStore.setupEnv),
-    ignoredError(profilesStore.setupProfiles),
-    ignoredError(subscribesStore.setupSubscribes),
-    ignoredError(rulesetsStore.setupRulesets),
-    ignoredError(pluginsStore.setupPlugins),
-    ignoredError(scheduledTasksStore.setupScheduledTasks)
+    envStore.setupEnv(),
+    profilesStore.setupProfiles(),
+    subscribesStore.setupSubscribes(),
+    rulesetsStore.setupRulesets(),
+    pluginsStore.setupPlugins(),
+    scheduledTasksStore.setupScheduledTasks()
   ])
+
+  startupResolve(0)
+
+  console.log('OnReady')
+
+  pluginsStore.onReadyTrigger().catch(message.error)
 
   await sleep(1000)
 
   loading.value = false
 
-  kernelApiStore.updateKernelStatus().then(async (running) => {
-    kernelApiStore.statusLoading = false
-    try {
-      if (running) {
-        await kernelApiStore.refreshConfig()
-        await kernelApiStore.refreshProviderProxies()
-        await envStore.updateSystemProxyStatus()
-      } else if (appSettings.app.autoStartKernel) {
-        await kernelApiStore.startKernel()
-      }
-    } catch (error: any) {
-      message.error(error)
-    }
-  })
-
-  try {
-    await pluginsStore.onStartupTrigger()
-  } catch (error: any) {
-    message.error(error)
-  }
+  kernelApiStore.updateKernelState()
 })
 </script>
 

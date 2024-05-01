@@ -4,15 +4,9 @@ import { useI18n } from 'vue-i18n'
 
 import { ProxyGroupType } from '@/constant'
 import { useMessage, usePrompt } from '@/hooks'
-import { ignoredError, sleep } from '@/utils'
+import { ignoredError, sleep, handleUseProxy } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import {
-  useProxy,
-  getGroupDelay,
-  getConnections,
-  deleteConnection,
-  getProxyDelay
-} from '@/api/kernel'
+import { getGroupDelay, getProxyDelay } from '@/api/kernel'
 
 const expandedSet = ref<Set<string>>(new Set())
 const loadingSet = ref<Set<string>>(new Set())
@@ -77,29 +71,8 @@ const groups = computed(() => {
   return result
 })
 
-const handleUseProxy = async (group: any, proxy: any) => {
-  if (group.type !== 'Selector') return
-
-  if (group.now === proxy.name) return
-
-  const promises: Promise<null>[] = []
-
-  if (appSettings.app.kernel.autoClose) {
-    const { connections } = await getConnections()
-    promises.push(
-      ...(connections || [])
-        .filter((v) => v.chains.includes(group.name))
-        .map((v) => deleteConnection(v.id))
-    )
-  }
-
-  try {
-    await useProxy(group.name, proxy.name)
-    await Promise.all(promises)
-    await kernelApiStore.refreshProviderProxies()
-  } catch (error: any) {
-    message.error(error)
-  }
+const useProxyWithCatchError = (group: any, proxy: any) => {
+  handleUseProxy(group, proxy).catch((err: any) => message.error(err.message || err))
 }
 
 const toggleExpanded = (group: string) => {
@@ -274,7 +247,7 @@ onActivated(() => {
             :title="proxy.name"
             :selected="proxy.name === group.now"
             :key="proxy.name"
-            @click="handleUseProxy(group, proxy)"
+            @click="useProxyWithCatchError(group, proxy)"
             class="proxy"
           >
             <Button
@@ -292,7 +265,7 @@ onActivated(() => {
           <div
             v-for="proxy in group.all"
             v-tips.fast="proxy.name"
-            @click="handleUseProxy(group, proxy)"
+            @click="useProxyWithCatchError(group, proxy)"
             :key="proxy.name"
             :style="{ background: delayColor(proxy.delay) }"
             :class="{ selected: proxy.name === group.now }"

@@ -413,6 +413,7 @@ export default {
     'on::shutdown': 'on::shutdown',
     'on::generate': 'on::generate',
     'on::subscribe': 'on::subscribe',
+    'on::ready': 'on::ready',
     name: 'Name',
     description: 'Description',
     url: 'Remote Url',

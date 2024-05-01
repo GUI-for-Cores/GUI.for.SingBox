@@ -3,8 +3,8 @@ import { stringify, parse } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { Notify } from '@/bridge'
-import { debounce } from '@/utils'
-import { ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
+import { debounce, ignoredError } from '@/utils'
+import { PluginManualEvent, ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
 import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
 import {
   Readfile,
@@ -35,8 +35,8 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const ScheduledTasksIDs: number[] = []
 
   const setupScheduledTasks = async () => {
-    const data = await Readfile(ScheduledTasksFilePath)
-    scheduledtasks.value = parse(data)
+    const data = await ignoredError(Readfile, ScheduledTasksFilePath)
+    data && (scheduledtasks.value = parse(data))
   }
 
   const initScheduledTasks = async () => {
@@ -111,7 +111,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
       case ScheduledTasksType.RunPlugin: {
         const pluginsStores = usePluginsStore()
         return withOutput(task.plugins, async (id: string) =>
-          pluginsStores.manualTrigger(id, 'onTask' as any)
+          pluginsStores.manualTrigger(id, PluginManualEvent.OnTask)
         )
       }
       case ScheduledTasksType.RunScript: {

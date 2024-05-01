@@ -4,8 +4,6 @@ import { useI18n } from 'vue-i18n'
 import { type ProfileType } from '@/stores'
 import { ModeOptions, LogLevelOptions, GeneralConfigDefaults } from '@/constant'
 
-import InterfaceSelect from '@/components/Profile/InterfaceSelect.vue'
-
 const fields = defineModel<ProfileType['generalConfig']>({ default: GeneralConfigDefaults() })
 
 const { t } = useI18n()

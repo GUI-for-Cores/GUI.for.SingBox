@@ -8,7 +8,6 @@ export enum ProxyGroup {
   Block = 'block'
 }
 
-// Why not unify the design with the above?
 export enum ProxyGroupType {
   Selector = 'Selector',
   UrlTest = 'URLTest',

@@ -3,6 +3,23 @@ import { APP_TITLE } from '@/utils'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
+export const omit = <T, K extends keyof T>(obj: T, fields: K[]): Omit<T, K> => {
+  const _obj = deepClone(obj)
+  fields.forEach((field) => {
+    delete _obj[field]
+  })
+  return _obj
+}
+
+export const omitArray = <T, K extends keyof T>(arr: T[], fields: K[]): Omit<T, K>[] => {
+  return arr.map((obj) => {
+    const item: Partial<T> = deepClone(obj)
+    fields.forEach((key) => {
+      delete item[key]
+    })
+    return item as Omit<T, K>
+  })
+}
 export const debounce = (fn: (...args: any) => any, wait: number) => {
   let timer: null | number = null
   const _debuonce = function (...args: any) {

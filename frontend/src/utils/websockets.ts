@@ -23,13 +23,9 @@ export class WebSockets {
     const wsMap: Record<string, { ready: boolean; close: () => void; open: () => void }> = {}
 
     urls.forEach(({ name, url, params = {}, cb }) => {
-      const usp = new URLSearchParams()
-
       Object.assign(params, { token: this.bearer })
 
-      Object.entries(params).forEach(([key, value]) => usp.set(key, value))
-
-      const query = usp.toString()
+      const query = new URLSearchParams(params).toString()
 
       query && (url += '?' + query)
 
