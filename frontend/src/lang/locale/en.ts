@@ -190,6 +190,7 @@ export default {
         GEOIP: 'GEOIP',
         GEOSITE: 'GEOSITE',
         IPSET: 'IPSET',
+        SCRIPT: 'SCRIPT',
         FALLBACK: 'FALLBACK',
         'DOMAIN-SUFFIX': 'DOMAIN-SUFFIX',
         'DOMAIN-KEYWORD': 'DOMAIN-KEYWORD',
