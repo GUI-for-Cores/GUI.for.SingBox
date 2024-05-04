@@ -202,45 +202,58 @@ initVersion()
 </script>
 
 <template>
-  <h3>{{ t('settings.kernel.latest') }}</h3>
-  <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
-    {{ t('kernel.local') }}
-    :
-    {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
-  </Tag>
-  <Tag @click="updateRemoteVersion(true)" style="cursor: pointer">
-    {{ t('kernel.remote') }}
-    :
-    {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
-  </Tag>
-  <Button
-    v-show="!localVersionLoading && !remoteVersionLoading && needUpdate"
-    @click="downloadCore"
-    :loading="downloadLoading"
-    size="small"
-    type="primary"
-  >
-    {{ t('kernel.update') }} : {{ remoteVersion }}
-  </Button>
-  <Button
-    v-show="!localVersionLoading && !remoteVersionLoading && needRestart"
-    @click="handleRestartKernel"
-    :loading="kernelApiStore.loading"
-    size="small"
-    type="primary"
-  >
-    {{ t('kernel.restart') }}
-  </Button>
+  <div class="title">{{ t('settings.kernel.latest') }}</div>
+  <div class="tags">
+    <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
+      {{ t('kernel.local') }}
+      :
+      {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
+    </Tag>
+    <Tag @click="updateRemoteVersion(true)" style="cursor: pointer">
+      {{ t('kernel.remote') }}
+      :
+      {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
+    </Tag>
+    <Button
+      v-show="!localVersionLoading && !remoteVersionLoading && needUpdate"
+      @click="downloadCore"
+      :loading="downloadLoading"
+      size="small"
+      type="primary"
+    >
+      {{ t('kernel.update') }} : {{ remoteVersion }}
+    </Button>
+    <Button
+      v-show="!localVersionLoading && !remoteVersionLoading && needRestart"
+      @click="handleRestartKernel"
+      :loading="kernelApiStore.loading"
+      size="small"
+      type="primary"
+    >
+      {{ t('kernel.restart') }}
+    </Button>
+  </div>
+
   <div class="detail">
     {{ versionDetail }}
   </div>
 </template>
 
 <style lang="less" scoped>
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 8px 4px;
+}
 .detail {
   font-size: 12px;
   padding: 8px 4px;
   word-wrap: break-word;
   word-break: break-all;
+}
+.tags {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
 }
 </style>

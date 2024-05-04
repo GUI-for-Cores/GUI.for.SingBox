@@ -5,6 +5,8 @@ import icons from './icons'
 
 type IconFuncType = Record<string, { default: Component }>
 
+export type IconType = (typeof icons)[number]
+
 const Icons: IconFuncType = import.meta.glob('./*Icon.vue', { eager: true })
 
 const IconsMap: Record<string, Component> = {}
@@ -16,14 +18,19 @@ for (const path in Icons) {
 }
 
 interface Props {
-  icon: (typeof icons)[number]
+  icon: IconType
+  size?: number
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), { size: 16 })
 </script>
 
 <template>
-  <Component :is="IconsMap[icon] || IconsMap['error']" v-bind="$attrs" fill="var(--color)" />
+  <Component
+    :is="IconsMap[icon] || IconsMap['error']"
+    v-bind="{ ...$attrs, width: size + 'px', height: size + 'px' }"
+    fill="var(--color)"
+  />
 </template>
 
 <style lang="less" scoped></style>

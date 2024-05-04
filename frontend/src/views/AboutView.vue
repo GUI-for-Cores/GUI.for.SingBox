@@ -14,14 +14,7 @@ import {
   Makedir,
   Removefile
 } from '@/bridge'
-import {
-  APP_TITLE,
-  APP_VERSION,
-  PROJECT_URL,
-  TG_GROUP,
-  TG_CHANNEL,
-  APP_VERSION_API
-} from '@/utils'
+import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, APP_VERSION_API } from '@/utils'
 
 let downloadUrl = ''
 
@@ -167,7 +160,10 @@ checkForUpdates()
   }
   .appver {
     font-size: 12px;
+    display: flex;
+    align-items: center;
     margin-bottom: 12px;
+    min-height: 40px;
   }
   .url {
     cursor: pointer;

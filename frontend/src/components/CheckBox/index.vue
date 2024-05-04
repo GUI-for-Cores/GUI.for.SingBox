@@ -55,6 +55,7 @@ const handleSelect = (val: string) => {
     padding: 7px 12px;
     border-left: 1px solid var(--primary-color);
     transition: all 0.2s;
+    white-space: nowrap;
     &:nth-child(1) {
       border-left: none;
     }

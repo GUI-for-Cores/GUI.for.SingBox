@@ -35,8 +35,8 @@ const fixMenuPos = (x: number, y: number) => {
   const { offsetWidth: clientWidth, offsetHeight: clientHeight } = document.body
   const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.value
 
-  if (x + menuWidth > clientWidth) left -= x + menuWidth - clientWidth
-  if (y + menuHeight > clientHeight) top -= y + menuHeight - clientHeight
+  if (x + menuWidth > clientWidth) left -= x + menuWidth - clientWidth + 8
+  if (y + menuHeight > clientHeight) top -= y + menuHeight - clientHeight + 8
 
   menuPosition.value = { left: left + 'px', top: top + 'px' }
 }
@@ -51,15 +51,18 @@ const fixSecondaryMenuPos = () => {
   const { offsetWidth: clientWidth, offsetHeight: clientHeight } = document.body
   const { offsetWidth: sMenuWidth, offsetHeight: sMenuHeight } = secondaryMenuRef.value
 
-  if (left + sMenuWidth + x > clientWidth) left -= x + menuWidth + sMenuWidth - clientWidth
-  if (top + sMenuHeight + y > clientHeight) top -= y + menuHeight + sMenuHeight - clientHeight
+  if (left + sMenuWidth + x > clientWidth) left -= x + menuWidth + sMenuWidth - clientWidth + 8
+  if (top + sMenuHeight + y > clientHeight) top -= sMenuHeight
 
   secondaryMenuPosition.value = { left: left + 'px', top: top + 'px' }
 }
 
 watch(
   () => props.position,
-  ({ x, y }) => nextTick(() => fixMenuPos(x, y))
+  ({ x, y }) => {
+    nextTick(() => fixMenuPos(x, y))
+    secondaryMenu.value = undefined
+  }
 )
 
 watch([() => secondaryMenu.value, () => props.position], () => {
@@ -76,34 +79,57 @@ onUnmounted(() => document.removeEventListener('click', onClick))
 </script>
 
 <template>
-  <div v-show="model" ref="menuRef" :style="menuPosition" class="menu">
-    <template v-for="menu in menuList">
-      <Divider v-if="menu.separator" :key="menu.label + '_divider'">{{ t(menu.label) }}</Divider>
-      <div
-        v-else
-        :key="menu.label"
-        @click="handleClick(menu)"
-        @mouseenter="secondaryMenu = menu.children"
-        class="menu-item"
-      >
-        {{ t(menu.label) }}
-        <Icon v-if="menu.children" icon="arrowRight" class="ml-8" />
-      </div>
-    </template>
-    <div
-      v-show="secondaryMenu"
-      ref="secondaryMenuRef"
-      :style="secondaryMenuPosition"
-      class="secondary menu"
-    >
-      <div v-for="m in secondaryMenu" :key="m.label" @click.stop="handleClick(m)" class="menu-item">
-        {{ t(m.label) }}
-      </div>
+  <Transition name="menu">
+    <div v-show="model" ref="menuRef" :style="menuPosition" class="menu">
+      <template v-for="menu in menuList">
+        <Divider v-if="menu.separator" :key="menu.label + '_divider'">{{ t(menu.label) }}</Divider>
+        <div
+          v-else
+          :key="menu.label"
+          @click="handleClick(menu)"
+          @mouseenter="secondaryMenu = menu.children"
+          class="menu-item"
+        >
+          {{ t(menu.label) }}
+          <Icon v-if="menu.children" icon="arrowRight" class="ml-8" />
+        </div>
+      </template>
+      <Transition name="menu">
+        <div
+          v-show="secondaryMenu"
+          ref="secondaryMenuRef"
+          :style="secondaryMenuPosition"
+          class="secondary menu"
+        >
+          <div
+            v-for="m in secondaryMenu"
+            :key="m.label"
+            @click.stop="handleClick(m)"
+            class="menu-item"
+          >
+            {{ t(m.label) }}
+          </div>
+        </div>
+      </Transition>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style lang="less" scoped>
+.menu-enter-active,
+.menu-leave-active {
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+  transform-origin: top;
+}
+
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+}
+
 .menu {
   position: fixed;
   z-index: 9999;

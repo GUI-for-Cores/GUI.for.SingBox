@@ -34,7 +34,12 @@ const extensions = computed(() => (appSettings.themeMode === Theme.Dark ? [oneDa
     :extensions="extensions"
     tab
     basic
+    style="background: #fff"
   />
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+:deep(.cm-editor) {
+  height: 100%;
+}
+</style>

@@ -26,8 +26,8 @@ withDefaults(defineProps<Props>(), {})
     </div>
     <div v-if="subtitle" class="subtitle">{{ subtitle }}</div>
     <slot />
-    <Icon v-if="selected" class="status" icon="selected" fill="var(--primary-color)" />
-    <Icon v-if="disabled" class="status" icon="disabled" fill="var(--primary-color)" />
+    <Icon v-if="selected" :size="32" icon="selected" fill="var(--primary-color)" class="status" />
+    <Icon v-if="disabled" :size="32" icon="disabled" fill="var(--primary-color)" class="status" />
   </div>
 </template>
 

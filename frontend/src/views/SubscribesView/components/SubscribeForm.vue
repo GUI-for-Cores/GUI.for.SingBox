@@ -163,9 +163,7 @@ if (props.isUpdate) {
         <div class="name">{{ t('subscribe.useragent') }}</div>
         <Input v-model="sub.userAgent" :placeholder="getUserAgent()" auto-size>
           <template #extra>
-            <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')">
-              <Icon icon="reset" fill="var(--primary-btn-color)" />
-            </Button>
+            <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')" icon="reset" />
           </template>
         </Input>
       </div>
@@ -180,7 +178,7 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disable="!sub.name || !sub.path || (!sub.url && sub.type !== 'Manual')"
+      :disabled="!sub.name || !sub.path || (!sub.url && sub.type !== 'Manual')"
       type="primary"
     >
       {{ t('common.save') }}

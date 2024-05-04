@@ -22,6 +22,8 @@ var assets embed.FS
 //go:embed frontend/dist/favicon.ico
 var icon []byte
 
+var isStartup = true
+
 func main() {
 	bridge.InitBridge()
 
@@ -54,7 +56,7 @@ func main() {
 		Width: 800,
 		Height: func() int {
 			if bridge.Env.OS == "linux" {
-				return 520
+				return 510
 			}
 			return 540
 		}(),
@@ -107,12 +109,21 @@ func main() {
 			bridge.CreateTray(app, icon, assets)
 			bridge.InitScheduledTasks()
 		},
+		OnDomReady: func(ctx context.Context) {
+			if isStartup {
+				runtime.EventsEmit(ctx, "onStartup")
+				isStartup = false
+			}
+		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
 			runtime.EventsEmit(ctx, "beforeClose")
 			return true
 		},
 		Bind: []interface{}{
 			app,
+		},
+		Debug: options.Debug{
+			OpenInspectorOnStartup: true,
 		},
 	})
 

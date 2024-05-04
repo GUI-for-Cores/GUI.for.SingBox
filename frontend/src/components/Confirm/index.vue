@@ -33,7 +33,7 @@ const getMessage = () => {
 
 <template>
   <div class="confirm">
-    <div class="title">{{ title }}</div>
+    <div class="title">{{ t(title) }}</div>
     <div class="message select-text">{{ getMessage() }}</div>
     <div class="form-action">
       <Button v-if="cancel" @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>

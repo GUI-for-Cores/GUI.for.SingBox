@@ -218,7 +218,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     </Button>
     <Button
       @click="handleUpdatePlugins"
-      :disable="noUpdateNeeded"
+      :disabled="noUpdateNeeded"
       :type="noUpdateNeeded ? 'text' : 'link'"
     >
       {{ t('common.updateAll') }}
@@ -290,7 +290,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
 
         <template v-else>
           <Button
-            :disable="p.disabled"
+            :disabled="p.disabled"
             :loading="p.updating"
             type="link"
             size="small"
@@ -305,7 +305,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
             {{ t('common.edit') }}
           </Button>
           <Button
-            :disable="p.install && p.installed"
+            :disabled="p.install && p.installed"
             type="link"
             size="small"
             @click="handleDeletePlugin(p)"

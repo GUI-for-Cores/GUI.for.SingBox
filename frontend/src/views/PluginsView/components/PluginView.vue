@@ -60,7 +60,7 @@ if (p) {
     <CodeViewer v-model="code" lang="javascript" editable />
   </div>
   <div class="form-action">
-    <Button @click="handleCancel" :disable="loading">
+    <Button @click="handleCancel" :disabled="loading">
       {{ t('common.cancel') }}
     </Button>
     <Button @click="handleSave" :loading="loading" type="primary">

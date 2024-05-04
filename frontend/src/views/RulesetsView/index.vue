@@ -177,7 +177,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     />
     <Button
       @click="handleUpdateRulesets"
-      :disable="noUpdateNeeded"
+      :disabled="noUpdateNeeded"
       :type="noUpdateNeeded ? 'text' : 'link'"
       class="ml-auto"
     >
@@ -217,7 +217,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
           </Button>
           <template #overlay>
             <Button
-              :disable="r.disabled"
+              :disabled="r.disabled"
               :loading="r.updating"
               :type="r.disabled ? 'text' : 'link'"
               size="small"
@@ -240,7 +240,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
 
       <template v-else #extra>
         <Button
-          :disable="r.disabled"
+          :disabled="r.disabled"
           :loading="r.updating"
           :type="r.disabled ? 'text' : 'link'"
           size="small"

@@ -354,6 +354,8 @@ export default {
     enterLink: 'Enter subscription link',
     proxyCount: 'Proxy Count',
     editProxies: 'Edit Proxies',
+    editSourceFile: 'Edit Proxies(Source)',
+    copySub: 'Copy Link',
     proxies: {
       type: 'Protocol',
       name: 'Name',
@@ -384,6 +386,7 @@ export default {
     shouldStop: 'Unable to delete, this profile is in use.',
     empty: 'The profiles list is empty, Please {action} a profile first.',
     copytoClipboard: 'Generate config to clipboard',
+    generateAndView: 'Generate and View',
     copy: 'Copy and Paste',
     start: 'Start/Restart with this Profile'
   },
@@ -404,7 +407,7 @@ export default {
   rulesets: {
     empty: 'The ruleset list is empty. Please {action} a ruleset first.',
     rulesetCount: 'Ruleset Count',
-    editRuleset: 'Edit Ruleset File'
+    editRuleset: 'Edit Rules'
   },
   plugin: {
     trigger: 'Trigger',

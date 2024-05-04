@@ -355,6 +355,8 @@ export default {
     enterLink: '输入订阅链接',
     proxyCount: '代理数量',
     editProxies: '编辑节点',
+    editSourceFile: '编辑节点(源文件)',
+    copySub: '复制订阅链接',
     proxies: {
       type: '协议',
       name: '名称',

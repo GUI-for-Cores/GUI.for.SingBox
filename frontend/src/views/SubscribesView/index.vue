@@ -6,7 +6,7 @@ import { View } from '@/constant'
 import { useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant'
 import { updateProvidersProxies } from '@/api/kernel'
-import { BrowserOpenURL, Removefile } from '@/bridge'
+import { BrowserOpenURL, ClipboardSetText, Removefile } from '@/bridge'
 import { formatBytes, formatRelativeTime, debounce, ignoredError } from '@/utils'
 import {
   type SubscribeType,
@@ -17,10 +17,12 @@ import {
 } from '@/stores'
 
 import ProxiesView from './components/ProxiesView.vue'
+import ProxiesEditor from './components/ProxiesEditor.vue'
 import SubscribeForm from './components/SubscribeForm.vue'
 
 const showSubForm = ref(false)
 const showProxies = ref(false)
+const showEditor = ref(false)
 const proxiesSub = ref()
 const proxiesTitle = ref('')
 const subFormSubID = ref()
@@ -31,6 +33,20 @@ const menuList: Menu[] = [
   {
     label: 'subscribes.editProxies',
     handler: (id: string) => handleEditProxies(id)
+  },
+  {
+    label: 'subscribes.editSourceFile',
+    handler: (id: string) => handleEditProxies(id, true)
+  },
+  {
+    label: 'subscribes.copySub',
+    handler: async (id: string) => {
+      const sub = subscribeStore.getSubscribeById(id)!
+      if (sub) {
+        await ClipboardSetText(sub.url)
+        message.success('common.copied')
+      }
+    }
   }
 ]
 
@@ -62,12 +78,16 @@ const handleEditSub = (s: SubscribeType) => {
   showSubForm.value = true
 }
 
-const handleEditProxies = (id: string) => {
+const handleEditProxies = (id: string, editor = false) => {
   const sub = subscribeStore.getSubscribeById(id)
   if (sub) {
     proxiesTitle.value = sub.name
     proxiesSub.value = sub
-    showProxies.value = true
+    if (editor) {
+      showEditor.value = true
+    } else {
+      showProxies.value = true
+    }
   }
 }
 
@@ -163,7 +183,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
     />
     <Button
       @click="handleUpdateSubs"
-      :disable="noUpdateNeeded"
+      :disabled="noUpdateNeeded"
       :type="noUpdateNeeded ? 'text' : 'link'"
     >
       {{ t('common.updateAll') }}
@@ -196,6 +216,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
           v-if="s.type !== 'File' && s.website"
           v-tips="'subscribe.website'"
           icon="link"
+          :size="18"
           @click="BrowserOpenURL(s.website)"
           style="cursor: pointer"
         />
@@ -208,7 +229,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
           </Button>
           <template #overlay>
             <Button
-              :disable="s.disabled"
+              :disabled="s.disabled"
               :loading="s.updating"
               :type="s.disabled ? 'text' : 'link'"
               size="small"
@@ -231,7 +252,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
 
       <template v-else #extra>
         <Button
-          :disable="s.disabled"
+          :disabled="s.disabled"
           :loading="s.updating"
           :type="s.disabled ? 'text' : 'link'"
           size="small"
@@ -256,9 +277,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
         <div>
           {{ t('subscribes.proxyCount') }}
           :
-          <Button type="text" size="small" @click="handleEditProxies(s.id)">
-            {{ s.proxies.length }}
-          </Button>
+          {{ s.proxies.length }}
         </div>
         <div>
           {{ t('subscribes.upload') }}
@@ -324,6 +343,17 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
     width="80"
   >
     <ProxiesView :sub="proxiesSub" />
+  </Modal>
+
+  <Modal
+    v-model:open="showEditor"
+    @ok="onEditProxiesEnd"
+    :title="proxiesTitle"
+    :footer="false"
+    height="80"
+    width="80"
+  >
+    <ProxiesEditor :sub="proxiesSub" />
   </Modal>
 </template>
 

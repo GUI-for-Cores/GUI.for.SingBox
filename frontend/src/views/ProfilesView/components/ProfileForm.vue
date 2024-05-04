@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
   step: 0
 })
 
+const loading = ref(false)
 const groupsRef = ref()
 const rulesRef = ref()
 const dnsRulesRef = ref()
@@ -65,6 +66,7 @@ const handlePrevStep = () => currentStep.value--
 const handleNextStep = () => currentStep.value++
 
 const handleSave = async () => {
+  loading.value = true
   try {
     if (props.isUpdate) {
       await profilesStore.editProfile(props.id, profile.value)
@@ -79,6 +81,7 @@ const handleSave = async () => {
     message.error(error)
     return
   }
+  loading.value = false
 }
 
 const handleAdd = () => {
@@ -158,19 +161,19 @@ if (props.isUpdate) {
   </div>
 
   <div class="form-action">
-    <Button @click="handlePrevStep" :disable="currentStep == 0" type="text">
+    <Button @click="handlePrevStep" :disabled="currentStep == 0" type="text">
       {{ t('common.prevStep') }}
     </Button>
     <Button
       @click="handleNextStep"
-      :disable="!profile.name || currentStep == 6"
+      :disabled="!profile.name || currentStep == 6"
       type="text"
       class="mr-auto"
     >
       {{ t('common.nextStep') }}
     </Button>
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSave" :disable="!profile.name" type="primary">
+    <Button @click="handleSave" :loading="loading" :disabled="!profile.name" type="primary">
       {{ t('common.save') }}
     </Button>
   </div>

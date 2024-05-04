@@ -245,7 +245,12 @@ const filteredConnections = computed(() => {
 })
 
 const handleCloseAll = async () => {
-  await Promise.all(dataSource.value.map((connection) => deleteConnection(connection.id)))
+  try {
+    await Promise.all(dataSource.value.map((connection) => deleteConnection(connection.id)))
+    dataSource.value = []
+  } catch (error: any) {
+    message.error(error.message || error)
+  }
 }
 
 const handleClearClosedConns = () => {
@@ -273,30 +278,30 @@ onUnmounted(() => {
         size="small"
       />
       <Input v-model="keywords" size="small" placeholder="Search" class="ml-8 flex-1" />
-      <Button @click="togglePause" size="small" type="text" class="ml-8">
-        <Icon :icon="isPause ? 'play' : 'pause'" fill="var(--color)" />
-      </Button>
+      <Button
+        @click="togglePause"
+        :icon="isPause ? 'play' : 'pause'"
+        size="small"
+        type="text"
+        class="ml-8"
+      />
       <Button
         v-if="isActive"
         @click="handleCloseAll"
         v-tips="'home.connections.closeAll'"
+        icon="close"
         size="small"
         type="text"
-      >
-        <Icon icon="close" fill="var(--color)" />
-      </Button>
+      />
       <Button
         v-else
         @click="handleClearClosedConns"
         v-tips="'common.clear'"
+        icon="clear"
         size="small"
         type="text"
-      >
-        <Icon icon="clear" fill="var(--color)" />
-      </Button>
-      <Button @click="toggleSettings" size="small" type="text">
-        <Icon icon="settings" />
-      </Button>
+      />
+      <Button @click="toggleSettings" icon="settings" size="small" type="text" />
     </div>
     <Table
       :columns="columns"

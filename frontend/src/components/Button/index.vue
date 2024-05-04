@@ -1,23 +1,29 @@
 <script setup lang="ts">
+import type { IconType } from '@/components/Icon/index.vue'
+
 interface Props {
   type?: 'primary' | 'normal' | 'link' | 'text'
   size?: 'default' | 'small' | 'large'
+  icon?: IconType
   loading?: boolean
-  disable?: boolean
+  disabled?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   type: 'normal',
   size: 'default',
   loading: false,
-  disable: false
+  disabled: false
 })
 </script>
 
 <template>
-  <div :class="[type, size, { disable, loading }]" class="btn">
-    <Icon v-if="disable" :fill="`var(--btn-${type}-color)`" icon="forbidden" class="disabled" />
+  <div :class="[type, size, { disabled, loading }]" class="btn">
     <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
+    <template v-else>
+      <Icon v-if="disabled" :fill="`var(--btn-${type}-color)`" icon="forbidden" class="disabled" />
+      <Icon v-if="icon" :icon="icon" />
+    </template>
     <slot />
   </div>
 </template>
@@ -28,19 +34,16 @@ withDefaults(defineProps<Props>(), {
   align-items: center;
   justify-content: center;
   text-align: center;
+  vertical-align: middle;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
   padding: 6px 12px;
   margin: 2px;
   transition: all 0.2s;
-
-  .disabled {
-    margin-bottom: -2px;
-  }
 }
 
-.disable,
+.disabled,
 .loading {
   pointer-events: none;
 }
@@ -106,7 +109,6 @@ withDefaults(defineProps<Props>(), {
 }
 
 .rotation {
-  margin: 1px 2px 0 0;
   animation: rotate 2s infinite linear;
 }
 </style>

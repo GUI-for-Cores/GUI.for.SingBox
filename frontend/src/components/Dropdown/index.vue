@@ -62,13 +62,29 @@ onUnmounted(() => {
     class="dropdown"
   >
     <slot />
-    <div v-show="show" class="overlay">
-      <slot name="overlay"> </slot>
-    </div>
+    <Transition name="overlay">
+      <div v-show="show" class="overlay">
+        <slot name="overlay"> </slot>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style lang="less" scoped>
+.overlay-enter-active,
+.overlay-leave-active {
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+  transform-origin: top;
+}
+
+.overlay-enter-from,
+.overlay-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+}
+
 .dropdown {
   text-align: center;
   position: relative;

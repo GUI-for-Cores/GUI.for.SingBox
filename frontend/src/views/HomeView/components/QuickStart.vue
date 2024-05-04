@@ -115,8 +115,8 @@ const handleSubmit = async () => {
   </div>
 
   <div class="form-action">
-    <Button @click="handleCancel" :disable="loading" type="text">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" :disable="!canSubmit" :loading="loading" type="primary">
+    <Button @click="handleCancel" :disabled="loading" type="text">{{ t('common.cancel') }}</Button>
+    <Button @click="handleSubmit" :disabled="!canSubmit" :loading="loading" type="primary">
       {{ t('common.save') }}
     </Button>
   </div>

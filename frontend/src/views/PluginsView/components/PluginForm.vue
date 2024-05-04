@@ -267,7 +267,7 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disable="!plugin.name || !plugin.path || (plugin.type === 'Http' && !plugin.url)"
+      :disabled="!plugin.name || !plugin.path || (plugin.type === 'Http' && !plugin.url)"
       type="primary"
     >
       {{ t('common.save') }}

@@ -187,7 +187,7 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disable="!task.name || !task.cron"
+      :disabled="!task.name || !task.cron"
       type="primary"
     >
       {{ t('common.save') }}

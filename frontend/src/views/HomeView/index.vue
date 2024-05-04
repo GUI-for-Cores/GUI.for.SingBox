@@ -137,9 +137,7 @@ watch(showController, (v) => {
     <template v-else-if="!kernelApiStore.statusLoading">
       <div :class="{ blur: showController }">
         <div class="kernel-status">
-          <Button @click="toggleSettingsModal" type="text" size="small">
-            <Icon icon="settings" />
-          </Button>
+          <Button @click="toggleSettingsModal" type="text" size="small" icon="settings" />
           <Switch
             v-model="envStore.systemProxy"
             @change="onSystemProxySwitchChange"
@@ -163,21 +161,23 @@ watch(showController, (v) => {
             v-tips="'home.overview.viewlog'"
             type="text"
             size="small"
+            icon="log"
             class="ml-auto"
-          >
-            <Icon icon="log" />
-          </Button>
+          />
           <Button
             @click="handleRestartKernel"
             v-tips="'home.overview.restart'"
             type="text"
             size="small"
-          >
-            <Icon icon="restart" />
-          </Button>
-          <Button @click="handleStopKernel" v-tips="'home.overview.stop'" type="text" size="small">
-            <Icon icon="stop" />
-          </Button>
+            icon="restart"
+          />
+          <Button
+            @click="handleStopKernel"
+            v-tips="'home.overview.stop'"
+            type="text"
+            size="small"
+            icon="stop"
+          />
         </div>
         <OverView />
         <Divider>

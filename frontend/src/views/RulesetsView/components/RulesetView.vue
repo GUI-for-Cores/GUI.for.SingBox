@@ -59,7 +59,7 @@ initContent()
   <div class="ruleset-view">
     <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable />
     <div class="form-action">
-      <Button @click="handleCancel" :disable="loading">
+      <Button @click="handleCancel" :disabled="loading">
         {{ t('common.cancel') }}
       </Button>
       <Button @click="handleSave" :loading="loading" type="primary">

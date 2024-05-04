@@ -11,7 +11,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div class="empty">
-    <Icon icon="empty" />
+    <Icon icon="empty" :size="64" />
     <slot name="description">
       <div class="desc">{{ description }}</div>
     </slot>

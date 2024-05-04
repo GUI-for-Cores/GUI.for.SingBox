@@ -195,9 +195,7 @@ if (envStore.env.os === 'windows') {
     <div class="settings-item">
       <div class="title">{{ t('settings.fontFamily') }}</div>
       <div style="display: flex; align-items: center">
-        <Button @click="resetFontFamily" v-tips="'settings.resetFont'" type="text">
-          <Icon icon="reset" />
-        </Button>
+        <Button @click="resetFontFamily" v-tips="'settings.resetFont'" type="text" icon="reset" />
         <Input v-model="appSettings.app['font-family']" editable style="margin-left: 8px" />
       </div>
     </div>
@@ -272,9 +270,12 @@ if (envStore.env.os === 'windows') {
     <div class="settings-item">
       <div class="title">{{ t('settings.userAgent.name') }}</div>
       <div style="display: flex; align-items: center">
-        <Button @click="resetUserAgent" v-tips="'settings.userAgent.reset'" type="text">
-          <Icon icon="reset" />
-        </Button>
+        <Button
+          @click="resetUserAgent"
+          v-tips="'settings.userAgent.reset'"
+          type="text"
+          icon="reset"
+        />
         <Input v-model.lazy="appSettings.app.userAgent" editable style="margin-left: 8px" />
       </div>
     </div>
