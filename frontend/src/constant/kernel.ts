@@ -11,9 +11,7 @@ export enum ProxyGroup {
 export enum ProxyGroupType {
   Selector = 'Selector',
   UrlTest = 'URLTest',
-  Fallback = 'Fallback',
-  Relay = 'Relay',
-  LoadBalance = 'LoadBalance'
+  Fallback = 'Fallback'
 }
 
 export enum FinalDnsType {
@@ -172,11 +170,6 @@ export const RulesTypeOptions = [
     label: 'kernel.rules.type.RULE-SET',
     value: 'rule_set'
   },
-  // To be realized
-  // {
-  //   label: 'kernel.rules.type.SCRIPT',
-  //   value: 'SCRIPT'
-  // },
   {
     label: 'kernel.rules.type.REMOTE-RULE-SET',
     value: 'rule_set_url'

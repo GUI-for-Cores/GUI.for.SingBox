@@ -75,11 +75,9 @@ const handleSave = async () => {
       await profilesStore.addProfile(profile.value)
       handleCancel()
     }
-    return
   } catch (error: any) {
     console.error('handleSave: ', error)
     message.error(error)
-    return
   }
   loading.value = false
 }
