@@ -49,26 +49,29 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
       const taskID = await AddScheduledTask(cron, id)
       ScheduledTasksEvents.push(id)
       ScheduledTasksIDs.push(taskID)
+      EventsOn(id, () => runScheduledTask(id))
+    })
+  }
 
-      EventsOn(id, async () => {
-        const task = getScheduledTaskById(id)
-        if (!task) return
+  const runScheduledTask = async (id: string) => {
+    const task = getScheduledTaskById(id)
+    if (!task) return
 
-        task.lastTime = new Date().toLocaleString()
-        editScheduledTask(id, task)
+    const logsStore = useLogsStore()
 
-        const startTime = Date.now()
-        const result = await getTaskFn(task)()
+    task.lastTime = new Date().toLocaleString()
+    editScheduledTask(id, task)
 
-        task.notification && Notify(task.name, result.join('\n'))
+    const startTime = Date.now()
+    const result = await getTaskFn(task)()
 
-        logsStore.recordScheduledTasksLog({
-          name: task.name,
-          startTime,
-          endTime: Date.now(),
-          result
-        })
-      })
+    task.notification && Notify(task.name, result.join('\n'))
+
+    logsStore.recordScheduledTasksLog({
+      name: task.name,
+      startTime,
+      endTime: Date.now(),
+      result
     })
   }
 
@@ -81,7 +84,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
 
   const withOutput = (list: string[], fn: (id: string) => Promise<string>) => {
     return async () => {
-      const output = []
+      const output: string[] = []
       for (const id of list) {
         try {
           const res = await fn(id)
@@ -188,6 +191,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     deleteScheduledTask,
     getScheduledTaskById,
     getTaskFn,
-    removeScheduledTasks
+    removeScheduledTasks,
+    runScheduledTask
   }
 })

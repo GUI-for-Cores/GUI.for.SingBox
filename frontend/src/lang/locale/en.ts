@@ -471,7 +471,9 @@ export default {
     endTime: 'End Time',
     time: 'Time',
     result: 'Result',
-    empty: 'The scheduled task list is empty. Please {action} a scheduled task first.'
+    empty: 'The scheduled task list is empty. Please {action} a scheduled task first.',
+    run: 'Run now',
+    log: 'View log'
   },
   settings: {
     general: 'General',

@@ -5,11 +5,17 @@ import { useLogsStore, useScheduledTasksStore } from '@/stores'
 
 import type { Column } from '@/components/Table/index.vue'
 
+interface Props {
+  id?: string
+}
+
+const props = withDefaults(defineProps<Props>(), { id: '' })
+
 const { t } = useI18n()
 const logsStore = useLogsStore()
 const pluginsStore = useScheduledTasksStore()
 
-const plugin = ref('')
+const plugin = ref(pluginsStore.getScheduledTaskById(props.id)?.name)
 const keywords = ref('')
 
 const columns: Column[] = [
@@ -57,7 +63,7 @@ const pluginsOptions = computed(() =>
 const filteredLogs = computed(() => {
   return logsStore.scheduledtasksLogs.filter((v) => {
     const p = plugin.value ? v.name === plugin.value : true
-    const k = v.result.some((vv) => (vv ? vv.includes(keywords.value) : true))
+    const k = v.result.some((vv) => (vv ? vv.toString().includes(keywords.value) : true))
     return p && k
   })
 })

@@ -6,7 +6,12 @@ import { View } from '@/constant'
 import { useMessage, useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant'
 import { debounce, formatRelativeTime } from '@/utils'
-import { type ScheduledTaskType, useAppSettingsStore, useScheduledTasksStore } from '@/stores'
+import {
+  type ScheduledTaskType,
+  useAppSettingsStore,
+  useScheduledTasksStore,
+  type Menu
+} from '@/stores'
 
 import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
 import ScheduledTasksLogs from './components/ScheduledTasksLogs.vue'
@@ -15,6 +20,22 @@ const showTaskForm = ref(false)
 const taskFormTaskID = ref()
 const taskFormIsUpdate = ref(false)
 const taskFormTitle = computed(() => (taskFormIsUpdate.value ? 'common.edit' : 'common.add'))
+
+const menuList: Menu[] = [
+  {
+    label: 'scheduledtasks.run',
+    handler: (id: string) => {
+      scheduledTasksStore.runScheduledTask(id)
+    }
+  },
+  {
+    label: 'scheduledtasks.log',
+    handler: (id: string) => {
+      taskFormTaskID.value = id
+      showLogs.value = true
+    }
+  }
+]
 
 const [showLogs, toggleLogs] = useBool(false)
 
@@ -48,6 +69,11 @@ const handleDisableTask = async (s: ScheduledTaskType) => {
   scheduledTasksStore.editScheduledTask(s.id, s)
 }
 
+const handleViewLogs = () => {
+  taskFormTaskID.value = ''
+  toggleLogs()
+}
+
 const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
 </script>
 
@@ -72,7 +98,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
         { label: 'common.list', value: View.List }
       ]"
     />
-    <Button @click="toggleLogs" type="text" class="ml-auto">
+    <Button @click="handleViewLogs" type="text" class="ml-auto">
       {{ t('scheduledtasks.logs') }}
     </Button>
     <Button @click="handleAddTask" type="primary">
@@ -92,6 +118,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       :key="s.id"
       :title="s.name"
       :disabled="s.disabled"
+      v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
       class="item"
     >
       <template v-if="appSettingsStore.app.scheduledtasksView === View.Grid" #extra>
@@ -166,7 +193,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
     width="90"
     height="90"
   >
-    <ScheduledTasksLogs />
+    <ScheduledTasksLogs :id="taskFormTaskID" />
   </Modal>
 </template>
 

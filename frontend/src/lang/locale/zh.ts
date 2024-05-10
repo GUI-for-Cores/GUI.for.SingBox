@@ -471,7 +471,9 @@ export default {
     endTime: '结束时间',
     time: '执行时间',
     result: '执行结果',
-    empty: '计划任务列表为空，请先{action}计划任务。'
+    empty: '计划任务列表为空，请先{action}计划任务。',
+    run: '立即运行',
+    log: '查看日志'
   },
   settings: {
     general: '通用',
