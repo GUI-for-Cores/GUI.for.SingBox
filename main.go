@@ -53,8 +53,16 @@ func main() {
 	err := wails.Run(&options.App{
 		Title: "GUI.for.SingBox",
 		Menu:  AppMenu,
-		Width: 800,
+		Width: func() int {
+			if bridge.Config.Width != 0 {
+				return bridge.Config.Width
+			}
+			return 800
+		}(),
 		Height: func() int {
+			if bridge.Config.Height != 0 {
+				return bridge.Config.Height
+			}
 			if bridge.Env.OS == "linux" {
 				return 510
 			}

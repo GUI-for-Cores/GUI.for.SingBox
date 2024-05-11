@@ -42,6 +42,8 @@ type HTTPResult struct {
 
 type AppConfig struct {
 	WindowStartState int    `yaml:"windowStartState"`
+	Width            int    `yaml:"width"`
+	Height           int    `yaml:"height"`
 	UserAgent        string `yaml:"userAgent"`
 }
 

@@ -18,6 +18,8 @@ type AppSettings = {
   pluginsView: View
   scheduledtasksView: View
   windowStartState: WindowStartState
+  width: number
+  height: number
   exitOnClose: boolean
   closeKernelOnExit: boolean
   autoSetSystemProxy: boolean
@@ -60,6 +62,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     pluginsView: View.Grid,
     scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
+    width: 0,
+    height: 0,
     exitOnClose: false,
     closeKernelOnExit: true,
     autoSetSystemProxy: false,
@@ -182,6 +186,11 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     },
     { deep: true }
   )
+
+  window.addEventListener('resize', () => {
+    app.value.width = document.documentElement.clientWidth
+    app.value.height = document.documentElement.clientHeight
+  })
 
   watch(
     [
