@@ -129,7 +129,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (s.type === 'Http') {
-      const { header: h, body: b } = await HttpGet(
+      const { headers: h, body: b } = await HttpGet(
         s.url,
         {
           'User-Agent': s.userAgent || getUserAgent()

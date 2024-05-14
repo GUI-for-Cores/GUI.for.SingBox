@@ -27,11 +27,17 @@ export function HttpDelete(arg1:string,arg2:{[key: string]: string},arg3:any):Pr
 
 export function HttpGet(arg1:string,arg2:{[key: string]: string},arg3:any):Promise<bridge.HTTPResult>;
 
+export function HttpHead(arg1:string,arg2:{[key: string]: string},arg3:any):Promise<bridge.HTTPResult>;
+
+export function HttpPatch(arg1:string,arg2:{[key: string]: string},arg3:string,arg4:any):Promise<bridge.HTTPResult>;
+
 export function HttpPost(arg1:string,arg2:{[key: string]: string},arg3:string,arg4:any):Promise<bridge.HTTPResult>;
 
 export function HttpPut(arg1:string,arg2:{[key: string]: string},arg3:string,arg4:any):Promise<bridge.HTTPResult>;
 
 export function KillProcess(arg1:number):Promise<bridge.FlagResult>;
+
+export function ListServer():Promise<bridge.FlagResult>;
 
 export function Makedir(arg1:string):Promise<bridge.FlagResult>;
 
@@ -49,7 +55,13 @@ export function RemoveScheduledTask(arg1:number):Promise<void>;
 
 export function Removefile(arg1:string):Promise<bridge.FlagResult>;
 
+export function Requests(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:any):Promise<bridge.HTTPResult>;
+
 export function RestartApp():Promise<bridge.FlagResult>;
+
+export function StartServer(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+
+export function StopServer(arg1:string):Promise<bridge.FlagResult>;
 
 export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 

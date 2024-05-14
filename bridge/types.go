@@ -22,6 +22,7 @@ type EnvResult struct {
 type RequestOptions = struct {
 	Proxy    string
 	Insecure bool
+	Timeout  int
 }
 
 type ExecOptions struct {
@@ -35,9 +36,10 @@ type FlagResult struct {
 }
 
 type HTTPResult struct {
-	Flag   bool        `json:"flag"`
-	Header http.Header `json:"header"`
-	Body   string      `json:"body"`
+	Flag    bool        `json:"flag"`
+	Status  int         `json:"status"`
+	Headers http.Header `json:"headers"`
+	Body    string      `json:"body"`
 }
 
 type AppConfig struct {

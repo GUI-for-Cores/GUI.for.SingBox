@@ -12,6 +12,7 @@ require (
 require (
 	github.com/energye/systray v1.0.2
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
+	github.com/google/uuid v1.6.0
 	github.com/klauspost/cpuid/v2 v2.2.7
 	github.com/robfig/cron/v3 v3.0.1
 	golang.org/x/text v0.15.0
@@ -23,7 +24,6 @@ require (
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/labstack/echo/v4 v4.12.0 // indirect

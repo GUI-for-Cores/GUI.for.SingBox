@@ -50,7 +50,8 @@ export namespace bridge {
 	}
 	export class HTTPResult {
 	    flag: boolean;
-	    header: {[key: string]: string[]};
+	    status: number;
+	    headers: {[key: string]: string[]};
 	    body: string;
 	
 	    static createFrom(source: any = {}) {
@@ -60,7 +61,8 @@ export namespace bridge {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.flag = source["flag"];
-	        this.header = source["header"];
+	        this.status = source["status"];
+	        this.headers = source["headers"];
 	        this.body = source["body"];
 	    }
 	}

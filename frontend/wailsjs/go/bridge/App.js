@@ -50,6 +50,14 @@ export function HttpGet(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['HttpGet'](arg1, arg2, arg3);
 }
 
+export function HttpHead(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['HttpHead'](arg1, arg2, arg3);
+}
+
+export function HttpPatch(arg1, arg2, arg3, arg4) {
+  return window['go']['bridge']['App']['HttpPatch'](arg1, arg2, arg3, arg4);
+}
+
 export function HttpPost(arg1, arg2, arg3, arg4) {
   return window['go']['bridge']['App']['HttpPost'](arg1, arg2, arg3, arg4);
 }
@@ -60,6 +68,10 @@ export function HttpPut(arg1, arg2, arg3, arg4) {
 
 export function KillProcess(arg1) {
   return window['go']['bridge']['App']['KillProcess'](arg1);
+}
+
+export function ListServer() {
+  return window['go']['bridge']['App']['ListServer']();
 }
 
 export function Makedir(arg1) {
@@ -94,8 +106,20 @@ export function Removefile(arg1) {
   return window['go']['bridge']['App']['Removefile'](arg1);
 }
 
+export function Requests(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['bridge']['App']['Requests'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function RestartApp() {
   return window['go']['bridge']['App']['RestartApp']();
+}
+
+export function StartServer(arg1, arg2) {
+  return window['go']['bridge']['App']['StartServer'](arg1, arg2);
+}
+
+export function StopServer(arg1) {
+  return window['go']['bridge']['App']['StopServer'](arg1);
 }
 
 export function UnzipGZFile(arg1, arg2) {
