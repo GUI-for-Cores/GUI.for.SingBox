@@ -2,7 +2,6 @@
   <img src="build/appicon.png" alt="GUI.for.SingBox" width="200">
   <h1>GUI.for.SingBox</h1>
   <p>A GUI program developed by vue3 + wails.</p>
-  <img src="https://img.shields.io/github/downloads/GUI-for-Cores/GUI.for.SingBox/total?color=%239F7AEA&logo=github" />
 </div>
 
 ## Preview
