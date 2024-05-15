@@ -38,8 +38,8 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 				runtime.EventsOff(a.Ctx, requestID)
 				resp := ResponseData{200, make(map[string]string), "A sample http server"}
 				if len(data) >= 3 {
-					if status, ok := data[0].(int); ok {
-						resp.Status = status
+					if status, ok := data[0].(float64); ok {
+						resp.Status = int(status)
 					}
 					if headers, ok := data[1].(string); ok {
 						json.Unmarshal([]byte(headers), &resp.Headers)
