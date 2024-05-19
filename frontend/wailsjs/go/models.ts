@@ -66,6 +66,7 @@ export namespace bridge {
 	        this.body = source["body"];
 	    }
 	}
+	
 	export class MenuItem {
 	    type: string;
 	    text: string;

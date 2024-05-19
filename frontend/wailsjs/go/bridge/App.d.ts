@@ -49,7 +49,9 @@ export function OnSecondInstanceLaunch(arg1:options.SecondInstanceData):Promise<
 
 export function ProcessInfo(arg1:number):Promise<bridge.FlagResult>;
 
-export function Readfile(arg1:string):Promise<bridge.FlagResult>;
+export function Readdir(arg1:string):Promise<bridge.FlagResult>;
+
+export function Readfile(arg1:string,arg2:bridge.IOOptions):Promise<bridge.FlagResult>;
 
 export function RemoveScheduledTask(arg1:number):Promise<void>;
 
@@ -73,4 +75,4 @@ export function UpdateTrayMenus(arg1:Array<bridge.MenuItem>):Promise<void>;
 
 export function Upload(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:any):Promise<bridge.HTTPResult>;
 
-export function Writefile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+export function Writefile(arg1:string,arg2:string,arg3:bridge.IOOptions):Promise<bridge.FlagResult>;

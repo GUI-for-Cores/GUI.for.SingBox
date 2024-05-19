@@ -8,8 +8,15 @@ type RequestType = {
   headers: Record<string, string>
   body: string
 }
-type ResponseType = { end: (status: number, headers: Record<string, string>, body: string) => void }
-type HttpServerHandler = (req: RequestType, res: ResponseType) => void
+type ResponseType = {
+  end: (
+    status: number,
+    headers: Record<string, string>,
+    body: string,
+    options: { mode: 'Binary' | 'Text' }
+  ) => void
+}
+type HttpServerHandler = (req: RequestType, res: ResponseType) => Promise<void>
 
 export const StartServer = async (address: string, id: string, handler: HttpServerHandler) => {
   const { flag, data } = await App.StartServer(address, id)
@@ -17,22 +24,35 @@ export const StartServer = async (address: string, id: string, handler: HttpServ
     throw data
   }
 
-  EventsOn(id, (...args) => {
+  EventsOn(id, async (...args) => {
     const [id, method, url, headers, body] = args
-    handler(
-      {
-        id,
-        method,
-        url,
-        headers: Object.entries(headers).reduce((p, c: any) => ({ ...p, [c[0]]: c[1][0] }), {}),
-        body
-      },
-      {
-        end: (status, headers, body) => {
-          EventsEmit(id, status, JSON.stringify(headers), body)
+    try {
+      await handler(
+        {
+          id,
+          method,
+          url,
+          headers: Object.entries(headers).reduce((p, c: any) => ({ ...p, [c[0]]: c[1][0] }), {}),
+          body
+        },
+        {
+          end: (status, headers, body, options = { mode: 'Text' }) => {
+            EventsEmit(id, status, JSON.stringify(headers), body, JSON.stringify(options))
+          }
         }
-      }
-    )
+      )
+    } catch (err: any) {
+      console.log('Server handler err:', err)
+      EventsEmit(
+        id,
+        500,
+        JSON.stringify({ 'Content-Type': 'text/plain; charset=utf-8' }),
+        err.message || err,
+        JSON.stringify({ Mode: 'Text' })
+      )
+    } finally {
+      EventsOff(id)
+    }
   })
   return { close: () => StopServer(id) }
 }

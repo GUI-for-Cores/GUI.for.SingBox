@@ -533,6 +533,10 @@ export default {
     userAgent: {
       name: 'User-Agent',
       reset: 'Reset User-Agent'
+    },
+    githubapi: {
+      name: 'Authenticating to the REST API',
+      tips: 'have a higher rate limit'
     }
   },
   about: {

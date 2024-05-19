@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { computed, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { ignoredError } from '@/utils'
+import { getGitHubApiAuthorization, ignoredError } from '@/utils'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
@@ -51,7 +51,9 @@ const updateRemoteVersion = async (showTips = false) => {
 const downloadCore = async () => {
   downloadLoading.value = true
   try {
-    const { body } = await HttpGet<Record<string, any>>(latestUrl)
+    const { body } = await HttpGet<Record<string, any>>(latestUrl, {
+      Authorization: getGitHubApiAuthorization()
+    })
     const { os, arch } = await GetEnv()
 
     const { assets, name, message: msg } = body[0]
@@ -154,7 +156,9 @@ const getLocalVersion = async (showTips = false) => {
 const getRemoteVersion = async (showTips = false) => {
   remoteVersionLoading.value = true
   try {
-    const { body } = await HttpGet<Record<string, any>>(latestUrl)
+    const { body } = await HttpGet<Record<string, any>>(latestUrl, {
+      Authorization: getGitHubApiAuthorization()
+    })
     const { name } = body[0]
     return name as string
   } catch (error: any) {

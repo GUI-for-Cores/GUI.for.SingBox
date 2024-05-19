@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { ignoredError } from '@/utils'
+import { getGitHubApiAuthorization, ignoredError } from '@/utils'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { usePluginsStore, type PluginType } from '@/stores'
 
@@ -21,8 +21,12 @@ const pluginsStore = usePluginsStore()
 const updateList = async () => {
   loading.value = true
   try {
-    const { body: body1 } = await HttpGet<string>(hubUrl)
-    const { body: body2 } = await HttpGet<string>(gfsUrl)
+    const { body: body1 } = await HttpGet<string>(hubUrl, {
+      Authorization: getGitHubApiAuthorization()
+    })
+    const { body: body2 } = await HttpGet<string>(gfsUrl, {
+      Authorization: getGitHubApiAuthorization()
+    })
     const list1 = JSON.parse(body1)
     const list2 = JSON.parse(body2)
     list.value = [...list1, ...list2]

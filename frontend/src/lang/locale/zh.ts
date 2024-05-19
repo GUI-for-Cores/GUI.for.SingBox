@@ -404,7 +404,7 @@ export default {
     updating: '更新中'
   },
   rulesets: {
-    empty: '规则集列表为空. 请先{action}规则集。',
+    empty: '规则集列表为空，请先{action}规则集。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则集文件'
   },
@@ -533,6 +533,10 @@ export default {
     userAgent: {
       name: '用户代理(User-Agent)',
       reset: ' 重置用户代理'
+    },
+    githubapi: {
+      name: '向 REST API 进行身份验证',
+      tips: '拥有更高的速率限制'
     }
   },
   about: {

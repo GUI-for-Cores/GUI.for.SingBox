@@ -94,8 +94,12 @@ export function ProcessInfo(arg1) {
   return window['go']['bridge']['App']['ProcessInfo'](arg1);
 }
 
-export function Readfile(arg1) {
-  return window['go']['bridge']['App']['Readfile'](arg1);
+export function Readdir(arg1) {
+  return window['go']['bridge']['App']['Readdir'](arg1);
+}
+
+export function Readfile(arg1, arg2) {
+  return window['go']['bridge']['App']['Readfile'](arg1, arg2);
 }
 
 export function RemoveScheduledTask(arg1) {
@@ -142,6 +146,6 @@ export function Upload(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5);
 }
 
-export function Writefile(arg1, arg2) {
-  return window['go']['bridge']['App']['Writefile'](arg1, arg2);
+export function Writefile(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['Writefile'](arg1, arg2, arg3);
 }

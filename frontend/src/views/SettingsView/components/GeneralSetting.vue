@@ -279,6 +279,13 @@ if (envStore.env.os === 'windows') {
         <Input v-model.lazy="appSettings.app.userAgent" editable style="margin-left: 8px" />
       </div>
     </div>
+    <div class="settings-item">
+      <div class="title">
+        {{ t('settings.githubapi.name') }}
+        <span class="tips">({{ t('settings.githubapi.tips') }})</span>
+      </div>
+      <Input v-model.lazy="appSettings.app.githubApiToken" editable />
+    </div>
   </div>
 </template>
 

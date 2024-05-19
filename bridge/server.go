@@ -1,7 +1,7 @@
 package bridge
 
 import (
-	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log"
@@ -26,18 +26,21 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 	server := &http.Server{
 		Addr: address,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			requestID := uuid.New().String()
-			responseChan := make(chan ResponseData)
-			b, err := io.ReadAll(r.Body)
+			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				w.WriteHeader(500)
+				log.Printf("reading body error: %v", err)
 				return
 			}
-			runtime.EventsEmit(a.Ctx, serverID, requestID, r.Method, r.URL.RequestURI(), r.Header, string(b))
+
+			requestID := uuid.New().String()
+			respChan := make(chan ResponseData)
+			respBody := []byte{}
+
 			runtime.EventsOn(a.Ctx, requestID, func(data ...interface{}) {
 				runtime.EventsOff(a.Ctx, requestID)
 				resp := ResponseData{200, make(map[string]string), "A sample http server"}
-				if len(data) >= 3 {
+				if len(data) >= 4 {
 					if status, ok := data[0].(float64); ok {
 						resp.Status = int(status)
 					}
@@ -46,16 +49,33 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 					}
 					if body, ok := data[2].(string); ok {
 						resp.Body = body
+						respBody = []byte(body)
+					}
+					if options, ok := data[3].(string); ok {
+						ioOptions := IOOptions{Mode: "Text"}
+						json.Unmarshal([]byte(options), &ioOptions)
+						if ioOptions.Mode == Binary {
+							body, err = base64.StdEncoding.DecodeString(resp.Body)
+							if err != nil {
+								resp.Status = 500
+								respBody = []byte(err.Error())
+							} else {
+								respBody = body
+							}
+						}
 					}
 				}
-				responseChan <- resp
+				respChan <- resp
 			})
-			res := <-responseChan
+
+			runtime.EventsEmit(a.Ctx, serverID, requestID, r.Method, r.URL.RequestURI(), r.Header, body)
+
+			res := <-respChan
 			for key, value := range res.Headers {
 				w.Header().Set(key, value)
 			}
 			w.WriteHeader(res.Status)
-			w.Write([]byte(res.Body))
+			w.Write(respBody)
 		}),
 	}
 
@@ -74,7 +94,7 @@ func (a *App) StopServer(id string) FlagResult {
 		return FlagResult{false, "server not found"}
 	}
 
-	err := server.Shutdown(context.TODO())
+	err := server.Close()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}

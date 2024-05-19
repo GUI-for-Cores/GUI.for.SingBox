@@ -30,6 +30,10 @@ type ExecOptions struct {
 	Env     map[string]string `json:"env"`
 }
 
+type IOOptions struct {
+	Mode string // Binary / Text
+}
+
 type FlagResult struct {
 	Flag bool   `json:"flag"`
 	Data string `json:"data"`
