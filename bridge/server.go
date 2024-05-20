@@ -37,6 +37,8 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 			respChan := make(chan ResponseData)
 			respBody := []byte{}
 
+			defer close(respChan)
+
 			runtime.EventsOn(a.Ctx, requestID, func(data ...interface{}) {
 				runtime.EventsOff(a.Ctx, requestID)
 				resp := ResponseData{200, make(map[string]string), "A sample http server"}
