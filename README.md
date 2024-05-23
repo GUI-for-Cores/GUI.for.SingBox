@@ -32,9 +32,15 @@
 ```bash
 git clone https://github.com/GUI-for-Cores/GUI.for.SingBox.git
 
-cd GUI.for.SingBox
+cd GUI.for.SingBox/frontend
 
-wails build -m -trimpath
+pnpm install
+
+pnpm build
+
+cd ..
+
+wails build
 ```
 
 ## Stargazers over time

@@ -177,8 +177,8 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
   <Modal
     v-model:open="showTaskForm"
     :title="taskFormTitle"
-    max-height="80"
-    max-width="90"
+    max-height="90"
+    max-width="70"
     :footer="false"
   >
     <ScheduledTaskForm :is-update="taskFormIsUpdate" :id="taskFormTaskID" />

@@ -387,7 +387,9 @@ export default {
     copytoClipboard: '生成配置到剪切板',
     generateAndView: '生成配置并查看',
     copy: '复制并粘贴',
-    start: '使用此配置启动/重启'
+    start: '使用此配置启动/重启',
+    proxyGroups: '代理组',
+    rules: '规则'
   },
   ruleset: {
     manual: '手动管理',
@@ -521,6 +523,7 @@ export default {
     autoStartKernel: '自动启动内核程序',
     admin: '以管理员身份运行',
     addToMenu: '将插件添加到托盘菜单',
+    multipleInstance: '允许多个实例',
     startup: {
       name: '开机时启动',
       delay: '延迟(秒)'

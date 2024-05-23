@@ -23,7 +23,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
     'store-cache': true,
     'store-fake-ip': false
   },
-  domain_strategy: '',
+  domain_strategy: 'ipv4_only',
   'tcp-fast-open': false,
   'tcp-multi-path': false,
   'udp-fragment': false,
@@ -46,7 +46,7 @@ export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
 export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
   enable: true,
   fakeip: false,
-  strategy: '',
+  strategy: 'ipv4_only',
   'local-dns': 'https://223.5.5.5/dns-query',
   'remote-dns': 'tls://8.8.8.8',
   'resolver-dns': '223.5.5.5',

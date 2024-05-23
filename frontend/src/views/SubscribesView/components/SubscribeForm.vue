@@ -163,7 +163,12 @@ if (props.isUpdate) {
         <div class="name">{{ t('subscribe.useragent') }}</div>
         <Input v-model="sub.userAgent" :placeholder="getUserAgent()" auto-size>
           <template #extra>
-            <Button @click="resetUserAgent" v-tips="t('subscribe.resetUserAgent')" icon="reset" />
+            <Button
+              @click="resetUserAgent"
+              type="text"
+              icon="reset"
+              v-tips="t('subscribe.resetUserAgent')"
+            />
           </template>
         </Input>
       </div>
@@ -190,7 +195,7 @@ if (props.isUpdate) {
 .form {
   padding: 0 8px;
   overflow-y: auto;
-  max-height: 58vh;
+  max-height: 70vh;
   .name {
     font-size: 14px;
     padding: 8px 8px 8px 0;

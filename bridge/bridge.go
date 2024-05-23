@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 
@@ -55,4 +56,20 @@ func InitBridge() {
 	if err == nil {
 		yaml.Unmarshal(b, &Config)
 	}
+}
+
+func (a *App) RestartApp() FlagResult {
+	exePath := Env.BasePath + "/" + Env.AppName
+
+	cmd := exec.Command(exePath)
+	HideExecWindow(cmd)
+
+	err := cmd.Start()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	a.ExitApp()
+
+	return FlagResult{true, "Success"}
 }

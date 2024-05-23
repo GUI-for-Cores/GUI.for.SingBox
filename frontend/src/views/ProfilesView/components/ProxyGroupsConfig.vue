@@ -259,13 +259,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     </div>
   </Modal>
 
-  <Modal
-    v-model:open="showModal"
-    @ok="handleAddEnd"
-    title="profile.group"
-    max-width="80"
-    max-height="80"
-  >
+  <Modal v-model:open="showModal" @ok="handleAddEnd" title="profile.group" width="80" height="80">
     <div class="form-item">
       {{ t('kernel.proxyGroups.name') }}
       <Input v-model="fields.tag" autofocus />

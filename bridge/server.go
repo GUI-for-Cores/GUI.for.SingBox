@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -81,7 +82,20 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 		}),
 	}
 
-	go func() { server.ListenAndServe() }()
+	var result error
+
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			result = err
+		}
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	if result != nil {
+		return FlagResult{false, result.Error()}
+	}
 
 	serverMap[serverID] = server
 

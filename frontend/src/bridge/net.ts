@@ -3,7 +3,7 @@ import { GetSystemProxy } from '@/utils/helper'
 import { sampleID, getUserAgent } from '@/utils'
 import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 
-type RequestOptions = {
+type RequestType = {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'HEAD' | 'PATCH'
   url: string
   headers?: {
@@ -17,12 +17,12 @@ type RequestOptions = {
   }
 }
 
-type HttpResult = { status: number; headers: Record<string, string>; body: any }
+type ResponseType = { status: number; headers: Record<string, string>; body: any }
 
 const transformRequest = async (
-  headers: RequestOptions['headers'],
-  body: RequestOptions['body'],
-  options: RequestOptions['options']
+  headers: RequestType['headers'],
+  body: RequestType['body'],
+  options: RequestType['options']
 ) => {
   headers = { 'User-Agent': getUserAgent(), ...headers }
 
@@ -47,9 +47,9 @@ const transformRequest = async (
 }
 
 const transformResponse = <T = any>(
-  status: number,
+  status: ResponseType['status'],
   headers: Record<string, string[]>,
-  body: string
+  body: ResponseType['body']
 ) => {
   Object.entries(headers).forEach(([key, value]) => (headers[key] = value[0] as any))
 
@@ -57,137 +57,81 @@ const transformResponse = <T = any>(
     body = JSON.parse(body)
   }
 
-  return { status, headers: headers as unknown as HttpResult['headers'], body: body as T }
+  return { status, headers: headers as unknown as ResponseType['headers'], body: body as T }
 }
 
-type RequestWithProgressOptions = {
-  url: string
-  path: string
-  headers: RequestOptions['headers']
-  options: RequestOptions['options']
-  progress: (progress: number, total: number) => void
+const requestWithProgress = (method: 'Download' | 'Upload') => {
+  return async (
+    url: RequestType['url'],
+    path: string,
+    headers: RequestType['headers'] = {},
+    progress: (progress: number, total: number) => void = () => 0,
+    options: RequestType['options'] = {}
+  ) => {
+    const [_headers, , _options] = await transformRequest(headers, null, {
+      Timeout: 20 * 60,
+      ...options
+    })
+
+    const event = sampleID()
+
+    EventsOn(event, progress)
+
+    const {
+      flag,
+      status,
+      headers: __headers,
+      body
+    } = await App[method](url, path, _headers, event, _options)
+
+    EventsOff(event)
+
+    if (!flag) throw body
+
+    return transformResponse(status, __headers, body)
+  }
 }
 
-const requestWithProgress = async (reqType: number, reqOptions: RequestWithProgressOptions) => {
-  const { url, path, headers = {}, progress = () => 0, options = {} } = reqOptions
+const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
+  return async <T = any>(
+    url: string,
+    headers: RequestType['headers'] = {},
+    body = {},
+    options = {}
+  ) => {
+    const [_headers, _body, _options] = await transformRequest(headers, body, options)
 
-  const [_headers, , _options] = await transformRequest(headers, null, {
-    Timeout: 20 * 60,
-    ...options
-  })
+    const {
+      flag,
+      status,
+      headers: __headers,
+      body: __body
+    } = await App.Requests(method, url, _headers, _body, _options)
 
-  const event = sampleID()
+    if (!flag) throw __body
 
-  EventsOn(event, progress)
-
-  const {
-    flag,
-    status,
-    headers: __headers,
-    body
-  } = await App[reqType === 0 ? 'Download' : 'Upload'](url, path, _headers, event, _options)
-
-  EventsOff(event)
-
-  if (!flag) throw body
-
-  return transformResponse(status, __headers, body)
+    return transformResponse<T>(status, __headers, __body)
+  }
 }
 
-export const Download = async (
-  url: string,
-  path: string,
-  headers: RequestOptions['headers'] = {},
-  progress: RequestWithProgressOptions['progress'] = () => 0,
-  options: RequestOptions['options'] = {}
-) => {
-  return await requestWithProgress(0, { url, path, headers, progress, options })
+const requestWithoutBody = (methd: 'GET' | 'HEAD' | 'DELETE') => {
+  return async <T = any>(url: string, headers: RequestType['headers'] = {}, options = {}) => {
+    const [_headers, , _options] = await transformRequest(headers, null, options)
+
+    const {
+      flag,
+      status,
+      headers: __headers,
+      body
+    } = await App.Requests(methd, url, _headers, '', _options)
+
+    if (!flag) throw body
+
+    return transformResponse<T>(status, __headers, body)
+  }
 }
 
-export const Upload = async (
-  url: string,
-  path: string,
-  headers: RequestOptions['headers'] = {},
-  progress: RequestWithProgressOptions['progress'] = () => 0,
-  options: RequestOptions['options'] = {}
-) => {
-  return await requestWithProgress(1, { url, path, headers, progress, options })
-}
-
-export const HttpGet = async <T = any>(
-  url: string,
-  headers: RequestOptions['headers'] = {},
-  options = {}
-) => {
-  const [_headers, , _options] = await transformRequest(headers, null, options)
-
-  const { flag, status, headers: __headers, body } = await App.HttpGet(url, _headers, _options)
-
-  if (!flag) throw body
-
-  return transformResponse<T>(status, __headers, body)
-}
-
-export const HttpPost = async <T = any>(
-  url: string,
-  headers: RequestOptions['headers'] = {},
-  body = {},
-  options = {}
-) => {
-  const [_headers, _body, _options] = await transformRequest(headers, body, options)
-
-  const {
-    flag,
-    status,
-    headers: __headers,
-    body: __body
-  } = await App.HttpPost(url, _headers, _body, _options)
-
-  if (!flag) throw __body
-
-  return transformResponse<T>(status, __headers, __body)
-}
-
-export const HttpDelete = async <T = any>(
-  url: string,
-  headers: RequestOptions['headers'] = {},
-  options = {}
-) => {
-  const [_headers, , _options] = await transformRequest(headers, null, options)
-
-  const {
-    flag,
-    status,
-    headers: __headers,
-    body: _body
-  } = await App.HttpDelete(url, _headers, _options)
-
-  if (!flag) throw _body
-
-  return transformResponse<T>(status, __headers, _body)
-}
-
-export const HttpPut = async <T = any>(
-  url: string,
-  headers: RequestOptions['headers'] = {},
-  body = {},
-  options = {}
-) => {
-  const [_headers, _body, _options] = await transformRequest(headers, body, options)
-
-  const {
-    flag,
-    status,
-    headers: __headers,
-    body: __body
-  } = await App.HttpPut(url, _headers, _body, _options)
-
-  if (!flag) throw _body
-
-  return transformResponse<T>(status, __headers, __body)
-}
-
-export const Requests = async (options: RequestOptions) => {
+export const Requests = async (options: RequestType) => {
   const { method = 'GET', url, headers = {}, body = '', options: _options = {} } = options
   const {
     flag,
@@ -204,3 +148,14 @@ export const Requests = async (options: RequestOptions) => {
     body: _body
   }
 }
+
+export const Upload = requestWithProgress('Upload')
+export const Download = requestWithProgress('Download')
+
+export const HttpGet = requestWithoutBody('GET')
+export const HttpHead = requestWithoutBody('HEAD')
+export const HttpDelete = requestWithoutBody('DELETE')
+
+export const HttpPut = requestWithBody('PUT')
+export const HttpPost = requestWithBody('POST')
+export const HttpPatch = requestWithBody('PATCH')

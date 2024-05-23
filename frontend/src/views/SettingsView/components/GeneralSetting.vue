@@ -268,6 +268,13 @@ if (envStore.env.os === 'windows') {
       <Switch v-model="appSettings.app.addPluginToMenu" />
     </div>
     <div class="settings-item">
+      <div class="title">
+        {{ t('settings.multipleInstance') }}
+        <span class="tips">({{ t('settings.needRestart') }})</span>
+      </div>
+      <Switch v-model="appSettings.app.multipleInstance" />
+    </div>
+    <div class="settings-item">
       <div class="title">{{ t('settings.userAgent.name') }}</div>
       <div style="display: flex; align-items: center">
         <Button

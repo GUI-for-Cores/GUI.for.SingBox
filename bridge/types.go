@@ -47,10 +47,10 @@ type HTTPResult struct {
 }
 
 type AppConfig struct {
-	WindowStartState int    `yaml:"windowStartState"`
-	Width            int    `yaml:"width"`
-	Height           int    `yaml:"height"`
-	UserAgent        string `yaml:"userAgent"`
+	WindowStartState int  `yaml:"windowStartState"`
+	Width            int  `yaml:"width"`
+	Height           int  `yaml:"height"`
+	MultipleInstance bool `yaml:"multipleInstance"`
 }
 
 type MenuItem struct {

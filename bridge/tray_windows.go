@@ -6,8 +6,6 @@ import (
 	"embed"
 	"log"
 	"os"
-	"os/exec"
-	"syscall"
 
 	"github.com/energye/systray"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -17,15 +15,19 @@ var assets embed.FS
 
 func CreateTray(a *App, icon []byte, fs embed.FS) {
 	assets = fs
-	go func() {
-		systray.Run(func() {
-			systray.SetIcon([]byte(icon))
-			systray.SetTitle("GUI.for.SingBox")
-			systray.SetTooltip("GUI.for.SingBox")
-			systray.SetOnDClick(func(menu systray.IMenu) { runtime.WindowShow(a.Ctx) })
-			systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
-		}, nil)
-	}()
+	go systray.Run(func() {
+		systray.SetIcon([]byte(icon))
+		systray.SetTitle("GUI.for.SingBox")
+		systray.SetTooltip("GUI.for.SingBox")
+		systray.SetOnClick(func(menu systray.IMenu) {
+			runtime.EventsEmit(a.Ctx, "onTrayClick")
+			runtime.WindowShow(a.Ctx)
+		})
+		systray.SetOnRClick(func(menu systray.IMenu) {
+			runtime.EventsEmit(a.Ctx, "onTrayRClick")
+			menu.ShowMenu()
+		})
+	}, nil)
 }
 
 func (a *App) UpdateTray(tray TrayContent) {
@@ -81,20 +83,4 @@ func (a *App) ExitApp() {
 	systray.Quit()
 	runtime.Quit(a.Ctx)
 	os.Exit(0)
-}
-
-func (a *App) RestartApp() FlagResult {
-	exePath := Env.BasePath + "\\" + Env.AppName
-
-	cmd := exec.Command(exePath)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-
-	err := cmd.Start()
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
-
-	a.ExitApp()
-
-	return FlagResult{true, "Success"}
 }

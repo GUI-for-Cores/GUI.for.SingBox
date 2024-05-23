@@ -387,7 +387,9 @@ export default {
     copytoClipboard: 'Generate config to clipboard',
     generateAndView: 'Generate and View',
     copy: 'Copy and Paste',
-    start: 'Start/Restart with this Profile'
+    start: 'Start/Restart with this Profile',
+    proxyGroups: 'Proxy Groups',
+    rules: 'Rules'
   },
   ruleset: {
     manual: 'MANUAL',
@@ -521,6 +523,7 @@ export default {
     autoStartKernel: 'Auto Start Kernel',
     admin: 'Run As Admin',
     addToMenu: 'Add Plugin To Menu',
+    multipleInstance: 'Allow Multiple Instances',
     startup: {
       name: 'Startup on boot',
       delay: 'Delay(s)'

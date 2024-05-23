@@ -194,6 +194,7 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
             @click="handleUseRuleset(ruleset)"
             :selected="fields.payload === ruleset.id"
             :title="ruleset.tag"
+            v-tips="ruleset.path"
             class="ruleset"
           >
             {{ ruleset.path }}
@@ -247,6 +248,9 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
     width: calc(33.3333% - 16px);
     margin: 8px;
     font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

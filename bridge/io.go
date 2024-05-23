@@ -155,6 +155,14 @@ func (a *App) Readdir(path string) FlagResult {
 	return FlagResult{true, strings.Join(result, "|")}
 }
 
+func (a *App) AbsolutePath(path string) FlagResult {
+	log.Printf("AbsolutePath: %s", path)
+
+	path = GetPath(path)
+
+	return FlagResult{true, path}
+}
+
 func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 	log.Printf("UnzipZIPFile: %s -> %s", path, output)
 

@@ -1,30 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
-import { APP_TITLE, APP_VERSION, APP_CHANNEL, exitApp } from '@/utils'
+import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
 import { type Menu, useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
 import {
-  WindowFullscreen,
-  WindowIsFullscreen,
-  WindowUnfullscreen,
   WindowSetAlwaysOnTop,
   WindowHide,
+  WindowMinimise,
   WindowSetSize,
-  WindowReloadApp
+  WindowReloadApp,
+  WindowToggleMaximise,
+  WindowIsMaximised
 } from '@/bridge'
 
 const isPinned = ref(false)
-const isFullScreen = ref(false)
+const isMaximised = ref(false)
 
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
-
-const toggleFullScreen = async () => {
-  const isFull = await WindowIsFullscreen()
-  isFull ? WindowUnfullscreen() : WindowFullscreen()
-  isFullScreen.value = !isFull
-}
 
 const pinWindow = () => {
   isPinned.value = !isPinned.value
@@ -42,23 +36,26 @@ const closeWindow = async () => {
 const menus: Menu[] = [
   {
     label: 'titlebar.resetSize',
-    handler: async () => {
-      WindowUnfullscreen()
-      await WindowSetSize(800, 540)
-      isFullScreen.value = false
-    }
+    handler: () => WindowSetSize(800, 540)
   },
   {
     label: 'titlebar.reload',
     handler: WindowReloadApp
   }
 ]
+
+const onResize = debounce(async () => {
+  isMaximised.value = await WindowIsMaximised()
+}, 100)
+
+onMounted(() => window.addEventListener('resize', onResize))
+onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <template>
   <div
     v-if="envStore.env.os === 'windows'"
-    @dblclick="toggleFullScreen"
+    @dblclick="WindowToggleMaximise"
     class="titlebar"
     style="--wails-draggable: drag"
   >
@@ -69,7 +66,7 @@ const menus: Menu[] = [
       }"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ APP_CHANNEL === 'Stable' ? '' : APP_CHANNEL }}
+      {{ APP_TITLE }} {{ APP_VERSION }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
     <div v-menu="menus" class="menus"></div>
@@ -77,11 +74,11 @@ const menus: Menu[] = [
       <Button @click.stop="pinWindow" type="text">
         <Icon :icon="isPinned ? 'pinFill' : 'pin'" />
       </Button>
-      <Button @click.stop="WindowHide" type="text">
+      <Button @click.stop="WindowMinimise" type="text">
         <Icon icon="minimize" />
       </Button>
-      <Button @click.stop="toggleFullScreen" type="text">
-        <Icon :icon="isFullScreen ? 'maximize2' : 'maximize'" />
+      <Button @click.stop="WindowToggleMaximise" type="text">
+        <Icon :icon="isMaximised ? 'maximize2' : 'maximize'" />
       </Button>
       <Button
         @click.stop="closeWindow"
@@ -100,7 +97,7 @@ const menus: Menu[] = [
       v-menu="menus"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ APP_CHANNEL === 'Stable' ? '' : APP_CHANNEL }}
+      {{ APP_TITLE }} {{ APP_VERSION }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
   </div>

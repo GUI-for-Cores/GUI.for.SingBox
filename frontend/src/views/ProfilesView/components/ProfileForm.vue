@@ -123,7 +123,7 @@ if (props.isUpdate) {
         </Button>
       </Divider>
       <div v-if="showAdvancedSetting">
-        <AdvancedConfig v-model="profile.advancedConfig" :profile="profile" />
+        <AdvancedConfig v-model="profile.advancedConfig" />
       </div>
     </div>
 
@@ -191,6 +191,6 @@ if (props.isUpdate) {
 .form {
   padding-right: 8px;
   overflow-y: auto;
-  max-height: 60vh;
+  max-height: calc(70vh - 8px);
 }
 </style>

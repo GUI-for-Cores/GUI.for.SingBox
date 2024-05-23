@@ -42,30 +42,6 @@ export function GetInterfaces() {
   return window['go']['bridge']['App']['GetInterfaces']();
 }
 
-export function HttpDelete(arg1, arg2, arg3) {
-  return window['go']['bridge']['App']['HttpDelete'](arg1, arg2, arg3);
-}
-
-export function HttpGet(arg1, arg2, arg3) {
-  return window['go']['bridge']['App']['HttpGet'](arg1, arg2, arg3);
-}
-
-export function HttpHead(arg1, arg2, arg3) {
-  return window['go']['bridge']['App']['HttpHead'](arg1, arg2, arg3);
-}
-
-export function HttpPatch(arg1, arg2, arg3, arg4) {
-  return window['go']['bridge']['App']['HttpPatch'](arg1, arg2, arg3, arg4);
-}
-
-export function HttpPost(arg1, arg2, arg3, arg4) {
-  return window['go']['bridge']['App']['HttpPost'](arg1, arg2, arg3, arg4);
-}
-
-export function HttpPut(arg1, arg2, arg3, arg4) {
-  return window['go']['bridge']['App']['HttpPut'](arg1, arg2, arg3, arg4);
-}
-
 export function KillProcess(arg1) {
   return window['go']['bridge']['App']['KillProcess'](arg1);
 }

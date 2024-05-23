@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 import * as Stores from '@/stores'
 import { EventsOn, WindowHide } from '@/bridge'
-import { exitApp, ignoredError, sampleID, sleep } from '@/utils'
+import { exitApp, sampleID, sleep } from '@/utils'
 import { useMessage, usePicker, useConfirm, usePrompt, useAlert } from '@/hooks'
 
 import AboutView from '@/views/AboutView.vue'
@@ -74,7 +74,13 @@ EventsOn('beforeClose', async () => {
 
 EventsOn('quitApp', () => exitApp())
 
-window.addEventListener('beforeunload', scheduledTasksStore.removeScheduledTasks)
+EventsOn('onTrayClick', () => {
+  console.log('You clicked the tray')
+})
+
+EventsOn('onTrayRClick', () => {
+  console.log('You right-clicked the tray')
+})
 
 appSettings.setupAppSettings().then(async () => {
   await Promise.all([

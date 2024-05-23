@@ -182,6 +182,8 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     initScheduledTasks()
   })
 
+  window.addEventListener('beforeunload', removeScheduledTasks)
+
   return {
     scheduledtasks,
     setupScheduledTasks,

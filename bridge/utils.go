@@ -57,14 +57,6 @@ func ConvertByte2String(byte []byte) string {
 	return string(decodeBytes)
 }
 
-func (a *App) AbsolutePath(path string) FlagResult {
-	log.Printf("AbsolutePath: %s", path)
-
-	path = GetPath(path)
-
-	return FlagResult{true, path}
-}
-
 func (a *App) GetEnv() EnvResult {
 	return EnvResult{
 		AppName:  Env.AppName,

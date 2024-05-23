@@ -4,7 +4,7 @@ import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
-import { Readfile, Writefile, WindowSetSystemDefaultTheme } from '@/bridge'
+import { Readfile, Writefile, WindowSetSystemDefaultTheme, WindowIsMaximised } from '@/bridge'
 import { Theme, WindowStartState, Lang, View, Color, Colors, DefaultFontFamily } from '@/constant'
 
 type AppSettings = {
@@ -44,6 +44,7 @@ type AppSettings = {
   addPluginToMenu: boolean
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
+  multipleInstance: boolean
 }
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
@@ -118,7 +119,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     },
     addPluginToMenu: false,
     pluginSettings: {},
-    githubApiToken: ''
+    githubApiToken: '',
+    multipleInstance: false
   })
 
   const saveAppSettings = debounce((config: string) => {
@@ -189,9 +191,11 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  window.addEventListener('resize', () => {
-    app.value.width = document.documentElement.clientWidth
-    app.value.height = document.documentElement.clientHeight
+  window.addEventListener('resize', async () => {
+    if (!(await WindowIsMaximised())) {
+      app.value.width = document.documentElement.clientWidth
+      app.value.height = document.documentElement.clientHeight
+    }
   })
 
   watch(

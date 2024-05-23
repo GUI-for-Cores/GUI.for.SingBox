@@ -14,7 +14,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func NewHTTPRequest(method string, url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
+func (a *App) Requests(method string, url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
+	log.Printf("Requests: %v %v %v %v %v", method, url, headers, body, options)
+
 	req, err := http.NewRequest(method, url, strings.NewReader(body))
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
@@ -36,41 +38,6 @@ func NewHTTPRequest(method string, url string, headers map[string]string, body s
 	}
 
 	return HTTPResult{true, resp.StatusCode, resp.Header, string(b)}
-}
-
-func (a *App) HttpGet(url string, headers map[string]string, options RequestOptions) HTTPResult {
-	log.Printf("HttpGet: %v %v %v", url, headers, options)
-	return NewHTTPRequest("GET", url, headers, "", options)
-}
-
-func (a *App) HttpPost(url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
-	log.Printf("HttpPost: %v %v %v %v", url, headers, body, options)
-	return NewHTTPRequest("POST", url, headers, body, options)
-}
-
-func (a *App) HttpDelete(url string, headers map[string]string, options RequestOptions) HTTPResult {
-	log.Printf("HttpDelete: %v %v %v", url, headers, options)
-	return NewHTTPRequest("DELETE", url, headers, "", options)
-}
-
-func (a *App) HttpPut(url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
-	log.Printf("HttpPut: %v %v %v %v", url, headers, body, options)
-	return NewHTTPRequest("PUT", url, headers, body, options)
-}
-
-func (a *App) HttpHead(url string, header map[string]string, options RequestOptions) HTTPResult {
-	log.Printf("HttpHead: %v %v %v", url, header, options)
-	return NewHTTPRequest("HEAD", url, header, "", options)
-}
-
-func (a *App) HttpPatch(url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
-	log.Printf("HttpPatch: %v %v %v %v", url, headers, body, options)
-	return NewHTTPRequest("PATCH", url, headers, body, options)
-}
-
-func (a *App) Requests(method string, url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
-	log.Printf("Requests: %v %v %v %v %v", method, url, headers, body, options)
-	return NewHTTPRequest(method, url, headers, body, options)
 }
 
 func (a *App) Download(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {

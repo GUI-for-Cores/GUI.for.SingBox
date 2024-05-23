@@ -27,10 +27,9 @@ export const RemoveScheduledTask = async (id: number) => {
 }
 
 export const Notify = async (title: string, message: string, icon = '') => {
-  icon =
-    {
-      success: 'frontend/dist/notify_success.png',
-      error: 'frontend/dist/notify_error.png'
-    }[icon] || 'frontend/dist/favicon.ico'
-  await App.Notify(title, message, icon)
+  const icons: Record<string, string> = {
+    success: 'data/.cache/notify_success.png',
+    error: 'data/.cache/notify_error.png'
+  }
+  await App.Notify(title, message, icons[icon] || 'data/.cache/favicon.ico')
 }

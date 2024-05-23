@@ -14,7 +14,7 @@ import (
 )
 
 func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
-	log.Printf("Exec: %s %s", path, args)
+	log.Printf("Exec: %s %s %v", path, args, options)
 
 	exe_path := GetPath(path)
 
@@ -24,7 +24,7 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 
 	cmd := exec.Command(exe_path, args...)
 	HideExecWindow(cmd)
-	// cmd.Env = os.Environ()
+
 	for key, value := range options.Env {
 		cmd.Env = append(cmd.Env, key+"="+value)
 	}
@@ -45,7 +45,7 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 }
 
 func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string, options ExecOptions) FlagResult {
-	log.Printf("ExecBackground: %s %s", path, args)
+	log.Printf("ExecBackground: %s %s %v", path, args, options)
 
 	exe_path := GetPath(path)
 
@@ -55,7 +55,7 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 
 	cmd := exec.Command(exe_path, args...)
 	HideExecWindow(cmd)
-	// cmd.Env = os.Environ()
+
 	for key, value := range options.Env {
 		cmd.Env = append(cmd.Env, key+"="+value)
 	}

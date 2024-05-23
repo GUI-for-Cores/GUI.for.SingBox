@@ -282,7 +282,13 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     </Card>
   </div>
 
-  <Modal v-model:open="showRulesetForm" :title="subFormTitle" max-height="80" :footer="false">
+  <Modal
+    v-model:open="showRulesetForm"
+    :title="subFormTitle"
+    max-height="90"
+    min-width="70"
+    :footer="false"
+  >
     <RulesetForm :is-update="rulesetFormIsUpdate" :id="rulesetFormID" />
   </Modal>
 
@@ -291,8 +297,8 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     :title="rulesetTitle"
     :footer="false"
     @ok="onEditRuelsetListEnd"
-    height="80"
-    width="80"
+    height="90"
+    width="90"
   >
     <RulesetView :id="rulesetFormID" />
   </Modal>

@@ -5,6 +5,7 @@ import (
 	"embed"
 	"guiforsingbox/bridge"
 
+	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
@@ -109,13 +110,19 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		SingleInstanceLock: &options.SingleInstanceLock{
-			UniqueId:               "GUI.for.Cores-GUI.for.SingBox",
+			UniqueId: func() string {
+				if bridge.Config.MultipleInstance {
+					return uuid.New().String()
+				}
+				return "GUI.for.Cores-GUI.for.SingBox"
+			}(),
 			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
 			bridge.CreateTray(app, icon, assets)
 			bridge.InitScheduledTasks()
+			bridge.InitNotification(assets)
 		},
 		OnDomReady: func(ctx context.Context) {
 			if isStartup {

@@ -393,6 +393,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     v-model:open="showPluginView"
     :title="pluginTitle"
     :footer="false"
+    min-width="70"
     max-height="90"
     width="90"
   >
