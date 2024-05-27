@@ -148,6 +148,7 @@ onUnmounted(() => {
   .title {
     padding: 14px 0;
     font-weight: bold;
+    color: var(--card-color);
   }
   .row {
     display: flex;

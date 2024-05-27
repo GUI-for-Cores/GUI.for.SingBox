@@ -4,6 +4,7 @@ import type { IconType } from '@/components/Icon/index.vue'
 interface Props {
   type?: 'primary' | 'normal' | 'link' | 'text'
   size?: 'default' | 'small' | 'large'
+  iconSize?: number
   icon?: IconType
   loading?: boolean
   disabled?: boolean
@@ -22,7 +23,7 @@ withDefaults(defineProps<Props>(), {
     <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
     <template v-else>
       <Icon v-if="disabled" :fill="`var(--btn-${type}-color)`" icon="forbidden" class="disabled" />
-      <Icon v-if="icon" :icon="icon" />
+      <Icon v-if="icon" :icon="icon" :size="iconSize" />
     </template>
     <slot />
   </div>

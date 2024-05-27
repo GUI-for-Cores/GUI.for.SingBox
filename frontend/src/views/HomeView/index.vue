@@ -271,6 +271,7 @@ watch(showController, (v) => {
 
 .controller {
   position: absolute;
+  z-index: 9;
   width: 100%;
   height: 100%;
   top: 100%;
@@ -285,7 +286,7 @@ watch(showController, (v) => {
 
 .close-controller {
   position: fixed;
-  z-index: 999;
+  z-index: 2;
   left: 50%;
   bottom: 12px;
   transform: translateX(-50%);

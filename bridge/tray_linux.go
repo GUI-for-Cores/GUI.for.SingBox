@@ -9,7 +9,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func CreateTray(a *App, icon []byte, fs embed.FS) {}
+func InitTray(a *App, icon []byte, fs embed.FS) {}
 
 func (a *App) UpdateTray(tray TrayContent) {}
 

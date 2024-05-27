@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 import useI18n from '@/lang'
 import { debounce } from '@/utils'
@@ -11,6 +11,7 @@ export interface Props {
   type?: 'number' | 'text'
   size?: 'default' | 'small'
   editable?: boolean
+  clearable?: boolean
   autofocus?: boolean
   width?: string
   min?: number
@@ -28,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'default',
   editable: false,
   autofocus: false,
+  clearable: false,
   width: '',
   disabled: false,
   border: true,
@@ -40,6 +42,7 @@ const emits = defineEmits(['update:modelValue', 'submit'])
 
 const showEdit = ref(false)
 const inputRef = ref<HTMLElement>()
+const innerClearable = computed(() => props.clearable && props.modelValue)
 
 const { t } = useI18n.global
 
@@ -58,6 +61,10 @@ const onInput = debounce((e: any) => {
   emits('update:modelValue', val)
 }, props.delay)
 
+const handleClear = () => {
+  emits('update:modelValue', props.type === 'number' ? 0 : '')
+}
+
 const showInput = () => {
   if (props.disabled) return
   showEdit.value = true
@@ -67,8 +74,13 @@ const showInput = () => {
 }
 
 const onSubmit = () => {
-  props.editable && (showEdit.value = false)
-  emits('submit', props.modelValue)
+  setTimeout(
+    () => {
+      emits('submit', props.modelValue)
+      props.editable && (showEdit.value = false)
+    },
+    props.clearable ? 100 : 0
+  )
 }
 
 onMounted(() => props.autofocus && inputRef.value?.focus())
@@ -84,20 +96,30 @@ defineExpose({
       <Icon v-if="disabled" icon="forbidden" class="disabled" />
       {{ modelValue || t('common.none') }}
     </div>
-    <input
-      v-else
-      :class="{ 'auto-size': autoSize }"
-      :value="modelValue"
-      :placeholder="placeholder"
-      :type="type"
-      :style="{ width, paddingLeft: pl, paddingRight: pr }"
-      :disabled="disabled"
-      @input="($event) => onInput($event)"
-      @blur="onSubmit"
-      @keydown.enter="inputRef?.blur"
-      autocomplete="off"
-      ref="inputRef"
-    />
+    <template v-else>
+      <input
+        :class="{ 'auto-size': autoSize, 'pr-clearable': innerClearable }"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :type="type"
+        :style="{ width, paddingLeft: pl, paddingRight: pr }"
+        :disabled="disabled"
+        @input="($event) => onInput($event)"
+        @blur="onSubmit"
+        @keydown.enter="inputRef?.blur"
+        autocomplete="off"
+        ref="inputRef"
+      />
+      <Button
+        v-if="innerClearable"
+        @click="handleClear"
+        :icon-size="12"
+        icon="clear2"
+        type="text"
+        size="small"
+        class="clearable"
+      />
+    </template>
     <slot name="extra" />
   </div>
 </template>
@@ -130,6 +152,12 @@ defineExpose({
   .auto-size {
     flex: 1;
     width: calc(100% - 2px);
+  }
+  .pr-clearable {
+    padding-right: 30px !important;
+  }
+  .clearable {
+    margin-left: -30px;
   }
 }
 

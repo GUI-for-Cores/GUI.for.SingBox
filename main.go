@@ -120,7 +120,7 @@ func main() {
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
-			bridge.CreateTray(app, icon, assets)
+			bridge.InitTray(app, icon, assets)
 			bridge.InitScheduledTasks()
 			bridge.InitNotification(assets)
 		},

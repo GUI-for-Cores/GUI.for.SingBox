@@ -15,6 +15,7 @@ const props = defineProps<Props>()
 
 const loading = ref(false)
 const plugin = ref<PluginType>()
+const metadata = ref<Record<string, any>>()
 const code = ref('')
 
 const { t } = useI18n()
@@ -51,13 +52,14 @@ const initPluginCode = async (p: PluginType) => {
 const p = pluginsStore.getPluginById(props.id)
 if (p) {
   plugin.value = deepClone(p)
+  metadata.value = pluginsStore.getPluginMetadata(plugin.value)
   initPluginCode(p)
 }
 </script>
 
 <template>
   <div class="plugin-view">
-    <CodeViewer v-model="code" lang="javascript" editable />
+    <CodeViewer v-model="code" :plugin="metadata" lang="javascript" editable />
   </div>
   <div class="form-action">
     <Button @click="handleCancel" :disabled="loading">

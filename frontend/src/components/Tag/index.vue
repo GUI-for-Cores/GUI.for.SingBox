@@ -22,6 +22,7 @@ withDefaults(defineProps<Props>(), {
   border-radius: 6px;
   display: inline-block;
   font-size: 12px;
+  white-space: nowrap;
 }
 .cyan {
   color: #22a3a7;

@@ -25,7 +25,13 @@ const sub = ref(deepClone(props.sub))
 
 const [showDetails, toggleDetails] = useBool(false)
 
-const keywordsRegexp = computed(() => new RegExp(keywords.value))
+const keywordsRegexp = computed(() => {
+  try {
+    return new RegExp(keywords.value, 'i')
+  } catch (error: any) {
+    return keywords.value
+  }
+})
 
 const filteredProxyTypeOptions = computed(() => {
   const protocolList = ProxyTypeOptions.map((v) => {
@@ -38,7 +44,12 @@ const filteredProxyTypeOptions = computed(() => {
 const filteredProxies = computed(() => {
   return sub.value.proxies.filter((v) => {
     const hitType = proxyType.value ? proxyType.value === v.type : true
-    const hitName = keywordsRegexp.value.test(v.tag)
+    let hitName = true
+    if (typeof keywordsRegexp.value === 'string') {
+      hitName = v.tag.toLowerCase().includes(keywordsRegexp.value.toLowerCase())
+    } else {
+      hitName = keywordsRegexp.value.test(v.tag)
+    }
     return hitName && hitType
   })
 })

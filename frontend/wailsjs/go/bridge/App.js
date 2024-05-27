@@ -122,6 +122,10 @@ export function Upload(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function ValidateCron(arg1) {
+  return window['go']['bridge']['App']['ValidateCron'](arg1);
+}
+
 export function Writefile(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['Writefile'](arg1, arg2, arg3);
 }

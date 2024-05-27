@@ -418,6 +418,7 @@ export default {
     'on::generate': 'on::generate',
     'on::subscribe': 'on::subscribe',
     'on::ready': 'on::ready',
+    'on::task': 'on::task',
     name: 'Name',
     description: 'Description',
     url: 'Remote Url',
@@ -446,7 +447,8 @@ export default {
     hub: 'Plugin-Hub',
     update: 'Update List',
     updateSuccess: 'updated successfully',
-    total: 'Number of plug-ins'
+    total: 'Number of plug-ins',
+    removeConfiguration: 'Do you want to remove the plugin configuration?'
   },
   scheduledtask: {
     name: 'Name',

@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"embed"
+	"log"
 	"os"
 
 	"github.com/gen2brain/beeep"
@@ -9,17 +10,18 @@ import (
 
 func InitNotification(fs embed.FS) {
 	icons := [3][2]string{
-		{"frontend/dist/notify_success.png", "data/.cache/notify_success.png"},
-		{"frontend/dist/notify_error.png", "data/.cache/notify_error.png"},
-		{"frontend/dist/favicon.ico", "data/.cache/favicon.ico"},
+		{"frontend/dist/imgs/notify_success.png", "data/.cache/imgs/notify_success.png"},
+		{"frontend/dist/imgs/notify_error.png", "data/.cache/imgs/notify_error.png"},
+		{"frontend/dist/favicon.ico", "data/.cache/imgs/notify_normal.ico"},
 	}
 
-	os.Mkdir("data/.cache", os.ModePerm)
+	os.MkdirAll(GetPath("data/.cache/imgs"), os.ModePerm)
 
 	for _, item := range icons {
-		if _, err := os.Stat(item[1]); os.IsNotExist(err) {
+		path := GetPath(item[1])
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			log.Printf("InitNotification [Icon]: %s", item[1])
 			b, _ := fs.ReadFile(item[0])
-			path := GetPath(item[1])
 			os.WriteFile(path, b, os.ModePerm)
 		}
 	}

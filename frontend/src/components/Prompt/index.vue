@@ -40,6 +40,7 @@ const handleCancel = () => {
       @keydown.enter="handleSubmit"
       :type="type"
       autofocus
+      clearable
       size="small"
     />
     <div class="form-action">

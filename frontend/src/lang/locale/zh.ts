@@ -418,6 +418,7 @@ export default {
     'on::generate': '生成配置时',
     'on::subscribe': '更新订阅时',
     'on::ready': 'APP就绪后',
+    'on::task': '计划任务执行时',
     name: '名称',
     description: '描述',
     url: '远程地址',
@@ -446,7 +447,8 @@ export default {
     hub: '插件中心',
     update: '更新列表',
     updateSuccess: '列表更新成功',
-    total: '插件数量为'
+    total: '插件数量为',
+    removeConfiguration: '是否删除插件配置？'
   },
   scheduledtask: {
     name: '名称',

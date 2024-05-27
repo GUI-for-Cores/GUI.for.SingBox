@@ -14,22 +14,10 @@ export const UpdateTray = async (tray: TrayContent) => {
   await App.UpdateTray({ icon, title, tooltip })
 }
 
-export const AddScheduledTask = async (cron: string, event: string) => {
-  const { flag, data } = await App.AddScheduledTask(cron, event)
-  if (!flag) {
-    throw data
-  }
-  return Number(data)
-}
-
-export const RemoveScheduledTask = async (id: number) => {
-  await App.RemoveScheduledTask(id)
-}
-
 export const Notify = async (title: string, message: string, icon = '') => {
   const icons: Record<string, string> = {
-    success: 'data/.cache/notify_success.png',
-    error: 'data/.cache/notify_error.png'
+    success: 'data/.cache/imgs/notify_success.png',
+    error: 'data/.cache/imgs/notify_error.png'
   }
-  await App.Notify(title, message, icons[icon] || 'data/.cache/favicon.ico')
+  await App.Notify(title, message, icons[icon] || 'data/.cache/imgs/notify_normal.ico')
 }

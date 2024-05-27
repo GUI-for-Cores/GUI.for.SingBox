@@ -34,6 +34,7 @@ const icons = [
   'pause',
   'play',
   'clear',
+  'clear2',
   'drag'
 ] as const
 

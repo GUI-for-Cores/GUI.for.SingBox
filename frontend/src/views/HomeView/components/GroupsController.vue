@@ -294,7 +294,7 @@ onActivated(() => {
 
   .header {
     position: sticky;
-    z-index: 99;
+    z-index: 1;
     top: 0;
     display: flex;
     align-items: center;
