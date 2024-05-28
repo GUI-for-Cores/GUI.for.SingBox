@@ -34,8 +34,8 @@ func InitTray(a *App, icon []byte, fs embed.FS) {
 
 	go systray.Run(func() {
 		systray.SetIcon([]byte(icon))
-		systray.SetTitle("GUI.for.Clash")
-		systray.SetTooltip("GUI.for.Clash")
+		systray.SetTitle("GUI.for.SingBox")
+		systray.SetTooltip("GUI.for.SingBox")
 		systray.SetOnClick(func(menu systray.IMenu) {
 			runtime.EventsEmit(a.Ctx, "onTrayClick")
 			runtime.WindowShow(a.Ctx)
