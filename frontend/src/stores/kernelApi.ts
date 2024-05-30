@@ -55,7 +55,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       const profilesStore = useProfilesStore()
       const result = deepClone(profilesStore.getProfileById(profileID)) as ProfileType
       const interfaces = await GetInterfaces()
-      result.tunConfig.enable = interfaces.some((f) => f === result.tunConfig.interface_name)
+      result.tunConfig.enable = interfaces.some((f) => f === result.tunConfig['interface-name'])
 
       if (config.value.mode) {
         result.generalConfig.mode = config.value.mode
@@ -68,7 +68,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         if (config.value.tun.device) {
           result.tunConfig.enable = config.value.tun.enable
           result.tunConfig.stack = config.value.tun.stack
-          result.tunConfig.interface_name = config.value.tun.device
+          result.tunConfig['interface-name'] = config.value.tun.device
         }
       }
 
@@ -97,7 +97,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value.tun = {
       enable: currentProfile.value.tunConfig.enable,
       stack: currentProfile.value.tunConfig.stack,
-      device: currentProfile.value.tunConfig.interface_name
+      device: currentProfile.value.tunConfig['interface-name']
     }
   }
 
@@ -126,7 +126,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     } else if (name == 'tun-stack') {
       currentProfile.value.tunConfig.stack = value
     } else if (name == 'tun-device') {
-      currentProfile.value.tunConfig.interface_name = value
+      currentProfile.value.tunConfig['interface-name'] = value
     } else if (name == 'interface-name') {
       currentProfile.value.generalConfig['interface-name'] = value
     } else if (name == 'mode') {

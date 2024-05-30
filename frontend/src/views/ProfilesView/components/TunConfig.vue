@@ -24,8 +24,8 @@ const { t } = useI18n()
       <Switch v-model="fields['auto-route']" />
     </div>
     <div class="form-item">
-      {{ t('kernel.tun.interface_name') }}
-      <Input v-model="fields['interface_name']" editable />
+      {{ t('kernel.tun.interface-name') }}
+      <Input v-model="fields['interface-name']" editable />
     </div>
     <div class="form-item">
       {{ t('kernel.tun.mtu') }}

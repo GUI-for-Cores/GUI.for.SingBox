@@ -323,7 +323,9 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
 
     inbounds.push({
       type: 'tun',
-      interface_name: profile.tunConfig.interface_name,
+      ...(profile.tunConfig['interface-name'].length > 0
+        ? { interface_name: profile.tunConfig['interface-name'] }
+        : {}),
       ...(inet4_address.length > 0 ? { inet4_address: inet4_address } : {}),
       ...(inet6_address.length > 0 ? { inet6_address: inet6_address } : {}),
       mtu: profile.tunConfig.mtu,

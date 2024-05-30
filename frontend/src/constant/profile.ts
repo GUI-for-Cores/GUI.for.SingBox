@@ -35,7 +35,7 @@ export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   enable: false,
   stack: 'System',
   'auto-route': true,
-  interface_name: 'utun_singbox',
+  'interface-name': '',
   mtu: 9000,
   'strict-route': true,
   'endpoint-independent-nat': false,

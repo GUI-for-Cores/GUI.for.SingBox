@@ -91,7 +91,7 @@ export default {
     tun: {
       enable: 'Enable',
       stack: 'Stack',
-      interface_name: 'Interface Name',
+      'interface-name': 'Interface Name',
       'auto-route': 'Auto Route',
       'auto-detect-interface': 'Auto Detect Interface',
       'dns-hijack': 'DNS Hijack',

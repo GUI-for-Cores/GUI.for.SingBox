@@ -44,7 +44,7 @@ export type ProfileType = {
     enable: boolean
     stack: string
     'auto-route': boolean
-    interface_name: string
+    'interface-name': string
     mtu: number
     'strict-route': boolean
     'endpoint-independent-nat': boolean
@@ -122,6 +122,14 @@ export const useProfilesStore = defineStore('profiles', () => {
       }
       if (profile.tunConfig['inet6-address'] === undefined) {
         profiles.value[i].tunConfig['inet6-address'] = TunConfigDefaults()['inet6-address']
+      }
+      if (profile.tunConfig['interface-name'] === undefined) {
+        const oldValue = (profile.tunConfig as any)['interface_name']
+        if (oldValue !== undefined) {
+          profile.tunConfig['interface-name'] = oldValue
+        } else {
+          profile.tunConfig['interface-name'] = ''
+        }
       }
       if (profile.dnsConfig['disable-cache'] === undefined) {
         profiles.value[i].dnsConfig['disable-cache'] = DnsConfigDefaults()['disable-cache']

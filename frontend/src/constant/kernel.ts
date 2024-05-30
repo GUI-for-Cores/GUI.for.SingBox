@@ -226,6 +226,10 @@ export const DnsRulesTypeOptions = [
     value: 'outbound'
   },
   {
+    label: 'kernel.rules.type.GEOIP',
+    value: 'geoip'
+  },
+  {
     label: 'kernel.rules.type.FAKE-IP',
     value: 'fakeip'
   },

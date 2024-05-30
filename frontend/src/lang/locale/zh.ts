@@ -91,7 +91,7 @@ export default {
     tun: {
       enable: '启用TUN',
       stack: 'TUN模式堆栈',
-      interface_name: 'TUN网卡名称',
+      'interface-name': 'TUN网卡名称',
       'auto-route': '自动设置全局路由',
       'auto-detect-interface': '自动选择流量出口接口',
       'dns-hijack': 'dns 劫持',
