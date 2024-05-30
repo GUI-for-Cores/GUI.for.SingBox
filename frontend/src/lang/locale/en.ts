@@ -118,6 +118,10 @@ export default {
       'remote-dns-detour': 'Remote DNS Detour',
       'final-dns': 'Fallback DNS',
       'fakeip-dns': 'Fake-IP DNS',
+      'disable-cache': 'Disable Cache',
+      'disable-expire': 'Disable Expire',
+      'independent-cache': 'Independent Cache',
+      'client-subnet': 'Client Subnet',
       block: 'BLOCK',
       default: 'Default',
       strategy: {
@@ -212,7 +216,8 @@ export default {
         INBOUND: 'INBOUND',
         OUTBOUND: 'OUTBOUND',
         'FAKE-IP': 'FAKE-IP',
-        INLINE: 'INLINE'
+        INLINE: 'INLINE',
+        'RULE-SET-IPCIDR-MATCH-SOURCE': 'RULE-SET-IPCIDR-MATCH-SOURCE'
       }
     },
     name: 'sing-box',

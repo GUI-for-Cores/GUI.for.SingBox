@@ -27,7 +27,9 @@ const generateCommonRule = (rule: Record<string, any>) => {
       return null
     }
     return { ...JSON.parse(rule.payload), ...invertConfig }
-  } else if (['ip_is_private', 'src_ip_is_private'].includes(type)) {
+  } else if (
+    ['ip_is_private', 'src_ip_is_private', 'rule_set_ipcidr_match_source'].includes(type)
+  ) {
     const this_rule: Record<string, any> = {}
     this_rule[type] = !invert
     return {
@@ -69,6 +71,7 @@ export const generateDnsRule = (rule: ProfileType['dnsRulesConfig'][0]) => {
     return {
       ...common_rule,
       ...(rule['disable-cache'] ? { disable_cache: true } : {}),
+      ...(rule['client-subnet'].length > 0 ? { client_subnet: rule['client-subnet'] } : {}),
       server: rule.server
     }
   }
@@ -190,6 +193,13 @@ const generateDnsConfig = async (profile: ProfileType) => {
   const resolver_dns = profile.dnsConfig['resolver-dns']
   const remote_detour = profile.dnsConfig['remote-dns-detour']
   const remote_detour_config = remote_detour ? { detour: remote_detour } : {}
+  const disable_cache = profile.dnsConfig['disable-cache']
+  const disable_expire = profile.dnsConfig['disable-expire']
+  const independent_cache = profile.dnsConfig['independent-cache']
+  const client_subnet =
+    profile.dnsConfig['client-subnet'].length > 0
+      ? { client_subnet: profile.dnsConfig['client-subnet'] }
+      : {}
 
   return {
     servers: [
@@ -228,6 +238,10 @@ const generateDnsConfig = async (profile: ProfileType) => {
         address: 'rcode://success'
       }
     ],
+    disable_cache,
+    disable_expire,
+    independent_cache,
+    ...client_subnet,
     rules: await (profile.dnsConfig.fakeip
       ? generateDnsRulesWithFakeIp(profile)
       : generateDnsRules(profile))

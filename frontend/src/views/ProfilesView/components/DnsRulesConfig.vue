@@ -28,7 +28,8 @@ const fields = ref({
   'disable-cache': false,
   'ruleset-name': '',
   'ruleset-format': 'binary',
-  'download-detour': ''
+  'download-detour': '',
+  'client-subnet': ''
 })
 
 const dnsOptions = computed(() => [
@@ -44,8 +45,16 @@ const downloadProxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
   ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
 ])
-const supportPayload = computed(() => !['final', 'rule_set', 'fakeip'].includes(fields.value.type))
-const supportInvert = computed(() => 'final' !== fields.value.type)
+const supportPayload = computed(
+  () =>
+    ![
+      'rule_set',
+      'fakeip',
+      'ip_is_private',
+      'src_ip_is_private',
+      'rule_set_ipcidr_match_source'
+    ].includes(fields.value.type)
+)
 const supportServer = computed(() => 'fakeip' !== fields.value.type)
 const multilinePayload = computed(() => 'inline' === fields.value.type)
 
@@ -64,7 +73,8 @@ const handleAdd = () => {
     'disable-cache': false,
     'ruleset-name': '',
     'ruleset-format': 'binary',
-    'download-detour': ''
+    'download-detour': '',
+    'client-subnet': ''
   }
   showModal.value = true
 }
@@ -104,7 +114,9 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
   const { type, payload, server, invert } = rule
   const opt = DnsRulesTypeOptions.filter((v) => v.value === type)
   let ruleStr = opt.length > 0 ? t(opt[0].label) : type
-  if (!['final', 'ip_is_private', 'src_ip_is_private', 'fakeip'].includes(type)) {
+  if (
+    !['ip_is_private', 'src_ip_is_private', 'fakeip', 'rule_set_ipcidr_match_source'].includes(type)
+  ) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
       const ruleset = rulesetsStore.getRulesetById(payload)
@@ -175,13 +187,17 @@ const generateRuleDesc = (rule: ProfileType['dnsRulesConfig'][0]) => {
       DNS
       <Select v-model="fields.server" :options="dnsOptions" />
     </div>
-    <div v-show="supportInvert" class="form-item">
+    <div class="form-item">
       {{ t('kernel.rules.invert') }}
       <Switch v-model="fields.invert" />
     </div>
-    <div v-show="supportInvert" class="form-item">
+    <div class="form-item">
       {{ t('kernel.rules.disable-cache') }}
       <Switch v-model="fields['disable-cache']" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.dns.client-subnet') }}
+      <Input v-model="fields['client-subnet']" editable />
     </div>
 
     <template v-if="fields.type === 'rule_set'">

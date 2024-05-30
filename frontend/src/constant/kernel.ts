@@ -198,6 +198,10 @@ export const RulesTypeOptions = [
     label: 'kernel.rules.type.IP-VERSION',
     value: 'ip_version'
   },
+  // {
+  //   label: 'kernel.rules.type.RULE-SET-IPCIDR-MATCH-SOURCE',
+  //   value: 'rule_set_ipcidr_match_source'
+  // },
   {
     label: 'kernel.rules.type.FALLBACK',
     value: 'final'
@@ -225,7 +229,7 @@ export const DnsRulesTypeOptions = [
     label: 'kernel.rules.type.FAKE-IP',
     value: 'fakeip'
   },
-  ...RulesTypeOptions.filter((item) => !item.value.includes('ip_') && item.value != 'final')
+  ...RulesTypeOptions.filter((item) => !['ip_version', 'final'].includes(item.value))
 ]
 
 export const StackOptions = [

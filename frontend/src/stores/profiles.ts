@@ -4,7 +4,13 @@ import { parse, stringify } from 'yaml'
 
 import { debounce, ignoredError } from '@/utils'
 import { Readfile, Writefile } from '@/bridge'
-import { ProfilesFilePath, ProxyGroup, FinalDnsType, TunConfigDefaults } from '@/constant'
+import {
+  ProfilesFilePath,
+  ProxyGroup,
+  FinalDnsType,
+  TunConfigDefaults,
+  DnsConfigDefaults
+} from '@/constant'
 
 export type ProfileType = {
   id: string
@@ -58,6 +64,10 @@ export type ProfileType = {
     'fake-ip-range-v4': string
     'fake-ip-range-v6': string
     'fake-ip-filter': string[]
+    'disable-cache': boolean
+    'disable-expire': boolean
+    'independent-cache': boolean
+    'client-subnet': string
   }
   proxyGroupsConfig: {
     id: string
@@ -94,6 +104,7 @@ export type ProfileType = {
     'ruleset-name': string
     'ruleset-format': string
     'download-detour': string
+    'client-subnet': string
   }[]
 }
 
@@ -111,6 +122,18 @@ export const useProfilesStore = defineStore('profiles', () => {
       }
       if (profile.tunConfig['inet6-address'] === undefined) {
         profiles.value[i].tunConfig['inet6-address'] = TunConfigDefaults()['inet6-address']
+      }
+      if (profile.dnsConfig['disable-cache'] === undefined) {
+        profiles.value[i].dnsConfig['disable-cache'] = DnsConfigDefaults()['disable-cache']
+        profiles.value[i].dnsConfig['disable-expire'] = DnsConfigDefaults()['disable-expire']
+        profiles.value[i].dnsConfig['independent-cache'] = DnsConfigDefaults()['independent-cache']
+        profiles.value[i].dnsConfig['client-subnet'] = DnsConfigDefaults()['client-subnet']
+        const dnsRulesSize = profiles.value[i].dnsRulesConfig.length
+        for (let j = 0; j < dnsRulesSize; ++j) {
+          if (profiles.value[i].dnsRulesConfig[j]['client-subnet'] === undefined) {
+            profiles.value[i].dnsRulesConfig[j]['client-subnet'] = ''
+          }
+        }
       }
     }
   }

@@ -43,7 +43,14 @@ const downloadProxyOptions = computed(() => [
 ])
 
 const supportPayload = computed(
-  () => !['final', 'rule_set', 'ip_is_private', 'src_ip_is_private'].includes(fields.value.type)
+  () =>
+    ![
+      'final',
+      'rule_set',
+      'ip_is_private',
+      'src_ip_is_private',
+      'rule_set_ipcidr_match_source'
+    ].includes(fields.value.type)
 )
 const supportInvert = computed(() => 'final' !== fields.value.type)
 const multilinePayload = computed(() => 'inline' === fields.value.type)
@@ -108,7 +115,9 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule
   const opt = RulesTypeOptions.filter((v) => v.value === type)
   let ruleStr = opt.length > 0 ? t(opt[0].label) : type
-  if (!['final', 'ip_is_private', 'src_ip_is_private'].includes(type)) {
+  if (
+    !['final', 'ip_is_private', 'src_ip_is_private', 'rule_set_ipcidr_match_source'].includes(type)
+  ) {
     if (type === 'rule_set') {
       const rulesetsStore = useRulesetsStore()
       const ruleset = rulesetsStore.getRulesetById(payload)

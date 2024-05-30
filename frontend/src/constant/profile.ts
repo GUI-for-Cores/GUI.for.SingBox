@@ -35,7 +35,7 @@ export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   enable: false,
   stack: 'System',
   'auto-route': true,
-  interface_name: 'singbox',
+  interface_name: 'utun_singbox',
   mtu: 9000,
   'strict-route': true,
   'endpoint-independent-nat': false,
@@ -66,7 +66,11 @@ export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
     '.home.arpa',
     '.msftconnecttest.com',
     '.msftncsi.com'
-  ]
+  ],
+  'disable-cache': false,
+  'disable-expire': false,
+  'independent-cache': false,
+  'client-subnet': ''
 })
 
 export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] => {
@@ -253,7 +257,8 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     'disable-cache': true,
     'ruleset-name': '',
     'ruleset-format': '',
-    'download-detour': ''
+    'download-detour': '',
+    'client-subnet': ''
   },
   {
     id: sampleID(),
@@ -264,7 +269,8 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     'disable-cache': false,
     'ruleset-name': '',
     'ruleset-format': '',
-    'download-detour': ''
+    'download-detour': '',
+    'client-subnet': ''
   },
   {
     id: sampleID(),
@@ -275,7 +281,8 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     'disable-cache': false,
     'ruleset-name': '',
     'ruleset-format': '',
-    'download-detour': ''
+    'download-detour': '',
+    'client-subnet': ''
   },
   {
     id: sampleID(),
@@ -286,7 +293,8 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     'disable-cache': false,
     'ruleset-name': '',
     'ruleset-format': '',
-    'download-detour': ''
+    'download-detour': '',
+    'client-subnet': ''
   },
   {
     id: sampleID(),
@@ -297,7 +305,8 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOSITE-CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct')
+    'download-detour': t('outbound.direct'),
+    'client-subnet': ''
   },
   {
     id: sampleID(),
@@ -309,6 +318,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct')
+    'download-detour': t('outbound.direct'),
+    'client-subnet': ''
   }
 ]

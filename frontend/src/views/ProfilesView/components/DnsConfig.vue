@@ -58,6 +58,23 @@ const proxyOptions = computed(() => [
     </div>
 
     <div class="form-item">
+      {{ t('kernel.dns.disable-cache') }}
+      <Switch v-model="fields['disable-cache']" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.dns.disable-expire') }}
+      <Switch v-model="fields['disable-expire']" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.dns.independent-cache') }}
+      <Switch v-model="fields['independent-cache']" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.dns.client-subnet') }}
+      <Input v-model="fields['client-subnet']" editable />
+    </div>
+
+    <div class="form-item">
       Fake-IP
       <Switch v-model="fields['fakeip']" />
     </div>

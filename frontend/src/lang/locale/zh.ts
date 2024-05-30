@@ -118,6 +118,10 @@ export default {
       'remote-dns-detour': '远程DNS出站',
       'final-dns': '回退DNS',
       'fakeip-dns': 'Fake-IP DNS',
+      'disable-cache': '禁用DNS缓存',
+      'disable-expire': '禁用DNS缓存过期',
+      'independent-cache': '独立缓存',
+      'client-subnet': '客户端子网',
       block: '禁止解析',
       default: '默认',
       strategy: {
@@ -212,7 +216,8 @@ export default {
         INBOUND: '入站 (INBOUND)',
         OUTBOUND: '出站 (OUTBOUND)',
         'FAKE-IP': 'Fake-IP',
-        INLINE: '内联规则'
+        INLINE: '内联规则',
+        'RULE-SET-IPCIDR-MATCH-SOURCE': '规则集中的ipcidr匹配源IP (RULE-SET-IPCIDR-MATCH-SOURCE)'
       }
     },
     name: 'sing-box',
