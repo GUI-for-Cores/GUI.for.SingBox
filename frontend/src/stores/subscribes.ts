@@ -151,6 +151,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       proxies = parse(body).proxies
     } else if (isValidBase64(body)) {
       proxies = [{ base64: body }]
+    } else if (s.type === 'Manual') {
+      proxies = JSON.parse(body)
     } else {
       throw 'Not a valid subscription data'
     }
@@ -160,7 +162,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     proxies = await pluginStore.onSubscribeTrigger(proxies, s)
 
     if (proxies.some((proxy) => proxy.name && !proxy.tag)) {
-      throw 'You need to install the [Sing-Box 订阅转换] plugin first'
+      throw 'You need to install the [节点转换] plugin first'
     }
 
     if (s.type !== 'Manual') {
