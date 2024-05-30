@@ -3,9 +3,9 @@ import { useI18n } from 'vue-i18n'
 import { computed, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { getGitHubApiAuthorization, ignoredError } from '@/utils'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
+import { getGitHubApiAuthorization, ignoredError, setupKernelPermissions } from '@/utils'
 import {
   Download,
   UnzipZIPFile,
@@ -106,10 +106,7 @@ const downloadCore = async () => {
     }
 
     await Removefile(tmp)
-
-    if (['darwin', 'linux'].includes(os)) {
-      await ignoredError(Exec, 'chmod', ['+x', await AbsolutePath(kernelFilePath)])
-    }
+    await setupKernelPermissions(kernelFilePath)
 
     downloadSuccessful.value = true
 
