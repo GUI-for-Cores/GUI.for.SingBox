@@ -74,14 +74,6 @@ EventsOn('beforeClose', async () => {
 
 EventsOn('quitApp', () => exitApp())
 
-EventsOn('onTrayClick', () => {
-  console.log('You clicked the tray')
-})
-
-EventsOn('onTrayRClick', () => {
-  console.log('You right-clicked the tray')
-})
-
 appSettings.setupAppSettings().then(async () => {
   await Promise.all([
     envStore.setupEnv(),

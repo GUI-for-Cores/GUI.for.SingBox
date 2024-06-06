@@ -4,7 +4,9 @@ import * as Utils from '@/utils'
 import * as Stores from '@/stores'
 import * as Bridge from '@/bridge'
 
-// global method
+/**
+ * Expose methods to be used by the plugin system
+ */
 window.Plugins = {
   ...Bridge,
   ...Utils,
@@ -14,3 +16,5 @@ window.Plugins = {
     stringify
   }
 }
+
+window.AsyncFunction = Object.getPrototypeOf(async function () {}).constructor

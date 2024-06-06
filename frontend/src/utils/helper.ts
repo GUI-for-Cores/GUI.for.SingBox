@@ -1,7 +1,7 @@
 import { ignoredError, APP_TITLE } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore, usePluginsStore } from '@/stores'
-import { Exec, ExitApp, WindowFullscreen, WindowIsFullscreen, WindowUnfullscreen } from '@/bridge'
+import { Exec, ExitApp, Readfile, Writefile } from '@/bridge'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -364,6 +364,15 @@ export const handleChangeMode = async (mode: 'direct' | 'global' | 'rule') => {
   const { connections } = await getConnections()
   const promises = (connections || []).map((v) => deleteConnection(v.id))
   await Promise.all(promises)
+}
+
+export const addToRuleSet = async (ruleset: 'direct' | 'reject' | 'block', payload: string) => {
+  // TODO: sing-box json rule
+  const path = `data/rulesets/${ruleset}.json`
+  const content = (await ignoredError(Readfile, path)) || '{}'
+  const { payload: p = [] } = JSON.parse(content)
+  p.unshift(payload)
+  await Writefile(path, JSON.stringify({ payload: [...new Set(p)] }))
 }
 
 export const exitApp = async () => {

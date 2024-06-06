@@ -3,7 +3,7 @@ import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { HttpGet, Readfile, Writefile } from '@/bridge'
-import { PluginsFilePath, PluginTrigger, PluginManualEvent } from '@/constant'
+import { PluginsFilePath, PluginTrigger, PluginTriggerEvent } from '@/constant'
 import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
 import { debounce, ignoredError, updateTrayMenus, isNumber, omitArray } from '@/utils'
 
@@ -57,37 +57,35 @@ const PluginsCache: Record<
 
 const PluginsTriggerMap: {
   [key in PluginTrigger]: {
-    fnName: string
+    fnName: PluginTriggerEvent
     observers: string[]
   }
 } = {
   [PluginTrigger.OnManual]: {
-    fnName: 'onRun',
+    fnName: PluginTriggerEvent.OnManual,
     observers: []
   },
   [PluginTrigger.OnSubscribe]: {
-    fnName: 'onSubscribe',
+    fnName: PluginTriggerEvent.OnSubscribe,
     observers: []
   },
   [PluginTrigger.OnGenerate]: {
-    fnName: 'onGenerate',
+    fnName: PluginTriggerEvent.OnGenerate,
     observers: []
   },
   [PluginTrigger.OnStartup]: {
-    fnName: 'onStartup',
+    fnName: PluginTriggerEvent.OnStartup,
     observers: []
   },
   [PluginTrigger.OnShutdown]: {
-    fnName: 'onShutdown',
+    fnName: PluginTriggerEvent.OnShutdown,
     observers: []
   },
   [PluginTrigger.OnReady]: {
-    fnName: 'onReady',
+    fnName: PluginTriggerEvent.OnReady,
     observers: []
   }
 }
-
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 
 const getPluginMetadata = (plugin: PluginType) => {
   const appSettingsStore = useAppSettingsStore()
@@ -334,7 +332,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return params as Record<string, any>
   }
 
-  const manualTrigger = async (id: string, event: PluginManualEvent) => {
+  const manualTrigger = async (id: string, event: PluginTriggerEvent) => {
     const plugin = getPluginById(id)
     if (!plugin) throw id + ' Not Found'
     const cache = PluginsCache[plugin.id]

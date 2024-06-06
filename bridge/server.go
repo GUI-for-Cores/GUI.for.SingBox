@@ -91,7 +91,7 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 		}
 	}()
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	if result != nil {
 		return FlagResult{false, result.Error()}

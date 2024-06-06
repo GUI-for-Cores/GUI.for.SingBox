@@ -8,11 +8,11 @@
   "frontend:dev:serverUrl": "auto",
   "nsisType": "single",
   "author": {
-    "name": "onejibang",
-    "email": "onejibang@github.com"
+    "name": "GUI.for.Cores",
+    "email": "GUI.for.Cores@github.com"
   },
   "info": {
     "copyright": "Copyright",
-    "comments": "https://github.com/GUI-for-Cores/GUI.for.SingBox"
+    "comments": "https://github.com/GUI-for-Cores"
   }
 }

@@ -561,12 +561,3 @@ export const generateConfigFile = async (profile: ProfileType) => {
 
   await Writefile(KernelConfigFilePath, JSON.stringify(config, null, 2))
 }
-
-export const addToRuleSet = async (ruleset: 'direct' | 'reject' | 'block', payload: string) => {
-  // TODO: sing-box json rule
-  const path = `data/rulesets/${ruleset}.json`
-  const content = (await ignoredError(Readfile, path)) || '{}'
-  const { payload: p = [] } = JSON.parse(content)
-  p.unshift(payload)
-  await Writefile(path, JSON.stringify({ payload: [...new Set(p)] }))
-}

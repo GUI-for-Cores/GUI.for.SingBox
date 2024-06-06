@@ -14,7 +14,7 @@ export function formatBytes(bytes: number, decimals: number = 1): string {
   return `${formattedValue} ${sizes[i]}`
 }
 
-export function formatRelativeTime(d: string) {
+export function formatRelativeTime(d: string | number) {
   const diffInMilliseconds = new Date().getTime() - new Date(d).getTime()
   const seconds = Math.abs(Math.floor(diffInMilliseconds / 1000))
   const minutes = Math.abs(Math.floor(seconds / 60))
@@ -50,4 +50,19 @@ export function formatRelativeTime(d: string) {
     const y = years > 1 ? t('format.years') : t('format.year')
     return `${years}${prefix}${y}${suffix}`
   }
+}
+
+export function formatDate(timestamp: number | string, format: string) {
+  const date = new Date(timestamp)
+
+  const map: Record<string, any> = {
+    YYYY: date.getFullYear(),
+    MM: String(date.getMonth() + 1).padStart(2, '0'),
+    DD: String(date.getDate()).padStart(2, '0'),
+    HH: String(date.getHours()).padStart(2, '0'),
+    mm: String(date.getMinutes()).padStart(2, '0'),
+    ss: String(date.getSeconds()).padStart(2, '0')
+  }
+
+  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (matched) => map[matched])
 }

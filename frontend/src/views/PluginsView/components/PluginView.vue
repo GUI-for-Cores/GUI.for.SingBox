@@ -4,6 +4,7 @@ import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { Readfile, Writefile } from '@/bridge'
+import { PluginTriggerEvent } from '@/constant'
 import { deepClone, ignoredError } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 
@@ -39,6 +40,24 @@ const handleSave = async () => {
   loading.value = false
 }
 
+const testing = ref(false)
+
+const handleTest = async (event: PluginTriggerEvent, arg1?: any, arg2?: any) => {
+  if (!plugin.value || testing.value) return
+  testing.value = true
+  try {
+    const metadata = { ...pluginsStore.getPluginMetadata(plugin.value), Mode: 'Dev' }
+    const fn = new AsyncFunction(
+      `const Plugin = ${JSON.stringify(metadata)};\n${code.value}\nreturn await ${event}(${arg1}, ${arg2})`
+    )
+    await fn()
+    message.success('common.success')
+  } catch (error: any) {
+    message.error(error.message || error)
+  }
+  testing.value = false
+}
+
 const initPluginCode = async (p: PluginType) => {
   const _code = pluginsStore.getPluginCodefromCache(p.id)
   if (_code) {
@@ -62,6 +81,46 @@ if (p) {
     <CodeViewer v-model="code" :plugin="metadata" lang="javascript" editable />
   </div>
   <div class="form-action">
+    <Dropdown :trigger="['hover']" placement="top" class="mr-auto">
+      <Button :loading="testing" type="link">{{ t('plugins.testRun') }}</Button>
+      <template #overlay>
+        <Button @click="handleTest(PluginTriggerEvent.OnManual)" type="link" size="small">
+          {{ t('plugin.on::manual') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnInstall)" type="link" size="small">
+          {{ t('plugin.on::install') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnUninstall)" type="link" size="small">
+          {{ t('plugin.on::uninstall') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnStartup)" type="link" size="small">
+          {{ t('plugin.on::startup') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnShutdown)" type="link" size="small">
+          {{ t('plugin.on::shutdown') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnReady)" type="link" size="small">
+          {{ t('plugin.on::ready') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnTask)" type="link" size="small">
+          {{ t('plugin.on::task') }}
+        </Button>
+        <Button
+          @click="handleTest(PluginTriggerEvent.OnSubscribe, '[]', '{}')"
+          type="link"
+          size="small"
+        >
+          {{ t('plugin.on::subscribe') }}
+        </Button>
+        <Button
+          @click="handleTest(PluginTriggerEvent.OnGenerate, '{}', '{}')"
+          type="link"
+          size="small"
+        >
+          {{ t('plugin.on::generate') }}
+        </Button>
+      </template>
+    </Dropdown>
     <Button @click="handleCancel" :disabled="loading">
       {{ t('common.cancel') }}
     </Button>

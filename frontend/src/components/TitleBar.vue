@@ -10,7 +10,8 @@ import {
   WindowSetSize,
   WindowReloadApp,
   WindowToggleMaximise,
-  WindowIsMaximised
+  WindowIsMaximised,
+  RestartApp
 } from '@/bridge'
 
 const isPinned = ref(false)
@@ -41,6 +42,14 @@ const menus: Menu[] = [
   {
     label: 'titlebar.reload',
     handler: WindowReloadApp
+  },
+  {
+    label: 'titlebar.restart',
+    handler: RestartApp
+  },
+  {
+    label: 'titlebar.exitApp',
+    handler: exitApp
   }
 ]
 

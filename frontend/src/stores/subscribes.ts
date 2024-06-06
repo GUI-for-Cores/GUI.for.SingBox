@@ -13,7 +13,8 @@ import {
   isValidSubYAML,
   isValidBase64,
   ignoredError,
-  omitArray
+  omitArray,
+  formatDate
 } from '@/utils'
 
 export type SubscribeType = {
@@ -22,8 +23,8 @@ export type SubscribeType = {
   upload: number
   download: number
   total: number
-  expire: string
-  updateTime: string
+  expire: number
+  updateTime: number
   type: 'Http' | 'File' | 'Manual'
   url: string
   website: string
@@ -72,8 +73,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       upload: 0,
       download: 0,
       total: 0,
-      expire: '',
-      updateTime: '',
+      expire: 0,
+      updateTime: 0,
       type: 'Http',
       url: url,
       website: '',
@@ -115,7 +116,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   }
 
   const _doUpdateSub = async (s: SubscribeType) => {
-    const pattern = /upload=(\d*);\s*download=(\d*);\s*total=(\d*);\s*expire=(\d*)/
+    const pattern =
+      /upload=(-?)([E+.\d]+);\s*download=(-?)([E+.\d]+);\s*total=([E+.\d]+);\s*expire=(\d*)/
     let userInfo = 'upload=0; download=0; total=0; expire=0'
     let body = ''
     let proxies: Record<string, any>[] = []
@@ -188,12 +190,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
     const match = userInfo.match(pattern) || [0, 0, 0, 0, 0]
 
-    const [, upload = 0, download = 0, total = 0, expire = 0] = match
+    const [, , upload = 0, , download = 0, total = 0, expire = 0] = match
     s.upload = Number(upload)
     s.download = Number(download)
     s.total = Number(total)
-    s.expire = Number(expire) ? new Date(Number(expire) * 1000).toLocaleString() : ''
-    s.updateTime = new Date().toLocaleString()
+    s.expire = Number(expire) * 1000
+    s.updateTime = Date.now()
     s.proxies = proxies.map(({ tag, type }) => {
       // Keep the original ID value of the proxy unchanged
       const id = s.proxies.find((v) => v.tag === tag)?.id || sampleID()

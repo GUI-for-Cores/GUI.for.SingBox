@@ -240,7 +240,9 @@ const onConnections = (data: KernelConnectionsWS) => {
 const filteredConnections = computed(() => {
   if (!keywords.value) return isActive.value ? dataSource.value : disconnectedData.value
   return (isActive.value ? dataSource.value : disconnectedData.value).filter((connection) =>
-    connection.metadata.host.includes(keywords.value)
+    Object.values(connection.metadata).some(
+      (v) => v && v.includes && v.toLocaleLowerCase().includes(keywords.value.toLocaleLowerCase())
+    )
   )
 })
 

@@ -10,6 +10,10 @@ export function AddScheduledTask(arg1, arg2) {
   return window['go']['bridge']['App']['AddScheduledTask'](arg1, arg2);
 }
 
+export function CloseMMDB(arg1, arg2) {
+  return window['go']['bridge']['App']['CloseMMDB'](arg1, arg2);
+}
+
 export function Copyfile(arg1, arg2) {
   return window['go']['bridge']['App']['Copyfile'](arg1, arg2);
 }
@@ -66,8 +70,16 @@ export function OnSecondInstanceLaunch(arg1) {
   return window['go']['bridge']['App']['OnSecondInstanceLaunch'](arg1);
 }
 
+export function OpenMMDB(arg1, arg2) {
+  return window['go']['bridge']['App']['OpenMMDB'](arg1, arg2);
+}
+
 export function ProcessInfo(arg1) {
   return window['go']['bridge']['App']['ProcessInfo'](arg1);
+}
+
+export function QueryMMDB(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['QueryMMDB'](arg1, arg2, arg3);
 }
 
 export function Readdir(arg1) {
@@ -112,10 +124,6 @@ export function UnzipZIPFile(arg1, arg2) {
 
 export function UpdateTray(arg1) {
   return window['go']['bridge']['App']['UpdateTray'](arg1);
-}
-
-export function UpdateTrayMenus(arg1) {
-  return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
 }
 
 export function Upload(arg1, arg2, arg3, arg4, arg5) {

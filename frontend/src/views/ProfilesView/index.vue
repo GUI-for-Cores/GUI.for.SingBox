@@ -223,9 +223,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 
       <template v-if="appSettingsStore.app.profilesView === View.Grid" #extra>
         <Dropdown :trigger="['hover', 'click']">
-          <Button type="link" size="small">
-            {{ t('common.more') }}
-          </Button>
+          <Button type="link" size="small" icon="more" />
           <template #overlay>
             <Button @click="handleUseProfile(p)" type="link" size="small">
               {{ t('common.use') }}

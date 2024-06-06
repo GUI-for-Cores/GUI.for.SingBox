@@ -53,16 +53,6 @@ type AppConfig struct {
 	MultipleInstance bool `yaml:"multipleInstance"`
 }
 
-type MenuItem struct {
-	Type     string     `json:"type"` // Menu Type: item / separator
-	Text     string     `json:"text"`
-	Tooltip  string     `json:"tooltip"`
-	Event    string     `json:"event"`
-	Children []MenuItem `json:"children"`
-	Hidden   bool       `json:"hidden"`
-	Checked  bool       `json:"checked"`
-}
-
 type TrayContent struct {
 	Icon    string `json:"icon"`
 	Title   string `json:"title"`

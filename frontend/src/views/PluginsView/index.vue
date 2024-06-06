@@ -5,7 +5,7 @@ import { useI18n, I18nT } from 'vue-i18n'
 import { useMessage, useConfirm } from '@/hooks'
 import { debounce, ignoredError } from '@/utils'
 import { Removefile, BrowserOpenURL } from '@/bridge'
-import { DraggableOptions, PluginManualEvent, PluginTrigger, View } from '@/constant'
+import { DraggableOptions, PluginTriggerEvent, PluginTrigger, View } from '@/constant'
 import {
   usePluginsStore,
   useAppSettingsStore,
@@ -133,9 +133,9 @@ const handleInstallation = async (p: PluginType) => {
   p.loading = true
   try {
     if (p.installed) {
-      await pluginsStore.manualTrigger(p.id, PluginManualEvent.OnUninstall)
+      await pluginsStore.manualTrigger(p.id, PluginTriggerEvent.OnUninstall)
     } else {
-      await pluginsStore.manualTrigger(p.id, PluginManualEvent.OnInstall)
+      await pluginsStore.manualTrigger(p.id, PluginTriggerEvent.OnInstall)
     }
     p.installed = !p.installed
     await pluginsStore.editPlugin(p.id, p)
@@ -148,7 +148,7 @@ const handleInstallation = async (p: PluginType) => {
 const handleOnRun = async (p: PluginType) => {
   p.running = true
   try {
-    await pluginsStore.manualTrigger(p.id, PluginManualEvent.OnRun)
+    await pluginsStore.manualTrigger(p.id, PluginTriggerEvent.OnManual)
   } catch (error: any) {
     message.error(error)
   }
@@ -266,9 +266,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
           v-if="appSettingsStore.app.pluginsView === View.Grid"
           :trigger="['hover', 'click']"
         >
-          <Button type="link" size="small">
-            {{ t('common.more') }}
-          </Button>
+          <Button type="link" size="small" icon="more" />
           <template #overlay>
             <Button
               v-if="!p.disabled"

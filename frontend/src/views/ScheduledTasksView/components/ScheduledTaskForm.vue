@@ -37,7 +37,7 @@ const task = ref<ScheduledTaskType>({
   cron: '',
   notification: false,
   disabled: false,
-  lastTime: ''
+  lastTime: 0
 })
 
 const { t } = useI18n()

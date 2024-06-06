@@ -22,7 +22,7 @@ const loading = ref(false)
 const ruleset = ref<RuleSetType>({
   id: sampleID(),
   tag: '',
-  updateTime: '',
+  updateTime: 0,
   format: RulesetFormat.Binary,
   type: 'Http',
   url: '',

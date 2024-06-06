@@ -131,10 +131,6 @@ const handleSave = async () => {
   loading.value = false
 }
 
-const resetForm = () => {
-  proxyType.value = ''
-  keywords.value = ''
-}
 const handleAdd = async () => {
   editId = ''
   details.value = ''
@@ -201,13 +197,11 @@ const getProxyByTag = async (tag: string) => {
       <Select v-model="proxyType" :options="filteredProxyTypeOptions" size="small" />
       <Input
         v-model="keywords"
-        size="small"
         :placeholder="t('subscribes.proxies.name')"
+        clearable
+        size="small"
         class="ml-8 flex-1"
       />
-      <Button @click="resetForm" size="small" class="ml-8">
-        {{ t('common.reset') }}
-      </Button>
       <Button @click="handleAdd" type="primary" size="small">
         {{ t('subscribes.proxies.add') }}
       </Button>

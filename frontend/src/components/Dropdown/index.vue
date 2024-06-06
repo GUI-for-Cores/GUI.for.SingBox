@@ -5,14 +5,17 @@ type TriggerType = 'click' | 'hover'
 
 interface Props {
   trigger?: TriggerType[]
+  placement?: 'bottom' | 'top'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  trigger: () => ['click']
+  trigger: () => ['click'],
+  placement: 'bottom'
 })
 
 const domRef = ref<HTMLElement>()
 const show = ref(false)
+const transformOrigin = ref(props.placement === 'top' ? 'bottom' : 'top')
 
 const hasTrigger = (t: TriggerType) => props.trigger.includes(t)
 
@@ -63,7 +66,7 @@ onUnmounted(() => {
   >
     <slot />
     <Transition name="overlay">
-      <div v-show="show" class="overlay">
+      <div v-show="show" :style="{ bottom: placement === 'top' ? '100%' : '' }" class="overlay">
         <slot name="overlay"> </slot>
       </div>
     </Transition>
@@ -76,7 +79,7 @@ onUnmounted(() => {
   transition:
     transform 0.2s ease-in-out,
     opacity 0.2s ease-in-out;
-  transform-origin: top;
+  transform-origin: v-bind(transformOrigin);
 }
 
 .overlay-enter-from,
@@ -89,6 +92,9 @@ onUnmounted(() => {
   text-align: center;
   position: relative;
   word-break: keep-all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .overlay {
   position: absolute;

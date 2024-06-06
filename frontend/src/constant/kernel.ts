@@ -1,4 +1,4 @@
-import { GetEnv } from '@/bridge'
+import { useEnvStore } from '@/stores'
 
 export enum ProxyGroup {
   Select = 'selector',
@@ -24,7 +24,8 @@ export const KernelCacheFilePath = KernelWorkDirectory + '/cache.db'
 export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
 
 export const getKernelFileName = async (isLatest = false) => {
-  const { os } = await GetEnv()
+  const envStore = useEnvStore()
+  const { os } = envStore.env
   const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
   const latest = isLatest ? '-latest' : ''
   return `sing-box${latest}${fileSuffix}`

@@ -424,6 +424,8 @@ export default {
     'on::subscribe': 'on::subscribe',
     'on::ready': 'on::ready',
     'on::task': 'on::task',
+    'on::install': 'on::install',
+    'on::uninstall': 'on::uninstall',
     name: 'Name',
     description: 'Description',
     url: 'Remote Url',
@@ -453,7 +455,8 @@ export default {
     update: 'Update List',
     updateSuccess: 'updated successfully',
     total: 'Number of plug-ins',
-    removeConfiguration: 'Do you want to remove the plugin configuration?'
+    removeConfiguration: 'Do you want to remove the plugin configuration?',
+    testRun: 'TestRun'
   },
   scheduledtask: {
     name: 'Name',
@@ -559,8 +562,12 @@ export default {
     latestVersion: 'Already the latest version'
   },
   titlebar: {
-    resetSize: 'Reset window',
-    reload: 'Reload'
+    resetSize: 'Reset Window',
+    reload: 'Reload Window',
+    restart: 'Restart App',
+    exitApp: 'Exit App',
+    waiting: 'Waiting for the program to exit...',
+    timeout: 'Exit timed out. Force exit？\n\nReason: Plugin exit timed out.'
   },
   format: {
     seconds: 'Seconds',
@@ -584,24 +591,6 @@ export default {
     direct: '🎯 Direct',
     block: '🛑 Block',
     fallback: '🐟 Fallback'
-  },
-  tray: {
-    restart: 'Restart',
-    restartTip: 'Restart App',
-    exit: 'Exit',
-    exitTip: 'Exit App',
-    proxyGroup: 'Proxy Group',
-    setSystemProxy: 'Set System Proxy',
-    clearSystemProxy: 'Clear System Proxy',
-    tun: 'Tun Mode',
-    enableTunMode: 'Enable Tun Mode',
-    disableTunMode: 'Disable Tun Mode',
-    kernel: 'Kernel',
-    proxy: 'System Proxy',
-    startKernel: 'Start Kernel',
-    stopKernel: 'Stop Kernel',
-    restartKernel: 'Restart Kernel',
-    plugins: 'Plugins'
   },
   commands: {
     noMatching: 'No matching commands'

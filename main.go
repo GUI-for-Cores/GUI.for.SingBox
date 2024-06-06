@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"embed"
-	"guiforsingbox/bridge"
+	"guiforcores/bridge"
 
 	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -52,7 +53,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title: "GUI.for.SingBox",
+		Title: bridge.Env.AppName,
 		Menu:  AppMenu,
 		Width: func() int {
 			if bridge.Config.Width != 0 {
@@ -96,7 +97,7 @@ func main() {
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
-				Title:   "GUI.for.SingBox",
+				Title:   bridge.Env.AppName,
 				Message: "© 2024 GUI.for.Cores",
 				Icon:    icon,
 			},
@@ -114,11 +115,12 @@ func main() {
 				if bridge.Config.MultipleInstance {
 					return uuid.New().String()
 				}
-				return "GUI.for.Cores-GUI.for.SingBox"
+				return bridge.Env.AppName
 			}(),
 			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
 		},
 		OnStartup: func(ctx context.Context) {
+			runtime.LogSetLogLevel(ctx, logger.INFO)
 			app.Ctx = ctx
 			bridge.InitTray(app, icon, assets)
 			bridge.InitScheduledTasks()

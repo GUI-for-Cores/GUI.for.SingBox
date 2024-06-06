@@ -9,7 +9,7 @@ import { deepClone, debounce, ignoredError, omitArray } from '@/utils'
 export type RuleSetType = {
   id: string
   tag: string
-  updateTime: string
+  updateTime: number
   disabled: boolean
   type: 'Http' | 'File' | 'Manual'
   format: RulesetFormat
@@ -93,7 +93,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       }
     }
 
-    r.updateTime = new Date().toLocaleString()
+    r.updateTime = Date.now()
   }
 
   const updateRuleset = async (id: string) => {

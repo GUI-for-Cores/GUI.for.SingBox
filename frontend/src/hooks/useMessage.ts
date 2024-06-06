@@ -3,35 +3,53 @@ import { APP_TITLE, sampleID } from '@/utils'
 
 import MessageComp, { type IconType } from '@/components/Message/index.vue'
 
-const createMessage = (
-  icon: IconType,
-  content: string,
-  duration: number,
-  parent: HTMLElement,
-  instances: Record<string, { dom: HTMLDivElement; vnode: VNode }>
-) => {
-  const id = sampleID()
-  const dom = document.createElement('div')
-  const vnode = createVNode(MessageComp, { icon, content })
-
-  dom.id = id
-  dom.style.cssText = `display: flex; align-items: center; justify-content: center;`
-  instances[id] = { dom, vnode }
-  parent.appendChild(dom)
-  render(vnode, dom)
-
-  setTimeout(() => {
-    dom.remove()
-    delete instances[id]
-  }, duration)
-
-  return id
+interface MessageInstance {
+  dom: HTMLDivElement
+  vnode: VNode
+  timer: number
 }
 
-class Message {
-  private dom: HTMLElement
-  private instances: { [key: string]: { dom: HTMLDivElement; vnode: VNode } }
-  private t: any
+interface MessageContext {
+  dom: HTMLElement
+  instances: Record<string, MessageInstance>
+  update: (id: string, content: string, icon?: IconType) => void
+  destroy: (id: string) => void
+}
+
+const buildMessage = (icon: IconType, ctx: MessageContext) => {
+  return (content: string, duration = 3_000) => {
+    const id = sampleID()
+
+    const vnode = createVNode(MessageComp, { icon, content, onClose: () => ctx.destroy(id) })
+    const dom = document.createElement('div')
+    dom.id = id
+    dom.style.cssText = `display: flex; align-items: center; justify-content: center;`
+
+    ctx.instances[id] = {
+      dom,
+      vnode,
+      timer: setTimeout(() => ctx.destroy(id), duration)
+    }
+
+    ctx.dom.appendChild(dom)
+    render(vnode, dom)
+
+    return {
+      id,
+      info: (content: string) => ctx.update(id, content, 'info'),
+      warn: (content: string) => ctx.update(id, content, 'warn'),
+      error: (content: string) => ctx.update(id, content, 'error'),
+      success: (content: string) => ctx.update(id, content, 'success'),
+      update: (content: string, icon?: IconType) => ctx.update(id, content, icon),
+      destroy: () => ctx.destroy(id)
+    }
+  }
+}
+
+class Message implements MessageContext {
+  public dom: HTMLElement
+  public instances: Record<string, MessageInstance>
+
   constructor() {
     const ID = APP_TITLE + '-toast'
     this.dom = document.getElementById(ID) || document.createElement('div')
@@ -47,21 +65,10 @@ class Message {
     this.instances = {}
   }
 
-  public info = (content: string, duration = 3_000) => ({
-    id: createMessage('info', content, duration, this.dom, this.instances)
-  })
-
-  public warn = (content: string, duration = 3_000) => ({
-    id: createMessage('warn', content, duration, this.dom, this.instances)
-  })
-
-  public error = (content: string, duration = 3_000) => ({
-    id: createMessage('error', content, duration, this.dom, this.instances)
-  })
-
-  public success = (content: string, duration = 3_000) => ({
-    id: createMessage('success', content, duration, this.dom, this.instances)
-  })
+  public info = buildMessage('info', this)
+  public warn = buildMessage('warn', this)
+  public error = buildMessage('error', this)
+  public success = buildMessage('success', this)
 
   public update = (id: string, content: string, icon?: IconType) => {
     const instance = this.instances[id]
@@ -72,8 +79,11 @@ class Message {
   }
 
   public destroy = (id: string) => {
-    if (this.instances[id]) {
-      this.instances[id].dom.remove()
+    const instance = this.instances[id]
+    if (instance) {
+      instance.dom.remove()
+      clearTimeout(instance.timer)
+      delete this.instances[id]
     }
   }
 }

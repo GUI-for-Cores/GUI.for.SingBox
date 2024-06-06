@@ -191,12 +191,15 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     { deep: true }
   )
 
-  window.addEventListener('resize', async () => {
-    if (!(await WindowIsMaximised())) {
-      app.value.width = document.documentElement.clientWidth
-      app.value.height = document.documentElement.clientHeight
-    }
-  })
+  window.addEventListener(
+    'resize',
+    debounce(async () => {
+      if (!(await WindowIsMaximised())) {
+        app.value.width = document.documentElement.clientWidth
+        app.value.height = document.documentElement.clientHeight
+      }
+    }, 1000)
+  )
 
   watch(
     [

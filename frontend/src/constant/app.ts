@@ -84,10 +84,15 @@ export enum PluginTrigger {
   OnReady = 'on::ready'
 }
 
-export enum PluginManualEvent {
+export enum PluginTriggerEvent {
   OnInstall = 'onInstall',
   OnUninstall = 'onUninstall',
-  OnRun = 'onRun',
+  OnManual = 'onRun',
+  OnSubscribe = 'onSubscribe',
+  OnGenerate = 'onGenerate',
+  OnStartup = 'onStartup',
+  OnShutdown = 'onShutdown',
+  OnReady = 'onReady',
   OnTask = 'onTask'
 }
 
@@ -99,16 +104,6 @@ export const PluginsTriggerOptions = [
   { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
   { label: 'plugin.on::ready', value: PluginTrigger.OnReady }
 ]
-
-export type MenuItem = {
-  type: 'item' | 'separator'
-  text?: string
-  tooltip?: string
-  event?: (() => void) | string
-  children?: MenuItem[]
-  hidden?: boolean
-  checked?: boolean
-}
 
 export type TrayContent = {
   icon?: string

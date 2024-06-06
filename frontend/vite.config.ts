@@ -18,5 +18,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@wails': fileURLToPath(new URL('./wailsjs', import.meta.url))
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 2048 // 2MB
   }
 })

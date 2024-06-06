@@ -4,7 +4,7 @@ import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
-import { debounce, formatRelativeTime, ignoredError } from '@/utils'
+import { debounce, formatRelativeTime, ignoredError, formatDate } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
 import { DraggableOptions, View, EmptyRuleSet, RulesetFormat } from '@/constant'
 import {
@@ -212,9 +212,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
 
       <template v-if="appSettingsStore.app.rulesetsView === View.Grid" #extra>
         <Dropdown :trigger="['hover', 'click']">
-          <Button type="link" size="small">
-            {{ t('common.more') }}
-          </Button>
+          <Button type="link" size="small" icon="more" />
           <template #overlay>
             <Button
               :disabled="r.disabled"
@@ -276,7 +274,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
         <div>
           {{ t('common.updateTime') }}
           :
-          {{ r.updateTime || '--' }}
+          {{ r.updateTime ? formatDate(r.updateTime, 'YYYY-MM-DD HH:mm:ss') : '--' }}
         </div>
       </template>
     </Card>

@@ -32,16 +32,18 @@ const getMessage = () => {
 </script>
 
 <template>
-  <div class="confirm">
-    <div class="title">{{ t(title) }}</div>
-    <div class="message select-text">{{ getMessage() }}</div>
-    <div class="form-action">
-      <Button v-if="cancel" @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
-      <Button @click="handleConfirm" size="small" type="primary">
-        {{ t('common.confirm') }}
-      </Button>
+  <Transition name="slide-down" appear>
+    <div class="confirm">
+      <div class="title">{{ t(title) }}</div>
+      <div class="message select-text">{{ getMessage() }}</div>
+      <div class="form-action">
+        <Button v-if="cancel" @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
+        <Button @click="handleConfirm" size="small" type="primary">
+          {{ t('common.confirm') }}
+        </Button>
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style lang="less" scoped>
@@ -49,7 +51,7 @@ const getMessage = () => {
   min-width: 340px;
   max-width: 60%;
   padding: 8px;
-  background: var(--modal-bg);
+  background: var(--toast-bg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 
