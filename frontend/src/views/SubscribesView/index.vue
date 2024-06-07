@@ -291,9 +291,9 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
           {{ s.total ? formatBytes(s.total, 2) : '--' }}
         </div>
         <div>
-          {{ s.expire ? formatDate(s.expire, 'YYYY-MM-DD HH:mm:ss') : '--' }}
+          {{ t('subscribes.expire') }}
           :
-          {{ s.expire || '--' }}
+          {{ s.expire ? formatDate(s.expire, 'YYYY-MM-DD HH:mm:ss') : '--' }}
           /
           {{ t('common.updateTime') }}
           :
