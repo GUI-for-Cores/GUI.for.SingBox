@@ -66,7 +66,14 @@ onUnmounted(() => {
   >
     <slot />
     <Transition name="overlay">
-      <div v-show="show" :style="{ bottom: placement === 'top' ? '100%' : '' }" class="overlay">
+      <div
+        v-show="show"
+        :style="{
+          bottom: placement === 'top' ? '100%' : '',
+          top: placement === 'top' ? '' : '100%'
+        }"
+        class="overlay"
+      >
         <slot name="overlay"> </slot>
       </div>
     </Transition>
