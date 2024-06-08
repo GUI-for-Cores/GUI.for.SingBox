@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { APP_TITLE, getTaskSchXmlString } from '@/utils'
+import { APP_TITLE, APP_VERSION, getTaskSchXmlString } from '@/utils'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import { BrowserOpenURL, GetEnv, Writefile, Removefile, FileExists } from '@/bridge'
 import {
@@ -95,7 +95,7 @@ const resetFontFamily = () => {
 }
 
 const resetUserAgent = () => {
-  appSettings.app.userAgent = APP_TITLE
+  appSettings.app.userAgent = APP_TITLE + '/' + APP_VERSION
 }
 
 const onPermChange = async (v: boolean) => {
