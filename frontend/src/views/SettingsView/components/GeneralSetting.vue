@@ -101,7 +101,7 @@ const resetUserAgent = () => {
 const onPermChange = async (v: boolean) => {
   try {
     await SwitchPermissions(v)
-    message.success('success')
+    message.success('common.success')
   } catch (error: any) {
     message.error(error)
     console.log(error)
@@ -114,8 +114,12 @@ const handleOpenFolder = async () => {
 }
 
 const handleClearKernelCache = async () => {
-  if (await FileExists(KernelCacheFilePath)) {
-    Removefile(KernelCacheFilePath)
+  try {
+    await Removefile(KernelCacheFilePath)
+    message.success('common.success')
+  } catch (error: any) {
+    message.error(error)
+    console.log(error)
   }
 }
 
