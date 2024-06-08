@@ -1,5 +1,5 @@
 import { useAppSettingsStore } from '@/stores'
-import { APP_TITLE } from '@/utils'
+import { APP_TITLE, APP_VERSION } from '@/utils'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
@@ -63,7 +63,7 @@ export const getValue = (obj: Record<string, any>, expr: string) => {
 
 export const getUserAgent = () => {
   const appSettings = useAppSettingsStore()
-  return appSettings.app.userAgent || APP_TITLE
+  return appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION
 }
 
 export const getGitHubApiAuthorization = () => {

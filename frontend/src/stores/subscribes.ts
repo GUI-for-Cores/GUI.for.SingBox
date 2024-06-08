@@ -140,11 +140,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       )
 
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
-      if (typeof b !== 'string') {
-        body = JSON.stringify(b)
-      } else {
-        body = b
-      }
+      body = b
     }
 
     if (isValidSubJson(body)) {
@@ -177,11 +173,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       })
 
       if (s.proxyPrefix) {
-        proxies = proxies.map((v) => {
-          return {
-            ...v,
-            tag: v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
-          }
+        proxies.forEach((v) => {
+          v.tag = v.tag.startsWith(s.proxyPrefix) ? v.tag : s.proxyPrefix + v.tag
         })
       }
     }

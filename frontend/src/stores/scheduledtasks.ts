@@ -42,8 +42,6 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const initScheduledTasks = async () => {
     removeScheduledTasks()
 
-    const logsStore = useLogsStore()
-
     scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {
       if (disabled) return
       const taskID = await AddScheduledTask(cron, id)

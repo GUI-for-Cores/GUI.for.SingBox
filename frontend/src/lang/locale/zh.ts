@@ -532,7 +532,6 @@ export default {
     autoSetSystemProxy: '自动配置/清除系统代理',
     autoStartKernel: '自动启动内核程序',
     admin: '以管理员身份运行',
-    addToMenu: '将插件添加到托盘菜单',
     multipleInstance: '允许多个实例',
     startup: {
       name: '开机时启动',
