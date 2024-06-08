@@ -2,6 +2,7 @@ import { ignoredError, APP_TITLE } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore, usePluginsStore } from '@/stores'
 import { Exec, ExitApp, Readfile, Writefile } from '@/bridge'
+import { useConfirm, useMessage } from '@/hooks'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -380,6 +381,8 @@ export const exitApp = async () => {
   const pluginsStore = usePluginsStore()
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
+  const { message } = useMessage()
+  const { confirm } = useConfirm()
 
   if (appSettings.app.kernel.running && appSettings.app.closeKernelOnExit) {
     await kernelApiStore.stopKernel()
@@ -388,13 +391,21 @@ export const exitApp = async () => {
     }
   }
 
-  setTimeout(ExitApp, 3_000)
+  let canceled = false
+  let timedout = false
+
+  const { destroy, error } = message.info('titlebar.waiting', 10 * 60 * 1000)
+
+  setTimeout(async () => {
+    timedout = true
+    canceled = !(await confirm('Tips', 'titlebar.timeout').catch(() => destroy()))
+    !canceled && ExitApp()
+  }, 5_000)
 
   try {
     await pluginsStore.onShutdownTrigger()
-  } catch (error: any) {
-    window.Plugins.message.error(error)
+    !timedout && ExitApp()
+  } catch (err: any) {
+    error(err)
   }
-
-  ExitApp()
 }
