@@ -23,7 +23,7 @@ withDefaults(defineProps<Props>(), {
     <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
     <template v-else>
       <Icon v-if="disabled" :fill="`var(--btn-${type}-color)`" icon="forbidden" class="disabled" />
-      <Icon v-if="icon" :icon="icon" :size="iconSize" />
+      <Icon v-if="icon" :icon="icon" :size="iconSize" :fill="`var(--btn-${type}-color)`" />
     </template>
     <slot />
   </div>

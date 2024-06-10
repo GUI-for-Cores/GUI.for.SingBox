@@ -205,15 +205,13 @@ if (envStore.env.os === 'windows') {
     </div>
     <div class="settings-item">
       <div class="title">{{ t('settings.appFolder.name') }}</div>
-      <Button @click="handleOpenFolder" type="primary">
-        <Icon icon="folder" fill="var(--btn-primary-color)" />
+      <Button @click="handleOpenFolder" type="primary" icon="folder">
         <span style="margin-left: 8px">{{ t('settings.appFolder.open') }}</span>
       </Button>
     </div>
     <div class="settings-item">
       <div class="title">{{ t('settings.kernelCache.name') }}</div>
-      <Button @click="handleClearKernelCache" type="primary">
-        <Icon icon="reset" fill="var(--btn-primary-color)" />
+      <Button @click="handleClearKernelCache" type="primary" icon="reset">
         <span style="margin-left: 8px">{{ t('settings.kernelCache.clear') }}</span>
       </Button>
     </div>

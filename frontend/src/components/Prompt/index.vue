@@ -42,6 +42,7 @@ const handleCancel = () => {
         :type="type"
         autofocus
         clearable
+        auto-size
         size="small"
       />
       <div class="form-action">

@@ -96,7 +96,15 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   <div v-show="showCommandPanel" class="command-view">
     <div class="input-view">
       <Icon icon="arrowRight" class="command-arrow" />
-      <Input ref="inputRef" v-model="userInput" :disabled="loading" autofocus clearable pl="24px" />
+      <Input
+        ref="inputRef"
+        v-model="userInput"
+        :disabled="loading"
+        auto-size
+        autofocus
+        clearable
+        pl="24px"
+      />
       <Icon v-show="loading" icon="loading" class="rotation" />
     </div>
     <div class="commands">

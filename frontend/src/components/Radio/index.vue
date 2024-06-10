@@ -41,7 +41,7 @@ const { t } = useI18n()
     cursor: pointer;
     color: var(--radio-normal-color);
     background-color: var(--radio-normal-bg);
-    padding: 7px 12px;
+    padding: 6px 12px;
     border-left: 1px solid var(--primary-color);
     transition: all 0.2s;
     &:nth-child(1) {

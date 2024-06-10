@@ -38,14 +38,13 @@ const { t } = useI18n()
 .select {
   min-width: 120px;
   display: inline-block;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 12px;
   background: var(--select-bg);
   select {
     cursor: pointer;
     width: 100%;
-    padding: 8px;
-    border-radius: 8px;
+    padding: 6px 8px;
     outline: none;
     border: none;
     background: transparent;

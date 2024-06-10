@@ -259,7 +259,7 @@ if (props.isUpdate) {
           </div>
         </template>
       </div>
-      <Button @click="handleAddParam" type="primary" size="small" class="w-full">+</Button>
+      <Button @click="handleAddParam" type="primary" size="small" icon="add" class="w-full" />
     </div>
   </div>
   <div class="form-action">

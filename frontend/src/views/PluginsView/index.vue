@@ -422,8 +422,8 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     v-model:open="showPluginConfiguration"
     title="plugins.configuration"
     :footer="false"
-    max-height="90"
-    max-width="60"
+    max-height="80"
+    max-width="80"
   >
     <PluginConfiguration :id="pluginFormID" />
   </Modal>

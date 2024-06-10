@@ -91,18 +91,30 @@ defineExpose({
 </script>
 
 <template>
-  <div :class="{ disabled, border, [size]: true }" class="input">
+  <div
+    :class="{
+      disabled,
+      border: (border && !editable) || showEdit,
+      'auto-size': autoSize,
+      'limit-width': !autoSize && (!editable || showEdit),
+      'bg-color': !editable || showEdit,
+      [size]: true
+    }"
+    :style="{
+      height: size === 'small' ? '26px' : '30px'
+    }"
+    class="input"
+  >
     <div v-if="editable && !showEdit" @click="showInput" class="editable">
       <Icon v-if="disabled" icon="forbidden" class="disabled" />
       {{ modelValue || t('common.none') }}
     </div>
     <template v-else>
       <input
-        :class="{ 'auto-size': autoSize, 'pr-clearable': innerClearable }"
         :value="modelValue"
         :placeholder="placeholder"
         :type="type"
-        :style="{ width, paddingLeft: pl, paddingRight: pr }"
+        :style="{ width, paddingLeft: pl, paddingRight: clearable ? '0' : pr }"
         :disabled="disabled"
         @input="($event) => onInput($event)"
         @blur="onSubmit"
@@ -128,37 +140,43 @@ defineExpose({
 .input {
   display: flex;
   align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid transparent;
   .editable {
-    cursor: pointer;
-    line-height: 30px;
+    flex: 1;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 220px;
+    max-width: 210px;
     .disabled {
       margin-bottom: -2px;
+      flex-shrink: 0;
     }
   }
   input {
-    width: 100%;
+    flex: 1;
+    width: auto;
     color: var(--input-color);
     display: inline-block;
-    padding: 6px 8px;
+    padding: 6px 0;
     border: none;
-    border-radius: 4px;
-    background: var(--input-bg);
-    margin: 1px;
+    outline: none;
+    background: transparent;
   }
-  .auto-size {
-    flex: 1;
-    width: calc(100% - 2px);
-  }
-  .pr-clearable {
-    padding-right: 30px !important;
-  }
-  .clearable {
-    margin-left: -30px;
-  }
+}
+
+.bg-color {
+  background: var(--input-bg);
+}
+
+.limit-width {
+  width: 210px;
+}
+
+.auto-size {
+  min-width: 0 !important;
 }
 
 .disabled {
@@ -168,15 +186,12 @@ defineExpose({
 }
 
 .border {
-  input {
-    outline: 1px solid var(--primary-color);
-  }
+  border: 1px solid var(--primary-color);
 }
 
 .small {
   input {
     font-size: 12px;
-    padding: 4px 8px;
   }
 }
 </style>

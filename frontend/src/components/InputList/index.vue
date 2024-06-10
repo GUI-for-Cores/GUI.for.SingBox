@@ -31,7 +31,7 @@ const handleDel = (i: number) => list.value.splice(i, 1)
       <TransitionGroup name="list">
         <Card v-for="(l, i) in list" :key="l" class="list-item">
           <div>{{ l }}</div>
-          <Button @click="handleDel(i)" type="text" size="small"> × </Button>
+          <Button @click="handleDel(i)" icon="close" :icon-size="10" type="text" />
         </Card>
       </TransitionGroup>
     </div>
@@ -44,10 +44,10 @@ const handleDel = (i: number) => list.value.splice(i, 1)
       type="text"
       auto-size
       :autofocus="autofocus"
-      style="width: 100%"
+      class="mt-4"
     >
       <template #extra>
-        <Button @click="handleAdd" type="primary">+</Button>
+        <Button @click="handleAdd" icon="add" size="small" type="primary" />
       </template>
     </Input>
   </div>
@@ -74,7 +74,7 @@ const handleDel = (i: number) => list.value.splice(i, 1)
     align-items: center;
     justify-content: space-between;
     font-size: 14px;
-    margin: 2px 0;
+    margin: 0 0 2px 0;
   }
 }
 </style>

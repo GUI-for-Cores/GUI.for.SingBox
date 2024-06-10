@@ -30,7 +30,9 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         :max="65535"
         @submit="onMixedPortSubmit"
         type="number"
+        :border="false"
         editable
+        auto-size
       />
     </Card>
     <Card :title="t('kernel.port')" class="card-item">
@@ -40,7 +42,9 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         :max="65535"
         @submit="onPortSubmit"
         type="number"
+        :border="false"
         editable
+        auto-size
       />
     </Card>
     <Card :title="t('kernel.socks-port')" class="card-item">
@@ -51,6 +55,8 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         @submit="onSocksPortSubmit"
         type="number"
         editable
+        :border="false"
+        auto-size
       />
     </Card>
     <Card :title="t('kernel.allow-lan')" class="card-item">
@@ -69,7 +75,13 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
       />
     </Card>
     <Card :title="t('kernel.tun.interface-name')" class="card-item">
-      <Input v-model="kernelApiStore.config.tun.device" @submit="onTunDeviceSubmit" editable />
+      <Input
+        v-model="kernelApiStore.config.tun.device"
+        @submit="onTunDeviceSubmit"
+        editable
+        :border="false"
+        auto-size
+      />
     </Card>
     <Card :title="t('kernel.interface-name')" class="card-item">
       <InterfaceSelect

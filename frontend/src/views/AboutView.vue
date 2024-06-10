@@ -158,7 +158,7 @@ checkForUpdates()
 
 <style lang="less" scoped>
 .about {
-  padding: 22px 0 0 0;
+  padding: 36px 0 0 0;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -83,13 +83,19 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
       <Input
         v-model="keywords"
         clearable
+        auto-size
         size="small"
         :placeholder="t('common.keywords')"
         class="ml-8 flex-1"
       />
-      <Button @click="clearLogs" v-tips="'common.clear'" size="small" type="text" class="ml-8">
-        <Icon icon="clear" fill="var(--color)" />
-      </Button>
+      <Button
+        @click="clearLogs"
+        v-tips="'common.clear'"
+        icon="clear"
+        size="small"
+        type="text"
+        class="ml-8"
+      />
     </div>
 
     <Empty v-if="logsStore.scheduledtasksLogs.length === 0" class="flex-1" />
