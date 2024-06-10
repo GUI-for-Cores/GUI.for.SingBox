@@ -140,7 +140,11 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       )
 
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
-      body = b
+      if (typeof b !== 'string') {
+        body = JSON.stringify(b)
+      } else {
+        body = b
+      }
     }
 
     if (isValidSubJson(body)) {
