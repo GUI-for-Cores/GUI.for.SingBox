@@ -19,7 +19,10 @@ const createConfirm = (title: string, message: string) => {
       message,
       onConfirm: resolve,
       onCancel: () => reject('cancelled'),
-      onFinish: () => dom.remove()
+      onFinish: () => {
+        render(null, dom)
+        dom.remove()
+      }
     })
     document.body.appendChild(dom)
     render(vnode, dom)

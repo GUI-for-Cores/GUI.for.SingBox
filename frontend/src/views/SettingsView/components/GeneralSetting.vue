@@ -255,13 +255,17 @@ if (envStore.env.os === 'windows') {
         <Switch v-model="isTaskScheduled" @change="onTaskSchChange" style="margin-right: 16px" />
         <template v-if="isTaskScheduled">
           <Radio v-model="appSettings.app.windowStartState" :options="windowStates" type="number" />
-          <span style="margin: 0 8px">{{ t('settings.startup.delay') }}</span>
           <Input
             v-model="appSettings.app.startupDelay"
             @submit="onStartupDelayChange"
             :min="0"
             type="number"
-          />
+            class="ml-4"
+          >
+            <template #extra>
+              <span class="ml-4">{{ t('settings.startup.delay') }}</span>
+            </template>
+          </Input>
         </template>
       </div>
     </div>

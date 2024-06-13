@@ -20,7 +20,8 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
   return (content: string, duration = 3_000) => {
     const id = sampleID()
 
-    const vnode = createVNode(MessageComp, { icon, content, onClose: () => ctx.destroy(id) })
+    const onClose = () => ctx.destroy(id)
+    const vnode = createVNode(MessageComp, { icon, content, onClose })
     const dom = document.createElement('div')
     dom.id = id
     dom.style.cssText = `display: flex; align-items: center; justify-content: center;`
@@ -28,7 +29,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
     ctx.instances[id] = {
       dom,
       vnode,
-      timer: setTimeout(() => ctx.destroy(id), duration)
+      timer: setTimeout(onClose, duration)
     }
 
     ctx.dom.appendChild(dom)
@@ -41,7 +42,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
       error: (content: string) => ctx.update(id, content, 'error'),
       success: (content: string) => ctx.update(id, content, 'success'),
       update: (content: string, icon?: IconType) => ctx.update(id, content, icon),
-      destroy: () => ctx.destroy(id)
+      destroy: onClose
     }
   }
 }
@@ -81,6 +82,7 @@ class Message implements MessageContext {
   public destroy = (id: string) => {
     const instance = this.instances[id]
     if (instance) {
+      render(null, instance.dom)
       instance.dom.remove()
       clearTimeout(instance.timer)
       delete this.instances[id]

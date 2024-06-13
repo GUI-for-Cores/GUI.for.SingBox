@@ -25,7 +25,10 @@ const createPrompt = <T>(
       props,
       onSubmit: resolve,
       onCancel: () => reject('cancelled'),
-      onFinish: () => dom.remove()
+      onFinish: () => {
+        render(null, dom)
+        dom.remove()
+      }
     })
     document.body.appendChild(dom)
     render(vnode, dom)

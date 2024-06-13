@@ -5,6 +5,7 @@ interface Props {
   type?: 'primary' | 'normal' | 'link' | 'text'
   size?: 'default' | 'small' | 'large'
   iconSize?: number
+  iconColor?: string
   icon?: IconType
   loading?: boolean
   disabled?: boolean
@@ -23,7 +24,12 @@ withDefaults(defineProps<Props>(), {
     <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
     <template v-else>
       <Icon v-if="disabled" :fill="`var(--btn-${type}-color)`" icon="forbidden" class="disabled" />
-      <Icon v-if="icon" :icon="icon" :size="iconSize" :fill="`var(--btn-${type}-color)`" />
+      <Icon
+        v-if="icon"
+        :icon="icon"
+        :size="iconSize"
+        :fill="iconColor || `var(--btn-${type}-color)`"
+      />
     </template>
     <slot />
   </div>

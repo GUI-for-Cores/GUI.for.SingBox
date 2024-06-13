@@ -114,7 +114,11 @@ defineExpose({
         :value="modelValue"
         :placeholder="placeholder"
         :type="type"
-        :style="{ width, paddingLeft: pl, paddingRight: clearable ? '0' : pr }"
+        :style="{
+          width: !autoSize ? '0' : width,
+          paddingLeft: pl,
+          paddingRight: clearable ? '0' : pr
+        }"
         :disabled="disabled"
         @input="($event) => onInput($event)"
         @blur="onSubmit"
@@ -157,7 +161,6 @@ defineExpose({
   }
   input {
     flex: 1;
-    width: auto;
     color: var(--input-color);
     display: inline-block;
     padding: 6px 0;

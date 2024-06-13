@@ -28,7 +28,10 @@ const createPicker = (
       initialValue,
       onConfirm: resolve,
       onCancel: () => reject('cancelled'),
-      onFinish: () => dom.remove()
+      onFinish: () => {
+        render(null, dom)
+        dom.remove()
+      }
     })
     document.body.appendChild(dom)
     render(vnode, dom)

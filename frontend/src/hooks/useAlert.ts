@@ -19,7 +19,10 @@ const createAlert = (title: string, message: string) => {
       message,
       cancel: false,
       onConfirm: resolve,
-      onFinish: () => dom.remove()
+      onFinish: () => {
+        render(null, dom)
+        dom.remove()
+      }
     })
     document.body.appendChild(dom)
     render(vnode, dom)
