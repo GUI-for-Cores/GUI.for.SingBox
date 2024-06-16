@@ -46,9 +46,22 @@ const handleTest = async (event: PluginTriggerEvent, arg1?: any, arg2?: any) => 
   if (!plugin.value || testing.value) return
   testing.value = true
   try {
-    const metadata = { ...pluginsStore.getPluginMetadata(plugin.value), Mode: 'Dev' }
+    const metadata = JSON.stringify({
+      ...pluginsStore.getPluginMetadata(plugin.value),
+      Mode: 'Dev'
+    })
+    if (event === PluginTriggerEvent.OnSubscribe) {
+      arg1 = '[]'
+      arg2 = '{}'
+    } else if (event === PluginTriggerEvent.OnGenerate) {
+      arg1 = '{}'
+      arg2 = '{}'
+    } else if (event === PluginTriggerEvent.OnConfigure) {
+      arg1 = metadata
+      arg2 = metadata
+    }
     const fn = new AsyncFunction(
-      `const Plugin = ${JSON.stringify(metadata)};\n${code.value}\nreturn await ${event}(${arg1}, ${arg2})`
+      `const Plugin = ${metadata};\n${code.value}\nreturn await ${event}(${arg1}, ${arg2})`
     )
     await fn()
     message.success('common.success')
@@ -105,18 +118,13 @@ if (p) {
         <Button @click="handleTest(PluginTriggerEvent.OnTask)" type="link" size="small">
           {{ t('plugin.on::task') }}
         </Button>
-        <Button
-          @click="handleTest(PluginTriggerEvent.OnSubscribe, '[]', '{}')"
-          type="link"
-          size="small"
-        >
+        <Button @click="handleTest(PluginTriggerEvent.OnConfigure)" type="link" size="small">
+          {{ t('plugin.on::configure') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnSubscribe)" type="link" size="small">
           {{ t('plugin.on::subscribe') }}
         </Button>
-        <Button
-          @click="handleTest(PluginTriggerEvent.OnGenerate, '{}', '{}')"
-          type="link"
-          size="small"
-        >
+        <Button @click="handleTest(PluginTriggerEvent.OnGenerate)" type="link" size="small">
           {{ t('plugin.on::generate') }}
         </Button>
       </template>

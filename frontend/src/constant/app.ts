@@ -93,7 +93,8 @@ export enum PluginTriggerEvent {
   OnStartup = 'onStartup',
   OnShutdown = 'onShutdown',
   OnReady = 'onReady',
-  OnTask = 'onTask'
+  OnTask = 'onTask',
+  OnConfigure = 'onConfigure'
 }
 
 export const PluginsTriggerOptions = [

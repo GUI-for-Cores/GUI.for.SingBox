@@ -426,6 +426,7 @@ export default {
     'on::task': '计划任务执行时',
     'on::install': '点击安装时',
     'on::uninstall': '点击卸载时',
+    'on::configure': '配置插件时',
     name: '名称',
     description: '描述',
     url: '远程地址',

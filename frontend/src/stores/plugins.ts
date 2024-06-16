@@ -332,7 +332,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return params as Record<string, any>
   }
 
-  const manualTrigger = async (id: string, event: PluginTriggerEvent) => {
+  const manualTrigger = async (id: string, event: PluginTriggerEvent, ...args: any[]) => {
     const plugin = getPluginById(id)
     if (!plugin) throw id + ' Not Found'
     const cache = PluginsCache[plugin.id]
@@ -341,9 +341,12 @@ export const usePluginsStore = defineStore('plugins', () => {
     if (cache.plugin.disabled) throw `${plugin.name} Disabled`
 
     const metadata = getPluginMetadata(plugin)
+    const _args = args.map((arg) => JSON.stringify(arg))
     try {
       const fn = new AsyncFunction(
-        `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${event}()`
+        `const Plugin = ${JSON.stringify(metadata)};
+        ${cache.code};
+        return await ${event}(${_args.join(',')})`
       )
       const exitCode = await fn()
       if (isNumber(exitCode) && exitCode !== plugin.status) {

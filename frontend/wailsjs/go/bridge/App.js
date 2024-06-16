@@ -66,10 +66,6 @@ export function Notify(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['Notify'](arg1, arg2, arg3);
 }
 
-export function OnSecondInstanceLaunch(arg1) {
-  return window['go']['bridge']['App']['OnSecondInstanceLaunch'](arg1);
-}
-
 export function OpenMMDB(arg1, arg2) {
   return window['go']['bridge']['App']['OpenMMDB'](arg1, arg2);
 }

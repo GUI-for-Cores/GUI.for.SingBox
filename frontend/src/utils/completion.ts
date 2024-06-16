@@ -96,6 +96,15 @@ export const getCompletions = (pluginScope: any = undefined) => {
         detail: t('plugin.trigger') + ' ' + t('plugin.on::task')
       }
     ),
+    snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::configure')} */\n` +
+        'const onConfigure = async (config, old) => {\n\t${}\n}',
+      {
+        label: 'onConfigure',
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::configure')
+      }
+    ),
     /**
      * Others
      */

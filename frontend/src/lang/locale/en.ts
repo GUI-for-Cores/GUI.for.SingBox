@@ -426,6 +426,7 @@ export default {
     'on::task': 'on::task',
     'on::install': 'on::install',
     'on::uninstall': 'on::uninstall',
+    'on::configure': 'on::configure',
     name: 'Name',
     description: 'Description',
     url: 'Remote Url',

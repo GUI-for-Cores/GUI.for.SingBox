@@ -7,20 +7,12 @@ import (
 	"runtime"
 
 	"github.com/klauspost/cpuid/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	R "github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
 )
 
 // NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
-}
-
-func (a *App) OnSecondInstanceLaunch(secondInstanceData options.SecondInstanceData) {
-	R.WindowUnminimise(a.Ctx)
-	R.Show(a.Ctx)
-	go R.EventsEmit(a.Ctx, "launchArgs", secondInstanceData.Args)
 }
 
 var Env = &EnvResult{

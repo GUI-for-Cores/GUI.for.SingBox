@@ -66,7 +66,30 @@ export namespace bridge {
 	        this.body = source["body"];
 	    }
 	}
+	export class IOOptions {
 	
+	
+	    static createFrom(source: any = {}) {
+	        return new IOOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	
+	    }
+	}
+	export class RequestOptions {
+	
+	
+	    static createFrom(source: any = {}) {
+	        return new RequestOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	
+	    }
+	}
 	export class TrayContent {
 	    icon: string;
 	    title: string;

@@ -19,7 +19,7 @@ type EnvResult struct {
 	X64Level    int    `json:"x64Level"`
 }
 
-type RequestOptions = struct {
+type RequestOptions struct {
 	Proxy    string
 	Insecure bool
 	Timeout  int

@@ -6,130 +6,118 @@ on:
       - "v*"
 
 jobs:
-  CreateRelease:
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: ${{ github.ref_name }}
-          body: |
-            Auto-generated release from GitHub Actions.
-
   Build:
-    needs: CreateRelease
     permissions: write-all
     strategy:
       fail-fast: false
       matrix:
         build:
-          - name: GUI.for.SingBox-windows-amd64.zip
-            os: ubuntu-latest
+          - os: windows-latest
             GOOS: windows
             GOARCH: amd64
-          - name: GUI.for.SingBox-windows-arm64.zip
-            os: ubuntu-latest
+          - os: windows-latest
             GOOS: windows
             GOARCH: arm64
-          - name: GUI.for.SingBox-windows-386.zip
-            os: ubuntu-latest
+          - os: windows-latest
             GOOS: windows
             GOARCH: 386
-          - name: GUI.for.SingBox-darwin-amd64.zip
-            os: macos-latest
+          - os: macos-latest
             GOOS: darwin
             GOARCH: amd64
-          - name: GUI.for.SingBox-darwin-arm64.zip
-            os: macos-latest
+          - os: macos-latest
             GOOS: darwin
             GOARCH: arm64
-          - name: GUI.for.SingBox-linux-amd64.zip
-            os: ubuntu-latest
+          - os: ubuntu-latest
             GOOS: linux
             GOARCH: amd64
-          # - name: GUI.for.SingBox-linux-arm64.zip
-          #   os: ubuntu-latest
+          # - os: ubuntu-latest
           #   GOOS: linux
           #   GOARCH: arm64
     runs-on: ${{ matrix.build.os }}
+    env:
+      APP_NAME: GUI.for.SingBox
+      ZIP_FILE: GUI.for.SingBox-${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}.zip
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set Channel
-        uses: MathieuSoysal/replace-string-in-file@v1.1.0
-        with:
-          file: frontend/.env
-          old-string: Dev
-          new-string: Stable
-
+      - uses: actions/checkout@v4
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.21.10"
-
+          go-version-file: ./go.mod
+      - run: go version
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm -v
       - name: Set up Node.js
-        uses: actions/setup-node@v3
-
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: node -v
       - name: Install dependencies
         run: |
-          npm i -g pnpm
           cd frontend && pnpm install
           go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Build Frontend
-        run: cd frontend && npm run build
-
+      # Dependencies: GNU/Linux
       - name: Update system and dependencies
-        if: ${{ matrix.build.GOOS == 'linux' }}
+        if: runner.os == 'Linux'
         run: |
-          sudo apt update
-          sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      - name: Build Frontend
+        run: cd frontend && pnpm build
+
+      # Build
       - name: Build for ${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}
         env:
           GOOS: ${{ matrix.build.GOOS }}
           GOARCH: ${{ matrix.build.GOARCH }}
-        run: $HOME/go/bin/wails build -m -s -trimpath -skipbindings -devtools -o GUI.for.SingBox.exe
+        run: ~/go/bin/wails build -m -s -trimpath -skipbindings -devtools -tags webkit2_41 -o ${{ env.APP_NAME }}.exe
 
-      - name: Create a compressed file for Darwin
-        if: ${{ matrix.build.GOOS == 'darwin' }}
+      # Compress: macOS
+      - name: Create a compressed file for macOS
+        if: runner.os == 'macOS'
         run: |
-          (
-            cd ./build/bin
-            # The compiled product name of macos is always "GUI.for.SingBox.app"
-            zip -q -r ${{ matrix.build.name }} GUI.for.SingBox.app
-          )
+          cd ./build/bin
+          # The compiled product name of macos is always "${{ env.APP_NAME }}.app"
+          zip -q -r ${{ env.ZIP_FILE }} ${{ env.APP_NAME }}.app
 
+      # Compress: Windows
       - name: Create a compressed file for Windows
-        if: ${{ matrix.build.GOOS == 'windows' }}
+        if: runner.os == 'Windows'
         run: |
-          (
-            cd ./build/bin
-            zip ${{ matrix.build.name }} GUI.for.SingBox.exe
-          )
+          cd ./build/bin
+          Compress-Archive -Path ${{ env.APP_NAME }}.exe -DestinationPath ${{ env.ZIP_FILE }}
 
-      - name: Create a compressed file for Linux
-        if: ${{ matrix.build.GOOS == 'linux' }}
+      # Compress: GNU/Linux
+      - name: Create a compressed file for GNU/Linux
+        if: runner.os == 'Linux'
         run: |
-          (
-            cd ./build/bin
-            mv GUI.for.SingBox.exe GUI.for.SingBox
-            zip ${{ matrix.build.name }} GUI.for.SingBox
-          )
+          cd ./build/bin
+          mv ${{ env.APP_NAME }}.exe ${{ env.APP_NAME }}
+          zip ${{ env.ZIP_FILE }} ${{ env.APP_NAME }}
 
-      - name: Upload ${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Artifact
+      # - name: Upload Artifact ${{ env.ZIP_FILE }}
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ env.ZIP_FILE }}
+      #     path: ./build/bin/${{ env.ZIP_FILE }}
+
+      - name: Create Release and Upload Assets
+        uses: svenstaro/upload-release-action@v2
         with:
-          upload_url: ${{ needs.CreateRelease.outputs.upload_url }}
-          asset_path: ./build/bin/${{ matrix.build.name }}
-          asset_name: ${{ matrix.build.name }}
-          asset_content_type: application/x-msdownload
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./build/bin/${{ env.ZIP_FILE }}
+          asset_name: ${{ env.ZIP_FILE }}
+          tag: ${{ github.ref }}
+          release_name: ${{ github.ref_name }}
+          overwrite: true
+          draft: false
+          prerelease: false
+          body: |
+            Auto-generated release from GitHub Actions.

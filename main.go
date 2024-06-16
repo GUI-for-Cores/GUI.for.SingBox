@@ -117,7 +117,10 @@ func main() {
 				}
 				return bridge.Env.AppName
 			}(),
-			OnSecondInstanceLaunch: app.OnSecondInstanceLaunch,
+			OnSecondInstanceLaunch: func(data options.SecondInstanceData) {
+				runtime.Show(app.Ctx)
+				runtime.EventsEmit(app.Ctx, "launchArgs", data.Args)
+			},
 		},
 		OnStartup: func(ctx context.Context) {
 			runtime.LogSetLogLevel(ctx, logger.INFO)
