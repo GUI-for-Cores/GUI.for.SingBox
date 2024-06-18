@@ -480,11 +480,6 @@ const generateRouteConfig = async (profile: ProfileType) => {
     if (final.length > 0) {
       route['final'] = final[0].proxy
     }
-  }
-
-  const final = profile.rulesConfig.filter((v) => v.type === 'final')
-  if (final.length > 0) {
-    route['final'] = final[0].proxy
   } else if (profile.generalConfig.mode == 'direct') {
     route['final'] = 'direct'
   }
