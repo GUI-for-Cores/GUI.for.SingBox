@@ -508,7 +508,8 @@ export const generateConfig = async (originalProfile: ProfileType) => {
       },
       cache_file: {
         enabled: profile.advancedConfig.profile['store-cache'],
-        store_fakeip: profile.advancedConfig.profile['store-fake-ip']
+        store_fakeip: profile.advancedConfig.profile['store-fake-ip'],
+        store_rdrc: profile.advancedConfig.profile['store-rdrc']
       }
     },
     inbounds: await generateInBoundsConfig(profile),

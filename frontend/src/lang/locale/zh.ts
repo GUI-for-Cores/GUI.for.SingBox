@@ -84,6 +84,7 @@ export default {
     'skip-auth-prefixes': '跳过验证的IP段',
     'store-cache': '持久化缓存',
     'store-fake-ip': '持久化Fake-IP',
+    'store-rdrc': '持久化被拒绝的 DNS 响应',
     'geo-auto-update': 'GEO 自动更新',
     'geo-update-interval': 'GEO 自动更新间隔',
     'lan-allowed-ips': '允许连接的地址段',

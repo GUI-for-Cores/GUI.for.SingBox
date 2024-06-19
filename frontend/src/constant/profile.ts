@@ -21,7 +21,8 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   'external-ui-url': '',
   profile: {
     'store-cache': true,
-    'store-fake-ip': false
+    'store-fake-ip': false,
+    'store-rdrc': false
   },
   domain_strategy: 'ipv4_only',
   'tcp-fast-open': false,

@@ -6,7 +6,7 @@ toolchain go1.21.10
 
 require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/wailsapp/wails/v2 v2.9.0
+	github.com/wailsapp/wails/v2 v2.9.1
 )
 
 require (
