@@ -84,6 +84,7 @@ export default {
     'skip-auth-prefixes': 'Skip Auth Prefixes',
     'store-cache': 'Store cache',
     'store-fake-ip': 'Store Fake-IP',
+    'store-rdrc': 'Store Rejected DNS Response',
     'geo-auto-update': 'GEO Auto Update',
     'geo-update-interval': 'GEO Update Interval',
     'lan-allowed-ips': 'LAN Allowed IPs',

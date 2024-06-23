@@ -43,6 +43,10 @@ const { t } = useI18n()
     <Switch v-model="fields.profile['store-fake-ip']" />
   </div>
   <div class="form-item">
+    {{ t('kernel.store-rdrc') }}
+    <Switch v-model="fields.profile['store-rdrc']" />
+  </div>
+  <div class="form-item">
     {{ t('kernel.domain_strategy') }}
     <Select v-model="fields.domain_strategy" :options="DomainStrategyOptions" />
   </div>

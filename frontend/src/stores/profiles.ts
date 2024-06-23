@@ -32,6 +32,7 @@ export type ProfileType = {
     profile: {
       'store-cache'?: boolean
       'store-fake-ip'?: boolean
+      'store-rdrc'?: boolean
     }
     domain_strategy: string
     'tcp-fast-open': boolean
