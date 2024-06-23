@@ -482,7 +482,10 @@ const generateRouteConfig = async (profile: ProfileType) => {
     }
   } else if (profile.generalConfig.mode == 'direct') {
     route['final'] = 'direct'
-  } else if (profile.generalConfig.mode == 'global') {
+  } else if (
+    profile.generalConfig.mode == 'global' &&
+    profile.proxyGroupsConfig.find((v) => v.tag === 'GLOBAL')
+  ) {
     route['final'] = 'GLOBAL'
   }
 
