@@ -22,12 +22,9 @@ const kernelApiStore = useKernelApiStore()
 
 const groups = computed(() => {
   const { proxies } = kernelApiStore
-
-  let fallback = -1
-  let idx = 0
-
-  let result = Object.values(proxies)
-    .filter((v) => v.all)
+  return Object.values(proxies)
+    .filter((v) => v.all && v.name !== 'GLOBAL')
+    .concat(proxies.GLOBAL || [])
     .map((group) => {
       const all = group.all
         .filter((proxy) => {
@@ -60,18 +57,8 @@ const groups = computed(() => {
         tmp.now && chains.push(tmp.now)
         tmp = proxies[tmp.now]
       }
-      if (['GLOBAL', 'Fallback'].includes(group.name)) {
-        group.name = 'Fallback'
-        fallback = idx
-      }
-      ++idx
       return { ...group, all, chains }
     })
-  if (fallback >= 0) {
-    result.push(result[fallback])
-    result.splice(fallback, 1)
-  }
-  return result
 })
 
 const useProxyWithCatchError = (group: any, proxy: any) => {

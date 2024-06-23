@@ -482,6 +482,8 @@ const generateRouteConfig = async (profile: ProfileType) => {
     }
   } else if (profile.generalConfig.mode == 'direct') {
     route['final'] = 'direct'
+  } else if (profile.generalConfig.mode == 'global') {
+    route['final'] = 'GLOBAL'
   }
 
   const interface_name = profile.generalConfig['interface-name']

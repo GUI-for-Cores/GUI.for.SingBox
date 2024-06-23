@@ -66,7 +66,7 @@ export default {
     global: '全局',
     direct: '直连',
     ruleDesp: '按照规则文件分流',
-    globalDesp: '仅走Global规则集',
+    globalDesp: '仅走Global策略组',
     directDesp: '直接连接所有流量',
     'keep-alive-interval': 'TCP Keep Alive 间隔',
     'find-process-mode': '进程匹配模式',
@@ -183,7 +183,7 @@ export default {
       'disable-cache': '关闭缓存',
       name: '名称',
       needGeodataMode: '请在高级设置中打开"GEO数据模式"',
-      notFound: '代理组不存在',
+      notFound: '策略组不存在',
       inlineRuleError: '内联规则语法错误',
       empty: '规则集列表为空',
       type: {
@@ -375,14 +375,14 @@ export default {
       general: '通用设置',
       tun: 'TUN 设置',
       dns: 'DNS 设置',
-      groups: '代理组设置',
+      groups: '策略组设置',
       dnsRules: 'DNS规则设置',
       rules: '路由规则设置'
     },
     proxies: '引用节点',
     use: '引用订阅',
     noSubs: '没有可用的订阅',
-    group: '代理组详情',
+    group: '策略组详情',
     rule: '规则详情',
     auto: '此配置由订阅接管，更新订阅时会被覆盖！\n如果你想修改此配置，请使用插件系统。'
   },
@@ -393,7 +393,7 @@ export default {
     generateAndView: '生成配置并查看',
     copy: '复制并粘贴',
     start: '使用此配置启动/重启',
-    proxyGroups: '代理组',
+    proxyGroups: '策略组',
     rules: '规则'
   },
   ruleset: {

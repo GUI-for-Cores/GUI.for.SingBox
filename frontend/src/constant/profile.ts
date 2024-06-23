@@ -79,6 +79,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
   const id3 = sampleID()
   const id4 = sampleID()
   const id5 = sampleID()
+  const id6 = sampleID()
 
   return [
     {
@@ -107,7 +108,10 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       id: id3,
       tag: t('outbound.direct'),
       type: ProxyGroup.Select,
-      proxies: [{ id: 'direct', type: 'built-in', tag: 'direct' }],
+      proxies: [
+        { id: 'direct', type: 'built-in', tag: 'direct' },
+        { id: 'block', type: 'built-in', tag: 'block' }
+      ],
       use: [],
       url: '',
       interval: 300,
@@ -118,7 +122,10 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       id: id4,
       tag: t('outbound.block'),
       type: ProxyGroup.Select,
-      proxies: [{ id: 'block', type: 'built-in', tag: 'block' }],
+      proxies: [
+        { id: 'block', type: 'built-in', tag: 'block' },
+        { id: 'direct', type: 'built-in', tag: 'direct' }
+      ],
       use: [],
       url: '',
       interval: 300,
@@ -132,6 +139,25 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       proxies: [
         { id: id1, type: 'built-in', tag: t('outbound.select') },
         { id: id3, type: 'built-in', tag: t('outbound.direct') }
+      ],
+      use: [],
+      url: '',
+      interval: 300,
+      tolerance: 150,
+      filter: ''
+    },
+    {
+      id: id6,
+      tag: 'GLOBAL',
+      type: ProxyGroup.Select,
+      proxies: [
+        { id: 'direct', type: 'built-in', tag: 'direct' },
+        { id: 'block', type: 'built-in', tag: 'block' },
+        { id: id1, type: 'built-in', tag: t('outbound.select') },
+        { id: id2, type: 'built-in', tag: t('outbound.urltest') },
+        { id: id3, type: 'built-in', tag: t('outbound.direct') },
+        { id: id4, type: 'built-in', tag: t('outbound.block') },
+        { id: id5, type: 'built-in', tag: t('outbound.fallback') }
       ],
       use: [],
       url: '',
@@ -158,26 +184,6 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'inline',
     payload: JSON.stringify({ network: 'udp', port: 443 }, null, 2),
     proxy: t('outbound.block'),
-    'ruleset-name': '',
-    'ruleset-format': '',
-    'download-detour': '',
-    invert: false
-  },
-  {
-    id: sampleID(),
-    type: 'clash_mode',
-    payload: 'direct',
-    proxy: t('outbound.direct'),
-    'ruleset-name': '',
-    'ruleset-format': '',
-    'download-detour': '',
-    invert: false
-  },
-  {
-    id: sampleID(),
-    type: 'clash_mode',
-    payload: 'global',
-    proxy: t('outbound.select'),
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
