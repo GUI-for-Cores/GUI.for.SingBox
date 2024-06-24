@@ -469,24 +469,25 @@ const generateRouteConfig = async (profile: ProfileType) => {
     rules: []
   }
 
-  if (profile.generalConfig.mode == 'rule') {
-    route.rules.push(
-      ...profile.rulesConfig
-        .filter((v) => v.type !== 'final')
-        .map((rule) => generateRule(rule))
-        .filter((v) => v != null)
-    )
-    const final = profile.rulesConfig.filter((v) => v.type === 'final')
-    if (final.length > 0) {
-      route['final'] = final[0].proxy
-    }
-  } else if (profile.generalConfig.mode == 'direct') {
+  route.rules.push(
+    ...profile.rulesConfig
+      .filter((v) => v.type !== 'final')
+      .map((rule) => generateRule(rule))
+      .filter((v) => v != null)
+  )
+
+  if (profile.generalConfig.mode == 'direct') {
     route['final'] = 'direct'
   } else if (
     profile.generalConfig.mode == 'global' &&
     profile.proxyGroupsConfig.find((v) => v.tag === 'GLOBAL')
   ) {
     route['final'] = 'GLOBAL'
+  } else {
+    const final = profile.rulesConfig.find((v) => v.type === 'final')
+    if (final) {
+      route['final'] = final.proxy
+    }
   }
 
   const interface_name = profile.generalConfig['interface-name']

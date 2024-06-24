@@ -588,7 +588,7 @@ export default {
   },
   outbound: {
     select: '🚀 Select',
-    urltest: '🎈 Auto Select',
+    urltest: '🎈 Auto',
     direct: '🎯 Direct',
     block: '🛑 Block',
     fallback: '🐟 Fallback'

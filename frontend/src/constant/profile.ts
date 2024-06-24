@@ -182,6 +182,26 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   },
   {
     id: sampleID(),
+    type: 'clash_mode',
+    payload: 'direct',
+    proxy: 'direct',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
+    type: 'clash_mode',
+    payload: 'global',
+    proxy: 'GLOBAL',
+    'ruleset-name': '',
+    'ruleset-format': '',
+    'download-detour': '',
+    invert: false
+  },
+  {
+    id: sampleID(),
     type: 'inline',
     payload: JSON.stringify({ network: 'udp', port: 443 }, null, 2),
     proxy: t('outbound.block'),

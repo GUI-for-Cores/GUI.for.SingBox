@@ -336,7 +336,10 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
   padding: 0 8px;
   margin-bottom: 2px;
   .name {
+    display: flex;
+    align-items: center;
     font-weight: bold;
+    min-width: 90px;
     .warn {
       color: rgb(200, 193, 11);
       cursor: pointer;
