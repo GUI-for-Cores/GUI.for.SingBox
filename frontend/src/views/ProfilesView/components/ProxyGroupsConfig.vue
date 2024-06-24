@@ -223,12 +223,8 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
         <Button @click="handleClearGroup(g)" v-if="hasLost(g)" type="text">
           {{ t('common.clear') }}
         </Button>
-        <Button @click="handleEditGroup(index)" type="text" size="small">
-          {{ t('common.edit') }}
-        </Button>
-        <Button @click="handleDeleteGroup(index)" type="text" size="small">
-          {{ t('common.delete') }}
-        </Button>
+        <Button @click="handleEditGroup(index)" icon="edit" type="text" size="small" />
+        <Button @click="handleDeleteGroup(index)" icon="delete" type="text" size="small" />
       </div>
     </Card>
   </div>

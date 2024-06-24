@@ -103,9 +103,13 @@ if (props.isUpdate) {
 <template>
   <div @dblclick="WindowToggleMaximise" class="header" style="--wails-draggable: drag">
     <div class="header-title">{{ t(stepItems[currentStep].title) }}</div>
-    <Button v-show="[3, 4, 6].includes(currentStep)" @click="handleAdd" type="link" class="ml-auto">
-      {{ t('common.add') }}
-    </Button>
+    <Button
+      v-show="[3, 4, 6].includes(currentStep)"
+      @click="handleAdd"
+      icon="add"
+      type="text"
+      class="ml-auto mr-8"
+    />
   </div>
 
   <div class="form">

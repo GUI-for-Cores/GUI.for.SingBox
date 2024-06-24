@@ -38,7 +38,9 @@ const icons = [
   'drag',
   'more',
   'add',
-  'filter'
+  'filter',
+  'edit',
+  'delete'
 ] as const
 
 export default icons
