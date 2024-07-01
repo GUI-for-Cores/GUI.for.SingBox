@@ -534,6 +534,7 @@ export default {
     autoSetSystemProxy: 'Auto Set / Clear System Proxy',
     autoStartKernel: 'Auto Start Kernel',
     admin: 'Run As Admin',
+    addToMenu: 'Add Plugin To Menu',
     multipleInstance: 'Allow Multiple Instances',
     startup: {
       name: 'Startup on boot',
@@ -592,6 +593,24 @@ export default {
     direct: '🎯 Direct',
     block: '🛑 Block',
     fallback: '🐟 Fallback'
+  },
+  tray: {
+    restart: 'Restart',
+    restartTip: 'Restart App',
+    exit: 'Exit',
+    exitTip: 'Exit App',
+    proxyGroup: 'Proxy Group',
+    setSystemProxy: 'Set System Proxy',
+    clearSystemProxy: 'Clear System Proxy',
+    tun: 'Tun Mode',
+    enableTunMode: 'Enable Tun Mode',
+    disableTunMode: 'Disable Tun Mode',
+    kernel: 'Kernel',
+    proxy: 'System Proxy',
+    startKernel: 'Start Kernel',
+    stopKernel: 'Stop Kernel',
+    restartKernel: 'Restart Kernel',
+    plugins: 'Plugins'
   },
   commands: {
     noMatching: 'No matching commands'

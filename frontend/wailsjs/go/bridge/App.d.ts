@@ -24,6 +24,8 @@ export function GetEnv():Promise<bridge.EnvResult>;
 
 export function GetInterfaces():Promise<bridge.FlagResult>;
 
+export function IsStartup():Promise<boolean>;
+
 export function KillProcess(arg1:number):Promise<bridge.FlagResult>;
 
 export function ListServer():Promise<bridge.FlagResult>;
@@ -61,6 +63,8 @@ export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 export function UnzipZIPFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function UpdateTray(arg1:bridge.TrayContent):Promise<void>;
+
+export function UpdateTrayMenus(arg1:Array<bridge.MenuItem>):Promise<void>;
 
 export function Upload(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 

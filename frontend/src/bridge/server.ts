@@ -8,15 +8,25 @@ type RequestType = {
   headers: Record<string, string>
   body: string
 }
+
 type ResponseType = {
-  end: (
-    status: number,
-    headers: Record<string, string>,
-    body: string,
-    options: { mode: 'Binary' | 'Text' }
-  ) => void
+  status: number
+  headers: Record<string, string>
+  body: string
+  options: { mode: 'Binary' | 'Text' }
 }
-type HttpServerHandler = (req: RequestType, res: ResponseType) => Promise<void>
+
+type HttpServerHandler = (
+  req: RequestType,
+  res: {
+    end: (
+      status: ResponseType['status'],
+      headers: ResponseType['headers'],
+      body: ResponseType['body'],
+      options: ResponseType['options']
+    ) => void
+  }
+) => Promise<void>
 
 export const StartServer = async (address: string, id: string, handler: HttpServerHandler) => {
   const { flag, data } = await App.StartServer(address, id)

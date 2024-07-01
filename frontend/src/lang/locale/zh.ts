@@ -534,6 +534,7 @@ export default {
     autoSetSystemProxy: '自动配置/清除系统代理',
     autoStartKernel: '自动启动内核程序',
     admin: '以管理员身份运行',
+    addToMenu: '将插件添加到托盘菜单',
     multipleInstance: '允许多个实例',
     startup: {
       name: '开机时启动',
@@ -592,6 +593,24 @@ export default {
     direct: '🎯 全球直连',
     block: '🛑 全球拦截',
     fallback: '🐟 漏网之鱼'
+  },
+  tray: {
+    restart: '重启',
+    restartTip: '重启程序',
+    exit: '退出',
+    exitTip: '退出程序',
+    proxyGroup: '代理组',
+    setSystemProxy: '设置系统代理',
+    clearSystemProxy: '清除系统代理',
+    tun: 'Tun模式',
+    enableTunMode: '启用TUN模式',
+    disableTunMode: '禁用TUN模式',
+    kernel: '内核管理',
+    proxy: '系统代理',
+    startKernel: '开启内核',
+    stopKernel: '关闭内核',
+    restartKernel: '重启内核',
+    plugins: '插件'
   },
   commands: {
     noMatching: '没有匹配到命令'

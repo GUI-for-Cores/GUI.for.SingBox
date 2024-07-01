@@ -51,6 +51,7 @@ type AppConfig struct {
 	Width            int  `yaml:"width"`
 	Height           int  `yaml:"height"`
 	MultipleInstance bool `yaml:"multipleInstance"`
+	StartHidden      bool
 }
 
 type TrayContent struct {
@@ -64,4 +65,14 @@ type WriteTracker struct {
 	Progress       int64
 	ProgressChange string
 	App            *App
+}
+
+type MenuItem struct {
+	Type     string     `json:"type"` // Menu Type: item / separator
+	Text     string     `json:"text"`
+	Tooltip  string     `json:"tooltip"`
+	Event    string     `json:"event"`
+	Children []MenuItem `json:"children"`
+	Hidden   bool       `json:"hidden"`
+	Checked  bool       `json:"checked"`
 }

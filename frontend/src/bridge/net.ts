@@ -133,12 +133,20 @@ const requestWithoutBody = (methd: 'GET' | 'HEAD' | 'DELETE') => {
 
 export const Requests = async (options: RequestType) => {
   const { method = 'GET', url, headers = {}, body = '', options: _options = {} } = options
+
+  const __options: Required<RequestType['options']> = {
+    Proxy: await GetSystemProxy(),
+    Insecure: false,
+    Timeout: 15,
+    ..._options
+  }
+
   const {
     flag,
     status,
     headers: _headers,
     body: _body
-  } = await App.Requests(method.toUpperCase(), url, headers, body, _options)
+  } = await App.Requests(method.toUpperCase(), url, headers, body, __options)
 
   if (!flag) throw _body
 

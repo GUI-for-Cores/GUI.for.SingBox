@@ -13,6 +13,8 @@ func InitTray(a *App, icon []byte, fs embed.FS) {}
 
 func (a *App) UpdateTray(tray TrayContent) {}
 
+func (a *App) UpdateTrayMenus(menus []MenuItem) {}
+
 func (a *App) ExitApp() {
 	runtime.Quit(a.Ctx)
 	os.Exit(0)

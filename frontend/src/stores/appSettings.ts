@@ -44,6 +44,7 @@ type AppSettings = {
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
   multipleInstance: boolean
+  addPluginToMenu: boolean
 }
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
@@ -118,7 +119,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     },
     pluginSettings: {},
     githubApiToken: '',
-    multipleInstance: false
+    multipleInstance: false,
+    addPluginToMenu: false
   })
 
   const saveAppSettings = debounce((config: string) => {
@@ -204,6 +206,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       themeMode,
       () => app.value.color,
       () => app.value.lang,
+      () => app.value.addPluginToMenu,
       () => app.value.kernel.running,
       () => app.value.kernel.unAvailable,
       () => app.value.kernel.sortByDelay

@@ -1,12 +1,16 @@
 package bridge
 
 import (
+	"log"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/klauspost/cpuid/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,6 +18,8 @@ import (
 func NewApp() *App {
 	return &App{}
 }
+
+var isStartup = true
 
 var Env = &EnvResult{
 	BasePath:    "",
@@ -48,6 +54,32 @@ func InitBridge() {
 	if err == nil {
 		yaml.Unmarshal(b, &Config)
 	}
+
+	if Config.Width == 0 {
+		Config.Width = 800
+	}
+
+	if Config.Height == 0 {
+		if Env.OS == "linux" {
+			Config.Height = 510
+		} else {
+			Config.Height = 540
+		}
+	}
+
+	Config.StartHidden = Env.FromTaskSch && Config.WindowStartState == int(options.Minimised)
+
+	if !Env.FromTaskSch {
+		Config.WindowStartState = int(options.Normal)
+	}
+}
+
+func (a *App) IsStartup() bool {
+	if isStartup {
+		isStartup = false
+		return true
+	}
+	return false
 }
 
 func (a *App) RestartApp() FlagResult {
@@ -64,4 +96,31 @@ func (a *App) RestartApp() FlagResult {
 	a.ExitApp()
 
 	return FlagResult{true, "Success"}
+}
+
+func (a *App) GetEnv() EnvResult {
+	return EnvResult{
+		AppName:  Env.AppName,
+		BasePath: Env.BasePath,
+		OS:       Env.OS,
+		ARCH:     Env.ARCH,
+		X64Level: Env.X64Level,
+	}
+}
+
+func (a *App) GetInterfaces() FlagResult {
+	log.Printf("GetInterfaces")
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	var interfaceNames []string
+
+	for _, inter := range interfaces {
+		interfaceNames = append(interfaceNames, inter.Name)
+	}
+
+	return FlagResult{true, strings.Join(interfaceNames, "|")}
 }

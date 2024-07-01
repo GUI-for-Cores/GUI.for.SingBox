@@ -13,9 +13,7 @@ export const DefaultFontFamily =
 
 export enum WindowStartState {
   Normal = 0,
-  // Maximised = 1,
   Minimised = 2
-  // Fullscreen = 3
 }
 
 export enum Theme {
@@ -105,6 +103,16 @@ export const PluginsTriggerOptions = [
   { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
   { label: 'plugin.on::ready', value: PluginTrigger.OnReady }
 ]
+
+export type MenuItem = {
+  type: 'item' | 'separator'
+  text?: string
+  tooltip?: string
+  event?: (() => void) | string
+  children?: MenuItem[]
+  hidden?: boolean
+  checked?: boolean
+}
 
 export type TrayContent = {
   icon?: string

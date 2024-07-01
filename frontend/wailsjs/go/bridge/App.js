@@ -46,6 +46,10 @@ export function GetInterfaces() {
   return window['go']['bridge']['App']['GetInterfaces']();
 }
 
+export function IsStartup() {
+  return window['go']['bridge']['App']['IsStartup']();
+}
+
 export function KillProcess(arg1) {
   return window['go']['bridge']['App']['KillProcess'](arg1);
 }
@@ -120,6 +124,10 @@ export function UnzipZIPFile(arg1, arg2) {
 
 export function UpdateTray(arg1) {
   return window['go']['bridge']['App']['UpdateTray'](arg1);
+}
+
+export function UpdateTrayMenus(arg1) {
+  return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
 }
 
 export function Upload(arg1, arg2, arg3, arg4, arg5) {

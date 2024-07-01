@@ -24,8 +24,6 @@ var assets embed.FS
 //go:embed frontend/dist/favicon.ico
 var icon []byte
 
-var isStartup = true
-
 func main() {
 	bridge.InitBridge()
 
@@ -44,7 +42,7 @@ func main() {
 		})
 		appMenu.AddSeparator()
 		appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
-			runtime.EventsEmit(app.Ctx, "quitApp")
+			runtime.EventsEmit(app.Ctx, "exitApp")
 		})
 
 		// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
@@ -53,39 +51,17 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title: bridge.Env.AppName,
-		Menu:  AppMenu,
-		Width: func() int {
-			if bridge.Config.Width != 0 {
-				return bridge.Config.Width
-			}
-			return 800
-		}(),
-		Height: func() int {
-			if bridge.Config.Height != 0 {
-				return bridge.Config.Height
-			}
-			if bridge.Env.OS == "linux" {
-				return 510
-			}
-			return 540
-		}(),
-		MinWidth:      600,
-		MinHeight:     400,
-		Frameless:     bridge.Env.OS == "windows",
-		DisableResize: false,
-		StartHidden: func() bool {
-			if bridge.Env.FromTaskSch {
-				return bridge.Config.WindowStartState == 2
-			}
-			return false
-		}(),
-		WindowStartState: func() options.WindowStartState {
-			if bridge.Env.FromTaskSch {
-				return options.WindowStartState(bridge.Config.WindowStartState)
-			}
-			return 0
-		}(),
+		MinWidth:         600,
+		MinHeight:        400,
+		DisableResize:    false,
+		Menu:             AppMenu,
+		Title:            bridge.Env.AppName,
+		Frameless:        bridge.Env.OS == "windows",
+		Width:            bridge.Config.Width,
+		Height:           bridge.Config.Height,
+		StartHidden:      bridge.Config.StartHidden,
+		WindowStartState: options.WindowStartState(bridge.Config.WindowStartState),
+		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		Windows: &windows.Options{
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
@@ -109,7 +85,6 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId: func() string {
 				if bridge.Config.MultipleInstance {
@@ -129,14 +104,8 @@ func main() {
 			bridge.InitScheduledTasks()
 			bridge.InitNotification(assets)
 		},
-		OnDomReady: func(ctx context.Context) {
-			if isStartup {
-				runtime.EventsEmit(ctx, "onStartup")
-				isStartup = false
-			}
-		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
-			runtime.EventsEmit(ctx, "beforeClose")
+			runtime.EventsEmit(ctx, "onBeforeExitApp")
 			return true
 		},
 		Bind: []interface{}{
