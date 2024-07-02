@@ -39,7 +39,7 @@ export type PluginType = {
   disabled: boolean
   install: boolean
   installed: boolean
-  status: 0 | 1 | 2 // 0: Normal 1: Running 2: Stopped
+  status: number // 0: Normal 1: Running 2: Stopped
   // Not Config
   key?: string
   updating?: boolean
