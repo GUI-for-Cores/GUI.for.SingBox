@@ -83,7 +83,8 @@ func main() {
 			WindowIsTranslucent: false,
 		},
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:     assets,
+			Middleware: bridge.RollingRelease,
 		},
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId: func() string {

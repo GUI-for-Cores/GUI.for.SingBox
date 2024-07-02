@@ -51,6 +51,7 @@ type AppConfig struct {
 	Width            int  `yaml:"width"`
 	Height           int  `yaml:"height"`
 	MultipleInstance bool `yaml:"multipleInstance"`
+	RollingRelease   bool `yaml:"rollingRelease"`
 	StartHidden      bool
 }
 

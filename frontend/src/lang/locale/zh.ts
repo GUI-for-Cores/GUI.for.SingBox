@@ -536,6 +536,7 @@ export default {
     admin: '以管理员身份运行',
     addToMenu: '将插件添加到托盘菜单',
     multipleInstance: '允许多个实例',
+    rollingRelease: '启用滚动发行',
     startup: {
       name: '开机时启动',
       delay: '延迟(秒)'

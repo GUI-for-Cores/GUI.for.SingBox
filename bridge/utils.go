@@ -1,8 +1,11 @@
 package bridge
 
 import (
+	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -53,4 +56,47 @@ func GetHeader(headers map[string]string) http.Header {
 func ConvertByte2String(byte []byte) string {
 	decodeBytes, _ := simplifiedchinese.GB18030.NewDecoder().Bytes(byte)
 	return string(decodeBytes)
+}
+
+func RollingRelease(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !Config.RollingRelease {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		url := r.URL.Path
+		if url == "/" {
+			url = "/index.html"
+		}
+
+		log.Printf("[Rolling Release] %v %v\n", r.Method, url)
+
+		file := GetPath("data/rolling-release" + url)
+
+		bytes, err := os.ReadFile(file)
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		ext := path.Ext(url)
+		mime := "application/octet-stream"
+
+		switch ext {
+		case ".html":
+			mime = "text/html"
+		case ".ico":
+			mime = "image/x-icon"
+		case ".png":
+			mime = "image/png"
+		case ".css":
+			mime = "text/css"
+		case ".js":
+			mime = "text/javascript"
+		}
+
+		w.Header().Set("Content-Type", mime)
+		w.Write(bytes)
+	})
 }

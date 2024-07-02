@@ -536,6 +536,7 @@ export default {
     admin: 'Run As Admin',
     addToMenu: 'Add Plugin To Menu',
     multipleInstance: 'Allow Multiple Instances',
+    rollingRelease: 'Enable Rolling Release',
     startup: {
       name: 'Startup on boot',
       delay: 'Delay(s)'
