@@ -1,0 +1,52 @@
+name: Rolling Release
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  Build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          cd frontend && pnpm install
+      - name: Build Frontend
+        run: cd frontend && pnpm build
+      - name: Create a compressed file
+        run: |
+          cd frontend
+          openssl dgst -sha256 dist/index.html | sed 's/([^)]*)//g' >> dist/version.txt
+          mv dist rolling-release
+          zip -r rolling-release.zip rolling-release
+
+      - name: Create Release and Upload Assets
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: frontend/{rolling-release.zip,rolling-release/version.txt}
+          file_glob: true
+          tag: rolling-release
+          release_name: rolling-release
+          overwrite: true
+          draft: false
+          prerelease: true
+          body: |
+            Rolling release built by GitHub Actions.
+            To use this version, please install the "Rolling Release Assistant" plugin and enable "Enable Rolling Release" within the app.
