@@ -16,6 +16,7 @@ import {
 
 const isPinned = ref(false)
 const isMaximised = ref(false)
+const isRollingRelease = ref(false)
 
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
@@ -57,6 +58,18 @@ const onResize = debounce(async () => {
   isMaximised.value = await WindowIsMaximised()
 }, 100)
 
+const updateRollingReleaseState = async () => {
+  try {
+    const res = await fetch('/version.txt')
+    const txt = await res.text()
+    isRollingRelease.value = txt.startsWith('SHA2-256')
+  } catch (error) {
+    console.log('Not a rolling release', error)
+  }
+}
+
+updateRollingReleaseState()
+
 onMounted(() => window.addEventListener('resize', onResize))
 onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
@@ -75,7 +88,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       }"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ isRollingRelease ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
     <div v-menu="menus" class="menus"></div>
@@ -106,7 +119,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       v-menu="menus"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ isRollingRelease ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
   </div>
