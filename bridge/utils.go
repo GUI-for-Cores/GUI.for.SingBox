@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
@@ -56,6 +59,23 @@ func GetHeader(headers map[string]string) http.Header {
 func ConvertByte2String(byte []byte) string {
 	decodeBytes, _ := simplifiedchinese.GB18030.NewDecoder().Bytes(byte)
 	return string(decodeBytes)
+}
+
+func AddMenusForDarwin(AppMenu *menu.Menu, app *App) {
+	appMenu := AppMenu.AddSubmenu("App")
+	appMenu.AddText("Show", keys.CmdOrCtrl("s"), func(_ *menu.CallbackData) {
+		runtime.WindowShow(app.Ctx)
+	})
+	appMenu.AddText("Hide", keys.CmdOrCtrl("h"), func(_ *menu.CallbackData) {
+		runtime.WindowHide(app.Ctx)
+	})
+	appMenu.AddSeparator()
+	appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
+		runtime.EventsEmit(app.Ctx, "exitApp")
+	})
+
+	// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+	AppMenu.Append(menu.EditMenu())
 }
 
 func RollingRelease(next http.Handler) http.Handler {

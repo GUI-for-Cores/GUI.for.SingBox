@@ -2,7 +2,7 @@ import { render, createVNode } from 'vue'
 
 import PickerComp from '@/components/Picker/index.vue'
 
-type PickerItem = { label: string; value: string }
+type PickerItem = { label: string; value: string; description?: string }
 
 const createPicker = (
   type: 'single' | 'multi',

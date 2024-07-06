@@ -6,7 +6,7 @@ import useI18n from '@/lang'
 interface Props {
   type: 'single' | 'multi'
   title: string
-  options: { label: string; value: string }[]
+  options: { label: string; value: string; description?: string }[]
   initialValue?: string[]
 }
 
@@ -62,14 +62,17 @@ const handleSelectAll = () => {
 
       <div class="options">
         <div v-for="(o, i) in options" :key="i" @click="handleSelect(o.value)" class="item">
-          <span>{{ o.label }}</span>
-          <Icon
-            v-show="isSelected(o.value)"
-            :size="32"
-            icon="selected"
-            fill="var(--primary-color)"
-            style="flex-shrink: 0"
-          />
+          <div class="label">
+            <div>{{ o.label }}</div>
+            <Icon
+              v-show="isSelected(o.value)"
+              :size="32"
+              icon="selected"
+              fill="var(--primary-color)"
+              style="flex-shrink: 0"
+            />
+          </div>
+          <div class="description">{{ o.description }}</div>
         </div>
       </div>
 
@@ -108,11 +111,7 @@ const handleSelectAll = () => {
     overflow: auto;
   }
   .item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin: 4px 0;
-    line-height: 32px;
     padding: 0 8px;
     word-wrap: break-word;
     word-break: break-all;
@@ -121,6 +120,19 @@ const handleSelectAll = () => {
     }
     &:nth-child(even) {
       background: var(--table-tr-even-bg);
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 32px;
+    }
+
+    .description {
+      font-size: 12px;
+      line-height: 22px;
+      opacity: 0.7;
     }
   }
 }

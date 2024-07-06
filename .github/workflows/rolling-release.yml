@@ -3,6 +3,8 @@ name: Rolling Release
 on:
   push:
     branches: [main]
+    paths:
+      - "frontend/**"
 
   workflow_dispatch:
 

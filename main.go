@@ -9,7 +9,6 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/menu"
-	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
@@ -30,23 +29,10 @@ func main() {
 	// Create an instance of the app structure
 	app := bridge.NewApp()
 
-	AppMenu := menu.NewMenu()
+	appMenu := menu.NewMenu()
 
 	if bridge.Env.OS == "darwin" {
-		appMenu := AppMenu.AddSubmenu("App")
-		appMenu.AddText("Show", keys.CmdOrCtrl("s"), func(_ *menu.CallbackData) {
-			runtime.WindowShow(app.Ctx)
-		})
-		appMenu.AddText("Hide", keys.CmdOrCtrl("h"), func(_ *menu.CallbackData) {
-			runtime.WindowHide(app.Ctx)
-		})
-		appMenu.AddSeparator()
-		appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
-			runtime.EventsEmit(app.Ctx, "exitApp")
-		})
-
-		// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
-		AppMenu.Append(menu.EditMenu())
+		bridge.AddMenusForDarwin(appMenu, app)
 	}
 
 	// Create application with options
@@ -54,7 +40,7 @@ func main() {
 		MinWidth:         600,
 		MinHeight:        400,
 		DisableResize:    false,
-		Menu:             AppMenu,
+		Menu:             appMenu,
 		Title:            bridge.Env.AppName,
 		Frameless:        bridge.Env.OS == "windows",
 		Width:            bridge.Config.Width,
