@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, inject, type Ref } from 'vue'
+import { ref, inject, type Ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage, useBool } from '@/hooks'
-import { deepClone, sampleID } from '@/utils'
+import { useMessage, useAlert, useBool } from '@/hooks'
+import { deepClone, generateConfig, sampleID } from '@/utils'
 import * as Defaults from '@/constant/profile'
 import { WindowToggleMaximise } from '@/bridge'
 import { type ProfileType, useProfilesStore } from '@/stores'
@@ -15,6 +15,7 @@ import DnsConfig from './DnsConfig.vue'
 import ProxyGroupsConfig from './ProxyGroupsConfig.vue'
 import DnsRulesConfig from './DnsRulesConfig.vue'
 import RulesConfig from './RulesConfig.vue'
+import MixinAndScript from './MixinAndScriptConfig.vue'
 
 interface Props {
   id?: string
@@ -41,7 +42,8 @@ const stepItems = [
   { title: 'profile.step.groups' },
   { title: 'profile.step.rules' },
   { title: 'profile.step.dns' },
-  { title: 'profile.step.dnsRules' }
+  { title: 'profile.step.dnsRules' },
+  { title: 'profile.step.mixin-script' }
 ]
 
 const profile = ref<ProfileType>({
@@ -53,10 +55,23 @@ const profile = ref<ProfileType>({
   dnsConfig: Defaults.DnsConfigDefaults(),
   proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
   rulesConfig: Defaults.RulesConfigDefaults(),
-  dnsRulesConfig: Defaults.DnsRulesConfigDefaults()
+  dnsRulesConfig: Defaults.DnsRulesConfigDefaults(),
+  mixinConfig: Defaults.MixinConfigDefaults(),
+  scriptConfig: Defaults.ScriptConfigDefaults()
+})
+
+const mixinAndScriptConfig = computed({
+  get() {
+    return { mixin: profile.value.mixinConfig, script: profile.value.scriptConfig }
+  },
+  set({ mixin, script }) {
+    profile.value.mixinConfig = mixin
+    profile.value.scriptConfig = script
+  }
 })
 
 const { t } = useI18n()
+const { alert } = useAlert()
 const { message } = useMessage()
 const profilesStore = useProfilesStore()
 const [showAdvancedSetting, toggleAdvancedSetting] = useBool(false)
@@ -92,6 +107,15 @@ const handleAdd = () => {
   map[currentStep.value].value.handleAdd()
 }
 
+const handlePreview = async () => {
+  try {
+    const config = await generateConfig(profile.value)
+    alert(profile.value.name, JSON.stringify(config, null, 2))
+  } catch (error: any) {
+    message.error(error.message || error)
+  }
+}
+
 if (props.isUpdate) {
   const p = profilesStore.getProfileById(props.id)
   if (p) {
@@ -103,12 +127,13 @@ if (props.isUpdate) {
 <template>
   <div @dblclick="WindowToggleMaximise" class="header" style="--wails-draggable: drag">
     <div class="header-title">{{ t(stepItems[currentStep].title) }}</div>
+    <Button @click="handlePreview" icon="file" type="text" class="ml-auto" />
     <Button
       v-show="[3, 4, 6].includes(currentStep)"
       @click="handleAdd"
       icon="add"
       type="text"
-      class="ml-auto mr-8"
+      class="mr-8"
     />
   </div>
 
@@ -161,6 +186,10 @@ if (props.isUpdate) {
         :proxy-groups="profile.proxyGroupsConfig"
       />
     </div>
+
+    <div v-show="currentStep === 7">
+      <MixinAndScript v-model="mixinAndScriptConfig" />
+    </div>
   </div>
 
   <div class="form-action">
@@ -169,7 +198,7 @@ if (props.isUpdate) {
     </Button>
     <Button
       @click="handleNextStep"
-      :disabled="!profile.name || currentStep == 6"
+      :disabled="!profile.name || currentStep == stepItems.length - 1"
       type="text"
       class="mr-auto"
     >

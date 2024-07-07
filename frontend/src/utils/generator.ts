@@ -1,5 +1,5 @@
 import { Readfile, Writefile } from '@/bridge'
-import { deepClone, ignoredError } from '@/utils'
+import { deepAssign, deepClone, ignoredError } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'
 import { TunConfigDefaults } from '@/constant'
@@ -552,8 +552,31 @@ export const generateConfig = async (originalProfile: ProfileType) => {
     }
   }
 
+  const { priority, config: mixin } = originalProfile.mixinConfig
+  if (priority === 'mixin') {
+    deepAssign(config, JSON.parse(mixin))
+  } else if (priority === 'gui') {
+    deepAssign(config, deepAssign(JSON.parse(mixin), config))
+  }
+
+  const fn = new AsyncFunction(
+    `${profile.scriptConfig.code};return await onGenerate(${JSON.stringify(config)})`
+  )
+  let _config
+  try {
+    _config = await fn()
+  } catch (error: any) {
+    throw error.message || error
+  }
+
+  if (typeof _config !== 'object') {
+    throw 'Wrong result'
+  }
+
   const pluginsStore = usePluginsStore()
-  return await pluginsStore.onGenerateTrigger(config, originalProfile)
+  const result = await pluginsStore.onGenerateTrigger(_config, originalProfile)
+
+  return result
 }
 
 export const generateConfigFile = async (profile: ProfileType) => {

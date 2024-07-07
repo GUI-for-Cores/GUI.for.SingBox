@@ -9,7 +9,9 @@ import {
   ProxyGroup,
   FinalDnsType,
   TunConfigDefaults,
-  DnsConfigDefaults
+  DnsConfigDefaults,
+  MixinConfigDefaults,
+  ScriptConfigDefaults
 } from '@/constant'
 
 export type ProfileType = {
@@ -107,6 +109,13 @@ export type ProfileType = {
     'download-detour': string
     'client-subnet': string
   }[]
+  mixinConfig: {
+    priority: 'mixin' | 'gui'
+    config: string
+  }
+  scriptConfig: {
+    code: string
+  }
 }
 
 export const useProfilesStore = defineStore('profiles', () => {
@@ -116,14 +125,13 @@ export const useProfilesStore = defineStore('profiles', () => {
     const data = await ignoredError(Readfile, ProfilesFilePath)
     data && (profiles.value = parse(data))
 
-    for (let i = 0; i < profiles.value.length; ++i) {
-      const profile = profiles.value[i]
-      if (profile.tunConfig['inet4-address'] === undefined) {
-        profiles.value[i].tunConfig['inet4-address'] = TunConfigDefaults()['inet4-address']
-      }
-      if (profile.tunConfig['inet6-address'] === undefined) {
-        profiles.value[i].tunConfig['inet6-address'] = TunConfigDefaults()['inet6-address']
-      }
+    profiles.value.forEach((profile) => {
+      const tunCofnigDefaults = TunConfigDefaults()
+      profile.tunConfig['inet4-address'] =
+        profile.tunConfig['inet4-address'] ?? tunCofnigDefaults['inet4-address']
+      profile.tunConfig['inet6-address'] =
+        profile.tunConfig['inet6-address'] ?? tunCofnigDefaults['inet6-address']
+
       if (profile.tunConfig['interface-name'] === undefined) {
         const oldValue = (profile.tunConfig as any)['interface_name']
         if (oldValue !== undefined) {
@@ -132,19 +140,24 @@ export const useProfilesStore = defineStore('profiles', () => {
           profile.tunConfig['interface-name'] = ''
         }
       }
+
       if (profile.dnsConfig['disable-cache'] === undefined) {
-        profiles.value[i].dnsConfig['disable-cache'] = DnsConfigDefaults()['disable-cache']
-        profiles.value[i].dnsConfig['disable-expire'] = DnsConfigDefaults()['disable-expire']
-        profiles.value[i].dnsConfig['independent-cache'] = DnsConfigDefaults()['independent-cache']
-        profiles.value[i].dnsConfig['client-subnet'] = DnsConfigDefaults()['client-subnet']
-        const dnsRulesSize = profiles.value[i].dnsRulesConfig.length
+        const dnsConfigDefaults = DnsConfigDefaults()
+        profile.dnsConfig['disable-cache'] = dnsConfigDefaults['disable-cache']
+        profile.dnsConfig['disable-expire'] = dnsConfigDefaults['disable-expire']
+        profile.dnsConfig['independent-cache'] = dnsConfigDefaults['independent-cache']
+        profile.dnsConfig['client-subnet'] = dnsConfigDefaults['client-subnet']
+        const dnsRulesSize = profile.dnsRulesConfig.length
         for (let j = 0; j < dnsRulesSize; ++j) {
-          if (profiles.value[i].dnsRulesConfig[j]['client-subnet'] === undefined) {
-            profiles.value[i].dnsRulesConfig[j]['client-subnet'] = ''
+          if (profile.dnsRulesConfig[j]['client-subnet'] === undefined) {
+            profile.dnsRulesConfig[j]['client-subnet'] = ''
           }
         }
       }
-    }
+
+      profile.mixinConfig = profile.mixinConfig ?? MixinConfigDefaults()
+      profile.scriptConfig = profile.scriptConfig ?? ScriptConfigDefaults()
+    })
   }
 
   const saveProfiles = debounce(async () => {

@@ -40,7 +40,9 @@ const icons = [
   'add',
   'filter',
   'edit',
-  'delete'
+  'delete',
+  'file',
+  'code'
 ] as const
 
 export default icons

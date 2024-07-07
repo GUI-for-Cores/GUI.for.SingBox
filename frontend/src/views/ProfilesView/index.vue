@@ -90,7 +90,8 @@ const menus: Menu[] = [
     'profile.step.groups',
     'profile.step.rules',
     'profile.step.dns',
-    'profile.step.dnsRules'
+    'profile.step.dnsRules',
+    'profile.step.mixin-script'
   ].map((v, i) => {
     return {
       label: v,

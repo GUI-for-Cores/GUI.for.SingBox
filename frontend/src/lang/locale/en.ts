@@ -378,14 +378,24 @@ export default {
       dns: 'DNS',
       groups: 'Proxy Groups',
       dnsRules: 'DNS Rules',
-      rules: 'Route Rules'
+      rules: 'Route Rules',
+      'mixin-script': 'Mixin & Script'
     },
     proxies: 'Reference proxies',
     use: 'Reference subscriptions',
     noSubs: 'There are no available subscriptions.',
     group: 'Group Details',
     rule: 'Rule Details',
-    auto: 'This configuration is managed by subscription and will be overwritten when the subscription is updated!\nIf you want to modify this profile, please use the plugin system.'
+    auto: 'This configuration is managed by subscription and will be overwritten when the subscription is updated!\nIf you want to modify this profile, please use the plugin system.',
+    mixinSettings: {
+      name: 'Mixin',
+      priority: 'Priority',
+      mixin: 'Mixin',
+      gui: 'GUI'
+    },
+    scriptSettings: {
+      name: 'Script'
+    }
   },
   profiles: {
     shouldStop: 'Unable to delete, this profile is in use.',
