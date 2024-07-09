@@ -281,7 +281,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
               {{ p.disabled ? t('common.enable') : t('common.disable') }}
             </Button>
             <Button type="link" size="small" @click="handleEditPlugin(p)">
-              {{ t('common.edit') }}
+              {{ t('common.develop') }}
             </Button>
             <Button
               v-if="!p.install || !p.installed"
@@ -308,7 +308,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
             {{ p.disabled ? t('common.enable') : t('common.disable') }}
           </Button>
           <Button type="link" size="small" @click="handleEditPlugin(p)">
-            {{ t('common.edit') }}
+            {{ t('common.develop') }}
           </Button>
           <Button
             :disabled="p.install && p.installed"

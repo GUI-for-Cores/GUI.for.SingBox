@@ -1,6 +1,7 @@
 import useI18n from '@/lang'
-import { Color, Lang, Theme } from '@/constant'
+import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/constant'
 import { handleChangeMode } from '@/utils'
+import { useMessage } from '@/hooks'
 import { ExitApp, RestartApp, WindowReloadApp } from '@/bridge'
 import {
   useAppSettingsStore,
@@ -47,6 +48,7 @@ export const getCommands = () => {
   const subscriptionsStore = useSubscribesStore()
   const rulesetsStore = useRulesetsStore()
   const pluginsStore = usePluginsStore()
+  const { message } = useMessage()
 
   const rawCommands: Command[] = [
     {
@@ -264,6 +266,51 @@ export const getCommands = () => {
           handler: pluginsStore.updatePlugins
         }
       ]
+    },
+
+    {
+      label: 'tray.plugins',
+      cmd: 'Plugins',
+      children: pluginsStore.plugins.flatMap((plugin) => {
+        const hasTrigger = !!plugin.triggers.find((trigger) => trigger === PluginTrigger.OnManual)
+        const hasMenus = !!Object.keys(plugin.menus).length
+        if (!hasTrigger && !hasMenus) return []
+        const children: Command[] = []
+        if (hasTrigger) {
+          children.push({
+            label: 'common.run',
+            cmd: PluginTrigger.OnManual,
+            handler: async () => {
+              plugin.running = true
+              try {
+                await pluginsStore.manualTrigger(plugin.id, PluginTriggerEvent.OnManual)
+              } catch (error: any) {
+                message.error(error)
+              }
+              plugin.running = false
+            }
+          })
+        }
+        if (hasMenus) {
+          Object.entries(plugin.menus).forEach(([title, fnName]) => {
+            children.push({
+              label: title,
+              cmd: fnName,
+              handler: async () => {
+                try {
+                  plugin.running = true
+                  await pluginsStore.manualTrigger(plugin.id, fnName as any)
+                } catch (error: any) {
+                  message.error(error.message || error)
+                } finally {
+                  plugin.running = false
+                }
+              }
+            })
+          })
+        }
+        return { label: plugin.name, cmd: plugin.id, children }
+      })
     }
   ]
 

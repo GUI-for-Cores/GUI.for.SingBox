@@ -2,9 +2,10 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 
+import { debounce } from '@/utils'
 import { useMessage } from '@/hooks'
 import { getCommands } from '@/utils/command'
-import { useAppSettingsStore } from '@/stores'
+import { useAppSettingsStore, usePluginsStore } from '@/stores'
 
 const loading = ref(false)
 const showCommandPanel = ref(false)
@@ -27,6 +28,7 @@ const hitCommand = computed(() =>
 const { t } = useI18n()
 const { message } = useMessage()
 const appSettings = useAppSettingsStore()
+const pluginsStore = usePluginsStore()
 
 const handleExecCommand = async (index: number) => {
   loading.value = true
@@ -75,18 +77,19 @@ const onKeydown = async (ev: KeyboardEvent) => {
   if (ev.code === 'Enter') {
     if (hitCommand.value.length) {
       await handleExecCommand(selected.value)
+    } else {
+      nextTick(inputRef.value.focus)
     }
   }
 }
 
 watch(hitCommand, () => (selected.value = 0))
 
-watch(
-  () => appSettings.app.lang,
-  () => {
-    commands.value = getCommands()
-  }
-)
+const updateCommands = debounce(() => {
+  commands.value = getCommands()
+}, 200)
+
+watch([() => appSettings.app.lang, pluginsStore.plugins], updateCommands)
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))
@@ -171,7 +174,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 .rotation {
   position: absolute;
   top: 13px;
-  right: 8px;
+  right: 38px;
   animation: rotate 2s infinite linear;
 }
 </style>

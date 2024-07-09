@@ -42,7 +42,8 @@ export default {
     selectAll: '全选',
     http: '远程下载',
     file: '本地文件',
-    openFile: '打开文件'
+    openFile: '打开文件',
+    develop: '开发'
   },
   kernel: {
     port: 'HTTP(s)代理端口',

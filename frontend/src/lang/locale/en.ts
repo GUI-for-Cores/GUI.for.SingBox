@@ -42,7 +42,8 @@ export default {
     selectAll: 'Select All',
     http: 'Remote',
     file: 'Local',
-    openFile: 'Open File'
+    openFile: 'Open File',
+    develop: 'Develop'
   },
   kernel: {
     port: 'HTTP(s) Port',

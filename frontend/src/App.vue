@@ -121,7 +121,7 @@ appSettings.setupAppSettings().then(async () => {
     :message="appStore.tipsMessage"
   />
 
-  <CommandView />
+  <CommandView v-if="!loading" />
 </template>
 
 <style scoped>
