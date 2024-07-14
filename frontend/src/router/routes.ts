@@ -11,10 +11,11 @@ import ScheduledTasksView from '@/views/ScheduledTasksView/index.vue'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
+    name: 'Overview',
     component: HomeView,
     meta: {
-      name: 'router.overview'
+      name: 'router.overview',
+      icon: 'overview'
     }
   },
   {
@@ -22,7 +23,8 @@ const routes: RouteRecordRaw[] = [
     name: 'Profiles',
     component: ProfilesView,
     meta: {
-      name: 'router.profiles'
+      name: 'router.profiles',
+      icon: 'profiles'
     }
   },
   {
@@ -30,7 +32,8 @@ const routes: RouteRecordRaw[] = [
     name: 'Subscriptions',
     component: SubscribesView,
     meta: {
-      name: 'router.subscriptions'
+      name: 'router.subscriptions',
+      icon: 'subscriptions'
     }
   },
   {
@@ -38,23 +41,26 @@ const routes: RouteRecordRaw[] = [
     name: 'Rulesets',
     component: RulesetsView,
     meta: {
-      name: 'router.rulesets'
+      name: 'router.rulesets',
+      icon: 'rulesets'
     }
   },
   {
     path: '/plugins',
-    name: 'PluginsView',
+    name: 'Plugins',
     component: PluginsView,
     meta: {
-      name: 'router.plugins'
+      name: 'router.plugins',
+      icon: 'plugins'
     }
   },
   {
     path: '/scheduledtasks',
-    name: 'ScheduledTasksView',
+    name: 'ScheduledTasks',
     component: ScheduledTasksView,
     meta: {
-      name: 'router.scheduledtasks'
+      name: 'router.scheduledtasks',
+      icon: 'scheduledTasks'
     }
   },
   {
@@ -62,7 +68,9 @@ const routes: RouteRecordRaw[] = [
     name: 'Settings',
     component: SettingsView,
     meta: {
-      name: 'router.settings'
+      name: 'router.settings',
+      icon: 'settings2',
+      hidden: false
     }
   }
 ]

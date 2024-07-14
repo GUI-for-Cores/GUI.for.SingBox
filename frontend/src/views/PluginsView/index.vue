@@ -206,7 +206,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
             <Button @click="handleAddPlugin" type="link">{{ t('common.add') }}</Button>
           </template>
           <template #import>
-            <Button @click="handleImportPlugin" type="link">{{ t('common.import') }}</Button>
+            <Button @click="handleImportPlugin" type="link">{{ t('plugins.hub') }}</Button>
           </template>
         </I18nT>
       </template>

@@ -56,14 +56,16 @@ const downloadCore = async () => {
     })
     const { os, arch } = await GetEnv()
 
-    const { assets, name, message: msg } = body[0]
+    const { assets, name, tag_name, message: msg } = body[0]
     if (msg) throw msg
+
+    const version = (name || tag_name).replace('v', '')
 
     const envStore = useEnvStore()
     const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
 
     const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
-    const assetName = `sing-box-${name}-${os}-${arch}${legacy}${suffix}`
+    const assetName = `sing-box-${version}-${os}-${arch}${legacy}${suffix}`
 
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName
@@ -92,7 +94,7 @@ const downloadCore = async () => {
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, KernelWorkDirectory)
-      const tmpPath = KernelWorkDirectory + `/sing-box-${name}-${os}-${arch}${legacy}`
+      const tmpPath = KernelWorkDirectory + `/sing-box-${version}-${os}-${arch}${legacy}`
       await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
       await Removefile(tmpPath)
     } else {
@@ -159,8 +161,8 @@ const getRemoteVersion = async (showTips = false) => {
     const { body } = await HttpGet<Record<string, any>>(latestUrl, {
       Authorization: getGitHubApiAuthorization()
     })
-    const { name } = body[0]
-    return name as string
+    const { name, tag_name } = body[0]
+    return (name || tag_name).replace('v', '')
   } catch (error: any) {
     console.log(error)
     showTips && message.error(error)
@@ -206,7 +208,7 @@ initVersion()
 </script>
 
 <template>
-  <div class="title">{{ t('settings.kernel.latest') }}</div>
+  <div class="title">Alpha</div>
   <div class="tags">
     <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
       {{ t('kernel.local') }}
@@ -247,7 +249,7 @@ initVersion()
 .title {
   font-weight: bold;
   font-size: 16px;
-  margin: 8px 4px;
+  margin: 12px 4px;
 }
 .detail {
   font-size: 12px;

@@ -46,6 +46,7 @@ type AppSettings = {
   multipleInstance: boolean
   addPluginToMenu: boolean
   rollingRelease: boolean
+  pages: string[]
 }
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
@@ -122,7 +123,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     githubApiToken: '',
     multipleInstance: false,
     addPluginToMenu: false,
-    rollingRelease: false
+    rollingRelease: false,
+    pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins']
   })
 
   const saveAppSettings = debounce((config: string) => {
@@ -133,6 +135,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const setupAppSettings = async () => {
     const data = await ignoredError(Readfile, 'data/user.yaml')
     data && (app.value = Object.assign(app.value, parse(data)))
+
+    // compatibility code
+    app.value.pages = app.value.pages ?? ['Overview', 'Profiles', 'Subscriptions', 'Plugins']
 
     firstOpen = !!data
 

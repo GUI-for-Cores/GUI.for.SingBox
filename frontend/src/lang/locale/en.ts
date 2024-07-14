@@ -222,7 +222,6 @@ export default {
         'RULE-SET-IPCIDR-MATCH-SOURCE': 'RULE-SET-IPCIDR-MATCH-SOURCE'
       }
     },
-    name: 'sing-box',
     standard: 'Standard',
     memconservative: 'Memconservative',
     chrome: 'Chrome',
@@ -255,7 +254,7 @@ export default {
     about: 'About',
     profiles: 'Profiles',
     kernel: 'Kernel',
-    scheduledtasks: 'ScheduledTasks'
+    scheduledtasks: 'Tasks'
   },
   home: {
     mode: 'Proxy Mode',
@@ -460,7 +459,7 @@ export default {
   },
   plugins: {
     updating: 'Updating',
-    empty: 'The plugin list is empty. Please {action} or {import} a plugin first.',
+    empty: 'The plugin list is empty. Please {action} or import from the {import} first.',
     source: 'Source',
     reload: 'Reload',
     configuration: 'Configure',
@@ -532,6 +531,9 @@ export default {
       zh: '简体中文',
       en: 'English'
     },
+    pages: {
+      name: 'Page visibility'
+    },
     windowState: {
       normal: 'Normal window',
       maximised: 'Maximised',
@@ -553,9 +555,10 @@ export default {
       delay: 'Delay(s)'
     },
     kernel: {
-      branch: 'Branch',
-      main: 'Main branch',
-      latest: 'Latest branch'
+      name: 'sing-box',
+      version: 'Switch version',
+      stable: 'Stable version',
+      alpha: 'Alpha version'
     },
     userAgent: {
       name: 'User-Agent',

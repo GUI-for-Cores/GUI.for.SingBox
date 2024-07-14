@@ -42,7 +42,14 @@ const icons = [
   'edit',
   'delete',
   'file',
-  'code'
+  'code',
+  'overview',
+  'profiles',
+  'subscriptions',
+  'rulesets',
+  'plugins',
+  'scheduledTasks',
+  'settings2'
 ] as const
 
 export default icons

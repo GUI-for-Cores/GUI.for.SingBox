@@ -29,6 +29,7 @@ withDefaults(defineProps<Props>(), {
         :icon="icon"
         :size="iconSize"
         :fill="iconColor || `var(--btn-${type}-color)`"
+        :class="$slots.default ? 'mr-4' : ''"
       />
     </template>
     <slot />

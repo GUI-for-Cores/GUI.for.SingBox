@@ -201,7 +201,7 @@ initVersion()
 </script>
 
 <template>
-  <div class="title">{{ t('settings.kernel.main') }}</div>
+  <div class="title">{{ t('settings.kernel.name') }}</div>
   <div class="tags">
     <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
       {{ t('kernel.local') }}
@@ -241,7 +241,7 @@ initVersion()
 .title {
   font-weight: bold;
   font-size: 16px;
-  margin: 8px 4px;
+  margin: 12px 4px;
 }
 .detail {
   font-size: 12px;

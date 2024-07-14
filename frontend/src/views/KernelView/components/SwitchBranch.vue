@@ -23,7 +23,7 @@ const handleUseBranch = async (branch: any) => {
 </script>
 
 <template>
-  <div class="title">{{ t('settings.kernel.branch') }}</div>
+  <div class="title">{{ t('settings.kernel.version') }}</div>
   <div class="branch">
     <Card
       :selected="appSettings.app.kernel.branch === 'main'"
@@ -31,15 +31,15 @@ const handleUseBranch = async (branch: any) => {
       title="Main"
       class="branch-item"
     >
-      {{ t('settings.kernel.main') }}
+      {{ t('settings.kernel.stable') }}
     </Card>
     <Card
       :selected="appSettings.app.kernel.branch === 'latest'"
       @click="handleUseBranch('latest')"
-      title="Latest"
+      title="Alpha"
       class="branch-item"
     >
-      {{ t('settings.kernel.latest') }}
+      {{ t('settings.kernel.alpha') }}
     </Card>
   </div>
 </template>
@@ -48,7 +48,7 @@ const handleUseBranch = async (branch: any) => {
 .title {
   font-weight: bold;
   font-size: 16px;
-  margin: 8px 4px;
+  margin: 12px 4px;
 }
 .branch {
   display: flex;

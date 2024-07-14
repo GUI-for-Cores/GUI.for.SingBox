@@ -222,7 +222,6 @@ export default {
         'RULE-SET-IPCIDR-MATCH-SOURCE': '规则集中的ipcidr匹配源IP (RULE-SET-IPCIDR-MATCH-SOURCE)'
       }
     },
-    name: 'sing-box',
     standard: '标准',
     memconservative: '适用小内存设备',
     chrome: 'Chrome',
@@ -460,7 +459,7 @@ export default {
   },
   plugins: {
     updating: '更新中',
-    empty: '插件列表为空，请先{action}或{import}插件。',
+    empty: '插件列表为空，请先{action}或从{import}导入。',
     source: '源码',
     reload: '重载插件',
     configuration: '配置插件',
@@ -532,6 +531,9 @@ export default {
       zh: '简体中文',
       en: 'English'
     },
+    pages: {
+      name: '页面可见性'
+    },
     windowState: {
       normal: '以普通窗口启动',
       maximised: '最大化',
@@ -553,9 +555,9 @@ export default {
       delay: '延迟(秒)'
     },
     kernel: {
-      branch: '分支',
-      main: '主分支',
-      latest: '最新分支'
+      version: '切换版本',
+      stable: '稳定版',
+      alpha: '内测版'
     },
     userAgent: {
       name: '用户代理(User-Agent)',
