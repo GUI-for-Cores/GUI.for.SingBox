@@ -21,7 +21,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
   'external-ui-url': '',
   profile: {
     'store-cache': true,
-    'store-fake-ip': false,
+    'store-fake-ip': true,
     'store-rdrc': false
   },
   domain_strategy: 'ipv4_only',
@@ -34,7 +34,7 @@ export const AdvancedConfigDefaults = (): ProfileType['advancedConfig'] => ({
 
 export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   enable: false,
-  stack: 'System',
+  stack: 'Mixed',
   'auto-route': true,
   'interface-name': '',
   mtu: 9000,
@@ -355,5 +355,5 @@ export const MixinConfigDefaults = (): ProfileType['mixinConfig'] => {
 }
 
 export const ScriptConfigDefaults = (): ProfileType['scriptConfig'] => {
-  return { code: `const onGenerate = async (config) => {\n\treturn config\n}` }
+  return { code: `const onGenerate = async (config) => {\n  return config\n}` }
 }

@@ -367,13 +367,26 @@ export const handleChangeMode = async (mode: 'direct' | 'global' | 'rule') => {
   await Promise.all(promises)
 }
 
-export const addToRuleSet = async (ruleset: 'direct' | 'reject' | 'block', payload: string) => {
-  // TODO: sing-box json rule
+export const addToRuleSet = async (
+  ruleset: 'direct' | 'reject' | 'block',
+  payloads: Record<string, any>[]
+) => {
   const path = `data/rulesets/${ruleset}.json`
-  const content = (await ignoredError(Readfile, path)) || '{}'
-  const { payload: p = [] } = JSON.parse(content)
-  p.unshift(payload)
-  await Writefile(path, JSON.stringify({ payload: [...new Set(p)] }))
+  const content = (await ignoredError(Readfile, path)) || '{ "version": 1, "rules": [] }'
+  const { rules = [] } = JSON.parse(content)
+  rules[0] = rules[0] || {}
+  payloads.forEach((payload) => {
+    if (payload.domain) {
+      rules[0].domain = [...new Set((rules[0].domain || []).concat(payload.domain))]
+    } else if (payload.ip_cidr) {
+      rules[0].ip_cidr = [...new Set((rules[0].ip_cidr || []).concat(payload.ip_cidr))]
+    } else if (payload.process_path) {
+      rules[0].process_path = [
+        ...new Set((rules[0].process_path || []).concat(payload.process_path))
+      ]
+    }
+  })
+  await Writefile(path, JSON.stringify({ version: 1, rules }, null, 2))
 }
 
 export const exitApp = async () => {

@@ -57,7 +57,7 @@ initContent()
 
 <template>
   <div class="ruleset-view">
-    <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable />
+    <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable class="rules" />
     <div class="form-action">
       <Button @click="handleCancel" :disabled="loading">
         {{ t('common.cancel') }}
@@ -74,7 +74,9 @@ initContent()
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: space-between;
-  overflow: auto;
+}
+.rules {
+  flex: 1;
+  overflow-y: auto;
 }
 </style>

@@ -33,7 +33,14 @@ const icon = computed(() => iconMap[props.icon] as any)
     <div class="message">
       <Icon style="flex-shrink: 0" :icon="icon" />
       <div class="content">{{ t(content) }}</div>
-      <Button @click="$emit('close')" icon="close" :icon-size="10" type="text" size="small" />
+      <Button
+        @click="$emit('close')"
+        icon="close"
+        :icon-size="10"
+        type="text"
+        size="small"
+        class="close"
+      />
     </div>
   </Transition>
 </template>
@@ -47,11 +54,19 @@ const icon = computed(() => iconMap[props.icon] as any)
   margin: 4px 0;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
   background: var(--toast-bg);
+  &:hover {
+    .close {
+      width: auto;
+    }
+  }
   .content {
     font-size: 14px;
     padding: 0 0 0 8px;
     word-wrap: break-word;
     word-break: break-all;
+  }
+  .close {
+    width: 0;
   }
 }
 </style>

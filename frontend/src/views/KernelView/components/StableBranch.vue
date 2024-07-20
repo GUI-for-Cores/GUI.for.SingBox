@@ -15,7 +15,8 @@ import {
   Removefile,
   GetEnv,
   Makedir,
-  AbsolutePath
+  AbsolutePath,
+  BrowserOpenURL
 } from '@/bridge'
 
 const releaseUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
@@ -201,7 +202,15 @@ initVersion()
 </script>
 
 <template>
-  <div class="title">{{ t('settings.kernel.name') }}</div>
+  <div class="title">
+    {{ t('settings.kernel.name') }}
+    <Button
+      @click="BrowserOpenURL('https://github.com/SagerNet/sing-box/releases/latest')"
+      icon="link"
+      type="text"
+      size="small"
+    />
+  </div>
   <div class="tags">
     <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
       {{ t('kernel.local') }}

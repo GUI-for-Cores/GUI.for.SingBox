@@ -424,7 +424,8 @@ export default {
   rulesets: {
     empty: 'The ruleset list is empty. Please {action} a ruleset first.',
     rulesetCount: 'Ruleset Count',
-    editRuleset: 'Edit Rules'
+    editRuleset: 'Edit Rules',
+    selectRuleType: 'Select Rule Type'
   },
   plugin: {
     trigger: 'Trigger',

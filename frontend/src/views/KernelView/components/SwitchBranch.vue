@@ -28,7 +28,7 @@ const handleUseBranch = async (branch: any) => {
     <Card
       :selected="appSettings.app.kernel.branch === 'main'"
       @click="handleUseBranch('main')"
-      title="Main"
+      title="Stable"
       class="branch-item"
     >
       {{ t('settings.kernel.stable') }}

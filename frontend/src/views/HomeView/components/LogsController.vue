@@ -2,10 +2,17 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
-import { useBool } from '@/hooks'
+import type { Menu } from '@/stores'
+import { useBool, useMessage, usePicker, type PickerItem } from '@/hooks'
 import { LogLevelOptions } from '@/constant'
 import { getKernelLogsWS } from '@/api/kernel'
-import { setIntervalImmediately } from '@/utils'
+import {
+  addToRuleSet,
+  ignoredError,
+  isValidIPv4,
+  isValidIPv6,
+  setIntervalImmediately
+} from '@/utils'
 
 const logType = ref('info')
 const keywords = ref('')
@@ -28,7 +35,61 @@ const filteredLogs = computed(() => {
   })
 })
 
+const menus: Menu[] = [
+  ['home.connections.addToDirect', 'direct'],
+  ['home.connections.addToProxy', 'proxy'],
+  ['home.connections.addToReject', 'reject']
+].map(([label, ruleset]) => {
+  return {
+    label,
+    handler: async ({ type, payload }: any) => {
+      if (type !== 'info') {
+        message.error('Not Support')
+        return
+      }
+      const regex = /(\b((?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|(?:\d{1,3}\.){3}\d{1,3})(:\d+)?\b)/g
+      const matches = payload.match(regex)
+      if (!matches) {
+        message.error('Not Matched')
+        return
+      }
+
+      const options: PickerItem[] = []
+
+      matches.forEach((match: string) => {
+        // FIXME: IPv6
+        const address = match.split(':')[0]
+        if (isValidIPv4(address) || isValidIPv6(address)) {
+          options.push({
+            label: t('kernel.rules.type.IP-CIDR'),
+            value: { ip_cidr: address + '/32' } as any,
+            description: address
+          })
+        } else {
+          options.push({
+            label: t('kernel.rules.type.DOMAIN'),
+            value: { domain: address } as any,
+            description: address
+          })
+        }
+      })
+
+      const payloads = await picker.multi<Record<string, any>[]>('rulesets.selectRuleType', options)
+
+      try {
+        await addToRuleSet(ruleset as any, payloads)
+        message.success('common.success')
+      } catch (error: any) {
+        message.error(error)
+        console.log(error)
+      }
+    }
+  }
+})
+
 const { t } = useI18n()
+const { message } = useMessage()
+const { picker } = usePicker()
 const [pause, togglePause] = useBool(false)
 
 const handleClear = () => logs.value.splice(0)
@@ -62,18 +123,25 @@ onUnmounted(() => {
         :placeholder="t('common.keywords')"
         class="ml-8 flex-1"
       />
-      <Button @click="togglePause" type="text" size="small" class="ml-8">
-        <Icon :icon="pause ? 'play' : 'pause'" fill="var(--color)" />
-      </Button>
-      <Button @click="handleClear" v-tips="'common.clear'" size="small" type="text">
-        <Icon icon="clear" fill="var(--color)" />
-      </Button>
+      <Button
+        @click="togglePause"
+        :icon="pause ? 'play' : 'pause'"
+        type="text"
+        size="small"
+        class="ml-8"
+      />
+      <Button @click="handleClear" v-tips="'common.clear'" icon="clear" size="small" type="text" />
     </div>
 
     <Empty v-if="filteredLogs.length === 0" class="flex-1" />
 
     <div v-else class="logs">
-      <div v-for="(log, i) in filteredLogs" :key="i" class="log select-text">
+      <div
+        v-for="log in filteredLogs"
+        v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(log) }))"
+        :key="log.payload"
+        class="log select-text"
+      >
         <span class="type">{{ log.type }}</span> {{ log.payload }}
       </div>
     </div>
@@ -108,13 +176,8 @@ onUnmounted(() => {
 }
 
 .form {
-  position: sticky;
-  top: 0;
-  z-index: 9;
   display: flex;
   align-items: center;
-  background-color: var(--modal-bg);
-  backdrop-filter: blur(2px);
   .label {
     padding-right: 8px;
     font-size: 12px;

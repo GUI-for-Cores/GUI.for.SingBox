@@ -58,7 +58,7 @@ const handleSelectAll = () => {
 <template>
   <Transition name="slide-down" appear>
     <div class="picker">
-      <div class="title">{{ title }}</div>
+      <div class="title">{{ t(title) }}</div>
 
       <div class="options">
         <div v-for="(o, i) in options" :key="i" @click="handleSelect(o.value)" class="item">

@@ -2,14 +2,14 @@ import { render, createVNode } from 'vue'
 
 import PickerComp from '@/components/Picker/index.vue'
 
-type PickerItem = { label: string; value: string; description?: string }
+export type PickerItem = { label: string; value: string; description?: string }
 
-const createPicker = (
+const createPicker = <T>(
   type: 'single' | 'multi',
   title: string,
   options: PickerItem[],
   initialValue: string[]
-) => {
+): Promise<T> => {
   return new Promise((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
@@ -41,11 +41,11 @@ const createPicker = (
 class Picker {
   constructor() {}
 
-  public single = (title: string, options: PickerItem[], initialValue: string[] = []) =>
-    createPicker('single', title, options, initialValue)
+  public single = <T>(title: string, options: PickerItem[], initialValue: string[] = []) =>
+    createPicker<T>('single', title, options, initialValue)
 
-  public multi = (title: string, options: PickerItem[], initialValue: string[] = []) =>
-    createPicker('multi', title, options, initialValue)
+  public multi = <T>(title: string, options: PickerItem[], initialValue: string[] = []) =>
+    createPicker<T>('multi', title, options, initialValue)
 }
 
 export const usePicker = () => {

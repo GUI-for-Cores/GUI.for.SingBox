@@ -2,12 +2,13 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
-import { useBool, useMessage } from '@/hooks'
+import { useBool, useMessage, usePicker, type PickerItem } from '@/hooks'
 import { DraggableOptions } from '@/constant'
 import { useAppSettingsStore, type Menu } from '@/stores'
 import type { KernelConnectionsWS } from '@/api/kernel.schema'
 import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 import {
+  addToRuleSet,
   formatBytes,
   formatRelativeTime,
   // addToRuleSet,
@@ -178,28 +179,51 @@ const menu: Menu[] = [
         message.error(error)
       }
     }
-  }
-  // ...[
-  //   ['home.connections.addToDirect', 'direct'],
-  //   ['home.connections.addToProxy', 'proxy'],
-  //   ['home.connections.addToReject', 'block']
-  // ].map(([label, ruleset]) => {
-  //   return {
-  //     label,
-  //     handler: async (record: Record<string, any>) => {
-  //       try {
-  //         const behavior = record.metadata.host ? 'domain' : 'ip_cidr'
-  //         const payload = record.metadata.host || record.metadata.destinationIP + '/32'
-  //         await addToRuleSet(ruleset as any, behavior + ',' + payload)
-  //         await ignoredError(updateProvidersRules, ruleset)
-  //         message.success('common.success')
-  //       } catch (error: any) {
-  //         message.error(error)
-  //         console.log(error)
-  //       }
-  //     }
-  //   }
-  // })
+  },
+  ...[
+    ['home.connections.addToDirect', 'direct'],
+    ['home.connections.addToProxy', 'proxy'],
+    ['home.connections.addToReject', 'block']
+  ].map(([label, ruleset]) => {
+    return {
+      label,
+      handler: async (record: Record<string, any>) => {
+        const options: PickerItem[] = []
+        if (record.metadata.host) {
+          options.push({
+            label: t('kernel.rules.type.DOMAIN'),
+            value: { domain: record.metadata.host } as any,
+            description: record.metadata.host
+          })
+        }
+        if (record.metadata.destinationIP) {
+          options.push({
+            label: t('kernel.rules.type.IP-CIDR'),
+            value: { ip_cidr: record.metadata.destinationIP + '/32' } as any,
+            description: record.metadata.destinationIP
+          })
+        }
+        if (record.metadata.processPath) {
+          options.push({
+            label: t('kernel.rules.type.PROCESS-PATH'),
+            value: { process_path: record.metadata.processPath } as any,
+            description: record.metadata.processPath
+          })
+        }
+        const payloads = await picker.multi<Record<string, any>[]>(
+          'rulesets.selectRuleType',
+          options
+        )
+        try {
+          await addToRuleSet(ruleset as any, payloads)
+          message.success('common.success')
+        } catch (error: any) {
+          message.error(error)
+          console.log(error)
+        }
+      }
+    }
+  })
 ]
 
 const details = ref()
@@ -211,6 +235,7 @@ const [showDetails, toggleDetails] = useBool(false)
 const [showSettings, toggleSettings] = useBool(false)
 const [isPause, togglePause] = useBool(false)
 const { message } = useMessage()
+const { picker } = usePicker()
 const { t } = useI18n()
 
 const onConnections = (data: KernelConnectionsWS) => {
