@@ -49,6 +49,10 @@ const proxyOptions = computed(() => [
       <Select v-model="fields['final-dns']" :options="FinalDnsOptions" />
     </div>
     <div class="form-item">
+      {{ t('kernel.dns.local-dns-detour') }}
+      <Select v-model="fields['local-dns-detour']" :options="proxyOptions" />
+    </div>
+    <div class="form-item">
       {{ t('kernel.dns.remote-dns-detour') }}
       <Select v-model="fields['remote-dns-detour']" :options="proxyOptions" />
     </div>

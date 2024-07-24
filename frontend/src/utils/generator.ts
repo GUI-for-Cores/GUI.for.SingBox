@@ -191,6 +191,8 @@ const generateDnsConfig = async (profile: ProfileType) => {
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
   const local_dns = profile.dnsConfig['local-dns']
   const resolver_dns = profile.dnsConfig['resolver-dns']
+  const local_detour = profile.dnsConfig['local-dns-detour']
+  const local_detour_config = local_detour ? { detour: local_detour } : {}
   const remote_detour = profile.dnsConfig['remote-dns-detour']
   const remote_detour_config = remote_detour ? { detour: remote_detour } : {}
   const disable_cache = profile.dnsConfig['disable-cache']
@@ -213,12 +215,12 @@ const generateDnsConfig = async (profile: ProfileType) => {
         tag: 'local-dns',
         address: local_dns,
         address_resolver: 'resolver-dns',
-        detour: 'direct'
+        ...local_detour_config
       },
       {
         tag: 'resolver-dns',
         address: resolver_dns,
-        detour: 'direct'
+        ...local_detour_config
       },
       {
         tag: 'remote-resolver-dns',

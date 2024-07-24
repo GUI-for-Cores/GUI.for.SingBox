@@ -63,6 +63,7 @@ export type ProfileType = {
     'resolver-dns': string
     'remote-resolver-dns': string
     'final-dns': FinalDnsType
+    'local-dns-detour': string
     'remote-dns-detour': string
     'fake-ip-range-v4': string
     'fake-ip-range-v6': string

@@ -117,6 +117,7 @@ export default {
       'remote-dns': 'Remote DNS',
       'resolver-dns': 'Resolver DNS',
       'remote-resolver-dns': 'Remote Resolver DNS',
+      'local-dns-detour': 'Local DNS Detour',
       'remote-dns-detour': 'Remote DNS Detour',
       'final-dns': 'Fallback DNS',
       'fakeip-dns': 'Fake-IP DNS',
