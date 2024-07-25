@@ -117,6 +117,7 @@ export default {
       'remote-dns': '远程DNS',
       'resolver-dns': '本地解析DNS',
       'remote-resolver-dns': '远程解析DNS',
+      'local-dns-detour': '本地DNS出站',
       'remote-dns-detour': '远程DNS出站',
       'final-dns': '回退DNS',
       'fakeip-dns': 'Fake-IP DNS',

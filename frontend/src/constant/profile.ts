@@ -53,6 +53,7 @@ export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
   'resolver-dns': '223.5.5.5',
   'remote-resolver-dns': '8.8.8.8',
   'final-dns': FinalDnsType.Remote,
+  'local-dns-detour': t('outbound.direct'),
   'remote-dns-detour': t('outbound.select'),
   'fake-ip-range-v4': '198.18.0.1/16',
   'fake-ip-range-v6': 'fc00::/18',
