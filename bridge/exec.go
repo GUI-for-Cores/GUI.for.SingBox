@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"strconv"
 	"sync"
-	"syscall"
 
 	"github.com/shirou/gopsutil/process"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -134,7 +133,7 @@ func (a *App) KillProcess(pid int) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	err = process.Signal(syscall.SIGKILL)
+	err = KillProcessImpl(process)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
