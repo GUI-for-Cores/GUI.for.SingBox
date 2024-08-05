@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import CodeMirror from 'vue-codemirror6'
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 import { yaml } from '@codemirror/lang-yaml'
@@ -18,6 +18,7 @@ interface Props {
 }
 
 const model = defineModel<string>({ default: '' })
+const emit = defineEmits(['change'])
 const props = withDefaults(defineProps<Props>(), {
   lang: 'json'
 })
@@ -39,6 +40,8 @@ const completion = computed(() =>
 const extensions = computed(() =>
   appSettings.themeMode === Theme.Dark ? [oneDark, completion.value] : [completion.value]
 )
+
+watch(model, (v) => emit('change', v))
 
 onMounted(() => setTimeout(() => (ready.value = true), 100))
 </script>

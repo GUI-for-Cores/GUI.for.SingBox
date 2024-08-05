@@ -20,7 +20,8 @@ const value = ref(props.initialValue)
 
 const { t } = useI18n.global
 
-const handleSubmit = () => {
+const handleSubmit = (e: Event) => {
+  if (e.type === 'keydown' && props.props.type === 'code') return
   emits('submit', unref(value))
   emits('finish')
 }
@@ -39,7 +40,7 @@ const handleCancel = () => {
         v-model="value"
         v-bind="props.props"
         @keydown.enter="handleSubmit"
-        :type="type"
+        :type="props.props.type || type"
         autofocus
         clearable
         auto-size

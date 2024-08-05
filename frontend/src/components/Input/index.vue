@@ -8,7 +8,8 @@ export interface Props {
   modelValue: string | number
   autoSize?: boolean
   placeholder?: string
-  type?: 'number' | 'text'
+  type?: 'number' | 'text' | 'code'
+  lang?: 'yaml' | 'json' | 'javascript'
   size?: 'default' | 'small'
   editable?: boolean
   clearable?: boolean
@@ -26,6 +27,7 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   autoSize: false,
   type: 'text',
+  lang: 'javascript',
   size: 'default',
   editable: false,
   autofocus: false,
@@ -101,7 +103,7 @@ defineExpose({
       [size]: true
     }"
     :style="{
-      height: size === 'small' ? '26px' : '30px'
+      height: type === 'code' ? '' : size === 'small' ? '26px' : '30px'
     }"
     class="input"
   >
@@ -110,7 +112,16 @@ defineExpose({
       {{ modelValue || t('common.none') }}
     </div>
     <template v-else>
+      <CodeViewer
+        v-if="type === 'code'"
+        @change="(value: string) => onInput({ target: { value } })"
+        :value="modelValue"
+        :lang="lang"
+        :editable="!disabled"
+        class="code"
+      />
       <input
+        v-else
         :value="modelValue"
         :placeholder="placeholder"
         :type="type"
@@ -133,10 +144,9 @@ defineExpose({
         icon="clear2"
         type="text"
         size="small"
-        class="clearable"
       />
     </template>
-    <slot name="extra" />
+    <slot name="extra"></slot>
   </div>
 </template>
 
@@ -167,6 +177,11 @@ defineExpose({
     border: none;
     outline: none;
     background: transparent;
+  }
+  .code {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
   }
 }
 
