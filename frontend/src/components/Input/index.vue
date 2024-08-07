@@ -44,7 +44,7 @@ const emits = defineEmits(['update:modelValue', 'submit'])
 
 const showEdit = ref(false)
 const inputRef = ref<HTMLElement>()
-const innerClearable = computed(() => props.clearable && props.modelValue)
+const innerClearable = computed(() => props.clearable && props.type !== 'code' && props.modelValue)
 
 const { t } = useI18n.global
 
