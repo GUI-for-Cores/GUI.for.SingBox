@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
@@ -26,6 +26,7 @@ const ruleset = ref<RuleSetType>({
   format: RulesetFormat.Binary,
   type: 'Http',
   url: '',
+  count: 0,
   path: `data/rulesets/${sampleID()}.srs`,
   disabled: false
 })
@@ -35,21 +36,6 @@ const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleCancel = inject('cancel') as any
-const isManual = () => {
-  if (ruleset.value.type === 'Manual' && ruleset.value.format === RulesetFormat.Binary) {
-    ruleset.value.format = RulesetFormat.Source
-  }
-  updatePostfix()
-  return ruleset.value.type === 'Manual'
-}
-
-const updatePostfix = async () => {
-  const source = ruleset.value.format === RulesetFormat.Source ? '.srs' : '.json'
-  const target = ruleset.value.format === RulesetFormat.Source ? '.json' : '.srs'
-  if (ruleset.value.path.endsWith(source)) {
-    ruleset.value.path = ruleset.value.path.replace(source, target)
-  }
-}
 
 const handleSubmit = async () => {
   loading.value = true
@@ -79,6 +65,38 @@ const handleSubmit = async () => {
   loading.value = true
 }
 
+const disabled = computed(
+  () =>
+    !ruleset.value.tag ||
+    (ruleset.value.type === 'Manual' && !ruleset.value.path) ||
+    (['Http', 'File'].includes(ruleset.value.type) && (!ruleset.value.url || !ruleset.value.path))
+)
+
+watch(
+  () => ruleset.value.type,
+  (v) => {
+    if (v === 'Manual') {
+      ruleset.value.format = RulesetFormat.Source
+    }
+  }
+)
+
+watch(
+  () => ruleset.value.format,
+  (v, old) => {
+    const isJson = v === RulesetFormat.Source
+    if (!isJson && ruleset.value.type === 'Manual') {
+      ruleset.value.format = old
+      message.error('Not support')
+      return
+    }
+    ruleset.value.path = ruleset.value.path.replace(
+      isJson ? '.srs' : '.json',
+      isJson ? '.json' : '.srs'
+    )
+  }
+)
+
 if (props.isUpdate) {
   const r = rulesetsStore.getRulesetById(props.id)
   if (r) {
@@ -102,7 +120,7 @@ if (props.isUpdate) {
         ]"
       />
     </div>
-    <div v-show="!isManual()" class="form-item">
+    <div v-show="ruleset.type !== 'Manual'" class="form-item">
       <div class="name">
         {{ t('ruleset.format.name') }}
       </div>
@@ -112,14 +130,14 @@ if (props.isUpdate) {
       <div class="name">{{ t('ruleset.name') }} *</div>
       <Input v-model="ruleset.tag" auto-size autofocus class="input" />
     </div>
-    <div v-show="!isManual()" class="form-item">
+    <div v-show="ruleset.type !== 'Manual'" class="form-item">
       <div class="name">{{ t('ruleset.url') }} *</div>
       <Input
         v-model="ruleset.url"
         :placeholder="
           ruleset.type === 'Http'
             ? 'http(s)://'
-            : 'data/local/{filename}.' + (ruleset.format === 'binary' ? 'srs' : 'json')
+            : 'data/local/{filename}.' + (ruleset.format === RulesetFormat.Binary ? 'srs' : 'json')
         "
         auto-size
         class="input"
@@ -129,7 +147,7 @@ if (props.isUpdate) {
       <div class="name">{{ t('ruleset.path') }} *</div>
       <Input
         v-model="ruleset.path"
-        placeholder="data/rulesets/{filename}.srs"
+        :placeholder="`data/rulesets/{filename}.${ruleset.format === RulesetFormat.Binary ? 'srs' : 'json'}`"
         auto-size
         class="input"
       />
@@ -138,12 +156,7 @@ if (props.isUpdate) {
 
   <div class="form-action">
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button
-      @click="handleSubmit"
-      :loading="loading"
-      :disabled="!ruleset.tag || !ruleset.path || (ruleset.type === 'Http' && !ruleset.url)"
-      type="primary"
-    >
+    <Button @click="handleSubmit" :loading="loading" :disabled="disabled" type="primary">
       {{ t('common.save') }}
     </Button>
   </div>

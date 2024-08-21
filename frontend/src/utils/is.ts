@@ -41,6 +41,15 @@ export const isValidPaylodYAML = (str: string) => {
   }
 }
 
+export const isValidRulesJson = (str: string) => {
+  try {
+    const { rules } = JSON.parse(str)
+    return !!rules
+  } catch (error) {
+    return false
+  }
+}
+
 export const isValidIPv4 = (ip: string) =>
   /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(ip)
 

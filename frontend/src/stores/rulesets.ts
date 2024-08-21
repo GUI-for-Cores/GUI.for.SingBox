@@ -2,9 +2,9 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { Readfile, Writefile, Copyfile, Download, FileExists } from '@/bridge'
+import { debounce, ignoredError, isValidRulesJson, omitArray } from '@/utils'
 import { RulesetsFilePath, RulesetFormat, EmptyRuleSet } from '@/constant'
-import { deepClone, debounce, ignoredError, omitArray } from '@/utils'
+import { Readfile, Writefile, Copyfile, Download, FileExists, HttpGet } from '@/bridge'
 
 export type RuleSetType = {
   id: string
@@ -15,6 +15,7 @@ export type RuleSetType = {
   format: RulesetFormat
   path: string
   url: string
+  count: number
   // Not Config
   updating?: boolean
 }
@@ -67,29 +68,53 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   }
 
   const _doUpdateRuleset = async (r: RuleSetType) => {
-    if (r.type === 'Manual') {
-      if (r.path.length == 0) {
-        throw 'Ruleset file path is empty'
-      }
-      if (!(await FileExists(r.path))) {
-        await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
-      }
-    } else if (r.type === 'File') {
-      const exists = r.url.length > 0 && (await FileExists(r.url))
-      if (exists) {
-        if (r.path != r.url) {
-          await Copyfile(r.url, r.path)
+    if (r.format === RulesetFormat.Source) {
+      let body = ''
+      let ruleset: any
+      let isExist = true
+
+      if (r.type === 'File') {
+        body = await Readfile(r.url)
+      } else if (r.type === 'Http') {
+        const { body: b } = await HttpGet(r.url)
+        body = b
+      } else if (r.type === 'Manual') {
+        isExist = await FileExists(r.path)
+        if (isExist) {
+          body = await Readfile(r.path)
+        } else {
+          body = JSON.stringify(EmptyRuleSet)
         }
-      } else if (r.path === r.url) {
-        // create a default ruleset file
-        await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
-      } else {
-        throw 'Source ruleset file not exists ' + r.url
       }
-    } else if (r.type === 'Http') {
-      await Download(r.url, r.path)
-      if (!(await FileExists(r.path))) {
-        throw 'Ruleset file not downloaded ' + r.url
+
+      if (!isValidRulesJson(body)) {
+        throw 'Not a valid ruleset data'
+      }
+
+      ruleset = JSON.parse(body)
+
+      r.count = ruleset.rules.reduce(
+        (p: number, c: string[]) =>
+          Object.values(c).reduce(
+            (p, c: string[] | string) => (Array.isArray(c) ? p + c.length : p + 1),
+            0
+          ) + p,
+        0
+      )
+
+      if (
+        (['Http', 'File'].includes(r.type) && r.url !== r.path) ||
+        (r.type === 'Manual' && !isExist)
+      ) {
+        await Writefile(r.path, JSON.stringify(ruleset, null, 2))
+      }
+    }
+
+    if (r.format === RulesetFormat.Binary) {
+      if (r.type === 'File' && r.url !== r.path) {
+        await Copyfile(r.url, r.path)
+      } else if (r.type === 'Http') {
+        await Download(r.url, r.path)
       }
     }
 

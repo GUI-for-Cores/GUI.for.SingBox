@@ -25,7 +25,7 @@ const rulesetFormID = ref()
 const rulesetFormIsUpdate = ref(false)
 const subFormTitle = computed(() => (rulesetFormIsUpdate.value ? 'common.edit' : 'common.add'))
 
-const menuList: Menu[] = [
+const sourceMenuList: Menu[] = [
   {
     label: 'rulesets.editRuleset',
     handler: (id: string) => handleEditRulesetList(id)
@@ -40,6 +40,15 @@ const menuList: Menu[] = [
   {
     label: 'common.clear',
     handler: (id: string) => handleClearRuleset(id)
+  }
+]
+
+const binaryMenuList: Menu[] = [
+  {
+    label: 'common.none',
+    handler: (id: string) => {
+      message.info('common.none')
+    }
   }
 ]
 
@@ -74,7 +83,6 @@ const handleEditRuleset = (r: RuleSetType) => {
 const handleEditRulesetList = (id: string) => {
   const r = rulesetsStore.getRulesetById(id)
   if (r) {
-    // r.path
     rulesetFormID.value = r.id
     rulesetTitle.value = r.tag
     showRulesetList.value = true
@@ -149,6 +157,13 @@ const _updateAllProvidersRules = async () => {
   }
 }
 
+const generateMenus = (r: RuleSetType) => {
+  return {
+    [RulesetFormat.Source]: sourceMenuList,
+    [RulesetFormat.Binary]: binaryMenuList
+  }[r.format].map((v) => ({ ...v, handler: () => v.handler?.(r.id) }))
+}
+
 const noUpdateNeeded = computed(() => rulesetsStore.rulesets.every((v) => v.disabled))
 
 const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
@@ -197,11 +212,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       :key="r.id"
       :title="r.tag"
       :disabled="r.disabled"
-      v-menu="
-        r.format == RulesetFormat.Source
-          ? menuList.map((v) => ({ ...v, handler: () => v.handler?.(r.id) }))
-          : []
-      "
+      v-menu="generateMenus(r)"
       class="item"
     >
       <template #title-prefix>
@@ -264,6 +275,11 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       </div>
 
       <template v-if="appSettingsStore.app.rulesetsView === View.Grid">
+        <div v-if="r.format === RulesetFormat.Source">
+          {{ t('rulesets.rulesetCount') }}
+          :
+          {{ r.count }}
+        </div>
         <div>
           {{ t('common.updateTime') }}
           :
@@ -271,6 +287,11 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
         </div>
       </template>
       <template v-else>
+        <div v-if="r.format === RulesetFormat.Source">
+          {{ t('rulesets.rulesetCount') }}
+          :
+          {{ r.count }}
+        </div>
         <div>
           {{ t('common.updateTime') }}
           :
