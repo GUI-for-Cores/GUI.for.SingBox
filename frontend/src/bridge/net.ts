@@ -51,7 +51,9 @@ const transformResponse = <T = any>(
   headers: Record<string, string[]>,
   body: ResponseType['body']
 ) => {
-  Object.entries(headers).forEach(([key, value]) => (headers[key] = value[0] as any))
+  Object.entries(headers).forEach(
+    ([key, value]) => (headers[key] = (value.length > 1 ? value : value[0]) as any)
+  )
 
   if (headers['Content-Type']?.includes('application/json')) {
     body = JSON.parse(body)
@@ -152,7 +154,10 @@ export const Requests = async (options: RequestType) => {
 
   return {
     status,
-    headers: Object.entries(_headers).reduce((p, c: any) => ({ ...p, [c[0]]: c[1][0] }), {}),
+    headers: Object.entries(_headers).reduce(
+      (p, c) => ({ ...p, [c[0]]: c[1].length > 1 ? c[1] : c[1][0] }),
+      {}
+    ),
     body: _body
   }
 }
