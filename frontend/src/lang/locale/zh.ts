@@ -559,7 +559,8 @@ export default {
     kernel: {
       version: '切换版本',
       stable: '稳定版',
-      alpha: '内测版'
+      alpha: '内测版',
+      grant: '授予特权'
     },
     userAgent: {
       name: '用户代理(User-Agent)',

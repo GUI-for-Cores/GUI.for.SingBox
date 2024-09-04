@@ -1,7 +1,7 @@
 import { ignoredError, APP_TITLE } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore, usePluginsStore } from '@/stores'
-import { Exec, ExitApp, Readfile, Writefile } from '@/bridge'
+import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
 import { useConfirm, useMessage } from '@/hooks'
 
 // Permissions Helper
@@ -47,6 +47,22 @@ export const CheckPermissions = async () => {
     return out.includes('RunAsAdmin')
   } catch (error) {
     return false
+  }
+}
+
+export const GrantTUNPermission = async (path: string) => {
+  const { os } = useEnvStore().env
+  const absPath = await AbsolutePath(path)
+  if (os === 'darwin') {
+    const osaScript = `chown root:admin ${absPath}\nchmod +sx ${absPath}`
+    const bashScript = `osascript -e 'do shell script "${osaScript}" with administrator privileges'`
+    await Exec('bash', ['-c', bashScript])
+  } else if (os === 'linux') {
+    await Exec('pkexec', [
+      'setcap',
+      'cap_net_bind_service,cap_net_admin,cap_dac_override=+ep',
+      absPath
+    ])
   }
 }
 

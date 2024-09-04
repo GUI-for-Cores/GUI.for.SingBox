@@ -49,7 +49,8 @@ const icons = [
   'rulesets',
   'plugins',
   'scheduledTasks',
-  'settings2'
+  'settings2',
+  'grant'
 ] as const
 
 export default icons

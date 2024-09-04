@@ -560,7 +560,8 @@ export default {
       name: 'sing-box',
       version: 'Switch version',
       stable: 'Stable version',
-      alpha: 'Alpha version'
+      alpha: 'Alpha version',
+      grant: 'Grant Privileges'
     },
     userAgent: {
       name: 'User-Agent',

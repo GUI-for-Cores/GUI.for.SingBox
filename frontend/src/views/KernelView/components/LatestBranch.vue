@@ -5,7 +5,7 @@ import { computed, ref } from 'vue'
 import { useMessage } from '@/hooks'
 import { KernelWorkDirectory, getKernelFileName } from '@/constant'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
-import { getGitHubApiAuthorization, ignoredError } from '@/utils'
+import { getGitHubApiAuthorization, GrantTUNPermission, ignoredError } from '@/utils'
 import {
   Download,
   UnzipZIPFile,
@@ -38,6 +38,7 @@ const needUpdate = computed(() => remoteVersion.value && localVersion.value !== 
 
 const { t } = useI18n()
 const { message } = useMessage()
+const envStore = useEnvStore()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
@@ -62,7 +63,6 @@ const downloadCore = async () => {
 
     const version = (name || tag_name).replace('v', '')
 
-    const envStore = useEnvStore()
     const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
 
     const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
@@ -187,6 +187,13 @@ const handleRestartKernel = async () => {
   }
 }
 
+const handleGrantPermission = async () => {
+  const fileName = await getKernelFileName(true)
+  const kernelFilePath = KernelWorkDirectory + '/' + fileName
+  await GrantTUNPermission(kernelFilePath)
+  message.success('common.success')
+}
+
 const initVersion = async () => {
   getLocalVersion()
     .then((v) => {
@@ -211,6 +218,14 @@ initVersion()
 <template>
   <div class="title">
     Alpha
+    <Button
+      @click="handleGrantPermission"
+      v-if="localVersion && envStore.env.os !== 'windows'"
+      v-tips="'settings.kernel.grant'"
+      type="text"
+      size="small"
+      icon="grant"
+    />
     <Button
       @click="BrowserOpenURL('https://github.com/SagerNet/sing-box/releases')"
       icon="link"
