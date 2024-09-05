@@ -4,8 +4,14 @@ import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
-import { Readfile, Writefile, WindowSetSystemDefaultTheme, WindowIsMaximised } from '@/bridge'
 import { Theme, WindowStartState, Lang, View, Color, Colors, DefaultFontFamily } from '@/constant'
+import {
+  Readfile,
+  Writefile,
+  WindowSetSystemDefaultTheme,
+  WindowIsMaximised,
+  WindowIsMinimised
+} from '@/bridge'
 
 type AppSettings = {
   lang: Lang
@@ -68,7 +74,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     windowStartState: WindowStartState.Normal,
     width: 0,
     height: 0,
-    exitOnClose: false,
+    exitOnClose: true,
     closeKernelOnExit: true,
     autoSetSystemProxy: false,
     autoStartKernel: false,
@@ -201,7 +207,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   window.addEventListener(
     'resize',
     debounce(async () => {
-      if (!(await WindowIsMaximised())) {
+      const isMinimised = await WindowIsMinimised()
+      const isMaximised = await WindowIsMaximised()
+      if (!isMinimised && !isMaximised) {
         app.value.width = document.documentElement.clientWidth
         app.value.height = document.documentElement.clientHeight
       }
