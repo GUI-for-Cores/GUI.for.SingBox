@@ -13,7 +13,7 @@
 
 ## Document
 
-[Community](https://gui-for-cores.github.io/gfs/community.html)
+[Community](https://gui-for-cores.github.io/guide/gfs/community)
 
 ## Build
 
