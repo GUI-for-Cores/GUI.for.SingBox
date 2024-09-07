@@ -14,6 +14,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const key = ref(sampleID())
+const loading = ref(false)
 const settings = ref<Record<string, any>>({})
 const oldSettings = ref<Record<string, any>>({})
 const configuration = ref<PluginConfiguration[]>([])
@@ -26,6 +27,7 @@ const appSettingsStore = useAppSettingsStore()
 const handleCancel = inject('cancel') as any
 
 const handleSubmit = async () => {
+  loading.value = true
   try {
     await pluginsStore.manualTrigger(
       props.id,
@@ -44,6 +46,8 @@ const handleSubmit = async () => {
       message.error(error)
       return
     }
+  } finally {
+    loading.value = false
   }
   appSettingsStore.app.pluginSettings[props.id] = settings.value
   handleCancel()
@@ -101,8 +105,8 @@ if (p) {
     <Button @click="handleRestoreConfiguration(true)" type="link" class="mr-auto">
       {{ t('plugin.restore') }}
     </Button>
-    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" type="primary">
+    <Button @click="handleCancel" :disabled="loading">{{ t('common.cancel') }}</Button>
+    <Button @click="handleSubmit" :loading="loading" type="primary">
       {{ t('common.save') }}
     </Button>
   </div>
