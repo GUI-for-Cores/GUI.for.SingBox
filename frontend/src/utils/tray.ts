@@ -369,6 +369,12 @@ const getTrayMenus = () => {
 export const updateTrayMenus = debounce(async () => {
   const trayMenus = getTrayMenus()
   const trayIcons = getTrayIcons()
-  await UpdateTray({ icon: trayIcons, title: APP_TITLE, tooltip: APP_TITLE + ' ' + APP_VERSION })
+  let title = APP_TITLE
+
+  if (useEnvStore().env.os === 'darwin') {
+    title = ''
+  }
+
+  await UpdateTray({ icon: trayIcons, title, tooltip: APP_TITLE + ' ' + APP_VERSION })
   await UpdateTrayMenus(trayMenus as any)
 }, 500)

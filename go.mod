@@ -10,7 +10,6 @@ require (
 )
 
 require (
-	github.com/energye/systray v1.0.2
 	github.com/klauspost/cpuid/v2 v2.2.8
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/robfig/cron/v3 v3.0.1
@@ -28,6 +27,7 @@ require (
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
+	github.com/energye/systray v1.0.2
 	github.com/gen2brain/beeep v0.0.0-20240516210008-9c006672e7f4
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
@@ -60,3 +60,5 @@ require (
 	golang.org/x/sys v0.21.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
+
+replace github.com/energye/systray => github.com/mklnz/systray v1.0.3-alpha.1
