@@ -156,11 +156,12 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'tray.showMainWindow',
-      tooltip: 'tray.showMainWindow',
+      hidden: envStore.env.os !== 'darwin',
       event: ShowMainWindow
     },
     {
-      type: 'separator'
+      type: 'separator',
+      hidden: envStore.env.os !== 'darwin',
     },
     {
       type: 'item',
