@@ -55,8 +55,10 @@ func InitTray(a *App, icon []byte, fs embed.FS) {
 			}
 
 			// Ensure the tray is still available if rolling-release fails
+			mShowWindow := systray.AddMenuItem("Show Main Window", "Show Main Window")
 			mRestart := systray.AddMenuItem("Restart", "Restart")
 			mExit := systray.AddMenuItem("Exit", "Exit")
+			mShowWindow.Click(func() { runtime.WindowShow(a.Ctx) })
 			mRestart.Click(func() { a.RestartApp() })
 			mExit.Click(func() { a.ExitApp() })
 		}, nil)
