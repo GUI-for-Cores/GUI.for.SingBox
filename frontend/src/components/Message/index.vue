@@ -56,17 +56,19 @@ const icon = computed(() => iconMap[props.icon] as any)
   background: var(--toast-bg);
   &:hover {
     .close {
-      width: auto;
+      visibility: visible;
     }
   }
   .content {
     font-size: 14px;
-    padding: 0 0 0 8px;
+    padding: 0 0 0 14px;
     word-wrap: break-word;
     word-break: break-all;
   }
   .close {
-    width: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    visibility: hidden;
   }
 }
 </style>
