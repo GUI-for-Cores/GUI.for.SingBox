@@ -613,6 +613,7 @@ export default {
     fallback: '🐟 Fallback'
   },
   tray: {
+    showMainWindow: 'Show Main Window',
     restart: 'Restart',
     restartTip: 'Restart App',
     exit: 'Exit',

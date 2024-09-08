@@ -44,8 +44,8 @@ func InitTray(a *App, icon []byte, fs embed.FS) {
 			systray.SetIcon([]byte(icon))
 			// systray.SetTitle("GUI.for.Cores")
 			// systray.SetTooltip("GUI.for.Cores")
-			systray.SetOnClick(func(menu systray.IMenu) { runtime.WindowShow(a.Ctx) })
-			systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
+			systray.SetOnClick(func(menu systray.IMenu) { menu.ShowMenu() })
+			systray.SetOnRClick(func(menu systray.IMenu) { runtime.WindowShow(a.Ctx) })
 
 			// Ensure the tray is still available if rolling-release fails
 			mRestart := systray.AddMenuItem("Restart", "Restart")

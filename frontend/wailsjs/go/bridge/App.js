@@ -106,6 +106,10 @@ export function RestartApp() {
   return window['go']['bridge']['App']['RestartApp']();
 }
 
+export function ShowMainWindow() {
+  return window['go']['bridge']['App']['ShowMainWindow']();
+}
+
 export function StartServer(arg1, arg2) {
   return window['go']['bridge']['App']['StartServer'](arg1, arg2);
 }
