@@ -87,7 +87,14 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 		} else {
 			m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
 		}
-		m.Click(func() { runtime.EventsEmit(a.Ctx, menu.Event) })
+
+		isDarwin := Env.OS == "darwin"
+
+		if isDarwin {
+			m.Click(func() { go runtime.EventsEmit(a.Ctx, menu.Event) })
+		} else {
+			m.Click(func() { runtime.EventsEmit(a.Ctx, menu.Event) })
+		}
 
 		if menu.Checked {
 			m.Check()
