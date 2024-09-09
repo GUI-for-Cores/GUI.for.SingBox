@@ -2,11 +2,13 @@ package bridge
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/shirou/gopsutil/process"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -138,5 +140,34 @@ func (a *App) KillProcess(pid int) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
+	waitForProcessWithTimeOut(process, 10)
 	return FlagResult{true, "Success"}
+}
+
+func waitForProcessWithTimeOut(process *os.Process, maxWaitSeconds int64) {
+	done := make(chan struct {
+		state *os.ProcessState
+		err   error
+	})
+
+	// 无限等等进程结束
+	go func() {
+		state, err := process.Wait()
+		done <- struct {
+			state *os.ProcessState
+			err   error
+		}{state, err}
+	}()
+
+	select {
+	case <-time.After(time.Second * time.Duration(maxWaitSeconds)):
+		// 这里错误没有处理,在*nix系统-9信号不能被程序捕获。而windows如果程序被保护,可能无法结束,大多数情况也能正常结束。
+		_ = process.Kill()
+	case result := <-done:
+		if result.err != nil {
+			fmt.Println("Command finished with error:", result.err)
+		} else {
+			fmt.Println("Command finished successfully with state:", result.state)
+		}
+	}
 }
