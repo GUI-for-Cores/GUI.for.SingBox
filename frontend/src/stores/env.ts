@@ -42,26 +42,10 @@ export const useEnvStore = defineStore('env', () => {
   }
 
   const setSystemProxy = async () => {
-    const kernelApiStore = useKernelApiStore()
+    const proxyPort = useKernelApiStore().getProxyPort()
+    if (!proxyPort) throw 'home.overview.needPort'
 
-    let port = 0
-    let proxyType = 0 // 0: Mixed    1: Http    2: Socks
-    const { port: _port, 'socks-port': socksPort, 'mixed-port': mixedPort } = kernelApiStore.config
-
-    if (mixedPort) {
-      port = mixedPort
-      proxyType = 0
-    } else if (_port) {
-      port = _port
-      proxyType = 1
-    } else if (socksPort) {
-      port = socksPort
-      proxyType = 2
-    }
-
-    if (!port) throw 'home.overview.needPort'
-
-    await SetSystemProxy(true, '127.0.0.1:' + port, proxyType)
+    await SetSystemProxy(true, '127.0.0.1:' + proxyPort.port, proxyPort.proxyType)
 
     systemProxy.value = true
   }

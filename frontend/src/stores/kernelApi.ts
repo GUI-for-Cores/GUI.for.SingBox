@@ -20,6 +20,8 @@ import {
   useEnvStore
 } from '@/stores'
 
+export type ProxyType = 'mixed' | 'http' | 'socks'
+
 export const useKernelApiStore = defineStore('kernelApi', () => {
   /** RESTful API */
   const config = ref<KernelApiConfig>({
@@ -331,6 +333,35 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     await startKernel()
   }
 
+  const getProxyPort = ():
+    | {
+        port: number
+        proxyType: ProxyType
+      }
+    | undefined => {
+    const { port, 'socks-port': socksPort, 'mixed-port': mixedPort } = config.value
+
+    if (mixedPort) {
+      return {
+        port: mixedPort,
+        proxyType: 'mixed'
+      }
+    }
+    if (port) {
+      return {
+        port,
+        proxyType: 'http'
+      }
+    }
+    if (socksPort) {
+      return {
+        port: socksPort,
+        proxyType: 'socks'
+      }
+    }
+    return undefined
+  }
+
   watch(
     [() => config.value.mode, () => config.value.tun.enable, () => proxies.value],
     updateTrayMenus
@@ -349,6 +380,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     refreshConfig,
     updateConfig,
     patchConfig,
-    refreshProviderProxies
+    refreshProviderProxies,
+    getProxyPort
   }
 })
