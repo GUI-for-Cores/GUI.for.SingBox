@@ -2,7 +2,7 @@ package bridge
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -140,34 +140,30 @@ func (a *App) KillProcess(pid int) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	waitForProcessWithTimeOut(process, 10)
+	err = waitForProcessExitWithTimeout(process, 15)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
 	return FlagResult{true, "Success"}
 }
 
-func waitForProcessWithTimeOut(process *os.Process, maxWaitSeconds int64) {
-	done := make(chan struct {
-		state *os.ProcessState
-		err   error
-	})
-
-	// 无限等等进程结束
+func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int64) error {
+	done := make(chan error, 1)
 	go func() {
-		state, err := process.Wait()
-		done <- struct {
-			state *os.ProcessState
-			err   error
-		}{state, err}
+		_, err := process.Wait()
+		done <- err
 	}()
 
 	select {
-	case <-time.After(time.Second * time.Duration(maxWaitSeconds)):
-		// 这里错误没有处理,在*nix系统-9信号不能被程序捕获。而windows如果程序被保护,可能无法结束,大多数情况也能正常结束。
-		_ = process.Kill()
-	case result := <-done:
-		if result.err != nil {
-			fmt.Println("Command finished with error:", result.err)
-		} else {
-			fmt.Println("Command finished successfully with state:", result.state)
+	case err := <-done:
+		if err != nil {
+			return err
 		}
+	case <-time.After(time.Duration(timeoutSeconds) * time.Second):
+		process.Kill()
+		return errors.New("timeout waiting for process to exit")
 	}
+
+	return nil
 }

@@ -1,4 +1,4 @@
-//go:build windows || darwin
+//go:build windows
 
 package bridge
 
@@ -37,27 +37,19 @@ func InitTray(a *App, icon []byte, fs embed.FS) {
 		}
 	}
 
-	isDarwin := Env.OS == "darwin"
-
 	go func() {
 		sysruntime.LockOSThread()
 		defer sysruntime.UnlockOSThread()
 		systray.Run(func() {
 			systray.SetIcon([]byte(icon))
+			systray.SetTitle("GUI.for.Cores")
 			systray.SetTooltip("GUI.for.Cores")
+			systray.SetOnClick(func(menu systray.IMenu) { runtime.WindowShow(a.Ctx) })
 			systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
-			if isDarwin {
-				systray.SetOnClick(func(menu systray.IMenu) { menu.ShowMenu() })
-			} else {
-				systray.SetTitle("GUI.for.Cores")
-				systray.SetOnClick(func(menu systray.IMenu) { a.ShowMainWindow() })
-			}
 
 			// Ensure the tray is still available if rolling-release fails
-			mShowWindow := systray.AddMenuItem("Show Main Window", "Show Main Window")
 			mRestart := systray.AddMenuItem("Restart", "Restart")
 			mExit := systray.AddMenuItem("Exit", "Exit")
-			mShowWindow.Click(func() { a.ShowMainWindow() })
 			mRestart.Click(func() { a.RestartApp() })
 			mExit.Click(func() { a.ExitApp() })
 		}, nil)
@@ -86,8 +78,7 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 		} else {
 			m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
 		}
-
-		m.Click(func() { go runtime.EventsEmit(a.Ctx, menu.Event) })
+		m.Click(func() { runtime.EventsEmit(a.Ctx, menu.Event) })
 
 		if menu.Checked {
 			m.Check()

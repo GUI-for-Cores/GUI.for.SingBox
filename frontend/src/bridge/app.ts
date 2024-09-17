@@ -5,8 +5,6 @@ export const RestartApp = App.RestartApp
 
 export const ExitApp = App.ExitApp
 
-export const ShowMainWindow = App.ShowMainWindow
-
 export const UpdateTray = async (tray: TrayContent) => {
   const { icon = '', title = '', tooltip = '' } = tray
   await App.UpdateTray({ icon, title, tooltip })

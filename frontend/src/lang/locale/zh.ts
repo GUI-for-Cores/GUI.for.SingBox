@@ -612,7 +612,6 @@ export default {
     fallback: '🐟 漏网之鱼'
   },
   tray: {
-    showMainWindow: '显示主窗口',
     restart: '重启',
     restartTip: '重启程序',
     exit: '退出',
