@@ -67,7 +67,7 @@ export namespace bridge {
 	    }
 	}
 	export class IOOptions {
-	
+	    Mode: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new IOOptions(source);
@@ -75,7 +75,7 @@ export namespace bridge {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	
+	        this.Mode = source["Mode"];
 	    }
 	}
 	export class MenuItem {
@@ -121,7 +121,9 @@ export namespace bridge {
 		}
 	}
 	export class RequestOptions {
-	
+	    Proxy: string;
+	    Insecure: boolean;
+	    Timeout: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestOptions(source);
@@ -129,7 +131,9 @@ export namespace bridge {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	
+	        this.Proxy = source["Proxy"];
+	        this.Insecure = source["Insecure"];
+	        this.Timeout = source["Timeout"];
 	    }
 	}
 	export class TrayContent {

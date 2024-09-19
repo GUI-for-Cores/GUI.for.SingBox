@@ -1,7 +1,15 @@
 import i18n from '@/lang'
 import { Theme, type MenuItem, Color, Lang } from '@/constant'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
-import { Notify, RestartApp, EventsOn, EventsOff, UpdateTray, UpdateTrayMenus } from '@/bridge'
+import {
+  Notify,
+  RestartApp,
+  EventsOn,
+  EventsOff,
+  UpdateTray,
+  UpdateTrayMenus,
+  ShowMainWindow
+} from '@/bridge'
 import {
   debounce,
   exitApp,
@@ -145,6 +153,16 @@ const getTrayMenus = () => {
   }
 
   const trayMenus: MenuItem[] = [
+    {
+      type: 'item',
+      text: 'tray.showMainWindow',
+      hidden: envStore.env.os !== 'darwin',
+      event: ShowMainWindow
+    },
+    {
+      type: 'separator',
+      hidden: envStore.env.os !== 'darwin'
+    },
     {
       type: 'item',
       text: 'kernel.mode',
@@ -370,6 +388,9 @@ export const updateTrayMenus = debounce(async () => {
   const trayMenus = getTrayMenus()
   const trayIcons = getTrayIcons()
 
-  await UpdateTray({ icon: trayIcons, title: APP_TITLE, tooltip: APP_TITLE + ' ' + APP_VERSION })
+  const isDarwin = useEnvStore().env.os === 'darwin'
+  const title = isDarwin ? '' : APP_TITLE
+
+  await UpdateTray({ icon: trayIcons, title, tooltip: APP_TITLE + ' ' + APP_VERSION })
   await UpdateTrayMenus(trayMenus as any)
 }, 500)

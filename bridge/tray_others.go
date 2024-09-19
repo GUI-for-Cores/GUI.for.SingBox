@@ -1,4 +1,4 @@
-//go:build windows
+//go:build windows || darwin
 
 package bridge
 
@@ -7,13 +7,11 @@ import (
 	"log"
 	"os"
 
-	sysruntime "runtime"
-
 	"github.com/energye/systray"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitTray(a *App, icon []byte, fs embed.FS) {
+func InitTray(a *App, icon []byte, fs embed.FS) (trayStart, trayEnd func()) {
 	src := "frontend/dist/icons/"
 	dst := "data/.cache/icons/"
 
@@ -37,23 +35,27 @@ func InitTray(a *App, icon []byte, fs embed.FS) {
 		}
 	}
 
-	go func() {
-		sysruntime.LockOSThread()
-		defer sysruntime.UnlockOSThread()
-		systray.Run(func() {
-			systray.SetIcon([]byte(icon))
-			systray.SetTitle("GUI.for.Cores")
-			systray.SetTooltip("GUI.for.Cores")
-			systray.SetOnClick(func(menu systray.IMenu) { runtime.WindowShow(a.Ctx) })
-			systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
+	isDarwin := Env.OS == "darwin"
 
-			// Ensure the tray is still available if rolling-release fails
-			mRestart := systray.AddMenuItem("Restart", "Restart")
-			mExit := systray.AddMenuItem("Exit", "Exit")
-			mRestart.Click(func() { a.RestartApp() })
-			mExit.Click(func() { a.ExitApp() })
-		}, nil)
-	}()
+	return systray.RunWithExternalLoop(func() {
+		systray.SetIcon([]byte(icon))
+		systray.SetTooltip("GUI.for.Cores")
+		systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
+		if isDarwin {
+			systray.SetOnClick(func(menu systray.IMenu) { menu.ShowMenu() })
+		} else {
+			systray.SetTitle("GUI.for.Cores")
+			systray.SetOnClick(func(menu systray.IMenu) { a.ShowMainWindow() })
+		}
+
+		// Ensure the tray is still available if rolling-release fails
+		mShowWindow := systray.AddMenuItem("Show Main Window", "Show Main Window")
+		mRestart := systray.AddMenuItem("Restart", "Restart")
+		mExit := systray.AddMenuItem("Exit", "Exit")
+		mShowWindow.Click(func() { a.ShowMainWindow() })
+		mRestart.Click(func() { a.RestartApp() })
+		mExit.Click(func() { a.ExitApp() })
+	}, nil)
 }
 
 func (a *App) UpdateTrayMenus(menus []MenuItem) {
@@ -78,7 +80,8 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 		} else {
 			m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
 		}
-		m.Click(func() { runtime.EventsEmit(a.Ctx, menu.Event) })
+
+		m.Click(func() { go runtime.EventsEmit(a.Ctx, menu.Event) })
 
 		if menu.Checked {
 			m.Check()

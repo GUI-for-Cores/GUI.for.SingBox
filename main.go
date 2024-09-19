@@ -35,6 +35,8 @@ func main() {
 		bridge.AddMenusForDarwin(appMenu, app)
 	}
 
+	trayStart, _ := bridge.InitTray(app, icon, assets)
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		MinWidth:         600,
@@ -87,9 +89,9 @@ func main() {
 		OnStartup: func(ctx context.Context) {
 			runtime.LogSetLogLevel(ctx, logger.INFO)
 			app.Ctx = ctx
-			bridge.InitTray(app, icon, assets)
 			bridge.InitScheduledTasks()
 			bridge.InitNotification(assets)
+			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
 			runtime.EventsEmit(ctx, "onBeforeExitApp")
