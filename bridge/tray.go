@@ -1,5 +1,3 @@
-//go:build windows || darwin
-
 package bridge
 
 import (

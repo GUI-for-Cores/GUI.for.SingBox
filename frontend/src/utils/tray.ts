@@ -156,12 +156,12 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'tray.showMainWindow',
-      hidden: envStore.env.os !== 'darwin',
+      hidden: envStore.env.os === 'windows',
       event: ShowMainWindow
     },
     {
       type: 'separator',
-      hidden: envStore.env.os !== 'darwin'
+      hidden: envStore.env.os === 'windows',
     },
     {
       type: 'item',
