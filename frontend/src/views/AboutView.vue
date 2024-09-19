@@ -21,7 +21,8 @@ import {
   TG_GROUP,
   TG_CHANNEL,
   APP_VERSION_API,
-  getGitHubApiAuthorization
+  getGitHubApiAuthorization,
+  ignoredError
 } from '@/utils'
 
 let downloadUrl = ''
@@ -75,6 +76,8 @@ const downloadApp = async () => {
     await Movefile(APP_TITLE + suffix, appName)
 
     await Removefile(tmpFile)
+
+    await ignoredError(Removefile, 'data/rolling-release')
 
     needRestart.value = true
     message.success('about.updateSuccessfulRestart')
