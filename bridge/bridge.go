@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -51,7 +52,16 @@ func InitBridge() {
 	Env.BasePath = filepath.Dir(exePath)
 	Env.AppName = filepath.Base(exePath)
 
-	// step2: Read Config
+	// step2: Create a persistent data symlink
+	if Env.OS == "darwin" {
+		user, _ := user.Current()
+		linkPath := Env.BasePath + "/data"
+		appPath := "/Users/" + user.Username + "/Library/Application Support/" + Env.AppName
+		os.MkdirAll(appPath, os.ModePerm)
+		os.Symlink(appPath, linkPath)
+	}
+
+	// step3: Read Config
 	b, err := os.ReadFile(Env.BasePath + "/data/user.yaml")
 	if err == nil {
 		yaml.Unmarshal(b, &Config)
