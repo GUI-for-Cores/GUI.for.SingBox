@@ -1,5 +1,5 @@
 import * as App from '@wails/go/bridge/App'
-import { GetSystemProxy } from '@/utils/helper'
+import { GetSystemOrKernelProxy } from '@/utils/helper'
 import { sampleID, getUserAgent } from '@/utils'
 import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 
@@ -38,7 +38,7 @@ const transformRequest = async (
   }
 
   options = {
-    Proxy: await GetSystemProxy(),
+    Proxy: await GetSystemOrKernelProxy(),
     Insecure: false,
     Timeout: 15,
     ...options
@@ -137,7 +137,7 @@ export const Requests = async (options: RequestType) => {
   const { method = 'GET', url, headers = {}, body = '', options: _options = {} } = options
 
   const __options: Required<RequestType['options']> = {
-    Proxy: await GetSystemProxy(),
+    Proxy: await GetSystemOrKernelProxy(),
     Insecure: false,
     Timeout: 15,
     ..._options

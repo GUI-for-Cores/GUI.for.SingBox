@@ -297,6 +297,25 @@ export const GetSystemProxy = async () => {
   return ''
 }
 
+export const GetSystemOrKernelProxy = async () => {
+  const systemProxy = await GetSystemProxy()
+  if (systemProxy.length > 0) {
+    return systemProxy
+  }
+
+  if (useAppSettingsStore().app.kernel.running) {
+    const kernelProxy = useKernelApiStore().getProxyPort()
+    if (kernelProxy !== undefined) {
+      if (kernelProxy.proxyType === 'socks') {
+        return `socks5://127.0.0.1:${kernelProxy.port}`
+      }
+      return `http://127.0.0.1:${kernelProxy.port}`
+    }
+  }
+
+  return ''
+}
+
 // System ScheduledTask Helper
 export const getTaskSchXmlString = async (delay = 30) => {
   const { basePath, appName } = useEnvStore().env
