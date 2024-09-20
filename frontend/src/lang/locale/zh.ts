@@ -576,6 +576,7 @@ export default {
     restart: '重启软件',
     noDownloadLink: '没有发现下载链接',
     updateSuccessfulRestart: '更新完成，请重启软件',
+    updateSuccessfulReplace: '下载完成，请手动替换软件',
     updateSuccessful: '更新完成',
     newVersion: '发现新版本',
     latestVersion: '已经是最新版本了'
