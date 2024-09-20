@@ -63,7 +63,7 @@ const setupKernelWSApi = () => {
   websockets.bearer = bearer
 }
 
-const request = new Request({ beforeRequest: setupKernelApi })
+const request = new Request({ beforeRequest: setupKernelApi, timeout: 60 * 1000 })
 
 const websockets = new WebSockets({ beforeConnect: setupKernelWSApi })
 
