@@ -1,5 +1,5 @@
-github.com/Ayideyia/systray v1.0.0 h1:jV/v6dV5QCwarJfs2HGp0XpV4UnMjoemIWPLfjsYqcE=
-github.com/Ayideyia/systray v1.0.0/go.mod h1:sp7Q/q/I4/w5ebvpSuJVep71s9Bg7L9ZVp69gBASehM=
+github.com/Ayideyia/systray v1.0.1 h1:whS+MykHTdkg+sdkFywKoFJ7BNOjYYOa3Y8hq1wJvBE=
+github.com/Ayideyia/systray v1.0.1/go.mod h1:sp7Q/q/I4/w5ebvpSuJVep71s9Bg7L9ZVp69gBASehM=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
 github.com/bep/debounce v1.2.1/go.mod h1:H8yggRPQKLUhUoqrJC1bO2xNya7vanpDl7xR3ISbCJ0=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
