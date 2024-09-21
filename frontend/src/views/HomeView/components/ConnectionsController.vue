@@ -2,7 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
-import { useBool, useMessage, usePicker, type PickerItem } from '@/hooks'
+import { useBool, useMessage, usePicker } from '@/hooks'
+import { type PickerItem } from '@/components/Picker/index.vue'
 import { DraggableOptions } from '@/constant'
 import { useAppSettingsStore, type Menu } from '@/stores'
 import type { KernelConnectionsWS } from '@/api/kernel.schema'
