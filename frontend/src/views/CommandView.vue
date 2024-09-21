@@ -44,7 +44,7 @@ const handleExecCommand = async (index: number) => {
 }
 
 const onKeydown = async (ev: KeyboardEvent) => {
-  if (ev.ctrlKey && ev.shiftKey && ev.code === 'KeyP') {
+  if (((ev.ctrlKey && ev.shiftKey) || ev.metaKey) && ev.code === 'KeyP') {
     ev.preventDefault()
     showCommandPanel.value = true
     nextTick(inputRef.value.focus)
