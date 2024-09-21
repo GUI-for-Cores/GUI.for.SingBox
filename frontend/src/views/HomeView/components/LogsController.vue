@@ -3,7 +3,8 @@ import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
 import type { Menu } from '@/stores'
-import { useBool, useMessage, usePicker, type PickerItem } from '@/hooks'
+import { useBool, useMessage, usePicker } from '@/hooks'
+import { type PickerItem } from '@/components/Picker/index.vue'
 import { LogLevelOptions } from '@/constant'
 import { getKernelLogsWS } from '@/api/kernel'
 import {
