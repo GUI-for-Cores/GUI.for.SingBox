@@ -280,7 +280,7 @@ if (envStore.env.os === 'windows') {
         </template>
       </div>
     </div>
-    <div v-if="envStore.env.os === 'windows'" class="settings-item">
+    <div class="settings-item">
       <div class="title">{{ t('settings.addToMenu') }}</div>
       <Switch v-model="appSettings.app.addPluginToMenu" />
     </div>
