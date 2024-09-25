@@ -2,7 +2,7 @@ import { render, createVNode } from 'vue'
 
 import ConfirmComp, { type Options } from '@/components/Confirm/index.vue'
 
-const createAlert = (title: string, message: string, options: Partial<Options> = {}) => {
+const createAlert = (title: string, message: string, options: Options = { type: 'text' }) => {
   return new Promise((resolve) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
