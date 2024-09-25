@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
 const ready = ref(false)
 const appSettings = useAppSettingsStore()
 
-const lang = { json, javascript, yaml }[props.lang]()
+const lang = { json, javascript, yaml }[props.lang]?.()
 const linter = props.lang === 'json' ? jsonParseLinter() : undefined
 
 const completion = computed(() =>

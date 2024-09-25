@@ -1,8 +1,8 @@
 import { render, createVNode } from 'vue'
 
-import ConfirmComp from '@/components/Confirm/index.vue'
+import ConfirmComp, { type Options } from '@/components/Confirm/index.vue'
 
-const createAlert = (title: string, message: string) => {
+const createAlert = (title: string, message: string, options: Partial<Options> = {}) => {
   return new Promise((resolve) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
@@ -13,10 +13,12 @@ const createAlert = (title: string, message: string) => {
       right: 0;
       display: flex;
       justify-content: center;
+      max-height: 70%;
     `
     const vnode = createVNode(ConfirmComp, {
       title,
       message,
+      options,
       cancel: false,
       onConfirm: resolve,
       onFinish: () => {
