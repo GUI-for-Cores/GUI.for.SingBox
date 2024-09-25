@@ -44,23 +44,20 @@ marked.use({
       const text = this.parser.parse(tokens)
       return `<div style="border-left: 4px solid var(--primary-color); padding: 8px; margin: 8px 0; display: flex; flex-direction: column; border-radius: 4px; background: var(--card-bg)">${text}</div>`
     },
-    paragraph({ text }) {
+    paragraph({ tokens }) {
+      const text = this.parser.parseInline(tokens)
       return `<p style="margin: 0">${text}</p>`
     },
     list({ ordered, items }) {
-      const children = items
-        .map(({ tokens }) => {
-          const text = this.parser.parse(tokens)
-          return `<li style="padding: 0">${text}</li>`
-        })
-        .join('')
-      if (ordered) {
-        return `<ol style="margin: 0; padding: 8px 16px">${children}</ol>`
-      }
-      return `<ul style="margin: 0; padding: 8px 16px">${children}</ul>`
+      const children = items.reduce((str, { tokens }) => {
+        const text = this.parser.parse(tokens)
+        return str + `<li style="padding: 0">${text}</li>`
+      }, '')
+      const tag = ordered ? 'ol' : 'ul'
+      return `<${tag} style="margin: 0; padding: 8px 16px">${children}</${tag}>`
     },
     hr() {
-      const containerId = 'Br_' + sampleID()
+      const containerId = 'Divider_' + sampleID()
       const comp = h(Divider, () => APP_TITLE + '/' + APP_VERSION)
       setTimeout(() => {
         const div = document.getElementById(containerId)
