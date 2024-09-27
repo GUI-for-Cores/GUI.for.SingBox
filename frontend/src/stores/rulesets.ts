@@ -78,6 +78,9 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       } else if (r.type === 'Http') {
         const { body: b } = await HttpGet(r.url)
         body = b
+        if (typeof body !== 'string') {
+          body = JSON.stringify(body)
+        }
       } else if (r.type === 'Manual') {
         isExist = await FileExists(r.path)
         if (isExist) {
