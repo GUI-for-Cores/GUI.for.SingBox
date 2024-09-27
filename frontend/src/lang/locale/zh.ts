@@ -423,7 +423,11 @@ export default {
     updating: '更新中'
   },
   rulesets: {
-    empty: '规则集列表为空，请先{action}规则集。',
+    hub: '规则集中心',
+    total: '规则集数量为',
+    noDesc: '无描述信息',
+    updating: '更新中',
+    empty: '规则集列表为空，请先{action}或从{import}导入。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则集文件',
     selectRuleType: '选择规则类型'

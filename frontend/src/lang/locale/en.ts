@@ -356,7 +356,7 @@ export default {
     expire: 'Expire',
     subtype: 'Subscription Type',
     website: 'Website',
-    empty: 'The subscription list is empty. Please {action} a subscription first.',
+    empty: 'The subscription list is empty. Please{action}a subscription first.',
     enterLink: 'Enter subscription link',
     proxyCount: 'Proxy Count',
     editProxies: 'Edit Proxies',
@@ -400,7 +400,7 @@ export default {
   },
   profiles: {
     shouldStop: 'Unable to delete, this profile is in use.',
-    empty: 'The profiles list is empty, Please {action} a profile first.',
+    empty: 'The profiles list is empty, Please{action}a profile first.',
     copytoClipboard: 'Generate config to clipboard',
     generateAndView: 'Generate and View',
     copy: 'Copy and Paste',
@@ -423,7 +423,11 @@ export default {
     updating: 'Updating'
   },
   rulesets: {
-    empty: 'The ruleset list is empty. Please {action} a ruleset first.',
+    hub: 'Ruleset-Hub',
+    total: 'Number of rule-sets',
+    noDesc: 'No description',
+    updating: 'Updating',
+    empty: 'The ruleset list is empty. Please{action}or import from the{import}first.',
     rulesetCount: 'Ruleset Count',
     editRuleset: 'Edit Rules',
     selectRuleType: 'Select Rule Type'
@@ -461,7 +465,7 @@ export default {
   },
   plugins: {
     updating: 'Updating',
-    empty: 'The plugin list is empty. Please {action} or import from the {import} first.',
+    empty: 'The plugin list is empty. Please{action}or import from the{import}first.',
     source: 'Source',
     reload: 'Reload',
     configuration: 'Configure',
@@ -497,7 +501,7 @@ export default {
     endTime: 'End Time',
     time: 'Time',
     result: 'Result',
-    empty: 'The scheduled task list is empty. Please {action} a scheduled task first.',
+    empty: 'The scheduled task list is empty. Please{action}a scheduled task first.',
     run: 'Run now',
     log: 'View log'
   },
