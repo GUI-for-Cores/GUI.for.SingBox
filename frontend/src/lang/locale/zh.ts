@@ -427,6 +427,7 @@ export default {
     total: '规则集数量为',
     noDesc: '无描述信息',
     updating: '更新中',
+    fetching: '获取中...',
     empty: '规则集列表为空，请先{action}或从{import}导入。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则集文件',

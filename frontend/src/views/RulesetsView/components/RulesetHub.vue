@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
+import { useMessage, useAlert } from '@/hooks'
 import { ignoredError } from '@/utils'
 import { useRulesetsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
@@ -20,6 +20,7 @@ const cacheFile = 'data/.cache/ruleset-list.json'
 const hubUrl = 'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing.json'
 
 const { t } = useI18n()
+const { alert } = useAlert()
 const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
@@ -53,11 +54,16 @@ const getList = async () => {
   updateList()
 }
 
-const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: RulesetFormat) => {
+const getRulesetUrlAndSuffix = (ruleset: RulesetHub['list'][number], format: RulesetFormat) => {
   const suffix = { [RulesetFormat.Binary]: '.srs', [RulesetFormat.Source]: '.json' }[format]
+  const basrUrl = { geosite: rulesetHub.value.geosite, geoip: rulesetHub.value.geoip }[ruleset.type]
+  return [basrUrl + ruleset.name + suffix, suffix]
+}
+
+const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: RulesetFormat) => {
+  const [url, suffix] = getRulesetUrlAndSuffix(ruleset, format)
   const id = ruleset.type + '_' + ruleset.name + '.' + format
   const file = ruleset.type + '_' + ruleset.name + suffix
-  const basrUrl = { geosite: rulesetHub.value.geosite, geoip: rulesetHub.value.geoip }[ruleset.type]
   try {
     await rulesetsStore.addRuleset({
       id,
@@ -67,7 +73,7 @@ const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: Rul
       type: 'Http',
       format,
       path: 'data/rulesets/' + file,
-      url: basrUrl + ruleset.name + suffix,
+      url,
       count: ruleset.count
     })
     const { success } = message.info('rulesets.updating')
@@ -76,6 +82,18 @@ const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: Rul
   } catch (error: any) {
     console.error(error)
     message.error(error.message || error)
+  }
+}
+
+const handlePreview = async (ruleset: RulesetHub['list'][number], format: RulesetFormat) => {
+  const { destroy, error } = message.info('rulesets.fetching', 15_000)
+  try {
+    const { body } = await HttpGet(getRulesetUrlAndSuffix(ruleset, format)[0])
+    destroy()
+    await alert(ruleset.name, JSON.stringify(body, null, 2))
+  } catch (err: any) {
+    error(err.message || err)
+    setTimeout(destroy, 2000)
   }
 }
 
@@ -113,6 +131,15 @@ getList()
           <template #extra>
             <Tag size="small" color="cyan">{{ ruleset.type }}</Tag>
           </template>
+          <div class="count">
+            {{ t('rulesets.rulesetCount') }} : {{ ruleset.count }}
+            <Button
+              @click="handlePreview(ruleset, RulesetFormat.Source)"
+              icon="preview"
+              size="small"
+              type="text"
+            />
+          </div>
           <div class="description">
             {{ ruleset.description || t('rulesets.noDesc') }}
           </div>
@@ -167,7 +194,11 @@ getList()
     margin: 4px;
     font-size: 12px;
     width: calc(33.333% - 8px);
-
+    .count {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     .description {
       margin: 4px 0;
       overflow: hidden;
