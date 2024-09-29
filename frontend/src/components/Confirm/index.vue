@@ -83,7 +83,7 @@ marked.use({
 
 const renderContent = async () => {
   if (typeof props.message !== 'string') {
-    content.value = props.message
+    content.value = JSON.stringify(props.message, null, 2)
     return
   }
   if (props.options.type === 'text') {
