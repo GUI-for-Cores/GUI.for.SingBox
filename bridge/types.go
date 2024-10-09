@@ -20,9 +20,11 @@ type EnvResult struct {
 }
 
 type RequestOptions struct {
-	Proxy    string
-	Insecure bool
-	Timeout  int
+	Proxy     string
+	Insecure  bool
+	Timeout   int
+	CancelId  string
+	FileField string
 }
 
 type ExecOptions struct {

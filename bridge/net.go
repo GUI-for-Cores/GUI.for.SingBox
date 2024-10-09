@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"io"
 	"log"
@@ -17,14 +18,20 @@ import (
 func (a *App) Requests(method string, url string, headers map[string]string, body string, options RequestOptions) HTTPResult {
 	log.Printf("Requests: %v %v %v %v %v", method, url, headers, body, options)
 
-	req, err := http.NewRequest(method, url, strings.NewReader(body))
+	client, ctx, cancel := withRequestOptionsClient(options)
+
+	req, err := http.NewRequestWithContext(ctx, method, url, strings.NewReader(body))
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
 	req.Header = GetHeader(headers)
 
-	client := withRequestOptionsClient(options)
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+		log.Printf("Requests Canceled: %v %v", method, url)
+		cancel()
+	})
+	defer runtime.EventsOff(a.Ctx, options.CancelId)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -43,14 +50,20 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 func (a *App) Download(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
 	log.Printf("Download: %v %v %v, %v", url, path, headers, options)
 
-	req, err := http.NewRequest("GET", url, nil)
+	client, ctx, cancel := withRequestOptionsClient(options)
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
 	req.Header = GetHeader(headers)
 
-	client := withRequestOptionsClient(options)
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+		log.Printf("Download Canceled: %v %v", url, path)
+		cancel()
+	})
+	defer runtime.EventsOff(a.Ctx, options.CancelId)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -100,7 +113,7 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile("file", path)
+	part, err := writer.CreateFormFile(options.FileField, path)
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
@@ -117,15 +130,21 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
-	req, err := http.NewRequest("POST", url, body)
+	client, ctx, cancel := withRequestOptionsClient(options)
+
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+		log.Printf("Upload Canceled: %v %v", url, path)
+		cancel()
+	})
+	defer runtime.EventsOff(a.Ctx, options.CancelId)
+
+	req, err := http.NewRequestWithContext(ctx, "POST", url, body)
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
 	req.Header = GetHeader(headers)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	client := withRequestOptionsClient(options)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -149,8 +168,8 @@ func (wt *WriteTracker) Write(p []byte) (n int, err error) {
 	return
 }
 
-func withRequestOptionsClient(options RequestOptions) *http.Client {
-	return &http.Client{
+func withRequestOptionsClient(options RequestOptions) (*http.Client, context.Context, context.CancelFunc) {
+	client := &http.Client{
 		Timeout: GetTimeout(options.Timeout),
 		Transport: &http.Transport{
 			Proxy: GetProxy(options.Proxy),
@@ -159,4 +178,8 @@ func withRequestOptionsClient(options RequestOptions) *http.Client {
 			},
 		},
 	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	return client, ctx, cancel
 }

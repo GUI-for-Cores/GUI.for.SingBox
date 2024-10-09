@@ -124,6 +124,8 @@ export namespace bridge {
 	    Proxy: string;
 	    Insecure: boolean;
 	    Timeout: number;
+	    CancelId: string;
+	    FileField: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestOptions(source);
@@ -134,6 +136,8 @@ export namespace bridge {
 	        this.Proxy = source["Proxy"];
 	        this.Insecure = source["Insecure"];
 	        this.Timeout = source["Timeout"];
+	        this.CancelId = source["CancelId"];
+	        this.FileField = source["FileField"];
 	    }
 	}
 	export class TrayContent {

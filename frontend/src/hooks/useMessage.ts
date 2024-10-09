@@ -17,11 +17,18 @@ interface MessageContext {
 }
 
 const buildMessage = (icon: IconType, ctx: MessageContext) => {
-  return (content: string, duration = 3_000) => {
+  return (content: string, duration = 3_000, onClose?: () => void) => {
     const id = sampleID()
 
-    const onClose = () => ctx.destroy(id)
-    const vnode = createVNode(MessageComp, { icon, content, onClose })
+    const onDestroy = () => ctx.destroy(id)
+    const vnode = createVNode(MessageComp, {
+      icon,
+      content,
+      onClose: () => {
+        onClose?.()
+        onDestroy()
+      }
+    })
     const dom = document.createElement('div')
     dom.id = id
     dom.style.cssText = `display: flex; align-items: center; justify-content: center;`
@@ -29,7 +36,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
     ctx.instances[id] = {
       dom,
       vnode,
-      timer: setTimeout(onClose, duration)
+      timer: setTimeout(onDestroy, duration)
     }
 
     ctx.dom.appendChild(dom)
@@ -42,7 +49,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
       error: (content: string) => ctx.update(id, content, 'error'),
       success: (content: string) => ctx.update(id, content, 'success'),
       update: (content: string, icon?: IconType) => ctx.update(id, content, icon),
-      destroy: onClose
+      destroy: onDestroy
     }
   }
 }
