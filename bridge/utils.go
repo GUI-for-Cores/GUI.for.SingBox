@@ -29,9 +29,6 @@ func GetProxy(_proxy string) func(*http.Request) (*url.URL, error) {
 	proxy := http.ProxyFromEnvironment
 
 	if _proxy != "" {
-		if !strings.HasPrefix(_proxy, "http") {
-			_proxy = "http://" + _proxy
-		}
 		proxyUrl, err := url.Parse(_proxy)
 		if err == nil {
 			proxy = http.ProxyURL(proxyUrl)
