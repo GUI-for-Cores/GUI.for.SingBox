@@ -1,5 +1,6 @@
 import { render, createVNode } from 'vue'
 
+import i18n from '@/lang'
 import PromptComp from '@/components/Prompt/index.vue'
 import { type Props as InputProps } from '@/components/Input/index.vue'
 
@@ -8,6 +9,8 @@ const createPrompt = <T>(
   initialValue: string | number = '',
   props: Partial<InputProps> = {}
 ) => {
+  const { t } = i18n.global
+
   return new Promise<T>((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
@@ -24,7 +27,7 @@ const createPrompt = <T>(
       initialValue,
       props,
       onSubmit: resolve,
-      onCancel: () => reject('cancelled'),
+      onCancel: () => reject(t('common.canceled')),
       onFinish: () => {
         render(null, dom)
         dom.remove()

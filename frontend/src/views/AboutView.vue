@@ -13,7 +13,8 @@ import {
   UnzipZIPFile,
   Makedir,
   Removefile,
-  AbsolutePath
+  AbsolutePath,
+  HttpCancel
 } from '@/bridge'
 import {
   APP_TITLE,
@@ -54,13 +55,24 @@ const downloadApp = async () => {
   const tmpFile = 'data/.cache/gui.zip'
 
   try {
-    const { id } = message.info('Downloading...', 10 * 60 * 1_000)
+    const { id } = message.info(t('common.downloading'), 10 * 60 * 1_000, () => {
+      HttpCancel('download-app')
+      setTimeout(() => Removefile(tmpFile), 1000)
+    })
 
     await Makedir('data/.cache')
 
-    await Download(downloadUrl, tmpFile, {}, (progress, total) => {
-      message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
-    }).finally(() => {
+    await Download(
+      downloadUrl,
+      tmpFile,
+      {},
+      (progress, total) => {
+        message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
+      },
+      {
+        CancelId: 'download-app'
+      }
+    ).finally(() => {
       message.destroy(id)
     })
 

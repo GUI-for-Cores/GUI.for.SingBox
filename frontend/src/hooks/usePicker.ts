@@ -1,5 +1,6 @@
 import { render, createVNode } from 'vue'
 
+import i18n from '@/lang'
 import PickerComp, { type PickerItem } from '@/components/Picker/index.vue'
 
 const createPicker = <T>(
@@ -8,6 +9,8 @@ const createPicker = <T>(
   options: PickerItem[],
   initialValue: string[]
 ): Promise<T> => {
+  const { t } = i18n.global
+
   return new Promise((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
@@ -25,7 +28,7 @@ const createPicker = <T>(
       options,
       initialValue,
       onConfirm: resolve,
-      onCancel: () => reject('cancelled'),
+      onCancel: () => reject(t('common.canceled')),
       onFinish: () => {
         render(null, dom)
         dom.remove()

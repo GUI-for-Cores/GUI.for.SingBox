@@ -8,6 +8,7 @@ import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import { getGitHubApiAuthorization, GrantTUNPermission, ignoredError } from '@/utils'
 import {
   Download,
+  HttpCancel,
   UnzipZIPFile,
   HttpGet,
   Exec,
@@ -75,11 +76,20 @@ const downloadCore = async () => {
 
     await Makedir('data/sing-box')
 
-    const { id } = message.info('Downloading...', 10 * 60 * 1_000)
+    const { id } = message.info(t('common.downloading'), 10 * 60 * 1_000, () => {
+      HttpCancel('download-latest-core')
+      setTimeout(() => Removefile(tmp), 1000)
+    })
 
-    await Download(asset.browser_download_url, tmp, undefined, (progress, total) => {
-      message.update(id, 'Downloading...' + ((progress / total) * 100).toFixed(2) + '%')
-    }).catch((err) => {
+    await Download(
+      asset.browser_download_url,
+      tmp,
+      undefined,
+      (progress, total) => {
+        message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
+      },
+      { CancelId: 'download-latest-core' }
+    ).catch((err) => {
       message.destroy(id)
       throw err
     })

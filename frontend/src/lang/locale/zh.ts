@@ -43,7 +43,9 @@ export default {
     http: '远程下载',
     file: '本地文件',
     openFile: '打开文件',
-    develop: '开发'
+    develop: '开发',
+    canceled: '已取消',
+    downloading: '下载中...'
   },
   kernel: {
     port: 'HTTP(s)代理端口',

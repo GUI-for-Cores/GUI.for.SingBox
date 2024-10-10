@@ -1,8 +1,11 @@
 import { render, createVNode } from 'vue'
 
+import i18n from '@/lang'
 import ConfirmComp, { type Options } from '@/components/Confirm/index.vue'
 
 const createConfirm = (title: string, message: string, options: Options = { type: 'text' }) => {
+  const { t } = i18n.global
+
   return new Promise((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = `
@@ -20,7 +23,7 @@ const createConfirm = (title: string, message: string, options: Options = { type
       message,
       options,
       onConfirm: resolve,
-      onCancel: () => reject('cancelled'),
+      onCancel: () => reject(t('common.canceled')),
       onFinish: () => {
         render(null, dom)
         dom.remove()
