@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { h, onMounted, ref, render } from 'vue'
+import { h, onMounted, ref, render, type VNode } from 'vue'
 import { marked } from 'marked'
 
 import useI18n from '@/lang'
 import { APP_TITLE, APP_VERSION, sampleID } from '@/utils'
 import CodeViewer from '@/components/CodeViewer/index.vue'
 import Divider from '@/components/Divider/index.vue'
+import Tag from '@/components/Tag/index.vue'
 
 export type Options = {
   type: 'text' | 'markdown'
@@ -59,27 +60,35 @@ marked.use({
     hr() {
       const containerId = 'Divider_' + sampleID()
       const comp = h(Divider, () => APP_TITLE + '/' + APP_VERSION)
-      setTimeout(() => {
-        const div = document.getElementById(containerId)
-        if (!div) return
-        render(comp, div)
-        domContainers.push(() => render(null, div))
-      })
+      mountCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
+    },
+    heading({ text, depth }) {
+      return `<h${depth} style="color: var(--primary-color)"># ${text}</h${depth}>`
+    },
+    codespan({ text }) {
+      const containerId = 'Tag_' + sampleID()
+      const comp = h(Tag, { color: 'cyan', size: 'small' }, () => text)
+      mountCustomComp(containerId, comp)
+      return `<span id="${containerId}"></span>`
     },
     code({ text, lang }) {
       const containerId = 'CodeViewer_' + sampleID()
       const comp = h(CodeViewer, { editable: false, modelValue: text, lang: lang as any })
-      setTimeout(() => {
-        const div = document.getElementById(containerId)
-        if (!div) return
-        render(comp, div)
-        domContainers.push(() => render(null, div))
-      })
+      mountCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
     }
   }
 })
+
+const mountCustomComp = (containerId: string, comp: VNode) => {
+  setTimeout(() => {
+    const div = document.getElementById(containerId)
+    if (!div) return
+    render(comp, div)
+    domContainers.push(() => render(null, div))
+  })
+}
 
 const renderContent = async () => {
   if (typeof props.message !== 'string') {
