@@ -26,13 +26,15 @@ const getTrayIcons = () => {
   const kernelApiStore = useKernelApiStore()
 
   const themeMode = appSettings.themeMode
-  let icon = `data/.cache/icons/tray_normal_${themeMode}.ico`
+  const ext = envStore.env.os === 'linux' ? '.png' : '.ico'
+  const folder = envStore.env.os === 'linux' ? 'imgs' : 'icons'
+  let icon = `data/.cache/${folder}/tray_normal_${themeMode}${ext}`
 
   if (appSettings.app.kernel.running) {
     if (kernelApiStore.config.tun.enable) {
-      icon = `data/.cache/icons/tray_tun_${themeMode}.ico`
+      icon = `data/.cache/${folder}/tray_tun_${themeMode}${ext}`
     } else if (envStore.systemProxy) {
-      icon = `data/.cache/icons/tray_proxy_${themeMode}.ico`
+      icon = `data/.cache/${folder}/tray_proxy_${themeMode}${ext}`
     }
   }
   return icon
@@ -161,7 +163,7 @@ const getTrayMenus = () => {
     },
     {
       type: 'separator',
-      hidden: envStore.env.os === 'windows',
+      hidden: envStore.env.os === 'windows'
     },
     {
       type: 'item',

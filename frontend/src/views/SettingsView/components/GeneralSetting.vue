@@ -269,7 +269,7 @@ if (envStore.env.os === 'windows') {
         {{ t('settings.webviewGpuPolicy.name') }}
         <span class="tips">({{ t('settings.needRestart') }})</span>
       </div>
-      <Radio v-model="appSettings.app.webGpuPolicy" :options="webviewGpuPolicy" />
+      <Radio v-model="appSettings.app.webviewGpuPolicy" :options="webviewGpuPolicy" />
     </div>
     <div v-if="envStore.env.os === 'windows'" class="settings-item">
       <div class="title">

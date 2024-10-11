@@ -1,6 +1,7 @@
 package bridge
 
 import (
+	"embed"
 	"log"
 	"net"
 	"os"
@@ -35,7 +36,7 @@ var Env = &EnvResult{
 
 var Config = &AppConfig{}
 
-func InitBridge() {
+func InitBridge(fs embed.FS) {
 	// step1: Set Env
 	exePath, err := os.Executable()
 	if err != nil {
@@ -61,7 +62,39 @@ func InitBridge() {
 		os.Symlink(appPath, linkPath)
 	}
 
-	// step3: Read Config
+	// step3: Extract embedded files
+	icon_src := "frontend/dist/icons"
+	icon_dst := "data/.cache/icons"
+	img_src := "frontend/dist/imgs"
+	img_dst := "data/.cache/imgs"
+
+	os.MkdirAll(GetPath(icon_dst), os.ModePerm)
+	os.MkdirAll(GetPath(img_dst), os.ModePerm)
+
+	icon_dirs, _ := fs.ReadDir(icon_src)
+	png_dirs, _ := fs.ReadDir(img_src)
+
+	for _, file := range icon_dirs {
+		fileName := file.Name()
+		path := GetPath(icon_dst + "/" + fileName)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			log.Printf("InitTray [Icon]: %s", icon_dst+"/"+fileName)
+			b, _ := fs.ReadFile(icon_src + "/" + fileName)
+			os.WriteFile(path, b, os.ModePerm)
+		}
+	}
+
+	for _, file := range png_dirs {
+		fileName := file.Name()
+		path := GetPath(img_dst + "/" + fileName)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			log.Printf("InitTray [Imgs]: %s", img_dst+"/"+fileName)
+			b, _ := fs.ReadFile(img_src + "/" + fileName)
+			os.WriteFile(path, b, os.ModePerm)
+		}
+	}
+
+	// step4: Read Config
 	b, err := os.ReadFile(Env.BasePath + "/data/user.yaml")
 	if err == nil {
 		yaml.Unmarshal(b, &Config)

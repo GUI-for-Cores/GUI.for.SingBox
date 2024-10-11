@@ -19,7 +19,7 @@ export const Notify = async (title: string, message: string, icon = '') => {
     success: 'data/.cache/imgs/notify_success.png',
     error: 'data/.cache/imgs/notify_error.png'
   }
-  await App.Notify(title, message, icons[icon] || 'data/.cache/imgs/notify_normal.ico')
+  await App.Notify(title, message, icons[icon] || 'data/.cache/imgs/tray_normal_dark.png')
 }
 
 export const GetEnv = App.GetEnv

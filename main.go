@@ -24,7 +24,7 @@ var assets embed.FS
 var icon []byte
 
 func main() {
-	bridge.InitBridge()
+	bridge.InitBridge(assets)
 
 	// Create an instance of the app structure
 	app := bridge.NewApp()
@@ -35,7 +35,7 @@ func main() {
 		bridge.AddMenusForDarwin(appMenu, app)
 	}
 
-	trayStart, _ := bridge.InitTray(app, icon, assets)
+	trayStart, _ := bridge.InitTray(app, icon)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -92,7 +92,6 @@ func main() {
 			runtime.LogSetLogLevel(ctx, logger.INFO)
 			app.Ctx = ctx
 			bridge.InitScheduledTasks()
-			bridge.InitNotification(assets)
 			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {

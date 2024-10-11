@@ -1,7 +1,6 @@
 package bridge
 
 import (
-	"embed"
 	"log"
 	"os"
 
@@ -9,34 +8,11 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitTray(a *App, icon []byte, fs embed.FS) (trayStart, trayEnd func()) {
-	src := "frontend/dist/icons/"
-	dst := "data/.cache/icons/"
-
-	icons := []string{
-		"tray_normal_light.ico",
-		"tray_normal_dark.ico",
-		"tray_proxy_light.ico",
-		"tray_proxy_dark.ico",
-		"tray_tun_light.ico",
-		"tray_tun_dark.ico",
-	}
-
-	os.MkdirAll(GetPath(dst), os.ModePerm)
-
-	for _, icon := range icons {
-		path := GetPath(dst + icon)
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			log.Printf("InitTray [Icon]: %s", src+icon)
-			b, _ := fs.ReadFile(src + icon)
-			os.WriteFile(path, b, os.ModePerm)
-		}
-	}
-
+func InitTray(a *App, icon []byte) (trayStart, trayEnd func()) {
 	isDarwin := Env.OS == "darwin"
 
 	return systray.RunWithExternalLoop(func() {
-		systray.SetIcon([]byte(icon))
+		systray.SetIcon(icon)
 		systray.SetTooltip("GUI.for.Cores")
 		systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
 		if isDarwin {
@@ -47,7 +23,7 @@ func InitTray(a *App, icon []byte, fs embed.FS) (trayStart, trayEnd func()) {
 		}
 
 		// Ensure the tray is still available if rolling-release fails
-		mShowWindow := systray.AddMenuItem("Show Main Window", "Show Main Window")
+		mShowWindow := systray.AddMenuItem("Show", "Show")
 		mRestart := systray.AddMenuItem("Restart", "Restart")
 		mExit := systray.AddMenuItem("Exit", "Exit")
 		mShowWindow.Click(func() { a.ShowMainWindow() })

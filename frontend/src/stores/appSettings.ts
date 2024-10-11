@@ -33,7 +33,7 @@ type AppSettings = {
   pluginsView: View
   scheduledtasksView: View
   windowStartState: WindowStartState
-  webGpuPolicy: WebviewGpuPolicy
+  webviewGpuPolicy: WebviewGpuPolicy
   width: number
   height: number
   exitOnClose: boolean
@@ -82,7 +82,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     pluginsView: View.Grid,
     scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
-    webGpuPolicy: WebviewGpuPolicy.OnDemand,
+    webviewGpuPolicy: WebviewGpuPolicy.OnDemand,
     width: 0,
     height: 0,
     exitOnClose: true,
