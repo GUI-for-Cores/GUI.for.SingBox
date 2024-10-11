@@ -16,6 +16,12 @@ export enum WindowStartState {
   Minimised = 2
 }
 
+export enum WebviewGpuPolicy {
+  Always = 0,
+  OnDemand = 1,
+  Never = 2
+}
+
 export enum Theme {
   Auto = 'auto',
   Light = 'light',

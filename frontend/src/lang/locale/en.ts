@@ -548,6 +548,12 @@ export default {
       minimised: 'Minimize window',
       fullscreen: 'Fullscreen'
     },
+    webviewGpuPolicy: {
+      name: 'Webview Gpu Policy',
+      always: 'Always',
+      onDemand: 'OnDemand',
+      never: 'Never'
+    },
     needRestart: 'Restart Required',
     needAdmin: 'Admin required',
     exitOnClose: 'Exit APP On Window Close',

@@ -70,7 +70,7 @@ func main() {
 			Icon:                icon,
 			WindowIsTranslucent: false,
 			ProgramName:         bridge.Env.AppName,
-			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
+			WebviewGpuPolicy:    linux.WebviewGpuPolicy(bridge.Config.WebviewGpuPolicy),
 		},
 		AssetServer: &assetserver.Options{
 			Assets:     assets,

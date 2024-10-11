@@ -548,6 +548,12 @@ export default {
       minimised: '最小化窗口启动',
       fullscreen: '全屏'
     },
+    webviewGpuPolicy: {
+      name: 'Webview GPU 策略',
+      always: '启用硬件加速',
+      onDemand: '根据Web内容自行决定',
+      never: '禁用硬件加速'
+    },
     needRestart: '重启生效',
     needAdmin: '需要管理员权限',
     exitOnClose: '关闭窗口时退出程序',

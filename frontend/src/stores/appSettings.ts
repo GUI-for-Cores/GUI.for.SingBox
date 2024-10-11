@@ -4,7 +4,16 @@ import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
-import { Theme, WindowStartState, Lang, View, Color, Colors, DefaultFontFamily } from '@/constant'
+import {
+  Theme,
+  WindowStartState,
+  Lang,
+  View,
+  Color,
+  Colors,
+  DefaultFontFamily,
+  WebviewGpuPolicy
+} from '@/constant'
 import {
   Readfile,
   Writefile,
@@ -24,6 +33,7 @@ type AppSettings = {
   pluginsView: View
   scheduledtasksView: View
   windowStartState: WindowStartState
+  webGpuPolicy: WebviewGpuPolicy
   width: number
   height: number
   exitOnClose: boolean
@@ -72,6 +82,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     pluginsView: View.Grid,
     scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
+    webGpuPolicy: WebviewGpuPolicy.OnDemand,
     width: 0,
     height: 0,
     exitOnClose: true,
