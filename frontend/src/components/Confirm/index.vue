@@ -7,6 +7,7 @@ import { APP_TITLE, APP_VERSION, sampleID } from '@/utils'
 import CodeViewer from '@/components/CodeViewer/index.vue'
 import Divider from '@/components/Divider/index.vue'
 import Tag from '@/components/Tag/index.vue'
+import Table from '@/components/Table/index.vue'
 
 export type Options = {
   type: 'text' | 'markdown'
@@ -75,6 +76,25 @@ marked.use({
     code({ text, lang }) {
       const containerId = 'CodeViewer_' + sampleID()
       const comp = h(CodeViewer, { editable: false, modelValue: text, lang: lang as any })
+      mountCustomComp(containerId, comp)
+      return `<div id="${containerId}"></div>`
+    },
+    table({ header, rows }) {
+      const containerId = 'Table_' + sampleID()
+      const comp = h(Table, {
+        columns: header.map(({ text, align }) => ({
+          title: text,
+          key: text,
+          align: align || 'center'
+        })),
+        dataSource: rows.map((row) => {
+          const record: Record<string, any> = {}
+          header.forEach(({ text }, index) => {
+            record[text] = row[index]?.text
+          })
+          return record
+        })
+      })
       mountCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
     }
