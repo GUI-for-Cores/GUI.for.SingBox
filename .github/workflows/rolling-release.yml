@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -27,22 +25,30 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
-        run: |
-          cd frontend && pnpm install
+        run: cd frontend && pnpm install
       - name: Build Frontend
         run: cd frontend && pnpm build
       - name: Create a compressed file
         run: |
+          git rev-parse --short HEAD | tr -d '\n' > frontend/dist/version.txt
           cd frontend
-          openssl dgst -sha256 dist/index.html | sed 's/([^)]*)//g' >> dist/version.txt
           mv dist rolling-release
           zip -r rolling-release.zip rolling-release
-
+      - name: Generate Changelog
+        run: |
+          set +e
+          LAST_COMMIT=$(curl -L https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/rolling-release/version.txt)
+          echo -e "## Change log\n\n> Update time: $(TZ='Asia/Shanghai' date "+%Y-%m-%d %H:%M:%S")\n" > changelog.md
+          git log $LAST_COMMIT..HEAD --pretty=format:"* %s" >> changelog.md
+          if [ $? -ne 0 ]; then
+            echo "No changes found since last commit." >> changelog.md
+          fi
+          set -e
       - name: Create Release and Upload Assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: frontend/{rolling-release.zip,rolling-release/version.txt}
+          file: ./{frontend/{rolling-release.zip,rolling-release/version.txt},changelog.md}
           file_glob: true
           tag: rolling-release
           release_name: rolling-release
