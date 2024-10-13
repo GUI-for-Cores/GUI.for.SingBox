@@ -16,7 +16,7 @@ import {
 
 const isPinned = ref(false)
 const isMaximised = ref(false)
-const isRollingRelease = ref(false)
+const rollingReleaseVersion = ref('')
 
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
@@ -62,7 +62,9 @@ const updateRollingReleaseState = async () => {
   try {
     const res = await fetch('/version.txt')
     const txt = await res.text()
-    isRollingRelease.value = txt.startsWith('SHA2-256')
+    if (!!txt && txt.length === 7) {
+      rollingReleaseVersion.value = txt
+    }
   } catch (error) {
     console.log('Not a rolling release', error)
   }
@@ -88,7 +90,8 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       }"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ isRollingRelease ? '- Rolling Release' : '' }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion ? '(9c26b84)' : '' }}
+      {{ rollingReleaseVersion ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
     <div v-menu="menus" class="menus"></div>
@@ -119,7 +122,8 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       v-menu="menus"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ isRollingRelease ? '- Rolling Release' : '' }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion ? '(9c26b84)' : '' }}
+      {{ rollingReleaseVersion ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
   </div>
