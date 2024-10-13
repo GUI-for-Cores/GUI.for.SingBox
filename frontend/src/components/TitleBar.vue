@@ -62,8 +62,8 @@ const updateRollingReleaseState = async () => {
   try {
     const res = await fetch('/version.txt')
     const txt = await res.text()
-    if (!!txt && txt.length === 7) {
-      rollingReleaseVersion.value = txt
+    if (txt && txt.length === 7) {
+      rollingReleaseVersion.value = `(${txt})`
     }
   } catch (error) {
     console.log('Not a rolling release', error)
@@ -90,7 +90,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       }"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion ? '(9c26b84)' : '' }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion || '' }}
       {{ rollingReleaseVersion ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
@@ -122,7 +122,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       v-menu="menus"
       class="appname"
     >
-      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion ? '(9c26b84)' : '' }}
+      {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion || '' }}
       {{ rollingReleaseVersion ? '- Rolling Release' : '' }}
     </div>
     <Button v-if="kernelApiStore.loading" loading type="text" size="small" />
