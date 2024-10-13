@@ -90,7 +90,7 @@ marked.use({
         dataSource: rows.map((row) => {
           const record: Record<string, any> = {}
           header.forEach(({ text }, index) => {
-            record[text] = row[index]?.text
+            record[text] = this.parser.parseInline(row[index]?.tokens || [])
           })
           return record
         })
@@ -102,12 +102,16 @@ marked.use({
 })
 
 const mountCustomComp = (containerId: string, comp: VNode) => {
-  setTimeout(() => {
+  let count = 0
+  const tryToMount = () => {
+    if (count >= 3) return
+    count += 1
     const div = document.getElementById(containerId)
-    if (!div) return
+    if (!div) return setTimeout(tryToMount, count * 100)
     render(comp, div)
     domContainers.push(() => render(null, div))
-  })
+  }
+  setTimeout(tryToMount)
 }
 
 const renderContent = async () => {

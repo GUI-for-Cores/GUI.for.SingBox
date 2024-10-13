@@ -96,13 +96,12 @@ const tableColumns = computed(() => {
             :key="column.key"
             :style="{ textAlign: column.align || 'left' }"
             class="select-text"
-          >
-            {{
+            v-html="
               (column.customRender
                 ? column.customRender({ value: getValue(data, column.key), record: data })
                 : getValue(data, column.key)) ?? '-'
-            }}
-          </td>
+            "
+          ></td>
         </tr>
       </tbody>
     </table>
