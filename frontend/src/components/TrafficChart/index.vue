@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch, onActivated } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, onActivated, useTemplateRef } from 'vue'
 
 import { formatBytes } from '@/utils'
 
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const MAX_HISTORY = 60
-const svgRef = ref<SVGElement>()
+const svgRef = useTemplateRef<SVGAElement>('svgRef')
 const width = ref(200)
 const points = ref<string[]>([])
 const showLines = ref([true, true])

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { APP_TITLE, sleep } from '@/utils'
@@ -15,7 +15,7 @@ import CommonController from './components/CommonController.vue'
 
 const kernelLoading = ref(false)
 const showController = ref(false)
-const controllerRef = ref<HTMLElement>()
+const controllerRef = useTemplateRef('controllerRef')
 
 const { t } = useI18n()
 const { message } = useMessage()

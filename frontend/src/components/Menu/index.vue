@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, watch, nextTick, useTemplateRef } from 'vue'
 
 import type { Menu } from '@/stores'
 
@@ -14,8 +14,8 @@ const props = defineProps<Props>()
 
 const secondaryMenu = ref<Menu[] | undefined>()
 
-const menuRef = ref()
-const secondaryMenuRef = ref()
+const menuRef = useTemplateRef('menuRef')
+const secondaryMenuRef = useTemplateRef('secondaryMenuRef')
 
 const menuPosition = ref({ left: '', top: '' })
 const secondaryMenuPosition = ref({ left: '', top: '' })
@@ -33,7 +33,7 @@ const fixMenuPos = (x: number, y: number) => {
   let top = y
 
   const { offsetWidth: clientWidth, offsetHeight: clientHeight } = document.body
-  const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.value
+  const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.value!
 
   if (x + menuWidth > clientWidth) left -= x + menuWidth - clientWidth + 8
   if (y + menuHeight > clientHeight) top -= y + menuHeight - clientHeight + 8
@@ -43,13 +43,13 @@ const fixMenuPos = (x: number, y: number) => {
 
 const fixSecondaryMenuPos = () => {
   const { x, y } = props.position
-  const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.value
+  const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.value!
 
   let left = menuWidth
   let top = menuHeight
 
   const { offsetWidth: clientWidth, offsetHeight: clientHeight } = document.body
-  const { offsetWidth: sMenuWidth, offsetHeight: sMenuHeight } = secondaryMenuRef.value
+  const { offsetWidth: sMenuWidth, offsetHeight: sMenuHeight } = secondaryMenuRef.value!
 
   if (left + sMenuWidth + x > clientWidth) left -= x + menuWidth + sMenuWidth - clientWidth + 8
   if (top + sMenuHeight + y > clientHeight) top -= sMenuHeight

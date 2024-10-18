@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 
 type TriggerType = 'click' | 'hover'
 
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<Props>(), {
   placement: 'bottom'
 })
 
-const domRef = ref<HTMLElement>()
+const domRef = useTemplateRef('domRef')
 const show = ref(false)
 const transformOrigin = ref(props.placement === 'top' ? 'bottom' : 'top')
 

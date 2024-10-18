@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, useTemplateRef } from 'vue'
 
 interface Props {
   position: { x: number; y: number }
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const model = defineModel<boolean>()
 
-const domRef = ref<HTMLElement>()
+const domRef = useTemplateRef('domRef')
 const fixedPosition = ref({ x: 0, y: 0 })
 
 const { t } = useI18n()

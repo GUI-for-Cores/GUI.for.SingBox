@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch, useTemplateRef } from 'vue'
 
 import { debounce } from '@/utils'
 import { useMessage } from '@/hooks'
@@ -11,7 +11,7 @@ const loading = ref(false)
 const showCommandPanel = ref(false)
 const userInput = ref('')
 const selected = ref(0)
-const inputRef = ref()
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef')
 const commands = ref(getCommands())
 let commandsRefMap: Record<string, HTMLElement> = {}
 
@@ -40,14 +40,14 @@ const handleExecCommand = async (index: number) => {
     message.error(error.message || error)
   }
   loading.value = false
-  nextTick(inputRef.value.focus)
+  nextTick(inputRef.value!.focus)
 }
 
 const onKeydown = async (ev: KeyboardEvent) => {
   if (((ev.ctrlKey && ev.shiftKey) || ev.metaKey) && ev.code === 'KeyP') {
     ev.preventDefault()
     showCommandPanel.value = true
-    nextTick(inputRef.value.focus)
+    nextTick(inputRef.value!.focus)
     return
   }
 
@@ -78,7 +78,7 @@ const onKeydown = async (ev: KeyboardEvent) => {
     if (hitCommand.value.length) {
       await handleExecCommand(selected.value)
     } else {
-      nextTick(inputRef.value.focus)
+      nextTick(inputRef.value!.focus)
     }
   }
 }

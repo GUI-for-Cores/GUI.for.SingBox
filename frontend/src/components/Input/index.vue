@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
 import useI18n from '@/lang'
 import { debounce } from '@/utils'
@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits(['update:modelValue', 'submit'])
 
 const showEdit = ref(false)
-const inputRef = ref<HTMLElement>()
+const inputRef = useTemplateRef('inputRef')
 const innerClearable = computed(() => props.clearable && props.type !== 'code' && props.modelValue)
 
 const { t } = useI18n.global
