@@ -6,12 +6,13 @@ import { debounce } from '@/utils'
 import { useMessage } from '@/hooks'
 import { getCommands } from '@/utils/command'
 import { useAppSettingsStore, usePluginsStore } from '@/stores'
+import Input from '@/components/Input/index.vue'
 
 const loading = ref(false)
 const showCommandPanel = ref(false)
 const userInput = ref('')
 const selected = ref(0)
-const inputRef = useTemplateRef<HTMLInputElement>('inputRef')
+const inputRef = useTemplateRef<typeof Input>('inputRef')
 const commands = ref(getCommands())
 let commandsRefMap: Record<string, HTMLElement> = {}
 

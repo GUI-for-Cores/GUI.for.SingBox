@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
+import Input from '@/components/Input/index.vue'
 
 import { DraggableOptions } from '@/constant'
 
@@ -13,7 +14,7 @@ withDefaults(defineProps<Props>(), { autofocus: true })
 const list = defineModel<string[]>({ default: [] })
 
 const value = ref('')
-const inputRef = useTemplateRef('inputRef')
+const inputRef = useTemplateRef<typeof Input>('inputRef')
 
 const handleAdd = () => {
   if (!value.value) return
