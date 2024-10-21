@@ -37,7 +37,7 @@ export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   stack: 'Mixed',
   'auto-route': true,
   'interface-name': '',
-  mtu: 9000,
+  mtu: 1500,
   'strict-route': true,
   'endpoint-independent-nat': false,
   'inet4-address': '172.19.0.1/30',
