@@ -16,6 +16,11 @@ type ResponseType = {
   options: { mode: 'Binary' | 'Text' }
 }
 
+type ServerOptions = {
+  cert: string
+  key: string
+}
+
 type HttpServerHandler = (
   req: RequestType,
   res: {
@@ -28,8 +33,13 @@ type HttpServerHandler = (
   }
 ) => Promise<void>
 
-export const StartServer = async (address: string, id: string, handler: HttpServerHandler) => {
-  const { flag, data } = await App.StartServer(address, id)
+export const StartServer = async (
+  address: string,
+  id: string,
+  handler: HttpServerHandler,
+  options: ServerOptions = { cert: '', key: '' }
+) => {
+  const { flag, data } = await App.StartServer(address, id, options)
   if (!flag) {
     throw data
   }

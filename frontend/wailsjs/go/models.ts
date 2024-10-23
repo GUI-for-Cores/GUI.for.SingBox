@@ -140,6 +140,20 @@ export namespace bridge {
 	        this.FileField = source["FileField"];
 	    }
 	}
+	export class ServerOptions {
+	    cert: string;
+	    key: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ServerOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.cert = source["cert"];
+	        this.key = source["key"];
+	    }
+	}
 	export class TrayContent {
 	    icon: string;
 	    title: string;

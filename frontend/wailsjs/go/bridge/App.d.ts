@@ -56,7 +56,7 @@ export function RestartApp():Promise<bridge.FlagResult>;
 
 export function ShowMainWindow():Promise<void>;
 
-export function StartServer(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+export function StartServer(arg1:string,arg2:string,arg3:bridge.ServerOptions):Promise<bridge.FlagResult>;
 
 export function StopServer(arg1:string):Promise<bridge.FlagResult>;
 

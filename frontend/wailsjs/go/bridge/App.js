@@ -110,8 +110,8 @@ export function ShowMainWindow() {
   return window['go']['bridge']['App']['ShowMainWindow']();
 }
 
-export function StartServer(arg1, arg2) {
-  return window['go']['bridge']['App']['StartServer'](arg1, arg2);
+export function StartServer(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['StartServer'](arg1, arg2, arg3);
 }
 
 export function StopServer(arg1) {

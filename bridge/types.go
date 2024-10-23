@@ -41,6 +41,11 @@ type FlagResult struct {
 	Data string `json:"data"`
 }
 
+type ServerOptions struct {
+	Cert string `json:"cert"`
+	Key  string `json:"key"`
+}
+
 type HTTPResult struct {
 	Flag    bool        `json:"flag"`
 	Status  int         `json:"status"`

@@ -21,7 +21,7 @@ type ResponseData struct {
 	Body    string
 }
 
-func (a *App) StartServer(address string, serverID string) FlagResult {
+func (a *App) StartServer(address string, serverID string, options ServerOptions) FlagResult {
 	log.Printf("StartServer: %s", address)
 
 	server := &http.Server{
@@ -85,7 +85,12 @@ func (a *App) StartServer(address string, serverID string) FlagResult {
 	var result error
 
 	go func() {
-		err := server.ListenAndServe()
+		var err error
+		if options.Cert != "" && options.Key != "" {
+			err = server.ListenAndServeTLS(GetPath(options.Cert), GetPath(options.Key))
+		} else {
+			err = server.ListenAndServe()
+		}
 		if err != nil {
 			result = err
 		}
