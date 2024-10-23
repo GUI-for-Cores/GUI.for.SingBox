@@ -68,6 +68,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      # Hide dock bar icon: macOS
+      - name: Update system and dependencies
+        if: runner.os == 'macOS'
+        run: |
+          go mod vendor
+          sed -i "" "s/\[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular\]/[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory]/g" vendor/github.com/wailsapp/wails/v2/internal/frontend/desktop/darwin/AppDelegate.m
+
       - name: Build Frontend
         run: cd frontend && pnpm build
 
