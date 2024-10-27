@@ -13,8 +13,7 @@ import {
   isValidSubYAML,
   isValidBase64,
   ignoredError,
-  omitArray,
-  formatDate
+  omitArray
 } from '@/utils'
 
 export type SubscribeType = {

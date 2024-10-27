@@ -14,7 +14,7 @@ const userInput = ref('')
 const selected = ref(0)
 const inputRef = useTemplateRef<typeof Input>('inputRef')
 const commands = ref(getCommands())
-let commandsRefMap: Record<string, HTMLElement> = {}
+const commandsRefMap: Record<string, HTMLElement> = {}
 
 const hitCommand = computed(() =>
   userInput.value

@@ -1,5 +1,5 @@
 import { Readfile, Writefile } from '@/bridge'
-import { deepAssign, deepClone, ignoredError } from '@/utils'
+import { deepAssign, deepClone } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'
 import { TunConfigDefaults } from '@/constant'
@@ -561,7 +561,7 @@ export const generateConfig = async (originalProfile: ProfileType) => {
     deepAssign(config, deepAssign(JSON.parse(mixin), config))
   }
 
-  const fn = new AsyncFunction(
+  const fn = new window.AsyncFunction(
     `${profile.scriptConfig.code};return await onGenerate(${JSON.stringify(config)})`
   )
   let _config

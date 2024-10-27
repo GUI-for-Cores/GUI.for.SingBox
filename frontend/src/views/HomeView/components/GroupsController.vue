@@ -80,7 +80,7 @@ const handleFilter = async (group: string) => {
     })) || ''
   try {
     new RegExp(keywords, 'i')
-  } catch (error) {
+  } catch {
     message.error('Incorrect regular expression')
     await handleFilter(group)
     return

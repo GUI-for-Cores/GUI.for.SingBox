@@ -91,7 +91,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value['allow-lan'] = currentProfile.value.generalConfig['allow-lan']
     try {
       config.value.mode = (await getConfigs()).mode
-    } catch (e) {
+    } catch {
       config.value.mode = currentProfile.value.generalConfig.mode
     }
     config.value['interface-name'] = currentProfile.value.generalConfig['interface-name']
@@ -175,7 +175,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
       try {
         config.value.mode = (await getConfigs()).mode
-      } catch (e) {
+      } catch {
         config.value.mode = latestConfig.experimental?.clash_api.default_mode
       }
 

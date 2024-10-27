@@ -116,7 +116,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
         )
       }
       case ScheduledTasksType.RunScript: {
-        return withOutput([task.script], (script: string) => new AsyncFunction(script)())
+        return withOutput([task.script], (script: string) => new window.AsyncFunction(script)())
       }
     }
   }

@@ -51,7 +51,7 @@ export const CheckPermissions = async () => {
       { convert: true }
     )
     return out.includes('RunAsAdmin')
-  } catch (error) {
+  } catch {
     return false
   }
 }

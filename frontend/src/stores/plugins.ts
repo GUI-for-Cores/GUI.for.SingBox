@@ -262,7 +262,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
-        const fn = new AsyncFunction(`const Plugin = ${JSON.stringify(metadata)};
+        const fn = new window.AsyncFunction(`const Plugin = ${JSON.stringify(metadata)};
           ${cache.code};
           return await ${fnName}(${JSON.stringify(result)}, ${JSON.stringify(subscription)})
         `) as <T>(params: T) => Promise<T>
@@ -291,7 +291,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
-        const fn = new AsyncFunction(
+        const fn = new window.AsyncFunction(
           `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`
         )
         const exitCode = await fn()
@@ -318,7 +318,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       const metadata = getPluginMetadata(cache.plugin)
       try {
-        const fn = new AsyncFunction(
+        const fn = new window.AsyncFunction(
           `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`
         )
         params = await fn()
@@ -343,7 +343,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     const metadata = getPluginMetadata(plugin)
     const _args = args.map((arg) => JSON.stringify(arg))
     try {
-      const fn = new AsyncFunction(
+      const fn = new window.AsyncFunction(
         `const Plugin = ${JSON.stringify(metadata)};
         ${cache.code};
         return await ${event}(${_args.join(',')})`

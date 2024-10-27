@@ -60,7 +60,7 @@ const handleTest = async (event: PluginTriggerEvent, arg1?: any, arg2?: any) => 
       arg1 = metadata
       arg2 = metadata
     }
-    const fn = new AsyncFunction(
+    const fn = new window.AsyncFunction(
       `const Plugin = ${metadata};\n${code.value}\nreturn await ${event}(${arg1}, ${arg2})`
     )
     await fn()

@@ -7,13 +7,7 @@ import { useBool, useMessage, usePicker } from '@/hooks'
 import { type PickerItem } from '@/components/Picker/index.vue'
 import { LogLevelOptions } from '@/constant'
 import { getKernelLogsWS } from '@/api/kernel'
-import {
-  addToRuleSet,
-  ignoredError,
-  isValidIPv4,
-  isValidIPv6,
-  setIntervalImmediately
-} from '@/utils'
+import { addToRuleSet, isValidIPv4, isValidIPv6, setIntervalImmediately } from '@/utils'
 
 const logType = ref('info')
 const keywords = ref('')

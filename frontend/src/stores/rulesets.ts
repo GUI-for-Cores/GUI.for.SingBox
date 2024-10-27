@@ -70,7 +70,6 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const _doUpdateRuleset = async (r: RuleSetType) => {
     if (r.format === RulesetFormat.Source) {
       let body = ''
-      let ruleset: any
       let isExist = true
 
       if (r.type === 'File') {
@@ -94,7 +93,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
         throw 'Not a valid ruleset data'
       }
 
-      ruleset = JSON.parse(body)
+      const ruleset = JSON.parse(body)
 
       r.count = ruleset.rules.reduce(
         (p: number, c: string[]) =>

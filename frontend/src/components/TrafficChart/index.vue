@@ -46,7 +46,8 @@ const updateSvgWidth = () => {
 }
 
 const updateChart = () => {
-  let { height, padding } = props
+  const { padding } = props
+  let { height } = props
   const paddingY = height / 8
   height -= paddingY
   points.value = props.series.map((s, index) => {
