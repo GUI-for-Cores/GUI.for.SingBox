@@ -11,6 +11,8 @@ import Table from '@/components/Table/index.vue'
 
 export type Options = {
   type: 'text' | 'markdown'
+  cancelText?: string
+  okText?: string
 }
 
 interface Props {
@@ -147,9 +149,11 @@ const handleCancel = () => {
       <div class="title">{{ t(title) }}</div>
       <div class="message select-text" v-html="content"></div>
       <div class="form-action">
-        <Button v-if="cancel" @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
+        <Button v-if="cancel" @click="handleCancel" size="small">
+          {{ t(options.cancelText || 'common.cancel') }}
+        </Button>
         <Button @click="handleConfirm" size="small" type="primary">
-          {{ t('common.confirm') }}
+          {{ t(options.okText || 'common.confirm') }}
         </Button>
       </div>
     </div>
