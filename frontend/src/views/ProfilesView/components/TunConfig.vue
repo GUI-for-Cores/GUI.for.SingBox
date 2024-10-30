@@ -39,13 +39,9 @@ const { t } = useI18n()
       {{ t('kernel.tun.endpoint-independent-nat') }}
       <Switch v-model="fields['endpoint-independent-nat']" />
     </div>
-    <div class="form-item">
-      {{ t('kernel.tun.inet4-address') }}
-      <Input v-model="fields['inet4-address']" editable />
-    </div>
-    <div class="form-item">
-      {{ t('kernel.tun.inet6-address') }}
-      <Input v-model="fields['inet6-address']" editable />
+    <div :class="{ 'flex-start': fields['address'].length }" class="form-item">
+      {{ t('kernel.tun.address') }}
+      <InputList v-model="fields['address']" />
     </div>
   </template>
 </template>

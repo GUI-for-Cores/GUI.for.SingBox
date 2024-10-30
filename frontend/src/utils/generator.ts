@@ -1,8 +1,7 @@
 import { Readfile, Writefile } from '@/bridge'
-import { deepAssign, deepClone } from '@/utils'
+import { deepAssign, deepClone, isValidIPv4, isValidIPv6 } from '@/utils'
 import { KernelConfigFilePath, ProxyGroup } from '@/constant/kernel'
 import { type ProfileType, useSubscribesStore, useRulesetsStore, usePluginsStore } from '@/stores'
-import { TunConfigDefaults } from '@/constant'
 
 const generateCommonRule = (rule: Record<string, any>) => {
   const { type, payload, invert } = rule
@@ -308,19 +307,11 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
   }
 
   if (profile.tunConfig.enable) {
-    let inet4_address = profile.tunConfig['inet4-address']
-    let inet6_address = profile.tunConfig['inet6-address']
-
+    let address = profile.tunConfig.address
     if (profile.advancedConfig.domain_strategy === 'ipv4_only') {
-      inet6_address = ''
+      address = address.filter((ip) => isValidIPv4(ip.split('/')[0]))
     } else if (profile.advancedConfig.domain_strategy === 'ipv6_only') {
-      inet4_address = ''
-    }
-    if (inet4_address === undefined) {
-      inet4_address = TunConfigDefaults()['inet4-address']
-    }
-    if (inet6_address === undefined) {
-      inet6_address = TunConfigDefaults()['inet6-address']
+      address = address.filter((ip) => isValidIPv6(ip.split('/')[0]))
     }
 
     inbounds.push({
@@ -328,8 +319,7 @@ const generateInBoundsConfig = async (profile: ProfileType) => {
       ...(profile.tunConfig['interface-name'].length > 0
         ? { interface_name: profile.tunConfig['interface-name'] }
         : {}),
-      ...(inet4_address.length > 0 ? { inet4_address: inet4_address } : {}),
-      ...(inet6_address.length > 0 ? { inet6_address: inet6_address } : {}),
+      address,
       mtu: profile.tunConfig.mtu,
       auto_route: profile.tunConfig['auto-route'],
       strict_route: profile.tunConfig['strict-route'],

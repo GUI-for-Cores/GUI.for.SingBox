@@ -4,15 +4,7 @@ import { parse, stringify } from 'yaml'
 
 import { debounce, ignoredError } from '@/utils'
 import { Readfile, Writefile } from '@/bridge'
-import {
-  ProfilesFilePath,
-  ProxyGroup,
-  FinalDnsType,
-  TunConfigDefaults,
-  DnsConfigDefaults,
-  MixinConfigDefaults,
-  ScriptConfigDefaults
-} from '@/constant'
+import { ProfilesFilePath, ProxyGroup, FinalDnsType } from '@/constant'
 
 export type ProfileType = {
   id: string
@@ -51,8 +43,7 @@ export type ProfileType = {
     mtu: number
     'strict-route': boolean
     'endpoint-independent-nat': boolean
-    'inet4-address': string
-    'inet6-address': string
+    address: string[]
   }
   dnsConfig: {
     enable: boolean
@@ -126,38 +117,16 @@ export const useProfilesStore = defineStore('profiles', () => {
     const data = await ignoredError(Readfile, ProfilesFilePath)
     data && (profiles.value = parse(data))
 
+    // compatibility code
     profiles.value.forEach((profile) => {
-      const tunCofnigDefaults = TunConfigDefaults()
-      profile.tunConfig['inet4-address'] =
-        profile.tunConfig['inet4-address'] ?? tunCofnigDefaults['inet4-address']
-      profile.tunConfig['inet6-address'] =
-        profile.tunConfig['inet6-address'] ?? tunCofnigDefaults['inet6-address']
-
-      if (profile.tunConfig['interface-name'] === undefined) {
-        const oldValue = (profile.tunConfig as any)['interface_name']
-        if (oldValue !== undefined) {
-          profile.tunConfig['interface-name'] = oldValue
-        } else {
-          profile.tunConfig['interface-name'] = ''
-        }
+      if (!profile.tunConfig['address']) {
+        profile.tunConfig['address'] = [
+          (profile.tunConfig as any)['inet4-address'],
+          (profile.tunConfig as any)['inet6-address']
+        ]
+        delete (profile.tunConfig as any)['inet4-address']
+        delete (profile.tunConfig as any)['inet6-address']
       }
-
-      if (profile.dnsConfig['disable-cache'] === undefined) {
-        const dnsConfigDefaults = DnsConfigDefaults()
-        profile.dnsConfig['disable-cache'] = dnsConfigDefaults['disable-cache']
-        profile.dnsConfig['disable-expire'] = dnsConfigDefaults['disable-expire']
-        profile.dnsConfig['independent-cache'] = dnsConfigDefaults['independent-cache']
-        profile.dnsConfig['client-subnet'] = dnsConfigDefaults['client-subnet']
-        const dnsRulesSize = profile.dnsRulesConfig.length
-        for (let j = 0; j < dnsRulesSize; ++j) {
-          if (profile.dnsRulesConfig[j]['client-subnet'] === undefined) {
-            profile.dnsRulesConfig[j]['client-subnet'] = ''
-          }
-        }
-      }
-
-      profile.mixinConfig = profile.mixinConfig ?? MixinConfigDefaults()
-      profile.scriptConfig = profile.scriptConfig ?? ScriptConfigDefaults()
     })
   }
 
