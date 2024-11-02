@@ -34,12 +34,12 @@ const proxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
   { label: 'block', value: 'block' },
   { label: 'dns-out', value: 'dns-out' },
-  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
+  ...props.proxyGroups.map(({ id, tag }) => ({ label: tag, value: id }))
 ])
 
 const downloadProxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
-  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
+  ...props.proxyGroups.map(({ id, tag }) => ({ label: tag, value: id }))
 ])
 
 const supportPayload = computed(
@@ -100,7 +100,7 @@ const handleUseRuleset = (ruleset: RuleSetType) => {
 
 const hasLost = (r: ProfileType['rulesConfig'][0]) => {
   if (['direct', 'block', 'dns-out'].includes(r.proxy)) return false
-  return !props.profile.proxyGroupsConfig.find((v) => v.tag === r.proxy)
+  return !props.profile.proxyGroupsConfig.find((v) => v.id === r.proxy)
 }
 
 const hasError = (r: ProfileType['rulesConfig'][0]) => {
@@ -113,8 +113,7 @@ const showError = () => message.warn('kernel.rules.inlineRuleError')
 
 const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
   const { type, payload, proxy, invert } = rule
-  const opt = RulesTypeOptions.filter((v) => v.value === type)
-  let ruleStr = opt.length > 0 ? t(opt[0].label) : type
+  let ruleStr = t(RulesTypeOptions.find((v) => v.value === type)?.label || type)
   if (
     !['final', 'ip_is_private', 'src_ip_is_private', 'rule_set_ipcidr_match_source'].includes(type)
   ) {
@@ -135,7 +134,8 @@ const generateRuleDesc = (rule: ProfileType['rulesConfig'][0]) => {
     ruleStr += ',' + t('kernel.rules.invert')
   }
 
-  ruleStr += ',' + proxy
+  const group = props.proxyGroups.find((v) => v.id === proxy)
+  ruleStr += ',' + (group?.tag || proxy)
   return ruleStr
 }
 </script>

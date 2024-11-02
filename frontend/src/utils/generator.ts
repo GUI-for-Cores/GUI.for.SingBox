@@ -53,12 +53,16 @@ const generateCommonRule = (rule: Record<string, any>) => {
   }
 }
 
-export const generateRule = (rule: ProfileType['rulesConfig'][0]) => {
+export const generateRule = (
+  rule: ProfileType['rulesConfig'][0],
+  proxyGruoups: ProfileType['proxyGroupsConfig']
+) => {
   const common_rule = generateCommonRule(rule)
   if (common_rule) {
+    const group = proxyGruoups.find((v) => v.id === rule.proxy)
     return {
       ...common_rule,
-      outbound: rule.proxy
+      outbound: group?.tag || rule.proxy
     }
   }
   return common_rule
@@ -81,7 +85,8 @@ type ProxiesType = { type: string; tag: string }
 
 const generateRuleSets = async (
   rules: ProfileType['rulesConfig'],
-  dnsRules: ProfileType['dnsRulesConfig']
+  dnsRules: ProfileType['dnsRulesConfig'],
+  proxyGruoups: ProfileType['proxyGroupsConfig']
 ) => {
   const rulesetsStore = useRulesetsStore()
   const ruleSets: {
@@ -118,12 +123,13 @@ const generateRuleSets = async (
       const tag = rule['ruleset-name']
       if (tag && !usedRuleSets.has(tag)) {
         usedRuleSets.add(tag)
+        const download_detour = proxyGruoups.find((v) => v.id === rule['download-detour'])?.tag
         ruleSets.push({
           tag: tag,
           type: 'remote',
           format: rule['ruleset-format'],
           url: rule.payload,
-          download_detour: rule['download-detour']
+          download_detour: download_detour || rule['download-detour']
         })
       }
     })
@@ -190,9 +196,14 @@ const generateDnsConfig = async (profile: ProfileType) => {
   const remote_resolver_dns = profile.dnsConfig['remote-resolver-dns']
   const local_dns = profile.dnsConfig['local-dns']
   const resolver_dns = profile.dnsConfig['resolver-dns']
-  const local_detour = profile.dnsConfig['local-dns-detour']
-  const local_detour_config = { detour: local_detour || 'direct' }
-  const remote_detour = profile.dnsConfig['remote-dns-detour']
+  const local_detour_config = {
+    detour:
+      profile.proxyGroupsConfig.find((v) => v.id === profile.dnsConfig['local-dns-detour'])?.tag ||
+      'direct'
+  }
+  const remote_detour = profile.proxyGroupsConfig.find(
+    (v) => v.id === profile.dnsConfig['remote-dns-detour']
+  )?.tag
   const remote_detour_config = remote_detour ? { detour: remote_detour } : {}
   const disable_cache = profile.dnsConfig['disable-cache']
   const disable_expire = profile.dnsConfig['disable-expire']
@@ -457,14 +468,18 @@ const generateOutBoundsConfig = async (groups: ProfileType['proxyGroupsConfig'])
 
 const generateRouteConfig = async (profile: ProfileType) => {
   const route: Record<string, any> = {
-    rule_set: await generateRuleSets(profile.rulesConfig, profile.dnsRulesConfig),
+    rule_set: await generateRuleSets(
+      profile.rulesConfig,
+      profile.dnsRulesConfig,
+      profile.proxyGroupsConfig
+    ),
     rules: []
   }
 
   route.rules.push(
     ...profile.rulesConfig
       .filter((v) => v.type !== 'final')
-      .map((rule) => generateRule(rule))
+      .map((rule) => generateRule(rule, profile.proxyGroupsConfig))
       .filter((v) => v != null)
   )
 
@@ -478,7 +493,8 @@ const generateRouteConfig = async (profile: ProfileType) => {
   } else {
     const final = profile.rulesConfig.find((v) => v.type === 'final')
     if (final) {
-      route['final'] = final.proxy
+      const group = profile.proxyGroupsConfig.find((v) => v.id === final.proxy)
+      route['final'] = group?.tag || final.proxy
     }
   }
 

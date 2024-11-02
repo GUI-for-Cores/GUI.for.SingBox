@@ -15,7 +15,7 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 
 const proxyOptions = computed(() => [
-  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag })),
+  ...props.proxyGroups.map(({ id, tag }) => ({ label: tag, value: id })),
   { label: 'direct', value: 'direct' },
   { label: 'block', value: 'block' },
   { label: t('kernel.dns.default'), value: '' }

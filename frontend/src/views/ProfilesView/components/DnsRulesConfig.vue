@@ -43,7 +43,7 @@ const dnsOptions = computed(() => [
 
 const downloadProxyOptions = computed(() => [
   { label: 'direct', value: 'direct' },
-  ...props.proxyGroups.map(({ tag }) => ({ label: tag, value: tag }))
+  ...props.proxyGroups.map(({ id, tag }) => ({ label: tag, value: id }))
 ])
 const supportPayload = computed(
   () =>
