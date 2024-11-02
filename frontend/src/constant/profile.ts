@@ -259,7 +259,7 @@ export const RulesConfigDefaults = (ids: string[]): ProfileType['rulesConfig'] =
     id: sampleID(),
     type: 'final',
     payload: '',
-    proxy: ids[0],
+    proxy: ids[4],
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
