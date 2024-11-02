@@ -295,7 +295,7 @@ export const DnsRulesConfigDefaults = (ids: string[]): ProfileType['dnsRulesConf
   {
     id: sampleID(),
     type: 'clash_mode',
-    payload: ids[2],
+    payload: 'direct',
     server: 'local-dns',
     invert: false,
     'disable-cache': false,
