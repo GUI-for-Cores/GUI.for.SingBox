@@ -18,7 +18,7 @@ export const restoreProfile = (
     name: subID,
     generalConfig: GeneralConfigDefaults(),
     advancedConfig: AdvancedConfigDefaults(),
-    dnsConfig: DnsConfigDefaults(),
+    dnsConfig: DnsConfigDefaults([]),
     tunConfig: TunConfigDefaults(),
     proxyGroupsConfig: [],
     rulesConfig: []

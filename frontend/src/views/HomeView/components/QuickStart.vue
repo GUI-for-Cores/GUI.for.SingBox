@@ -30,16 +30,18 @@ const handleSubmit = async () => {
   const profileID = sampleID()
   const subscribeID = sampleID()
 
+  const ids = [sampleID(), sampleID(), sampleID(), sampleID(), sampleID(), sampleID()]
+
   const profile: ProfileType = {
     id: profileID,
     name: profileID,
     generalConfig: Defaults.GeneralConfigDefaults(),
     advancedConfig: Defaults.AdvancedConfigDefaults(),
     tunConfig: Defaults.TunConfigDefaults(),
-    dnsConfig: Defaults.DnsConfigDefaults(),
-    proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
-    rulesConfig: Defaults.RulesConfigDefaults(),
-    dnsRulesConfig: Defaults.DnsRulesConfigDefaults(),
+    dnsConfig: Defaults.DnsConfigDefaults(ids),
+    proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(ids),
+    rulesConfig: Defaults.RulesConfigDefaults(ids),
+    dnsRulesConfig: Defaults.DnsRulesConfigDefaults(ids),
     mixinConfig: Defaults.MixinConfigDefaults(),
     scriptConfig: Defaults.ScriptConfigDefaults()
   }

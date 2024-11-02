@@ -43,7 +43,7 @@ export const TunConfigDefaults = (): ProfileType['tunConfig'] => ({
   address: ['172.19.0.1/30', 'fdfe:dcba:9876::1/126']
 })
 
-export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
+export const DnsConfigDefaults = (ids: string[]): ProfileType['dnsConfig'] => ({
   enable: true,
   fakeip: false,
   strategy: 'ipv4_only',
@@ -52,8 +52,8 @@ export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
   'resolver-dns': '223.5.5.5',
   'remote-resolver-dns': '8.8.8.8',
   'final-dns': FinalDnsType.Remote,
-  'local-dns-detour': t('outbound.direct'),
-  'remote-dns-detour': t('outbound.select'),
+  'local-dns-detour': ids[2],
+  'remote-dns-detour': ids[0],
   'fake-ip-range-v4': '198.18.0.1/16',
   'fake-ip-range-v6': 'fc00::/18',
   'fake-ip-filter': [
@@ -74,20 +74,13 @@ export const DnsConfigDefaults = (): ProfileType['dnsConfig'] => ({
   'client-subnet': ''
 })
 
-export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] => {
-  const id1 = sampleID()
-  const id2 = sampleID()
-  const id3 = sampleID()
-  const id4 = sampleID()
-  const id5 = sampleID()
-  const id6 = sampleID()
-
+export const ProxyGroupsConfigDefaults = (ids: string[]): ProfileType['proxyGroupsConfig'] => {
   return [
     {
-      id: id1,
+      id: ids[0],
       tag: t('outbound.select'),
       type: ProxyGroup.Select,
-      proxies: [{ id: id2, type: 'built-in', tag: t('outbound.urltest') }],
+      proxies: [{ id: ids[1], type: 'built-in', tag: t('outbound.urltest') }],
       use: [],
       url: '',
       interval: 300,
@@ -95,7 +88,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       filter: ''
     },
     {
-      id: id2,
+      id: ids[1],
       tag: t('outbound.urltest'),
       type: ProxyGroup.UrlTest,
       proxies: [],
@@ -106,7 +99,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       filter: ''
     },
     {
-      id: id3,
+      id: ids[2],
       tag: t('outbound.direct'),
       type: ProxyGroup.Select,
       proxies: [
@@ -120,7 +113,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       filter: ''
     },
     {
-      id: id4,
+      id: ids[3],
       tag: t('outbound.block'),
       type: ProxyGroup.Select,
       proxies: [
@@ -134,12 +127,12 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       filter: ''
     },
     {
-      id: id5,
+      id: ids[4],
       tag: t('outbound.fallback'),
       type: ProxyGroup.Select,
       proxies: [
-        { id: id1, type: 'built-in', tag: t('outbound.select') },
-        { id: id3, type: 'built-in', tag: t('outbound.direct') }
+        { id: ids[0], type: 'built-in', tag: t('outbound.select') },
+        { id: ids[2], type: 'built-in', tag: t('outbound.direct') }
       ],
       use: [],
       url: '',
@@ -148,17 +141,17 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
       filter: ''
     },
     {
-      id: id6,
+      id: ids[5],
       tag: 'GLOBAL',
       type: ProxyGroup.Select,
       proxies: [
         { id: 'direct', type: 'built-in', tag: 'direct' },
         { id: 'block', type: 'built-in', tag: 'block' },
-        { id: id1, type: 'built-in', tag: t('outbound.select') },
-        { id: id2, type: 'built-in', tag: t('outbound.urltest') },
-        { id: id3, type: 'built-in', tag: t('outbound.direct') },
-        { id: id4, type: 'built-in', tag: t('outbound.block') },
-        { id: id5, type: 'built-in', tag: t('outbound.fallback') }
+        { id: ids[0], type: 'built-in', tag: t('outbound.select') },
+        { id: ids[1], type: 'built-in', tag: t('outbound.urltest') },
+        { id: ids[2], type: 'built-in', tag: t('outbound.direct') },
+        { id: ids[3], type: 'built-in', tag: t('outbound.block') },
+        { id: ids[4], type: 'built-in', tag: t('outbound.fallback') }
       ],
       use: [],
       url: '',
@@ -169,7 +162,7 @@ export const ProxyGroupsConfigDefaults = (): ProfileType['proxyGroupsConfig'] =>
   ]
 }
 
-export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
+export const RulesConfigDefaults = (ids: string[]): ProfileType['rulesConfig'] => [
   {
     id: sampleID(),
     type: 'inline',
@@ -194,7 +187,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'clash_mode',
     payload: 'global',
-    proxy: 'GLOBAL',
+    proxy: ids[5],
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -204,7 +197,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'inline',
     payload: JSON.stringify({ network: 'udp', port: 443 }, null, 2),
-    proxy: t('outbound.block'),
+    proxy: ids[3],
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -215,17 +208,17 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'rule_set_url',
     payload:
       'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs',
-    proxy: t('outbound.block'),
+    proxy: ids[3],
     'ruleset-name': 'CATEGORY-ADS',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     invert: false
   },
   {
     id: sampleID(),
     type: 'ip_is_private',
     payload: '',
-    proxy: t('outbound.direct'),
+    proxy: ids[2],
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -235,20 +228,20 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     id: sampleID(),
     type: 'rule_set_url',
     payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs',
-    proxy: t('outbound.direct'),
+    proxy: ids[2],
     'ruleset-name': 'GEOIP-CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     invert: false
   },
   {
     id: sampleID(),
     type: 'rule_set_url',
     payload: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs',
-    proxy: t('outbound.direct'),
+    proxy: ids[2],
     'ruleset-name': 'GEOSITE-CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     invert: false
   },
   {
@@ -256,17 +249,17 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
     type: 'rule_set_url',
     payload:
       'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs',
-    proxy: t('outbound.select'),
+    proxy: ids[0],
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     invert: false
   },
   {
     id: sampleID(),
     type: 'final',
     payload: '',
-    proxy: t('outbound.fallback'),
+    proxy: ids[0],
     'ruleset-name': '',
     'ruleset-format': '',
     'download-detour': '',
@@ -274,7 +267,7 @@ export const RulesConfigDefaults = (): ProfileType['rulesConfig'] => [
   }
 ]
 
-export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
+export const DnsRulesConfigDefaults = (ids: string[]): ProfileType['dnsRulesConfig'] => [
   {
     id: sampleID(),
     type: 'outbound',
@@ -302,7 +295,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
   {
     id: sampleID(),
     type: 'clash_mode',
-    payload: 'direct',
+    payload: ids[2],
     server: 'local-dns',
     invert: false,
     'disable-cache': false,
@@ -332,7 +325,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOSITE-CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     'client-subnet': ''
   },
   {
@@ -345,7 +338,7 @@ export const DnsRulesConfigDefaults = (): ProfileType['dnsRulesConfig'] => [
     invert: false,
     'ruleset-name': 'GEOLOCATION-!CN',
     'ruleset-format': 'binary',
-    'download-detour': t('outbound.direct'),
+    'download-detour': ids[2],
     'client-subnet': ''
   }
 ]

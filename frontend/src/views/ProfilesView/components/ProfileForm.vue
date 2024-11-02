@@ -57,16 +57,18 @@ const stepItems = [
   { title: 'profile.step.mixin-script' }
 ]
 
+const ids = [sampleID(), sampleID(), sampleID(), sampleID(), sampleID(), sampleID()]
+
 const profile = ref<ProfileType>({
   id: sampleID(),
   name: '',
   generalConfig: Defaults.GeneralConfigDefaults(),
   advancedConfig: Defaults.AdvancedConfigDefaults(),
   tunConfig: Defaults.TunConfigDefaults(),
-  dnsConfig: Defaults.DnsConfigDefaults(),
-  proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(),
-  rulesConfig: Defaults.RulesConfigDefaults(),
-  dnsRulesConfig: Defaults.DnsRulesConfigDefaults(),
+  dnsConfig: Defaults.DnsConfigDefaults(ids),
+  proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(ids),
+  rulesConfig: Defaults.RulesConfigDefaults(ids),
+  dnsRulesConfig: Defaults.DnsRulesConfigDefaults(ids),
   mixinConfig: Defaults.MixinConfigDefaults(),
   scriptConfig: Defaults.ScriptConfigDefaults()
 })

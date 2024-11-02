@@ -9,7 +9,9 @@ interface Props {
   proxyGroups: ProfileType['proxyGroupsConfig']
 }
 
-const fields = defineModel<ProfileType['dnsConfig']>({ default: DnsConfigDefaults() })
+const fields = defineModel<ProfileType['dnsConfig']>({
+  default: DnsConfigDefaults(['1', '2', '3'])
+})
 const props = defineProps<Props>()
 
 const { t } = useI18n()
