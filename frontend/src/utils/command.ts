@@ -209,6 +209,11 @@ export const getCommands = () => {
               label: 'settings.color.green',
               cmd: 'Green',
               handler: () => (appSettings.app.color = Color.Green)
+            },
+            {
+              label: 'settings.color.purple',
+              cmd: 'Purple',
+              handler: () => (appSettings.app.color = Color.Purple)
             }
           ]
         },
