@@ -294,7 +294,12 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         // stdout
         (out: string) => onOut(out, pid),
         // end
-        onEnd
+        onEnd,
+        {
+          env: {
+            ENABLE_DEPRECATED_: 'true'
+          }
+        }
       )
     } catch (error) {
       loading.value = false
