@@ -297,7 +297,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         onEnd,
         {
           env: {
-            ENABLE_DEPRECATED_: 'true'
+            ENABLE_DEPRECATED_: 'true',
+            ENABLE_DEPRECATED_LEGACY_DNS_ROUTE_OPTIONS: 'true'
           }
         }
       )
