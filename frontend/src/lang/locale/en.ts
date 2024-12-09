@@ -246,8 +246,8 @@ export default {
     restart: 'Restart Kernel'
   },
   router: {
-    overview: 'OverView',
-    subscriptions: 'Subscriptions',
+    overview: 'OverVi',
+    subscriptions: 'Подписка',
     rulesets: 'Rulesets',
     plugins: 'Plugins',
     settings: 'Settings',
