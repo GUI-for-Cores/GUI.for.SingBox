@@ -243,28 +243,28 @@ export const DefaultRouteRuleset = (): IRuleSet => ({
 
 export const DefaultRoute = (): IRoute => ({
   rules: [
-    {
-      id: sampleID(),
-      type: RuleType.Inbound,
-      payload: DefaultInboundIds.MixedIn,
-      invert: false,
-      action: RuleAction.Resolve,
-      outbound: '',
-      sniffer: [],
-      strategy: Strategy.Default,
-      server: ''
-    },
     // {
     //   id: sampleID(),
     //   type: RuleType.Inbound,
     //   payload: DefaultInboundIds.MixedIn,
     //   invert: false,
-    //   action: RuleAction.Sniff,
+    //   action: RuleAction.Resolve,
     //   outbound: '',
     //   sniffer: [],
     //   strategy: Strategy.Default,
     //   server: ''
     // },
+    {
+      id: sampleID(),
+      type: RuleType.Inbound,
+      payload: DefaultInboundIds.Tun,
+      invert: false,
+      action: RuleAction.Sniff,
+      outbound: '',
+      sniffer: [],
+      strategy: Strategy.Default,
+      server: ''
+    },
     {
       id: sampleID(),
       type: RuleType.Protocol,
