@@ -15,6 +15,7 @@ import {
 
 export const CoreWorkingDirectory = 'data/sing-box'
 export const CoreConfigFilePath = CoreWorkingDirectory + '/config.json'
+export const CoreCacheFilePath = CoreWorkingDirectory + '/cache.db'
 
 export const ModeOptions = [
   {

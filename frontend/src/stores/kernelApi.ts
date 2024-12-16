@@ -39,7 +39,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   })
 
-  let runtimeProfile: IProfile | null
+  let runtimeProfile: IProfile | undefined
 
   const proxies = ref<Record<string, IKernelProxy>>({})
   const providers = ref<{
@@ -226,7 +226,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     await generateConfigFile(profile || _profile)
 
     if (!_profile) {
-      runtimeProfile = null
+      runtimeProfile = undefined
     }
 
     const fileName = await getKernelFileName(branch === 'latest')
@@ -290,9 +290,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     logsStore.clearKernelLog()
   }
 
-  const restartKernel = async () => {
+  const restartKernel = async (cleanupTask?: () => Promise<any>) => {
     await stopKernel()
-    await startKernel()
+    await cleanupTask?.()
+    await startKernel(runtimeProfile)
   }
 
   const getProxyPort = ():
