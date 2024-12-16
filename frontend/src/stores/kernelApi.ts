@@ -62,6 +62,22 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       runtimeProfile = restoreProfile(JSON.parse(txt))
     }
 
+    const profile = profilesStore.getProfileById(appSettingsStore.app.kernel.profile)
+    if (profile) {
+      const _profile = deepClone(profile)
+      runtimeProfile.inbounds.forEach((inbound) => {
+        const _in = _profile.inbounds.find((v) => v.tag === inbound.tag)
+        if (_in) {
+          inbound.id = _in.id
+        }
+      })
+      runtimeProfile.outbounds = _profile.outbounds
+      runtimeProfile.dns = _profile.dns
+      runtimeProfile.route.final = _profile.route.final
+      runtimeProfile.route.rule_set = _profile.route.rule_set
+      runtimeProfile.route.rules = _profile.route.rules
+    }
+
     const mixed = runtimeProfile.inbounds.find((v) => v.mixed)
     const http = runtimeProfile.inbounds.find((v) => v.http)
     const socks = runtimeProfile.inbounds.find((v) => v.socks)
@@ -143,27 +159,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       runtimeProfile.route.auto_detect_interface = !options.interface_name
     }
 
-    const reloadRuntimeProfile = async () => {
-      if (!runtimeProfile) return
-      const profile = profilesStore.getProfileById(appSettingsStore.app.kernel.profile)
-      if (profile) {
-        const _profile = deepClone(profile)
-        runtimeProfile.inbounds.forEach((inbound) => {
-          const _in = _profile.inbounds.find((v) => v.tag === inbound.tag)
-          if (_in) {
-            inbound.id = _in.id
-          }
-        })
-        runtimeProfile.outbounds = _profile.outbounds
-        runtimeProfile.dns = _profile.dns
-        runtimeProfile.route.final = _profile.route.final
-        runtimeProfile.route.rule_set = _profile.route.rule_set
-        runtimeProfile.route.rules = _profile.route.rules
-      }
-      await stopKernel()
-      await startKernel(runtimeProfile)
-    }
-
     const fieldHandlerMap: Recordable<() => void> = {
       http: () => patchInboundPort(Inbound.Http, value),
       socks: () => patchInboundPort(Inbound.Socks, value),
@@ -177,8 +172,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     fieldHandlerMap[field]?.()
 
-    await reloadRuntimeProfile()
-    await refreshConfig()
+    await restartKernel()
     await envStore.updateSystemProxyStatus()
   }
 
