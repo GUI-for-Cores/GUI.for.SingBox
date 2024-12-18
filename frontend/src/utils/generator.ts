@@ -35,6 +35,17 @@ const _generateRule = (rule: IRule, rule_set: IRuleSet[], inbounds: IInbound[]) 
   return extra
 }
 
+const generateExperimental = (experimental: IExperimental, outbounds: IOutbound[]) => {
+  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
+  return {
+    clash_api: {
+      ...experimental.clash_api,
+      external_ui_download_detour: getOutbound(experimental.clash_api.external_ui_download_detour)
+    },
+    cache_file: experimental.cache_file
+  }
+}
+
 const generateInbounds = (inbounds: IInbound[]) => {
   return inbounds.flatMap((inbound) => {
     if (!inbound.enable) return []
@@ -249,7 +260,7 @@ export const generateConfig = async (originalProfile: IProfile) => {
   // step 1
   const config: Recordable<any> = {
     log: profile.log,
-    experimental: profile.experimental,
+    experimental: generateExperimental(profile.experimental, profile.outbounds),
     inbounds: generateInbounds(profile.inbounds),
     outbounds: await generateOutbounds(profile.outbounds),
     route: generateRoute(profile.route, profile.inbounds, profile.outbounds, profile.dns),
