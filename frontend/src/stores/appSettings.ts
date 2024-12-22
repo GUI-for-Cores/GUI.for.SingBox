@@ -132,7 +132,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     githubApiToken: '',
     multipleInstance: false,
     addPluginToMenu: false,
-    rollingRelease: false,
+    rollingRelease: true,
     pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins']
   })
 
