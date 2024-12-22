@@ -592,5 +592,7 @@ export const generateConfigFile = async (profile: ProfileType) => {
 
   const config = await generateConfig(profile)
 
+  config.log['level'] = 'debug'
+
   await Writefile(KernelConfigFilePath, JSON.stringify(config, null, 2))
 }

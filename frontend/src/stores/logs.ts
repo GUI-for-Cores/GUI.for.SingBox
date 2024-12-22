@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useMessage } from '@/hooks'
+import { useAlert, useMessage } from '@/hooks'
 
 const MAX_LINES = 9000
 
@@ -14,11 +14,13 @@ type TaskLogType = {
 export const useLogsStore = defineStore('logs', () => {
   const kernelLogs = ref<string[]>([])
   const scheduledtasksLogs = ref<TaskLogType[]>([])
+  const { alert } = useAlert()
   const { message } = useMessage()
 
   const regExp = /\+0800 \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (.*)/
   const recordKernelLog = (msg: string) => {
     msg.includes('FATAL') && message.error(msg)
+    msg.includes('is deprecated in sing-box') && alert('WARN', msg)
     const match = regExp.exec(msg)
     kernelLogs.value.unshift((match && match[1]) || msg)
     if (kernelLogs.value.length > MAX_LINES) {
