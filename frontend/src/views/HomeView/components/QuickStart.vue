@@ -58,6 +58,7 @@ const handleSubmit = async () => {
     await subscribeStore.addSubscribe(subscribe)
     await subscribeStore.updateSubscribe(subscribeID)
   } catch (error: any) {
+    loading.value = false
     console.log(error)
     message.error(error)
     subscribeStore.deleteSubscribe(subscribeID)

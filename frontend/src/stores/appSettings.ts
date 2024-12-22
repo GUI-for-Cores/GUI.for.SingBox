@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
-import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
+import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
 import { Colors, DefaultFontFamily } from '@/constant/app'
 import { Theme, WindowStartState, Lang, View, Color, WebviewGpuPolicy } from '@/enums/app'
 import {
@@ -81,7 +81,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     closeKernelOnExit: true,
     autoSetSystemProxy: true,
     autoStartKernel: false,
-    userAgent: APP_TITLE,
+    userAgent: APP_TITLE + '/' + APP_VERSION,
     startupDelay: 30,
     connections: {
       visibility: {
