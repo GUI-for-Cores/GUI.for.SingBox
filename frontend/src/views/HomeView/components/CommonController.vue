@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import { StackOptions } from '@/constant'
+import { TunStackOptions } from '@/constant/kernel'
 import { useKernelApiStore } from '@/stores'
 
 const { t } = useI18n()
 const kernelApiStore = useKernelApiStore()
 
-const onPortSubmit = (port: number) => kernelApiStore.updateConfig('http-port', port)
-const onSocksPortSubmit = (port: number) => kernelApiStore.updateConfig('socks-port', port)
-const onMixedPortSubmit = (port: number) => kernelApiStore.updateConfig('mixed-port', port)
+const onPortSubmit = (port: number) => kernelApiStore.updateConfig('http', port)
+const onSocksPortSubmit = (port: number) => kernelApiStore.updateConfig('socks', port)
+const onMixedPortSubmit = (port: number) => kernelApiStore.updateConfig('mixed', port)
 const onAllowLanChange = (allow: boolean) => kernelApiStore.updateConfig('allow-lan', allow)
-const conStackChange = (stack: string) => kernelApiStore.updateConfig('tun-stack', stack)
-const onTunDeviceSubmit = (device: string) => kernelApiStore.updateConfig('tun-device', device)
-const onInterfaceChange = (name: string) => kernelApiStore.updateConfig('interface-name', name)
-const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', name)
+const conStackChange = (stack: string) => kernelApiStore.updateConfig('tun-stack', { stack })
+const onTunDeviceSubmit = (device: string) => kernelApiStore.updateConfig('tun-device', { device })
+const onInterfaceChange = (interface_name: string) =>
+  kernelApiStore.updateConfig('interface-name', { interface_name })
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
       {{ t('home.overview.settingsTips') }}
     </Divider>
 
-    <Card :title="t('kernel.mixed-port')" class="card-item">
+    <Card :title="t('kernel.inbounds.mixedPort')" class="card-item">
       <Input
         v-model="kernelApiStore.config['mixed-port']"
         :min="0"
@@ -35,7 +35,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         auto-size
       />
     </Card>
-    <Card :title="t('kernel.port')" class="card-item">
+    <Card :title="t('kernel.inbounds.httpPort')" class="card-item">
       <Input
         v-model="kernelApiStore.config.port"
         :min="0"
@@ -47,7 +47,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         auto-size
       />
     </Card>
-    <Card :title="t('kernel.socks-port')" class="card-item">
+    <Card :title="t('kernel.inbounds.socksPort')" class="card-item">
       <Input
         v-model="kernelApiStore.config['socks-port']"
         :min="0"
@@ -65,16 +65,16 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
 
     <div class="w-full mt-8"></div>
 
-    <Card :title="t('kernel.tun.stack')" class="card-item">
+    <Card :title="t('kernel.inbounds.tun.stack')" class="card-item">
       <Select
         v-model="kernelApiStore.config.tun.stack"
-        :options="StackOptions"
+        :options="TunStackOptions"
         :border="false"
         auto-size
         @change="conStackChange"
       />
     </Card>
-    <Card :title="t('kernel.tun.interface-name')" class="card-item">
+    <Card :title="t('kernel.inbounds.tun.interface_name')" class="card-item">
       <Input
         v-model="kernelApiStore.config.tun.device"
         @submit="onTunDeviceSubmit"
@@ -83,7 +83,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         auto-size
       />
     </Card>
-    <Card :title="t('kernel.interface-name')" class="card-item">
+    <Card :title="t('kernel.route.default_interface')" class="card-item">
       <InterfaceSelect
         v-model="kernelApiStore.config['interface-name']"
         :border="false"
@@ -91,9 +91,7 @@ const onFakeIpChange = (name: string) => kernelApiStore.updateConfig('fakeip', n
         @change="onInterfaceChange"
       />
     </Card>
-    <Card title="Fake-IP" class="card-item">
-      <Switch v-model="kernelApiStore.config.fakeip" @change="onFakeIpChange" />
-    </Card>
+    <Card :title="t('common.none')" class="card-item"> </Card>
   </div>
 </template>
 

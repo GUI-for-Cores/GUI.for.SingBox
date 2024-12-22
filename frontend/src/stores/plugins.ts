@@ -3,8 +3,9 @@ import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { HttpGet, Readfile, Writefile } from '@/bridge'
-import { PluginsFilePath, PluginTrigger, PluginTriggerEvent } from '@/constant'
-import { useAppSettingsStore, type ProfileType, type SubscribeType } from '@/stores'
+import { PluginsFilePath } from '@/constant/app'
+import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
+import { useAppSettingsStore, type SubscribeType } from '@/stores'
 import { debounce, ignoredError, updateTrayMenus, isNumber, omitArray } from '@/utils'
 
 export type PluginConfiguration = {
@@ -306,7 +307,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return
   }
 
-  const onGenerateTrigger = async (params: Record<string, any>, profile: ProfileType) => {
+  const onGenerateTrigger = async (params: Record<string, any>, profile: IProfile) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnGenerate]
     if (observers.length === 0) return params
 

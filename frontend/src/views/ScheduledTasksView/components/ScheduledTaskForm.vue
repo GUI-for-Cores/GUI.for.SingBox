@@ -5,7 +5,8 @@ import { useI18n } from 'vue-i18n'
 import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
 import { ValidateCron } from '@/bridge/scheduledTasks'
-import { ScheduledTasksType, ScheduledTaskOptions } from '@/constant'
+import { ScheduledTaskOptions } from '@/constant/app'
+import { ScheduledTasksType } from '@/enums/app'
 import {
   type ScheduledTaskType,
   useScheduledTasksStore,

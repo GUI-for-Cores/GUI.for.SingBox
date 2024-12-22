@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { deepClone, sampleID } from '@/utils'
-import { PluginTriggerEvent } from '@/constant'
+import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, type PluginConfiguration } from '@/stores'
 
 interface Props {

@@ -4,11 +4,10 @@ import { useI18n, I18nT } from 'vue-i18n'
 
 import { ClipboardSetText } from '@/bridge'
 import { useMessage, useAlert } from '@/hooks'
-import { DraggableOptions, View } from '@/constant'
+import { View } from '@/enums/app'
+import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { debounce, deepClone, generateConfig, sampleID } from '@/utils'
 import {
-  type ProfileType,
-  type Menu,
   useProfilesStore,
   useAppSettingsStore,
   useKernelApiStore,
@@ -86,11 +85,10 @@ const menus: Menu[] = [
   ...[
     'profile.step.name',
     'profile.step.general',
-    'profile.step.tun',
-    'profile.step.groups',
-    'profile.step.rules',
+    'profile.step.inbounds',
+    'profile.step.outbounds',
+    'profile.step.route',
     'profile.step.dns',
-    'profile.step.dnsRules',
     'profile.step.mixin-script'
   ].map((v, i) => {
     return {
@@ -117,14 +115,14 @@ const handleAddProfile = async () => {
   showForm.value = true
 }
 
-const handleEditProfile = (p: ProfileType, step = 0) => {
+const handleEditProfile = (p: IProfile, step = 0) => {
   isUpdate.value = true
   profileID.value = p.id
   profileStep.value = step
   showForm.value = true
 }
 
-const handleDeleteProfile = async (p: ProfileType) => {
+const handleDeleteProfile = async (p: IProfile) => {
   const { profile, running } = appSettingsStore.app.kernel
   if (profile === p.id && running) {
     message.warn('profiles.shouldStop')
@@ -139,7 +137,7 @@ const handleDeleteProfile = async (p: ProfileType) => {
   }
 }
 
-const handleUseProfile = async (p: ProfileType) => {
+const handleUseProfile = async (p: IProfile) => {
   if (appSettingsStore.app.kernel.profile === p.id) return
 
   appSettingsStore.app.kernel.profile = p.id
@@ -179,14 +177,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
   </div>
 
   <div v-else class="grid-list-header">
-    <Radio
-      v-model="appSettingsStore.app.profilesView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
-      ]"
-      class="mr-auto"
-    />
+    <Radio v-model="appSettingsStore.app.profilesView" :options="ViewOptions" class="mr-auto" />
     <Button @click="handleAddProfile" type="primary">
       {{ t('common.add') }}
     </Button>
@@ -251,27 +242,31 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
         </Button>
       </template>
       <div>
-        {{ t('profiles.proxyGroups') }}
+        {{ t('profiles.inbounds') }}
         :
-        {{ p.proxyGroupsConfig.length }}
+        {{ p.inbounds.length }}
         /
-        {{ t('profiles.rules') }}
+        {{ t('profiles.outbounds') }}
         :
-        {{ p.rulesConfig.length }}
+        {{ p.outbounds.length }}
       </div>
       <div>
-        TUN :
-        {{ p.tunConfig.enable ? t('common.enabled') : t('common.disabled') }}
-        / DNS :
-        {{ p.dnsConfig.enable ? t('common.enabled') : t('common.disabled') }}
+        {{ t('kernel.route.tab.rule_set') }}
+        :
+        {{ p.route.rule_set.length }}
+        /
+        {{ t('kernel.route.tab.rules') }}
+        :
+        {{ p.route.rules.length }}
       </div>
       <div>
-        Http :
-        {{ p.advancedConfig.port || '--' }}
-        Socks :
-        {{ p.advancedConfig['socks-port'] || '--' }}
-        Mixed :
-        {{ p.generalConfig['mixed-port'] || '--' }}
+        {{ t('profiles.dnsServers') }}
+        :
+        {{ p.dns.servers.length }}
+        /
+        {{ t('profiles.dnsRules') }}
+        :
+        {{ p.dns.rules.length }}
       </div>
     </Card>
   </div>

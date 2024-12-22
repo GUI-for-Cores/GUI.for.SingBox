@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { ref, inject, type Ref, computed, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ref, inject, computed, useTemplateRef, type Ref } from 'vue'
 
-import { useMessage, useAlert, useBool } from '@/hooks'
+import { useMessage, useAlert } from '@/hooks'
 import { deepClone, generateConfig, sampleID } from '@/utils'
 import * as Defaults from '@/constant/profile'
 import { WindowToggleMaximise } from '@/bridge'
-import { type ProfileType, useProfilesStore } from '@/stores'
+import { useProfilesStore } from '@/stores'
 
 import GeneralConfig from './GeneralConfig.vue'
-import AdvancedConfig from './AdvancedConfig.vue'
-import TunConfig from './TunConfig.vue'
+import InboundsConfig from './InboundsConfig.vue'
+import OutboundsConfig from './OutboundsConfig.vue'
+import RouteConfig from './RouteConfig.vue'
 import DnsConfig from './DnsConfig.vue'
-import ProxyGroupsConfig from './ProxyGroupsConfig.vue'
-import DnsRulesConfig from './DnsRulesConfig.vue'
-import RulesConfig from './RulesConfig.vue'
 import MixinAndScript from './MixinAndScriptConfig.vue'
 
 interface Props {
@@ -23,63 +21,81 @@ interface Props {
   isUpdate?: boolean
 }
 
-enum StepEnum {
-  NAME = 0,
-  GENERAL = 1,
-  TUN = 2,
-  GROUPS = 3,
-  RULES = 4,
-  DNS = 5,
-  DNS_RULES = 6,
-  MIXIN_SCRIPT = 7
+enum Step {
+  Name = 0,
+  General = 1,
+  Inbounds = 2,
+  Outbounds = 3,
+  Route = 4,
+  Dns = 5,
+  MixinScript = 6
 }
 
 const props = withDefaults(defineProps<Props>(), {
   id: '',
   isUpdate: false,
-  step: StepEnum.NAME
+  step: Step.Name
 })
 
 const loading = ref(false)
-const groupsRef = useTemplateRef<typeof ProxyGroupsConfig>('groupsRef')
-const rulesRef = useTemplateRef<typeof RulesConfig>('rulesRef')
-const dnsRulesRef = useTemplateRef<typeof DnsRulesConfig>('dnsRulesRef')
+const inboundsRef = useTemplateRef('inboundsRef')
+const outboundsRef = useTemplateRef('outboundsRef')
+const routeRef = useTemplateRef('routeRef')
+const dnsRef = useTemplateRef('dnsRef')
 const currentStep = ref(props.step)
 
 const stepItems = [
   { title: 'profile.step.name' },
   { title: 'profile.step.general' },
-  { title: 'profile.step.tun' },
-  { title: 'profile.step.groups' },
-  { title: 'profile.step.rules' },
+  { title: 'profile.step.inbounds' },
+  { title: 'profile.step.outbounds' },
+  { title: 'profile.step.route' },
   { title: 'profile.step.dns' },
-  { title: 'profile.step.dnsRules' },
   { title: 'profile.step.mixin-script' }
 ]
 
-const ids = [sampleID(), sampleID(), sampleID(), sampleID(), sampleID(), sampleID()]
-
-const profile = ref<ProfileType>({
+const profile = ref<IProfile>({
   id: sampleID(),
   name: '',
-  generalConfig: Defaults.GeneralConfigDefaults(),
-  advancedConfig: Defaults.AdvancedConfigDefaults(),
-  tunConfig: Defaults.TunConfigDefaults(),
-  dnsConfig: Defaults.DnsConfigDefaults(ids),
-  proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(ids),
-  rulesConfig: Defaults.RulesConfigDefaults(ids),
-  dnsRulesConfig: Defaults.DnsRulesConfigDefaults(ids),
-  mixinConfig: Defaults.MixinConfigDefaults(),
-  scriptConfig: Defaults.ScriptConfigDefaults()
+  log: Defaults.DefaultLog(),
+  experimental: Defaults.DefaultExperimental(),
+  inbounds: Defaults.DefaultInbounds(),
+  outbounds: Defaults.DefaultOutbounds(),
+  route: Defaults.DefaultRoute(),
+  dns: Defaults.DefaultDns(),
+  mixin: Defaults.DefaultMixin(),
+  script: Defaults.DefaultScript()
+})
+
+const inboundOptions = computed(() =>
+  profile.value.inbounds.map((v) => ({ label: v.tag, value: v.id }))
+)
+
+const outboundOptions = computed(() =>
+  profile.value.outbounds.map((v) => ({ label: v.tag, value: v.id }))
+)
+
+const serverOptions = computed(() =>
+  profile.value.dns.servers.map((v) => ({ label: v.tag, value: v.id }))
+)
+
+const generalConfig = computed({
+  get() {
+    return { log: profile.value.log, experimental: profile.value.experimental }
+  },
+  set({ log, experimental }) {
+    profile.value.log = log
+    profile.value.experimental = experimental
+  }
 })
 
 const mixinAndScriptConfig = computed({
   get() {
-    return { mixin: profile.value.mixinConfig, script: profile.value.scriptConfig }
+    return { mixin: profile.value.mixin, script: profile.value.script }
   },
   set({ mixin, script }) {
-    profile.value.mixinConfig = mixin
-    profile.value.scriptConfig = script
+    profile.value.mixin = mixin
+    profile.value.script = script
   }
 })
 
@@ -87,7 +103,6 @@ const { t } = useI18n()
 const { alert } = useAlert()
 const { message } = useMessage()
 const profilesStore = useProfilesStore()
-const [showAdvancedSetting, toggleAdvancedSetting] = useBool(false)
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -113,9 +128,10 @@ const handleSave = async () => {
 
 const handleAdd = () => {
   const map: Record<number, Ref> = {
-    [StepEnum.GROUPS]: groupsRef,
-    [StepEnum.RULES]: rulesRef,
-    [StepEnum.DNS_RULES]: dnsRulesRef
+    [Step.Inbounds]: inboundsRef,
+    [Step.Outbounds]: outboundsRef,
+    [Step.Route]: routeRef,
+    [Step.Dns]: dnsRef
   }
   map[currentStep.value].value.handleAdd()
 }
@@ -139,10 +155,12 @@ if (props.isUpdate) {
 
 <template>
   <div @dblclick="WindowToggleMaximise" class="header" style="--wails-draggable: drag">
-    <div class="header-title">{{ t(stepItems[currentStep].title) }}</div>
+    <div class="header-title">
+      {{ t(stepItems[currentStep].title) }} ({{ currentStep + 1 }} / {{ stepItems.length }})
+    </div>
     <Button @click="handlePreview" icon="file" type="text" class="ml-auto" />
     <Button
-      v-show="[StepEnum.GROUPS, StepEnum.RULES, StepEnum.DNS_RULES].includes(currentStep)"
+      v-show="[Step.Inbounds, Step.Outbounds, Step.Route, Step.Dns].includes(currentStep)"
       @click="handleAdd"
       icon="add"
       type="text"
@@ -151,62 +169,46 @@ if (props.isUpdate) {
   </div>
 
   <div class="form">
-    <div v-show="currentStep === StepEnum.NAME">
+    <div v-show="currentStep === Step.Name">
       <div class="form-item">
         <div class="name">{{ t('profile.name') }} *</div>
         <Input v-model="profile.name" auto-size autofocus class="flex-1 ml-8" />
       </div>
     </div>
-
-    <div v-show="currentStep === StepEnum.GENERAL">
-      <GeneralConfig v-model="profile.generalConfig" />
-      <Divider>
-        <Button type="text" size="small" @click="toggleAdvancedSetting">
-          {{ t('profile.advancedSettings') }}
-        </Button>
-      </Divider>
-      <div v-if="showAdvancedSetting">
-        <AdvancedConfig v-model="profile.advancedConfig" />
-      </div>
+    <div v-show="currentStep === Step.General">
+      <GeneralConfig v-model="generalConfig" :outbound-options="outboundOptions" />
     </div>
-
-    <div v-show="currentStep === StepEnum.TUN">
-      <TunConfig v-model="profile.tunConfig" />
+    <div v-show="currentStep === Step.Inbounds">
+      <InboundsConfig v-model="profile.inbounds" ref="inboundsRef" />
     </div>
-
-    <div v-show="currentStep === StepEnum.GROUPS">
-      <ProxyGroupsConfig ref="groupsRef" v-model="profile.proxyGroupsConfig" />
+    <div v-show="currentStep === Step.Outbounds">
+      <OutboundsConfig v-model="profile.outbounds" ref="outboundsRef" />
     </div>
-
-    <div v-show="currentStep === StepEnum.RULES">
-      <RulesConfig
-        ref="rulesRef"
-        v-model="profile.rulesConfig"
-        :proxy-groups="profile.proxyGroupsConfig"
-        :profile="profile"
+    <div v-show="currentStep === Step.Route">
+      <RouteConfig
+        v-model="profile.route"
+        :inbound-options="inboundOptions"
+        :outbound-options="outboundOptions"
+        :server-options="serverOptions"
+        ref="routeRef"
       />
     </div>
-
-    <div v-show="currentStep === StepEnum.DNS">
-      <DnsConfig v-model="profile.dnsConfig" :proxy-groups="profile.proxyGroupsConfig" />
-    </div>
-
-    <div v-show="currentStep === StepEnum.DNS_RULES">
-      <DnsRulesConfig
-        ref="dnsRulesRef"
-        v-model="profile.dnsRulesConfig"
-        :dns-config="profile.dnsConfig"
-        :proxy-groups="profile.proxyGroupsConfig"
+    <div v-show="currentStep === Step.Dns">
+      <DnsConfig
+        v-model="profile.dns"
+        :inbound-options="inboundOptions"
+        :outbound-options="outboundOptions"
+        :rule-set="profile.route.rule_set"
+        ref="dnsRef"
       />
     </div>
-
-    <div v-show="currentStep === StepEnum.MIXIN_SCRIPT">
+    <div v-show="currentStep === Step.MixinScript">
       <MixinAndScript v-model="mixinAndScriptConfig" />
     </div>
   </div>
 
   <div class="form-action">
-    <Button @click="handlePrevStep" :disabled="currentStep == StepEnum.NAME" type="text">
+    <Button @click="handlePrevStep" :disabled="currentStep == Step.Name" type="text">
       {{ t('common.prevStep') }}
     </Button>
     <Button

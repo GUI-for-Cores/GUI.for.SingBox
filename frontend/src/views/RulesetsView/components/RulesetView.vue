@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { deepClone, ignoredError, isValidInlineRuleJson } from '@/utils'
+import { deepClone, ignoredError, isValidJson } from '@/utils'
 import { Readfile, Writefile } from '@/bridge'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
 
@@ -29,7 +29,7 @@ const handleSave = async () => {
   if (!ruleset.value) return
   loading.value = true
   try {
-    if (!isValidInlineRuleJson(rulesetContent.value)) {
+    if (!isValidJson(rulesetContent.value)) {
       throw 'syntax error'
     }
     await Writefile(ruleset.value.path, rulesetContent.value)

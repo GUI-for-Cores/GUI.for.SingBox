@@ -412,3 +412,11 @@ export const exitApp = async () => {
     error(err)
   }
 }
+
+export const getKernelFileName = async (isLatest = false) => {
+  const envStore = useEnvStore()
+  const { os } = envStore.env
+  const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
+  const latest = isLatest ? '-latest' : ''
+  return `sing-box${latest}${fileSuffix}`
+}

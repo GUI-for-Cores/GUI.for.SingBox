@@ -2,10 +2,9 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
 
-import type { Menu } from '@/stores'
 import { useBool, useMessage, usePicker } from '@/hooks'
 import { type PickerItem } from '@/components/Picker/index.vue'
-import { LogLevelOptions } from '@/constant'
+import { LogLevelOptions } from '@/constant/kernel'
 import { getKernelLogsWS } from '@/api/kernel'
 import { addToRuleSet, isValidIPv4, isValidIPv6, setIntervalImmediately } from '@/utils'
 
@@ -15,11 +14,13 @@ const logs = ref<{ type: string; payload: string }[]>([])
 const keywordsRegexp = computed(() => new RegExp(keywords.value))
 
 const LogLevelMap: Record<string, string[]> = {
-  panic: ['silent'],
-  error: ['error'],
-  warn: ['error', 'warn'],
-  info: ['error', 'warn', 'info'],
-  debug: ['error', 'warn', 'info', 'debug']
+  trace: ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'panic'],
+  debug: ['debug', 'info', 'warn', 'error', 'fatal', 'panic'],
+  info: ['info', 'warn', 'error', 'fatal', 'panic'],
+  warn: ['warn', 'error', 'fatal', 'panic'],
+  error: ['error', 'fatal', 'panic'],
+  fatal: ['fatal', 'panic'],
+  panic: ['panic']
 }
 
 const filteredLogs = computed(() => {
@@ -106,7 +107,7 @@ onUnmounted(() => {
   <div class="logs-view">
     <div class="form">
       <span class="label">
-        {{ t('kernel.log-level') }}
+        {{ t('kernel.log.level') }}
         :
       </span>
       <Select v-model="logType" :options="LogLevelOptions" size="small" />

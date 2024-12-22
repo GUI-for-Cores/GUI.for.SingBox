@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ref, computed, onActivated } from 'vue'
 
-import { ProxyGroupType } from '@/constant'
 import { useMessage, usePrompt } from '@/hooks'
 import { ignoredError, sleep, handleUseProxy } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
@@ -23,10 +22,10 @@ const kernelApiStore = useKernelApiStore()
 const groups = computed(() => {
   const { proxies } = kernelApiStore
   return Object.values(proxies)
-    .filter((v) => v.all && v.name !== 'GLOBAL')
+    .filter((v) => ['Selector', 'URLTest', 'Direct'].includes(v.type) && v.name !== 'GLOBAL')
     .concat(proxies.GLOBAL || [])
     .map((group) => {
-      const all = group.all
+      const all = (group.all || [])
         .filter((proxy) => {
           const history = proxies[proxy].history || []
           const alive = history[history.length - 1]?.delay > 0
@@ -209,15 +208,16 @@ onActivated(() => {
       <div class="group-info">
         <span class="group-name">{{ group.name }}</span>
         <span class="group-type">
-          {{
+          {{ group.type }}
+          <!-- {{
             t(
               {
-                [ProxyGroupType.Selector]: 'kernel.proxyGroups.type.Selector',
-                [ProxyGroupType.UrlTest]: 'kernel.proxyGroups.type.UrlTest',
-                [ProxyGroupType.Fallback]: 'kernel.proxyGroups.type.Fallback'
+                [Outbound.Selector]: 'kernel.proxyGroups.type.Selector',
+                [Outbound.Urltest]: 'kernel.proxyGroups.type.UrlTest',
+                [Outbound.Direct]: 'kernel.proxyGroups.type.Fallback'
               }[group.type]!
             )
-          }}
+          }} -->
         </span>
         <span> :: </span>
         <template v-for="(chain, index) in group.chains" :key="chain">

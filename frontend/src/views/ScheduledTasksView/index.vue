@@ -2,16 +2,11 @@
 import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { View } from '@/constant'
+import { View } from '@/enums/app'
 import { useMessage, useBool } from '@/hooks'
-import { DraggableOptions } from '@/constant'
+import { DraggableOptions } from '@/constant/app'
 import { debounce, formatRelativeTime, formatDate } from '@/utils'
-import {
-  type ScheduledTaskType,
-  useAppSettingsStore,
-  useScheduledTasksStore,
-  type Menu
-} from '@/stores'
+import { type ScheduledTaskType, useAppSettingsStore, useScheduledTasksStore } from '@/stores'
 
 import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
 import ScheduledTasksLogs from './components/ScheduledTasksLogs.vue'

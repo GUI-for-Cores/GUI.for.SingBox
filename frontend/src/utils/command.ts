@@ -1,7 +1,8 @@
 import useI18n from '@/lang'
-import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/constant'
+import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
 import { handleChangeMode } from '@/utils'
 import { useMessage } from '@/hooks'
+import { ClashMode } from '@/enums/kernel'
 import { ExitApp, RestartApp, WindowReloadApp } from '@/bridge'
 import {
   useAppSettingsStore,
@@ -73,15 +74,12 @@ export const getCommands = () => {
         {
           label: 'tray.enableTunMode',
           cmd: 'Enable Tun',
-          handler: async () => {
-            await envStore.clearSystemProxy()
-            await kernelStore.updateConfig('tun', true)
-          }
+          handler: () => kernelStore.updateConfig('tun', { enable: true })
         },
         {
           label: 'tray.disableTunMode',
           cmd: 'Disable Tun',
-          handler: () => kernelStore.updateConfig('tun', false)
+          handler: () => kernelStore.updateConfig('tun', { enable: false })
         },
         {
           label: 'kernel.allow-lan',
@@ -100,17 +98,17 @@ export const getCommands = () => {
             {
               label: 'kernel.global',
               cmd: 'Global',
-              handler: () => handleChangeMode('global')
+              handler: () => handleChangeMode(ClashMode.Global)
             },
             {
               label: 'kernel.rule',
               cmd: 'Rule',
-              handler: () => handleChangeMode('rule')
+              handler: () => handleChangeMode(ClashMode.Rule)
             },
             {
               label: 'kernel.direct',
               cmd: 'Direct',
-              handler: () => handleChangeMode('direct')
+              handler: () => handleChangeMode(ClashMode.Direct)
             }
           ]
         }
@@ -123,10 +121,7 @@ export const getCommands = () => {
         {
           label: 'tray.setSystemProxy',
           cmd: 'Set System Proxy',
-          handler: async () => {
-            await kernelStore.updateConfig('tun', false)
-            await envStore.setSystemProxy()
-          }
+          handler: envStore.setSystemProxy
         },
         {
           label: 'tray.clearSystemProxy',

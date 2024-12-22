@@ -3,14 +3,13 @@ import { useI18n } from 'vue-i18n'
 import { computed, inject, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
-import * as Defaults from '@/constant'
+import * as Defaults from '@/constant/profile'
 import { sampleID } from '@/utils'
 import {
   useProfilesStore,
   useAppSettingsStore,
   useSubscribesStore,
-  type SubscribeType,
-  type ProfileType
+  type SubscribeType
 } from '@/stores'
 
 const { t } = useI18n()
@@ -27,27 +26,23 @@ const handleCancel = inject('cancel') as any
 const canSubmit = computed(() => url.value && url.value.toLocaleLowerCase().startsWith('http'))
 
 const handleSubmit = async () => {
-  const profileID = sampleID()
   const subscribeID = sampleID()
 
-  const ids = [sampleID(), sampleID(), sampleID(), sampleID(), sampleID(), sampleID()]
-
-  const profile: ProfileType = {
-    id: profileID,
-    name: profileID,
-    generalConfig: Defaults.GeneralConfigDefaults(),
-    advancedConfig: Defaults.AdvancedConfigDefaults(),
-    tunConfig: Defaults.TunConfigDefaults(),
-    dnsConfig: Defaults.DnsConfigDefaults(ids),
-    proxyGroupsConfig: Defaults.ProxyGroupsConfigDefaults(ids),
-    rulesConfig: Defaults.RulesConfigDefaults(ids),
-    dnsRulesConfig: Defaults.DnsRulesConfigDefaults(ids),
-    mixinConfig: Defaults.MixinConfigDefaults(),
-    scriptConfig: Defaults.ScriptConfigDefaults()
+  const profile: IProfile = {
+    id: sampleID(),
+    name: '',
+    log: Defaults.DefaultLog(),
+    experimental: Defaults.DefaultExperimental(),
+    inbounds: Defaults.DefaultInbounds(),
+    outbounds: Defaults.DefaultOutbounds(),
+    route: Defaults.DefaultRoute(),
+    dns: Defaults.DefaultDns(),
+    mixin: Defaults.DefaultMixin(),
+    script: Defaults.DefaultScript()
   }
 
-  profile.proxyGroupsConfig[0].use = [subscribeID]
-  profile.proxyGroupsConfig[1].use = [subscribeID]
+  // profile.proxyGroupsConfig[0].use = [subscribeID]
+  // profile.proxyGroupsConfig[1].use = [subscribeID]
 
   const subscribe: SubscribeType = {
     id: subscribeID,
@@ -64,7 +59,7 @@ const handleSubmit = async () => {
     include: '',
     exclude: '',
     includeProtocol: '',
-    excludeProtocol: Defaults.DefaultExcludeProtocols,
+    excludeProtocol: '', // Defaults.DefaultExcludeProtocols,
     proxyPrefix: '',
     disabled: false,
     inSecure: false,

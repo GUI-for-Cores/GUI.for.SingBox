@@ -4,7 +4,8 @@ import { stringify, parse } from 'yaml'
 
 import { usePluginsStore } from '@/stores'
 import { Readfile, Writefile, HttpGet } from '@/bridge'
-import { SubscribesFilePath, DefaultExcludeProtocols } from '@/constant'
+import { DefaultExcludeProtocols } from '@/constant/kernel'
+import { SubscribesFilePath } from '@/constant/app'
 import {
   debounce,
   sampleID,

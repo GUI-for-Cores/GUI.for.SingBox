@@ -4,7 +4,7 @@ import { ref, inject } from 'vue'
 
 import { useMessage } from '@/hooks'
 import { Readfile, Writefile } from '@/bridge'
-import { PluginTriggerEvent } from '@/constant'
+import { PluginTriggerEvent } from '@/enums/app'
 import { deepClone, ignoredError } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 

@@ -7,7 +7,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { javascript } from '@codemirror/lang-javascript'
 import { autocompletion } from '@codemirror/autocomplete'
 
-import { Theme } from '@/constant'
+import { Theme } from '@/enums/app'
 import { getCompletions } from '@/utils'
 import { useAppSettingsStore } from '@/stores'
 

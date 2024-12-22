@@ -1,5 +1,6 @@
 import i18n from '@/lang'
-import { Theme, type MenuItem, Color, Lang } from '@/constant'
+import { ClashMode } from '@/enums/kernel'
+import { Theme, Color, Lang } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   Notify,
@@ -14,10 +15,10 @@ import {
   debounce,
   exitApp,
   handleChangeMode,
-  handleUseProxy,
   sampleID,
   APP_TITLE,
-  APP_VERSION
+  APP_VERSION,
+  handleUseProxy
 } from '@/utils'
 
 const getTrayIcons = () => {
@@ -80,10 +81,10 @@ const getTrayMenus = () => {
   const groupsMenus: MenuItem[] = (() => {
     if (!proxies) return []
     return Object.values(proxies)
-      .filter((v) => v.all && v.name !== 'GLOBAL')
+      .filter((v) => ['Selector', 'URLTest', 'Direct'].includes(v.type) && v.name !== 'GLOBAL')
       .concat(proxies.GLOBAL || [])
       .map((group) => {
-        const all = group.all
+        const all = (group.all || [])
           .filter((proxy) => {
             const history = proxies[proxy].history || []
             const alive = history[history.length - 1]?.delay > 0
@@ -173,20 +174,20 @@ const getTrayMenus = () => {
         {
           type: 'item',
           text: 'kernel.global',
-          checked: kernelApiStore.config.mode === 'global',
-          event: () => handleChangeMode('global')
+          checked: kernelApiStore.config.mode === ClashMode.Global,
+          event: () => handleChangeMode(ClashMode.Global)
         },
         {
           type: 'item',
           text: 'kernel.rule',
-          checked: kernelApiStore.config.mode === 'rule',
-          event: () => handleChangeMode('rule')
+          checked: kernelApiStore.config.mode === ClashMode.Rule,
+          event: () => handleChangeMode(ClashMode.Rule)
         },
         {
           type: 'item',
           text: 'kernel.direct',
-          checked: kernelApiStore.config.mode === 'direct',
-          event: () => handleChangeMode('direct')
+          checked: kernelApiStore.config.mode === ClashMode.Direct,
+          event: () => handleChangeMode(ClashMode.Direct)
         }
       ]
     },
@@ -233,10 +234,7 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'tray.setSystemProxy',
           hidden: envStore.systemProxy,
-          event: async () => {
-            await kernelApiStore.updateConfig('tun', false)
-            await envStore.setSystemProxy()
-          }
+          event: envStore.setSystemProxy
         },
         {
           type: 'item',
@@ -255,18 +253,13 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'tray.enableTunMode',
           hidden: kernelApiStore.config.tun.enable,
-          event: async () => {
-            await envStore.clearSystemProxy()
-            await kernelApiStore.updateConfig('tun', true)
-          }
+          event: envStore.clearSystemProxy
         },
         {
           type: 'item',
           text: 'tray.disableTunMode',
           hidden: !kernelApiStore.config.tun.enable,
-          event: async () => {
-            await kernelApiStore.updateConfig('tun', false)
-          }
+          event: () => kernelApiStore.updateConfig('tun', { enable: false })
         }
       ]
     },

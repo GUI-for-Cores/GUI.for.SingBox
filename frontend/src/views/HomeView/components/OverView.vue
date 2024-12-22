@@ -105,7 +105,7 @@ onUnmounted(() => {
           :title="t(mode.label)"
           class="mode-card"
         >
-          <div class="desp">{{ t(mode.desp) }}</div>
+          <div class="desp">{{ t(mode.desc) }}</div>
         </Card>
       </div>
     </div>

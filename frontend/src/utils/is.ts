@@ -58,11 +58,10 @@ export const isValidIPv6 = (ip: string) =>
     ip
   )
 
-export const isValidInlineRuleJson = (str: string) => {
+export const isValidJson = (str: string) => {
   try {
     return !!JSON.parse(str)
-  } catch (error) {
-    console.log(error)
+  } catch {
     return false
   }
 }

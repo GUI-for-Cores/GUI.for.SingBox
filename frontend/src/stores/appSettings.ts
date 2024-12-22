@@ -4,16 +4,8 @@ import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError } from '@/utils'
-import {
-  Theme,
-  WindowStartState,
-  Lang,
-  View,
-  Color,
-  Colors,
-  DefaultFontFamily,
-  WebviewGpuPolicy
-} from '@/constant'
+import { Colors, DefaultFontFamily } from '@/constant/app'
+import { Theme, WindowStartState, Lang, View, Color, WebviewGpuPolicy } from '@/enums/app'
 import {
   Readfile,
   Writefile,

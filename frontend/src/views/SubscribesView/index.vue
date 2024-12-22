@@ -2,15 +2,14 @@
 import { computed, ref } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { View } from '@/constant'
+import { View } from '@/enums/app'
 import { useMessage } from '@/hooks'
-import { DraggableOptions } from '@/constant'
+import { DraggableOptions } from '@/constant/app'
 import { updateProvidersProxies } from '@/api/kernel'
 import { BrowserOpenURL, ClipboardSetText, Removefile } from '@/bridge'
 import { formatBytes, formatRelativeTime, debounce, ignoredError, formatDate } from '@/utils'
 import {
   type SubscribeType,
-  type Menu,
   useSubscribesStore,
   useAppSettingsStore,
   useKernelApiStore

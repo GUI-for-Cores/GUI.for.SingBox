@@ -10,10 +10,12 @@ interface Props {
   activeKey: string
   items: TabItemType[]
   height?: string
+  tabPosition?: 'left' | 'top'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  height: ''
+  height: '',
+  tabPosition: 'left'
 })
 
 const emits = defineEmits(['update:activeKey'])
@@ -26,7 +28,7 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
 </script>
 
 <template>
-  <div :style="{ height }" class="tabs">
+  <div :style="{ height }" :class="'position-' + tabPosition" class="tabs">
     <div class="tab">
       <Button
         v-for="tab in items"
@@ -50,15 +52,28 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
   display: flex;
 }
 .tab {
-  width: 20%;
   display: flex;
   align-items: center;
-  flex-direction: column;
 }
 .slot {
-  width: 80%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+.position-left {
+  .tab {
+    width: 20%;
+    flex-direction: column;
+  }
+  .slot {
+    width: 80%;
+  }
+}
+.position-top {
+  flex-direction: column;
+  .tab {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
 }
 </style>

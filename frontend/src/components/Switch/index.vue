@@ -2,11 +2,13 @@
 interface Props {
   size?: 'default' | 'small'
   border?: 'default' | 'square'
+  disabled?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   size: 'default',
-  border: 'default'
+  border: 'default',
+  disabled: false
 })
 
 const model = defineModel<boolean>()
@@ -14,6 +16,7 @@ const model = defineModel<boolean>()
 const emits = defineEmits(['change'])
 
 const toggle = () => {
+  if (props.disabled) return
   model.value = !model.value
   emits('change', !model.value)
 }
@@ -23,7 +26,7 @@ const toggle = () => {
   <div
     @click="toggle"
     :style="{ 'justify-content': !model ? 'flex-start' : 'flex-end' }"
-    :class="[size, border, model ? 'on' : 'off']"
+    :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
     class="switch"
   >
     <div v-if="$slots.default && !model" class="slot">
@@ -89,5 +92,9 @@ const toggle = () => {
   .dot {
     background-color: var(--switch-off-dot-bg);
   }
+}
+
+.disabled {
+  cursor: not-allowed;
 }
 </style>

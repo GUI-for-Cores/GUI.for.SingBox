@@ -1,11 +1,10 @@
-export type KernelApiConfig = {
+interface IKernelApiConfig {
   port: number
   'socks-port': number
   'mixed-port': number
   'interface-name': string
   'allow-lan': boolean
   mode: string
-  fakeip: boolean
   tun: {
     enable: boolean
     stack: string
@@ -13,7 +12,7 @@ export type KernelApiConfig = {
   }
 }
 
-export type Proxy = {
+interface IKernelProxy {
   alive: boolean
   all: string[]
   name: string
@@ -25,11 +24,11 @@ export type Proxy = {
   }[]
 }
 
-export type KernelApiProxies = {
+interface IKernelApiProxies {
   proxies: Record<string, Proxy>
 }
 
-export type KernelApiProviders = {
+interface IKernelApiProviders {
   providers: Record<
     string,
     {
@@ -39,14 +38,14 @@ export type KernelApiProviders = {
   >
 }
 
-export type KernelApiConnections = {
+interface IKernelApiConnections {
   connections: {
     id: string
     chains: string[]
   }[]
 }
 
-export type KernelConnectionsWS = {
+interface IKernelConnectionsWS {
   connections: {
     id: string
     metadata: {
@@ -78,7 +77,7 @@ export type KernelConnectionsWS = {
   }[]
 }
 
-export type KernelApiProvidersRules = {
+interface IKernelApiProvidersRules {
   providers: Record<
     string,
     {

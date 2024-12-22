@@ -1,13 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export type Menu = {
-  label: string
-  handler?: (...args: any) => void
-  separator?: boolean
-  children?: Menu[]
-}
-
 export const useAppStore = defineStore('app', () => {
   /* Global Menu */
   const menuShow = ref(false)

@@ -4,7 +4,8 @@ import { computed, ref, watch } from 'vue'
 
 import { Notify } from '@/bridge'
 import { debounce, ignoredError } from '@/utils'
-import { PluginTriggerEvent, ScheduledTasksFilePath, ScheduledTasksType } from '@/constant'
+import { ScheduledTasksFilePath } from '@/constant/app'
+import { ScheduledTasksType, PluginTriggerEvent } from '@/enums/app'
 import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
 import {
   Readfile,

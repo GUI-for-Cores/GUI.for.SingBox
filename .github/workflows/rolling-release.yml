@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: cd frontend && pnpm install
       - name: Build Frontend
-        run: cd frontend && pnpm build
+        run: cd frontend && pnpm build-only
       - name: Create a compressed file
         run: |
           git rev-parse --short HEAD | tr -d '\n' > frontend/dist/version.txt

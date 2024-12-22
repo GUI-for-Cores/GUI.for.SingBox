@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 
 import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
-import { type Menu, useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
+import { useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
 import {
   WindowSetAlwaysOnTop,
   WindowHide,

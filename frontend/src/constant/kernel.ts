@@ -1,316 +1,185 @@
-import { useEnvStore } from '@/stores'
+import {
+  ClashMode,
+  Inbound,
+  Outbound,
+  TunStack,
+  LogLevel,
+  RuleType,
+  RulesetFormat,
+  RulesetType,
+  RuleAction,
+  Sniffer,
+  Strategy,
+  RuleActionReject
+} from '@/enums/kernel'
 
-export enum ProxyGroup {
-  Select = 'selector',
-  UrlTest = 'urltest',
-  Direct = 'direct',
-  Dns = 'dns',
-  Block = 'block'
-}
-
-export enum ProxyGroupType {
-  Selector = 'Selector',
-  UrlTest = 'URLTest',
-  Fallback = 'Fallback'
-}
-
-export enum FinalDnsType {
-  Local = 'local-dns',
-  Remote = 'remote-dns'
-}
-
-export const KernelWorkDirectory = 'data/sing-box'
-export const KernelCacheFilePath = KernelWorkDirectory + '/cache.db'
-export const KernelConfigFilePath = KernelWorkDirectory + '/config.json'
-
-export const getKernelFileName = async (isLatest = false) => {
-  const envStore = useEnvStore()
-  const { os } = envStore.env
-  const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
-  const latest = isLatest ? '-latest' : ''
-  return `sing-box${latest}${fileSuffix}`
-}
+export const CoreWorkingDirectory = 'data/sing-box'
+export const CoreConfigFilePath = CoreWorkingDirectory + '/config.json'
+export const CoreCacheFilePath = CoreWorkingDirectory + '/cache.db'
 
 export const ModeOptions = [
   {
     label: 'kernel.global',
-    value: 'global',
-    desp: 'kernel.globalDesp'
+    value: ClashMode.Global,
+    desc: 'kernel.globalDesc'
   },
   {
     label: 'kernel.rule',
-    value: 'rule',
-    desp: 'kernel.ruleDesp'
+    value: ClashMode.Rule,
+    desc: 'kernel.ruleDesc'
   },
   {
     label: 'kernel.direct',
-    value: 'direct',
-    desp: 'kernel.directDesp'
+    value: ClashMode.Direct,
+    desc: 'kernel.directDesc'
   }
 ]
 
 export const LogLevelOptions = [
   {
-    label: 'kernel.info',
-    value: 'info'
+    label: 'kernel.log.trace',
+    value: LogLevel.Trace
   },
   {
-    label: 'kernel.warning',
-    value: 'warn'
+    label: 'kernel.log.debug',
+    value: LogLevel.Debug
   },
   {
-    label: 'kernel.error',
-    value: 'error'
+    label: 'kernel.log.info',
+    value: LogLevel.Info
   },
   {
-    label: 'kernel.debug',
-    value: 'debug'
+    label: 'kernel.log.warn',
+    value: LogLevel.Warn
   },
   {
-    label: 'kernel.silent',
-    value: 'panic'
+    label: 'kernel.log.error',
+    value: LogLevel.Error
+  },
+  {
+    label: 'kernel.log.fatal',
+    value: LogLevel.Fatal
+  },
+  {
+    label: 'kernel.log.panic',
+    value: LogLevel.Panic
   }
 ]
 
-export const FindProcessModeOptions = [
-  {
-    label: 'kernel.always',
-    value: 'always'
-  },
-  {
-    label: 'kernel.strict',
-    value: 'strict'
-  },
-  {
-    label: 'kernel.off',
-    value: 'off'
-  }
+export const InboundOptions = [
+  { label: 'mixed', value: Inbound.Mixed },
+  { label: 'socks', value: Inbound.Socks },
+  { label: 'http', value: Inbound.Http },
+  { label: 'tun', value: Inbound.Tun }
 ]
 
-export const GlobalClientFingerprintOptions = [
-  { label: 'kernel.chrome', value: 'chrome' },
-  { label: 'kernel.firefox', value: 'firefox' },
-  { label: 'kernel.safari', value: 'safari' },
-  { label: 'kernel.iOS', value: 'iOS' },
-  { label: 'kernel.android', value: 'android' },
-  { label: 'kernel.edge', value: 'edge' },
-  { label: 'kernel.360', value: '360' },
-  { label: 'kernel.qq', value: 'qq' },
-  { label: 'kernel.random', value: 'random' }
-]
-
-export const GeodataLoaderOptions = [
-  { label: 'kernel.standard', value: 'standard' },
-  { label: 'kernel.memconservative', value: 'memconservative' }
-]
-
-export const GroupsTypeOptions = [
-  {
-    label: 'kernel.proxyGroups.type.select',
-    value: ProxyGroup.Select
-  },
-  {
-    label: 'kernel.proxyGroups.type.url-test',
-    value: ProxyGroup.UrlTest
-  }
-]
-
-export const StrategyOptions = [
-  {
-    label: 'kernel.proxyGroups.strategy.consistent-hashing',
-    value: 'consistent-hashing'
-  },
-  {
-    label: 'kernel.proxyGroups.strategy.round-robin',
-    value: 'round-robin'
-  }
+export const OutboundOptions = [
+  { label: 'kernel.outbounds.direct', value: Outbound.Direct },
+  { label: 'kernel.outbounds.selector', value: Outbound.Selector },
+  { label: 'kernel.outbounds.urltest', value: Outbound.Urltest }
 ]
 
 export const RulesTypeOptions = [
   {
-    label: 'kernel.rules.type.DOMAIN',
-    value: 'domain'
+    label: 'kernel.rules.type.inbound',
+    value: RuleType.Inbound
   },
   {
-    label: 'kernel.rules.type.DOMAIN-SUFFIX',
-    value: 'domain_suffix'
+    label: 'kernel.rules.type.network',
+    value: RuleType.Network
   },
   {
-    label: 'kernel.rules.type.DOMAIN-KEYWORD',
-    value: 'domain_keyword'
+    label: 'kernel.rules.type.protocol',
+    value: RuleType.Protocol
   },
   {
-    label: 'kernel.rules.type.DOMAIN-REGEX',
-    value: 'domain_regex'
+    label: 'kernel.rules.type.domain',
+    value: RuleType.Domain
   },
   {
-    label: 'kernel.rules.type.IP-CIDR',
-    value: 'ip_cidr'
+    label: 'kernel.rules.type.domain_suffix',
+    value: RuleType.DomainSuffix
   },
   {
-    label: 'kernel.rules.type.SRC-IP-CIDR',
-    value: 'source_ip_cidr'
+    label: 'kernel.rules.type.domain_keyword',
+    value: RuleType.DomainKeyword
   },
   {
-    label: 'kernel.rules.type.SRC-PORT',
-    value: 'source_port'
+    label: 'kernel.rules.type.domain_regex',
+    value: RuleType.DomainRegex
   },
   {
-    label: 'kernel.rules.type.DST-PORT',
-    value: 'port'
+    label: 'kernel.rules.type.source_ip_cidr',
+    value: RuleType.SourceIPCidr
   },
   {
-    label: 'kernel.rules.type.PROCESS-NAME',
-    value: 'process_name'
+    label: 'kernel.rules.type.ip_cidr',
+    value: RuleType.IPCidr
   },
   {
-    label: 'kernel.rules.type.PROCESS-PATH',
-    value: 'process_path'
+    label: 'kernel.rules.type.ip_is_private',
+    value: RuleType.IpIsPrivate
   },
   {
-    label: 'kernel.rules.type.RULE-SET',
-    value: 'rule_set'
+    label: 'kernel.rules.type.source_port',
+    value: RuleType.SourcePort
   },
   {
-    label: 'kernel.rules.type.REMOTE-RULE-SET',
-    value: 'rule_set_url'
+    label: 'kernel.rules.type.source_port_range',
+    value: RuleType.SourcePortRange
   },
   {
-    label: 'kernel.rules.type.IP-PRIVATE',
-    value: 'ip_is_private'
+    label: 'kernel.rules.type.port',
+    value: RuleType.Port
   },
   {
-    label: 'kernel.rules.type.SRC-IP-PRIVATE',
-    value: 'source_ip_is_private'
+    label: 'kernel.rules.type.port_range',
+    value: RuleType.PortRange
   },
   {
-    label: 'kernel.rules.type.PROTOCOL',
-    value: 'protocol'
+    label: 'kernel.rules.type.process_name',
+    value: RuleType.ProcessName
   },
   {
-    label: 'kernel.rules.type.CLASH-MODE',
-    value: 'clash_mode'
+    label: 'kernel.rules.type.process_path',
+    value: RuleType.ProcessPath
   },
   {
-    label: 'kernel.rules.type.NETWORK',
-    value: 'network'
+    label: 'kernel.rules.type.process_path_regex',
+    value: RuleType.ProcessPathRegex
   },
   {
-    label: 'kernel.rules.type.IP-VERSION',
-    value: 'ip_version'
-  },
-  // {
-  //   label: 'kernel.rules.type.RULE-SET-IPCIDR-MATCH-SOURCE',
-  //   value: 'rule_set_ipcidr_match_source'
-  // },
-  {
-    label: 'kernel.rules.type.FALLBACK',
-    value: 'final'
+    label: 'kernel.rules.type.clash_mode',
+    value: RuleType.ClashMode
   },
   {
-    label: 'kernel.rules.type.INLINE',
-    value: 'inline'
+    label: 'kernel.rules.type.rule_set',
+    value: RuleType.RuleSet
+  },
+  {
+    label: 'kernel.rules.type.inline',
+    value: RuleType.Inline
   }
 ]
 
-export const DnsRulesTypeOptions = [
+export const DnsRuleTypeOptions = RulesTypeOptions.concat([
   {
-    label: 'kernel.rules.type.QUERY-TYPE',
-    value: 'query_type'
-  },
-  {
-    label: 'kernel.rules.type.INBOUND',
-    value: 'inbound'
-  },
-  {
-    label: 'kernel.rules.type.OUTBOUND',
-    value: 'outbound'
-  },
-  {
-    label: 'kernel.rules.type.GEOIP',
-    value: 'geoip'
-  },
-  {
-    label: 'kernel.rules.type.FAKE-IP',
-    value: 'fakeip'
-  },
-  ...RulesTypeOptions.filter((item) => !['ip_version', 'final'].includes(item.value))
-]
-
-export const StackOptions = [
-  { label: 'kernel.tun.system', value: 'System' },
-  { label: 'kernel.tun.gvisor', value: 'gVisor' },
-  { label: 'kernel.tun.mixed', value: 'Mixed' }
-  // { label: 'kernel.tun.lwip', value: 'LWIP' }
-]
-
-export const ProxyTypeOptions = [
-  {
-    label: 'direct',
-    value: 'direct'
-  },
-  {
-    label: 'http',
-    value: 'http'
-  },
-  {
-    label: 'socks',
-    value: 'socks'
-  },
-  {
-    label: 'vmess',
-    value: 'vmess'
-  },
-  {
-    label: 'vless',
-    value: 'vless'
-  },
-  {
-    label: 'trojan',
-    value: 'trojan'
-  },
-  {
-    label: 'hysteria',
-    value: 'hysteria'
-  },
-  {
-    label: 'hysteria2',
-    value: 'hysteria2'
-  },
-  {
-    label: 'tuic',
-    value: 'tuic'
-  },
-  {
-    label: 'wireguard',
-    value: 'wireguard'
-  },
-  {
-    label: 'shadowsocks',
-    value: 'shadowsocks'
-  },
-  {
-    label: 'shadowtls',
-    value: 'shadowtls'
-  },
-  {
-    label: 'tuic',
-    value: 'tuic'
-  },
-  {
-    label: 'tor',
-    value: 'tor'
-  },
-  {
-    label: 'ssh',
-    value: 'ssh'
+    label: 'kernel.rules.type.outbound',
+    value: RuleType.Outbound
   }
+])
+
+export const TunStackOptions = [
+  { label: 'kernel.inbounds.tun.system', value: TunStack.System },
+  { label: 'kernel.inbounds.tun.gvisor', value: TunStack.GVisor },
+  { label: 'kernel.inbounds.tun.mixed', value: TunStack.Mixed }
 ]
 
-export enum RulesetFormat {
-  Source = 'source',
-  Binary = 'binary'
-}
+export const RulesetTypeOptions = [
+  { label: 'kernel.route.rule_set.type.inline', value: RulesetType.Inline },
+  { label: 'kernel.route.rule_set.type.local', value: RulesetType.Local },
+  { label: 'kernel.route.rule_set.type.remote', value: RulesetType.Remote }
+]
 
 export const RulesetFormatOptions = [
   { label: 'ruleset.format.source', value: RulesetFormat.Source },
@@ -318,16 +187,40 @@ export const RulesetFormatOptions = [
 ]
 
 export const DomainStrategyOptions = [
-  { label: 'kernel.dns.strategy.default', value: '' },
-  { label: 'kernel.dns.strategy.prefer_ipv4', value: 'prefer_ipv4' },
-  { label: 'kernel.dns.strategy.prefer_ipv6', value: 'prefer_ipv6' },
-  { label: 'kernel.dns.strategy.ipv4_only', value: 'ipv4_only' },
-  { label: 'kernel.dns.strategy.ipv6_only', value: 'ipv6_only' }
+  { label: 'kernel.strategy.default', value: Strategy.Default },
+  { label: 'kernel.strategy.prefer_ipv4', value: Strategy.PreferIPv4 },
+  { label: 'kernel.strategy.prefer_ipv6', value: Strategy.PreferIPv6 },
+  { label: 'kernel.strategy.ipv4_only', value: Strategy.IPv4Only },
+  { label: 'kernel.strategy.ipv6_only', value: Strategy.IPv6Only }
 ]
 
-export const FinalDnsOptions = [
-  { label: 'kernel.dns.local-dns', value: 'local-dns' },
-  { label: 'kernel.dns.remote-dns', value: 'remote-dns' }
+export const RuleActionOptions = [
+  { label: 'kernel.route.rules.action.route', value: RuleAction.Route },
+  { label: 'kernel.route.rules.action.route-options', value: RuleAction.RouteOptions },
+  { label: 'kernel.route.rules.action.reject', value: RuleAction.Reject },
+  { label: 'kernel.route.rules.action.hijack-dns', value: RuleAction.HijackDNS },
+  { label: 'kernel.route.rules.action.sniff', value: RuleAction.Sniff },
+  { label: 'kernel.route.rules.action.resolve', value: RuleAction.Resolve }
+]
+
+export const DnsRuleActionOptions = [
+  { label: 'kernel.route.rules.action.route', value: RuleAction.Route },
+  { label: 'kernel.route.rules.action.route-options', value: RuleAction.RouteOptions },
+  { label: 'kernel.route.rules.action.reject', value: RuleAction.Reject }
+]
+
+export const DnsRuleActionRejectOptions = [
+  { label: 'kernel.route.rules.action.rejectDefault', value: RuleActionReject.Default },
+  { label: 'kernel.route.rules.action.rejectDrop', value: RuleActionReject.Drop }
+]
+
+export const RuleSnifferOptions = [
+  { label: 'kernel.route.rules.sniffer.http', value: Sniffer.Http },
+  { label: 'kernel.route.rules.sniffer.tls', value: Sniffer.Tls },
+  { label: 'kernel.route.rules.sniffer.quic', value: Sniffer.Quic },
+  { label: 'kernel.route.rules.sniffer.dns', value: Sniffer.Dns },
+  { label: 'kernel.route.rules.sniffer.ssh', value: Sniffer.Ssh },
+  { label: 'kernel.route.rules.sniffer.rdp', value: Sniffer.Rdp }
 ]
 
 export const EmptyRuleSet = {

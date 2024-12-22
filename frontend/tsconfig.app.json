@@ -1,6 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "global.d.ts"],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
@@ -10,8 +10,6 @@
       "@/*": ["./src/*"],
       "@wails/*": ["./wailsjs/*"]
     },
-    "types": [
-      "@types/dom-view-transitions"
-    ]
+    "types": ["@types/dom-view-transitions"]
   }
 }

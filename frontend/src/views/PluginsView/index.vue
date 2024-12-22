@@ -5,14 +5,9 @@ import { useI18n, I18nT } from 'vue-i18n'
 import { useMessage, useConfirm } from '@/hooks'
 import { debounce, ignoredError } from '@/utils'
 import { Removefile, BrowserOpenURL } from '@/bridge'
-import { DraggableOptions, PluginTriggerEvent, PluginTrigger, View } from '@/constant'
-import {
-  usePluginsStore,
-  useAppSettingsStore,
-  useEnvStore,
-  type PluginType,
-  type Menu
-} from '@/stores'
+import { DraggableOptions } from '@/constant/app'
+import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
+import { usePluginsStore, useAppSettingsStore, useEnvStore, type PluginType } from '@/stores'
 
 import PluginForm from './components/PluginForm.vue'
 import PluginView from './components/PluginView.vue'

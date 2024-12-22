@@ -6,14 +6,11 @@ import { useMessage } from '@/hooks'
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
 import { debounce, formatRelativeTime, ignoredError, formatDate } from '@/utils'
 import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
-import { DraggableOptions, View, EmptyRuleSet, RulesetFormat } from '@/constant'
-import {
-  type RuleSetType,
-  type Menu,
-  useRulesetsStore,
-  useAppSettingsStore,
-  useEnvStore
-} from '@/stores'
+import { DraggableOptions } from '@/constant/app'
+import { View } from '@/enums/app'
+import { EmptyRuleSet } from '@/constant/kernel'
+import { RulesetFormat } from '@/enums/kernel'
+import { type RuleSetType, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
 
 import RulesetForm from './components/RulesetForm.vue'
 import RulesetView from './components/RulesetView.vue'

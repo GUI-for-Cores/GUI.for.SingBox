@@ -4,9 +4,8 @@ import { ref, computed, onUnmounted } from 'vue'
 
 import { useBool, useMessage, usePicker } from '@/hooks'
 import { type PickerItem } from '@/components/Picker/index.vue'
-import { DraggableOptions } from '@/constant'
-import { useAppSettingsStore, type Menu } from '@/stores'
-import type { KernelConnectionsWS } from '@/api/kernel.schema'
+import { DraggableOptions } from '@/constant/app'
+import { useAppSettingsStore } from '@/stores'
 import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 import {
   addToRuleSet,
@@ -230,8 +229,8 @@ const menu: Menu[] = [
 const details = ref()
 const isActive = ref(true)
 const keywords = ref('')
-const dataSource = ref<(KernelConnectionsWS['connections'][0] & TrafficCacheType)[]>([])
-const disconnectedData = ref<KernelConnectionsWS['connections']>([])
+const dataSource = ref<(IKernelConnectionsWS['connections'][0] & TrafficCacheType)[]>([])
+const disconnectedData = ref<IKernelConnectionsWS['connections']>([])
 const [showDetails, toggleDetails] = useBool(false)
 const [showSettings, toggleSettings] = useBool(false)
 const [isPause, togglePause] = useBool(false)
@@ -239,7 +238,7 @@ const { message } = useMessage()
 const { picker } = usePicker()
 const { t } = useI18n()
 
-const onConnections = (data: KernelConnectionsWS) => {
+const onConnections = (data: IKernelConnectionsWS) => {
   if (isPause.value) return
   const connections = data.connections || []
 

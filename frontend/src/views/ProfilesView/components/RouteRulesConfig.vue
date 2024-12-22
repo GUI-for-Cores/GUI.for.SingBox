@@ -1,38 +1,32 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, isValidJson } from '@/utils'
+import { deepClone } from '@/utils'
 import { useBool, useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
-import { DefaultDnsRule, DefaultDnsRules } from '@/constant/profile'
+import { DefaultRouteRule } from '@/constant/profile'
+import { RuleAction, RulesetFormat, RulesetType, RuleType, ClashMode } from '@/enums/kernel'
 import {
-  RuleType,
-  ClashMode,
-  RulesetType,
-  RulesetFormat,
-  RuleAction,
-  RuleActionReject
-} from '@/enums/kernel'
-import {
-  DnsRuleTypeOptions,
-  DnsRuleActionOptions,
-  DnsRuleActionRejectOptions
+  DomainStrategyOptions,
+  RuleActionOptions,
+  RuleSnifferOptions,
+  RulesTypeOptions
 } from '@/constant/kernel'
 
 interface Props {
   inboundOptions: { label: string; value: string }[]
   outboundOptions: { label: string; value: string }[]
-  serversOptions: { label: string; value: string }[]
+  serverOptions: { label: string; value: string }[]
   ruleSet: IRuleSet[]
 }
 
 const props = defineProps<Props>()
 
-const model = defineModel<IDNSRule[]>({ default: DefaultDnsRules() })
+const model = defineModel<IRule[]>({ default: DefaultRouteRule() })
 
 let ruleId = 0
-const fields = ref<IDNSRule>(DefaultDnsRule())
+const fields = ref<IRule>(DefaultRouteRule())
 
 const { t } = useI18n()
 const [showEditModal] = useBool(false)
@@ -40,7 +34,7 @@ const { message } = useMessage()
 
 const handleAdd = () => {
   ruleId = -1
-  fields.value = DefaultDnsRule()
+  fields.value = DefaultRouteRule()
   showEditModal.value = true
 }
 
@@ -60,67 +54,58 @@ const handleEdit = (index: number) => {
   showEditModal.value = true
 }
 
-const handleDeleteRule = (index: number) => {
-  model.value.splice(index, 1)
-}
-
 const handleUse = (ruleset: any) => {
   fields.value.payload = ruleset.id
 }
 
-const showLost = () => message.warn('kernel.route.rules.invalid')
-
-const hasLost = (rule: IDNSRule) => {
-  const checkServer = () => {
-    if (rule.action === RuleAction.Route) {
-      if (!props.serversOptions.find((v) => v.value === rule.server)) {
-        return true
-      }
-      return false
-    } else if (rule.action === RuleAction.RouteOptions) {
-      return !isValidJson(rule.server)
-    } else if (rule.action === RuleAction.Reject) {
-      return ![RuleActionReject.Default, RuleActionReject.Drop].includes(rule.server as any)
-    }
-    return false
-  }
-
-  const checkPayload = () => {
-    if (rule.type === RuleType.Inbound) {
-      return !props.inboundOptions.find((v) => v.value === rule.payload)
-    }
-    if (rule.type === RuleType.Outbound) {
-      return rule.payload !== 'any' && !props.outboundOptions.find((v) => v.value === rule.payload)
-    }
-    if (rule.type === RuleType.RuleSet) {
-      return !props.ruleSet.find((v) => v.id === rule.payload)
-    }
-    if (rule.type === RuleType.Inline) {
-      return !isValidJson(rule.payload)
-    }
-    return !rule.payload
-  }
-
-  return checkServer() || checkPayload()
+const handleDelete = (index: number) => {
+  model.value.splice(index, 1)
 }
 
-const renderRule = (rule: IDNSRule) => {
-  const { type, payload, server, action } = rule
+const showLost = () => message.warn('kernel.route.rules.invalid')
+
+const isSupportPayload = computed(() => {
+  return ![RuleType.RuleSet].includes(fields.value.type as any)
+})
+
+const hasLost = (rule: IRule) => {
+  if (rule.type === RuleType.Protocol) {
+    return false
+  }
+  if (rule.type === RuleType.Inbound) {
+    return !props.inboundOptions.find((v) => v.value === rule.payload)
+  }
+  if (rule.action !== RuleAction.Route) {
+    return false
+  }
+  const outboundLost = !props.outboundOptions.find((v) => v.value === rule.outbound)
+  if (rule.type === RuleType.RuleSet) {
+    return !props.ruleSet.find((v) => v.id === rule.payload) || outboundLost
+  }
+  return outboundLost
+}
+
+const renderRule = (rule: IRule) => {
+  const { type, payload, outbound, action } = rule
   const children: string[] = [type]
   if (type === RuleType.RuleSet) {
     const tag = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
+    children.push(tag)
+  } else if (type === RuleType.Inbound) {
+    const tag = props.inboundOptions.find((v) => v.value === rule.payload)?.label || rule.payload
     children.push(tag)
   } else {
     children.push(payload)
   }
   children.push(action)
-  if (server) {
-    const proxy = props.serversOptions.find((v) => v.value === server)?.label || server
+  if (outbound) {
+    const proxy = props.outboundOptions.find((v) => v.value === outbound)?.label || outbound
     children.push(proxy)
   }
   return children.join(',')
 }
 </script>
+
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
@@ -138,7 +123,7 @@ const renderRule = (rule: IDNSRule) => {
       </div>
       <div class="ml-auto">
         <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-        <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
+        <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
       </div>
     </Card>
   </div>
@@ -146,20 +131,54 @@ const renderRule = (rule: IDNSRule) => {
   <Modal
     v-model:open="showEditModal"
     @ok="handleAddEnd"
-    title="kernel.dns.tab.rules"
+    title="kernel.route.tab.rules"
     max-width="80"
     max-height="80"
   >
     <div class="form-item">
-      {{ t('kernel.dns.rules.type') }}
-      <Select v-model="fields.type" :options="DnsRuleTypeOptions" />
+      {{ t('kernel.route.rules.type') }}
+      <Select v-model="fields.type" :options="RulesTypeOptions" />
     </div>
     <div class="form-item">
-      {{ t('kernel.dns.rules.action') }}
-      <Radio v-model="fields.action" :options="DnsRuleActionOptions" />
+      {{ t('kernel.route.rules.action.name') }}
+      <Radio v-model="fields.action" :options="RuleActionOptions" class="ml-8" />
     </div>
-    <div v-if="fields.type !== RuleType.RuleSet" class="form-item">
-      {{ t('kernel.dns.rules.payload') }}
+    <template v-if="fields.action === RuleAction.Route">
+      <div class="form-item">
+        {{ t('kernel.route.rules.outbound') }}
+        <Select v-model="fields.outbound" :options="outboundOptions" />
+      </div>
+    </template>
+    <template v-else-if="fields.action === RuleAction.RouteOptions">
+      <div class="form-item">
+        {{ t('kernel.route.rules.routeOptions') }}
+        <CodeViewer v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
+      </div>
+    </template>
+    <template v-else-if="fields.action === RuleAction.Sniff">
+      <div class="form-item">
+        {{ t('kernel.route.rules.sniffer.name') }}
+        <div class="flex items-center">
+          <Switch :model-value="fields.sniffer.length === 0" disabled>All</Switch>
+          <CheckBox v-model="fields.sniffer" :options="RuleSnifferOptions" class="ml-4" />
+        </div>
+      </div>
+    </template>
+    <template v-else-if="fields.action === RuleAction.Resolve">
+      <div class="form-item">
+        {{ t('kernel.strategy.name') }}
+        <Select v-model="fields.strategy" :options="DomainStrategyOptions" />
+      </div>
+      <div class="form-item">
+        {{ t('kernel.route.rules.server') }}
+        <Select
+          v-model="fields.server"
+          :options="[{ label: 'kernel.strategy.byDnsRules', value: '' }, ...serverOptions]"
+        />
+      </div>
+    </template>
+    <div v-if="isSupportPayload" class="form-item">
+      {{ t('kernel.route.rules.payload') }}
       <Radio
         v-if="fields.type === RuleType.ClashMode"
         v-model="fields.payload"
@@ -179,11 +198,6 @@ const renderRule = (rule: IDNSRule) => {
         v-model="fields.payload"
         :options="inboundOptions"
       />
-      <Select
-        v-else-if="fields.type === RuleType.Outbound"
-        v-model="fields.payload"
-        :options="[{ label: 'any', value: 'any' }, ...outboundOptions]"
-      />
       <CodeViewer
         v-else-if="fields.type === RuleType.Inline"
         v-model="fields.payload"
@@ -198,24 +212,7 @@ const renderRule = (rule: IDNSRule) => {
       />
       <Input v-else v-model="fields.payload" autofocus />
     </div>
-    <template v-if="fields.action === RuleAction.Route">
-      <div class="form-item">
-        {{ t('kernel.dns.rules.server') }}
-        <Select v-model="fields.server" :options="serversOptions" />
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.RouteOptions">
-      <div class="form-item">
-        {{ t('kernel.route.rules.routeOptions') }}
-        <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.Reject">
-      <div class="form-item">
-        {{ t('kernel.route.rules.action.rejectMethod') }}
-        <Radio v-model="fields.server" :options="DnsRuleActionRejectOptions" />
-      </div>
-    </template>
+
     <template v-if="fields.type === RuleType.RuleSet">
       <Divider>{{ t('kernel.route.tab.rule_set') }}</Divider>
       <div class="rulesets">

@@ -2,16 +2,15 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { type ProfileType } from '@/stores'
-import { MixinConfigDefaults, ScriptConfigDefaults } from '@/constant'
+import { DefaultMixin, DefaultScript } from '@/constant/profile'
 
 const model = defineModel<{
-  mixin: ProfileType['mixinConfig']
-  script: ProfileType['scriptConfig']
+  mixin: IProfile['mixin']
+  script: IProfile['script']
 }>({
   default: {
-    mixin: MixinConfigDefaults(),
-    script: ScriptConfigDefaults()
+    mixin: DefaultMixin(),
+    script: DefaultScript()
   }
 })
 

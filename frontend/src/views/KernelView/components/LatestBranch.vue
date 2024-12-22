@@ -3,7 +3,8 @@ import { useI18n } from 'vue-i18n'
 import { computed, ref } from 'vue'
 
 import { useMessage } from '@/hooks'
-import { KernelWorkDirectory, getKernelFileName } from '@/constant'
+import { CoreWorkingDirectory } from '@/constant/kernel'
+import { getKernelFileName } from '@/utils'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import { getGitHubApiAuthorization, GrantTUNPermission, ignoredError } from '@/utils'
 import {
@@ -99,13 +100,13 @@ const downloadCore = async () => {
     const fileName = await getKernelFileName() // sing-box.exe
     const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
 
-    const latestKernelFilePath = KernelWorkDirectory + '/' + latestFileName
+    const latestKernelFilePath = CoreWorkingDirectory + '/' + latestFileName
 
     await ignoredError(Movefile, latestKernelFilePath, latestKernelFilePath + '.bak')
 
     if (suffix === '.zip') {
-      await UnzipZIPFile(tmp, KernelWorkDirectory)
-      const tmpPath = KernelWorkDirectory + `/sing-box-${version}-${os}-${arch}${legacy}`
+      await UnzipZIPFile(tmp, CoreWorkingDirectory)
+      const tmpPath = CoreWorkingDirectory + `/sing-box-${version}-${os}-${arch}${legacy}`
       await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
       await Removefile(tmpPath)
     } else {
@@ -147,7 +148,7 @@ const getLocalVersion = async (showTips = false) => {
   localVersionLoading.value = true
   try {
     const fileName = await getKernelFileName(true)
-    const kernelFilePath = KernelWorkDirectory + '/' + fileName
+    const kernelFilePath = CoreWorkingDirectory + '/' + fileName
     const res = await Exec(kernelFilePath, ['version'])
     versionDetail.value = res.trim()
     return (
@@ -172,7 +173,7 @@ const getRemoteVersion = async (showTips = false) => {
     const { body } = await HttpGet<Record<string, any>>(latestUrl, {
       Authorization: getGitHubApiAuthorization()
     })
-    const { name, tag_name } = body[0]
+    const { name, tag_name } = body.find((v: any) => v.prerelease === true)
     return (name || tag_name).replace('v', '')
   } catch (error: any) {
     console.log(error)
@@ -199,7 +200,7 @@ const handleRestartKernel = async () => {
 
 const handleGrantPermission = async () => {
   const fileName = await getKernelFileName(true)
-  const kernelFilePath = KernelWorkDirectory + '/' + fileName
+  const kernelFilePath = CoreWorkingDirectory + '/' + fileName
   await GrantTUNPermission(kernelFilePath)
   message.success('common.success')
 }
@@ -245,12 +246,12 @@ initVersion()
   </div>
   <div class="tags">
     <Tag @click="updateLocalVersion(true)" style="cursor: pointer">
-      {{ t('kernel.local') }}
+      {{ t('settings.kernel.local') }}
       :
       {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
     </Tag>
     <Tag @click="updateRemoteVersion(true)" style="cursor: pointer">
-      {{ t('kernel.remote') }}
+      {{ t('settings.kernel.remote') }}
       :
       {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
     </Tag>
@@ -261,7 +262,7 @@ initVersion()
       size="small"
       type="primary"
     >
-      {{ t('kernel.update') }} : {{ remoteVersion }}
+      {{ t('settings.kernel.update') }} : {{ remoteVersion }}
     </Button>
     <Button
       v-show="!localVersionLoading && !remoteVersionLoading && needRestart"
@@ -270,7 +271,7 @@ initVersion()
       size="small"
       type="primary"
     >
-      {{ t('kernel.restart') }}
+      {{ t('settings.kernel.restart') }}
     </Button>
   </div>
 

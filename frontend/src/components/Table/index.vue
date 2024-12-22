@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 
 import useI18n from '@/lang'
 import { getValue } from '@/utils'
-import type { Menu } from '@/stores'
 import vMenu from '@/directives/menu'
 
 export type Column = {

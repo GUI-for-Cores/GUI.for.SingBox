@@ -4,18 +4,12 @@ import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import routes from '@/router/routes'
+import { CoreCacheFilePath } from '@/constant/kernel'
 import { APP_TITLE, APP_VERSION, getTaskSchXmlString } from '@/utils'
-import { useAppSettingsStore, useEnvStore } from '@/stores'
+import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import { BrowserOpenURL, GetEnv, Writefile, Removefile, AbsolutePath } from '@/bridge'
-import {
-  Theme,
-  Lang,
-  WindowStartState,
-  Color,
-  KernelCacheFilePath,
-  DefaultFontFamily,
-  WebviewGpuPolicy
-} from '@/constant'
+import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
+import { DefaultFontFamily } from '@/constant/app'
 import {
   QuerySchTask,
   CreateSchTask,
@@ -30,6 +24,7 @@ const isTaskScheduled = ref(false)
 const { t } = useI18n()
 const { message } = useMessage()
 const appSettings = useAppSettingsStore()
+const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 
 const themes = [
@@ -133,7 +128,11 @@ const handleOpenFolder = async () => {
 
 const handleClearKernelCache = async () => {
   try {
-    await Removefile(KernelCacheFilePath)
+    if (appSettings.app.kernel.running) {
+      await kernelApiStore.restartKernel(() => Removefile(CoreCacheFilePath))
+    } else {
+      await Removefile(CoreCacheFilePath)
+    }
     message.success('common.success')
   } catch (error: any) {
     message.error(error)
