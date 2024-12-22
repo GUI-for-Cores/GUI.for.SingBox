@@ -14,7 +14,7 @@ import {
   Makedir,
   Removefile,
   AbsolutePath,
-  HttpCancel
+  HttpCancel,
 } from '@/bridge'
 import {
   APP_TITLE,
@@ -24,7 +24,7 @@ import {
   TG_CHANNEL,
   APP_VERSION_API,
   getGitHubApiAuthorization,
-  ignoredError
+  ignoredError,
 } from '@/utils'
 
 let downloadUrl = ''
@@ -70,8 +70,8 @@ const downloadApp = async () => {
         message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
       },
       {
-        CancelId: 'download-app'
-      }
+        CancelId: 'download-app',
+      },
     ).finally(() => {
       message.destroy(id)
     })
@@ -107,7 +107,7 @@ const checkForUpdates = async (showTips = false) => {
 
   try {
     const { body } = await HttpGet<Record<string, any>>(APP_VERSION_API, {
-      Authorization: getGitHubApiAuthorization()
+      Authorization: getGitHubApiAuthorization(),
     })
 
     const { tag_name, assets, message: msg } = body

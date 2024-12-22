@@ -14,8 +14,8 @@ defineProps<Props>()
 const model = defineModel<{ log: IProfile['log']; experimental: IProfile['experimental'] }>({
   default: {
     log: DefaultLog(),
-    experimental: DefaultExperimental()
-  }
+    experimental: DefaultExperimental(),
+  },
 })
 
 const { t } = useI18n()
@@ -79,7 +79,7 @@ const [showMore, toggleMore] = useBool(false)
       </div>
       <div
         :class="{
-          'flex-start': model.experimental.clash_api.access_control_allow_origin.length !== 0
+          'flex-start': model.experimental.clash_api.access_control_allow_origin.length !== 0,
         }"
         class="form-item"
       >

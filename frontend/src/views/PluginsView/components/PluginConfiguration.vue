@@ -33,7 +33,7 @@ const handleSubmit = async () => {
       props.id,
       PluginTriggerEvent.OnConfigure,
       settings.value,
-      oldSettings.value
+      oldSettings.value,
     )
   } catch (error: any) {
     const errors = [
@@ -41,7 +41,7 @@ const handleSubmit = async () => {
       'is Missing source code',
       'Disabled',
       "Can't find variable: " + PluginTriggerEvent.OnConfigure,
-      PluginTriggerEvent.OnConfigure + ' is not defined'
+      PluginTriggerEvent.OnConfigure + ' is not defined',
     ]
     if (errors.every((v) => !error.includes(v))) {
       message.error(error)

@@ -20,7 +20,7 @@ const LogLevelMap: Record<string, string[]> = {
   warn: ['warn', 'error', 'fatal', 'panic'],
   error: ['error', 'fatal', 'panic'],
   fatal: ['fatal', 'panic'],
-  panic: ['panic']
+  panic: ['panic'],
 }
 
 const filteredLogs = computed(() => {
@@ -34,7 +34,7 @@ const filteredLogs = computed(() => {
 const menus: Menu[] = [
   ['home.connections.addToDirect', 'direct'],
   ['home.connections.addToProxy', 'proxy'],
-  ['home.connections.addToReject', 'reject']
+  ['home.connections.addToReject', 'reject'],
 ].map(([label, ruleset]) => {
   return {
     label,
@@ -59,13 +59,13 @@ const menus: Menu[] = [
           options.push({
             label: t('kernel.rules.type.IP-CIDR'),
             value: { ip_cidr: address + '/32' } as any,
-            description: address
+            description: address,
           })
         } else {
           options.push({
             label: t('kernel.rules.type.DOMAIN'),
             value: { domain: address } as any,
-            description: address
+            description: address,
           })
         }
       })
@@ -79,7 +79,7 @@ const menus: Menu[] = [
         message.error(error)
         console.log(error)
       }
-    }
+    },
   }
 })
 

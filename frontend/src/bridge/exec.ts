@@ -11,7 +11,7 @@ export const Exec = async (path: string, args: string[], options: Partial<ExecOp
   const { flag, data } = await App.Exec(
     path,
     args,
-    Object.assign({}, { convert: false, env: {} }, options)
+    Object.assign({}, { convert: false, env: {} }, options),
   )
   if (!flag) {
     throw data
@@ -24,7 +24,7 @@ export const ExecBackground = async (
   args: string[],
   onOut: (out: string) => void,
   onEnd: () => void,
-  options: Partial<ExecOptions> = {}
+  options: Partial<ExecOptions> = {},
 ) => {
   const outEvent = sampleID()
   const endEvent = sampleID()
@@ -33,7 +33,7 @@ export const ExecBackground = async (
     args,
     outEvent,
     endEvent,
-    Object.assign({}, { convert: false, env: {} }, options)
+    Object.assign({}, { convert: false, env: {} }, options),
   )
   if (!flag) {
     throw data

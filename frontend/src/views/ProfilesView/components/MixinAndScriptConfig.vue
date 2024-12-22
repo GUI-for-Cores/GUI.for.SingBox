@@ -10,8 +10,8 @@ const model = defineModel<{
 }>({
   default: {
     mixin: DefaultMixin(),
-    script: DefaultScript()
-  }
+    script: DefaultScript(),
+  },
 })
 
 const { t } = useI18n()
@@ -20,12 +20,12 @@ const activeTab = ref('mixin')
 
 const tabItems = [
   { key: 'mixin', tab: 'profile.mixinSettings.name' },
-  { key: 'script', tab: 'profile.scriptSettings.name' }
+  { key: 'script', tab: 'profile.scriptSettings.name' },
 ]
 
 const MixinPriorityOptions = [
   { label: 'profile.mixinSettings.mixin', value: 'mixin' },
-  { label: 'profile.mixinSettings.gui', value: 'gui' }
+  { label: 'profile.mixinSettings.gui', value: 'gui' },
 ]
 </script>
 

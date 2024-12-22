@@ -10,7 +10,7 @@ const model = defineModel<string[]>({ default: [] })
 
 withDefaults(defineProps<Props>(), {
   options: () => [],
-  size: 'default'
+  size: 'default',
 })
 
 const { t } = useI18n()

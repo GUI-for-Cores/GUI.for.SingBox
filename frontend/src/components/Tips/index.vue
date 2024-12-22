@@ -8,7 +8,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  message: ''
+  message: '',
 })
 
 const model = defineModel<boolean>()
@@ -31,7 +31,7 @@ watch(
         fixedPosition.value = { x, y }
       }
     })
-  }
+  },
 )
 </script>
 

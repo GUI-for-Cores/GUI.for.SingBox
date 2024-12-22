@@ -15,7 +15,7 @@ interface Props {
 defineProps<Props>()
 
 const model = defineModel<IProfile['route']>({
-  default: DefaultRoute()
+  default: DefaultRoute(),
 })
 
 const activeKey = ref('common')
@@ -24,7 +24,7 @@ const rulesetConfigRef = useTemplateRef('rulesetConfigRef')
 const tabs = [
   { key: 'common', tab: 'kernel.route.tab.common' },
   { key: 'rule_set', tab: 'kernel.route.tab.rule_set' },
-  { key: 'rules', tab: 'kernel.route.tab.rules' }
+  { key: 'rules', tab: 'kernel.route.tab.rules' },
 ]
 
 const { t } = useI18n()
@@ -33,7 +33,7 @@ const handleAdd = () => {
   const handlerMap: Record<string, (() => void) | undefined> = {
     common: () => {},
     rules: rulesConfigRef.value?.handleAdd,
-    rule_set: rulesetConfigRef.value?.handleAdd
+    rule_set: rulesetConfigRef.value?.handleAdd,
   }
   handlerMap[activeKey.value]?.()
 }

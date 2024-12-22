@@ -7,7 +7,7 @@ export const useAppStore = defineStore('app', () => {
   const menuList = ref<Menu[]>([])
   const menuPosition = ref({
     x: 0,
-    y: 0
+    y: 0,
   })
 
   /* Global Tips */
@@ -15,7 +15,7 @@ export const useAppStore = defineStore('app', () => {
   const tipsMessage = ref('')
   const tipsPosition = ref({
     x: 0,
-    y: 0
+    y: 0,
   })
 
   const showAbout = ref(false)
@@ -27,6 +27,6 @@ export const useAppStore = defineStore('app', () => {
     tipsShow,
     tipsMessage,
     tipsPosition,
-    showAbout
+    showAbout,
   }
 })

@@ -17,7 +17,7 @@ const statistics = ref({
   downloadTotal: 0,
   uploadTotal: 0,
   connections: [],
-  inuse: 0
+  inuse: 0,
 })
 
 const { t } = useI18n()

@@ -27,19 +27,19 @@ const subFormTitle = computed(() => (rulesetFormIsUpdate.value ? 'common.edit' :
 const sourceMenuList: Menu[] = [
   {
     label: 'rulesets.editRuleset',
-    handler: (id: string) => handleEditRulesetList(id)
+    handler: (id: string) => handleEditRulesetList(id),
   },
   {
     label: 'common.openFile',
     handler: (id: string) => {
       const ruleset = rulesetsStore.getRulesetById(id)
       BrowserOpenURL(envStore.env.basePath + '/' + ruleset!.path)
-    }
+    },
   },
   {
     label: 'common.clear',
-    handler: (id: string) => handleClearRuleset(id)
-  }
+    handler: (id: string) => handleClearRuleset(id),
+  },
 ]
 
 const binaryMenuList: Menu[] = [
@@ -48,8 +48,8 @@ const binaryMenuList: Menu[] = [
     handler: (id: string) => {
       console.log(id)
       message.info('common.none')
-    }
-  }
+    },
+  },
 ]
 
 const { t } = useI18n()
@@ -164,7 +164,7 @@ const _updateAllProvidersRules = async () => {
 const generateMenus = (r: RuleSetType) => {
   return {
     [RulesetFormat.Source]: sourceMenuList,
-    [RulesetFormat.Binary]: binaryMenuList
+    [RulesetFormat.Binary]: binaryMenuList,
   }[r.format].map((v) => ({ ...v, handler: () => v.handler?.(r.id) }))
 }
 
@@ -194,7 +194,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       v-model="appSettingsStore.app.rulesetsView"
       :options="[
         { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
+        { label: 'common.list', value: View.List },
       ]"
     />
     <Button @click="handleImportRuleset" type="link" class="ml-auto">

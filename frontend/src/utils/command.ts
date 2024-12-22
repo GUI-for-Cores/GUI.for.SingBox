@@ -11,7 +11,7 @@ import {
   useKernelApiStore,
   usePluginsStore,
   useRulesetsStore,
-  useSubscribesStore
+  useSubscribesStore,
 } from '@/stores'
 
 type Command = {
@@ -59,37 +59,37 @@ export const getCommands = () => {
         {
           label: 'tray.startKernel',
           cmd: 'Start Kernel',
-          handler: kernelStore.startKernel
+          handler: kernelStore.startKernel,
         },
         {
           label: 'tray.stopKernel',
           cmd: 'Stop Kernel',
-          handler: kernelStore.stopKernel
+          handler: kernelStore.stopKernel,
         },
         {
           label: 'tray.restartKernel',
           cmd: 'Restart Kernel',
-          handler: kernelStore.restartKernel
+          handler: kernelStore.restartKernel,
         },
         {
           label: 'tray.enableTunMode',
           cmd: 'Enable Tun',
-          handler: () => kernelStore.updateConfig('tun', { enable: true })
+          handler: () => kernelStore.updateConfig('tun', { enable: true }),
         },
         {
           label: 'tray.disableTunMode',
           cmd: 'Disable Tun',
-          handler: () => kernelStore.updateConfig('tun', { enable: false })
+          handler: () => kernelStore.updateConfig('tun', { enable: false }),
         },
         {
           label: 'kernel.allow-lan',
           cmd: 'Allow Lan',
-          handler: () => kernelStore.updateConfig('allow-lan', true)
+          handler: () => kernelStore.updateConfig('allow-lan', true),
         },
         {
           label: 'kernel.disallow-lan',
           cmd: 'Disallow Lan',
-          handler: () => kernelStore.updateConfig('allow-lan', false)
+          handler: () => kernelStore.updateConfig('allow-lan', false),
         },
         {
           label: 'kernel.mode',
@@ -98,21 +98,21 @@ export const getCommands = () => {
             {
               label: 'kernel.global',
               cmd: 'Global',
-              handler: () => handleChangeMode(ClashMode.Global)
+              handler: () => handleChangeMode(ClashMode.Global),
             },
             {
               label: 'kernel.rule',
               cmd: 'Rule',
-              handler: () => handleChangeMode(ClashMode.Rule)
+              handler: () => handleChangeMode(ClashMode.Rule),
             },
             {
               label: 'kernel.direct',
               cmd: 'Direct',
-              handler: () => handleChangeMode(ClashMode.Direct)
-            }
-          ]
-        }
-      ]
+              handler: () => handleChangeMode(ClashMode.Direct),
+            },
+          ],
+        },
+      ],
     },
     {
       label: 'tray.proxy',
@@ -121,14 +121,14 @@ export const getCommands = () => {
         {
           label: 'tray.setSystemProxy',
           cmd: 'Set System Proxy',
-          handler: envStore.setSystemProxy
+          handler: envStore.setSystemProxy,
         },
         {
           label: 'tray.clearSystemProxy',
           cmd: 'Clear System Proxy',
-          handler: envStore.clearSystemProxy
-        }
-      ]
+          handler: envStore.clearSystemProxy,
+        },
+      ],
     },
     {
       label: 'APP',
@@ -141,14 +141,14 @@ export const getCommands = () => {
             {
               label: 'settings.lang.zh',
               cmd: 'Chinese',
-              handler: () => (appSettings.app.lang = Lang.ZH)
+              handler: () => (appSettings.app.lang = Lang.ZH),
             },
             {
               label: 'settings.lang.en',
               cmd: 'English',
-              handler: () => (appSettings.app.lang = Lang.EN)
-            }
-          ]
+              handler: () => (appSettings.app.lang = Lang.EN),
+            },
+          ],
         },
         {
           label: 'settings.theme.name',
@@ -157,19 +157,19 @@ export const getCommands = () => {
             {
               label: 'settings.theme.light',
               cmd: 'Light',
-              handler: () => (appSettings.app.theme = Theme.Light)
+              handler: () => (appSettings.app.theme = Theme.Light),
             },
             {
               label: 'settings.theme.dark',
               cmd: 'Dark',
-              handler: () => (appSettings.app.theme = Theme.Dark)
+              handler: () => (appSettings.app.theme = Theme.Dark),
             },
             {
               label: 'settings.theme.auto',
               cmd: 'Auto',
-              handler: () => (appSettings.app.theme = Theme.Auto)
-            }
-          ]
+              handler: () => (appSettings.app.theme = Theme.Auto),
+            },
+          ],
         },
         {
           label: 'settings.color.name',
@@ -178,61 +178,61 @@ export const getCommands = () => {
             {
               label: 'settings.color.default',
               cmd: 'Default',
-              handler: () => (appSettings.app.color = Color.Default)
+              handler: () => (appSettings.app.color = Color.Default),
             },
             {
               label: 'settings.color.orange',
               cmd: 'Orange',
-              handler: () => (appSettings.app.color = Color.Orange)
+              handler: () => (appSettings.app.color = Color.Orange),
             },
             {
               label: 'settings.color.pink',
               cmd: 'Pink',
-              handler: () => (appSettings.app.color = Color.Pink)
+              handler: () => (appSettings.app.color = Color.Pink),
             },
             {
               label: 'settings.color.red',
               cmd: 'Red',
-              handler: () => (appSettings.app.color = Color.Red)
+              handler: () => (appSettings.app.color = Color.Red),
             },
             {
               label: 'settings.color.skyblue',
               cmd: 'Skyblue',
-              handler: () => (appSettings.app.color = Color.Skyblue)
+              handler: () => (appSettings.app.color = Color.Skyblue),
             },
             {
               label: 'settings.color.green',
               cmd: 'Green',
-              handler: () => (appSettings.app.color = Color.Green)
+              handler: () => (appSettings.app.color = Color.Green),
             },
             {
               label: 'settings.color.purple',
               cmd: 'Purple',
-              handler: () => (appSettings.app.color = Color.Purple)
-            }
-          ]
+              handler: () => (appSettings.app.color = Color.Purple),
+            },
+          ],
         },
         {
           label: 'titlebar.reload',
           cmd: 'Reload Window',
-          handler: WindowReloadApp
+          handler: WindowReloadApp,
         },
         {
           label: 'tray.restartTip',
           cmd: 'Restart APP',
-          handler: RestartApp
+          handler: RestartApp,
         },
         {
           label: 'tray.exitTip',
           cmd: 'Exit APP',
-          handler: ExitApp
+          handler: ExitApp,
         },
         {
           label: 'router.about',
           cmd: 'About APP',
-          handler: () => (appStore.showAbout = true)
-        }
-      ]
+          handler: () => (appStore.showAbout = true),
+        },
+      ],
     },
     {
       label: 'router.subscriptions',
@@ -241,9 +241,9 @@ export const getCommands = () => {
         {
           label: 'common.updateAll',
           cmd: 'Update Subscriptions',
-          handler: subscriptionsStore.updateSubscribes
-        }
-      ]
+          handler: subscriptionsStore.updateSubscribes,
+        },
+      ],
     },
     {
       label: 'router.rulesets',
@@ -252,9 +252,9 @@ export const getCommands = () => {
         {
           label: 'common.updateAll',
           cmd: 'Update Rulesets',
-          handler: rulesetsStore.updateRulesets
-        }
-      ]
+          handler: rulesetsStore.updateRulesets,
+        },
+      ],
     },
     {
       label: 'router.plugins',
@@ -263,9 +263,9 @@ export const getCommands = () => {
         {
           label: 'common.updateAll',
           cmd: 'Update Plugins',
-          handler: pluginsStore.updatePlugins
-        }
-      ]
+          handler: pluginsStore.updatePlugins,
+        },
+      ],
     },
 
     {
@@ -288,7 +288,7 @@ export const getCommands = () => {
                 message.error(error)
               }
               plugin.running = false
-            }
+            },
           })
         }
         if (hasMenus) {
@@ -305,13 +305,13 @@ export const getCommands = () => {
                 } finally {
                   plugin.running = false
                 }
-              }
+              },
             })
           })
         }
         return { label: plugin.name, cmd: plugin.id, children }
-      })
-    }
+      }),
+    },
   ]
 
   return processCommands(rawCommands)

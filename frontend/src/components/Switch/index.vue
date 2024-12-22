@@ -8,7 +8,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   size: 'default',
   border: 'default',
-  disabled: false
+  disabled: false,
 })
 
 const model = defineModel<boolean>()

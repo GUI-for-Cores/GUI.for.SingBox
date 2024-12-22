@@ -15,7 +15,7 @@ withDefaults(defineProps<Props>(), {
   options: () => [],
   border: true,
   size: 'default',
-  autoSize: false
+  autoSize: false,
 })
 
 const emits = defineEmits(['change'])

@@ -20,7 +20,7 @@ interface Props {
 const model = defineModel<string>({ default: '' })
 const emit = defineEmits(['change'])
 const props = withDefaults(defineProps<Props>(), {
-  lang: 'json'
+  lang: 'json',
 })
 
 const ready = ref(false)
@@ -33,12 +33,12 @@ const completion = computed(() =>
   autocompletion({
     override: props.lang === 'javascript' ? getCompletions(props.plugin) : null,
     optionClass: () => 'codeviewer-custom-font',
-    tooltipClass: () => 'codeviewer-custom-font'
-  })
+    tooltipClass: () => 'codeviewer-custom-font',
+  }),
 )
 
 const extensions = computed(() =>
-  appSettings.themeMode === Theme.Dark ? [oneDark, completion.value] : [completion.value]
+  appSettings.themeMode === Theme.Dark ? [oneDark, completion.value] : [completion.value],
 )
 
 watch(model, (v) => emit('change', v))

@@ -13,7 +13,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   height: 214,
   padding: 50,
-  legend: () => ['upload', 'download']
+  legend: () => ['upload', 'download'],
 })
 
 const MAX_HISTORY = 60

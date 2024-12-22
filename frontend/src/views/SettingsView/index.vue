@@ -9,7 +9,7 @@ import GeneralSetting from './components/GeneralSetting.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
-  { key: 'kernel', tab: 'router.kernel' }
+  { key: 'kernel', tab: 'router.kernel' },
 ]
 
 const activeKey = ref(settings[0].key)

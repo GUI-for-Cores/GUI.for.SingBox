@@ -11,7 +11,7 @@ import {
   DomainStrategyOptions,
   RuleActionOptions,
   RuleSnifferOptions,
-  RulesTypeOptions
+  RulesTypeOptions,
 } from '@/constant/kernel'
 
 interface Props {
@@ -185,12 +185,12 @@ const renderRule = (rule: IRule) => {
         :options="[
           {
             label: 'kernel.global',
-            value: ClashMode.Global
+            value: ClashMode.Global,
           },
           {
             label: 'kernel.direct',
-            value: ClashMode.Direct
-          }
+            value: ClashMode.Direct,
+          },
         ]"
       />
       <Select

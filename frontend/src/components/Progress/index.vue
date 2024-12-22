@@ -11,11 +11,11 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   status: 'primary',
   type: 'line',
-  radius: 100
+  radius: 100,
 })
 
 const innerStyle = computed(() => ({
-  width: (props.percent > 100 ? 100 : props.percent || 0) + '%'
+  width: (props.percent > 100 ? 100 : props.percent || 0) + '%',
 }))
 
 const circleStyle = computed(() => {
@@ -29,7 +29,7 @@ const circleStyle = computed(() => {
     height: radius,
     background: bg,
     mask: mask,
-    '-webkit-mask': mask
+    '-webkit-mask': mask,
   }
 })
 </script>

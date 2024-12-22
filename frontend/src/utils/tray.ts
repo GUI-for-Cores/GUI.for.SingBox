@@ -9,7 +9,7 @@ import {
   EventsOff,
   UpdateTray,
   UpdateTrayMenus,
-  ShowMainWindow
+  ShowMainWindow,
 } from '@/bridge'
 import {
   debounce,
@@ -18,7 +18,7 @@ import {
   sampleID,
   APP_TITLE,
   APP_VERSION,
-  handleUseProxy
+  handleUseProxy,
 } from '@/utils'
 
 const getTrayIcons = () => {
@@ -121,9 +121,9 @@ const getTrayMenus = () => {
               checked: proxy.name === group.now,
               event: () => {
                 handleUseProxy(group, proxy)
-              }
+              },
             }
-          })
+          }),
         }
       })
   })()
@@ -133,7 +133,7 @@ const getTrayMenus = () => {
 
   if (!pluginMenusHidden) {
     const filtered = pluginsStore.plugins.filter(
-      (plugin) => Object.keys(plugin.menus).length && !plugin.disabled
+      (plugin) => Object.keys(plugin.menus).length && !plugin.disabled,
     )
     pluginMenusHidden = filtered.length === 0
     pluginMenus = filtered.map(({ id, name, menus }) => {
@@ -148,9 +148,9 @@ const getTrayMenus = () => {
               pluginsStore.manualTrigger(id, event as any).catch((err: any) => {
                 Notify('Error', err.message || err)
               })
-            }
+            },
           }
-        })
+        }),
       }
     })
   }
@@ -160,11 +160,11 @@ const getTrayMenus = () => {
       type: 'item',
       text: 'tray.showMainWindow',
       hidden: envStore.env.os === 'windows',
-      event: ShowMainWindow
+      event: ShowMainWindow,
     },
     {
       type: 'separator',
-      hidden: envStore.env.os === 'windows'
+      hidden: envStore.env.os === 'windows',
     },
     {
       type: 'item',
@@ -175,27 +175,27 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'kernel.global',
           checked: kernelApiStore.config.mode === ClashMode.Global,
-          event: () => handleChangeMode(ClashMode.Global)
+          event: () => handleChangeMode(ClashMode.Global),
         },
         {
           type: 'item',
           text: 'kernel.rule',
           checked: kernelApiStore.config.mode === ClashMode.Rule,
-          event: () => handleChangeMode(ClashMode.Rule)
+          event: () => handleChangeMode(ClashMode.Rule),
         },
         {
           type: 'item',
           text: 'kernel.direct',
           checked: kernelApiStore.config.mode === ClashMode.Direct,
-          event: () => handleChangeMode(ClashMode.Direct)
-        }
-      ]
+          event: () => handleChangeMode(ClashMode.Direct),
+        },
+      ],
     },
     {
       type: 'item',
       text: 'tray.proxyGroup',
       hidden: !appSettings.app.kernel.running,
-      children: groupsMenus
+      children: groupsMenus,
     },
     {
       type: 'item',
@@ -205,25 +205,25 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'tray.startKernel',
           hidden: appSettings.app.kernel.running,
-          event: kernelApiStore.startKernel
+          event: kernelApiStore.startKernel,
         },
         {
           type: 'item',
           text: 'tray.restartKernel',
           hidden: !appSettings.app.kernel.running,
-          event: kernelApiStore.restartKernel
+          event: kernelApiStore.restartKernel,
         },
         {
           type: 'item',
           text: 'tray.stopKernel',
           hidden: !appSettings.app.kernel.running,
-          event: kernelApiStore.stopKernel
-        }
-      ]
+          event: kernelApiStore.stopKernel,
+        },
+      ],
     },
     {
       type: 'separator',
-      hidden: !appSettings.app.kernel.running
+      hidden: !appSettings.app.kernel.running,
     },
     {
       type: 'item',
@@ -234,15 +234,15 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'tray.setSystemProxy',
           hidden: envStore.systemProxy,
-          event: envStore.setSystemProxy
+          event: envStore.setSystemProxy,
         },
         {
           type: 'item',
           text: 'tray.clearSystemProxy',
           hidden: !envStore.systemProxy,
-          event: envStore.clearSystemProxy
-        }
-      ]
+          event: envStore.clearSystemProxy,
+        },
+      ],
     },
     {
       type: 'item',
@@ -253,15 +253,15 @@ const getTrayMenus = () => {
           type: 'item',
           text: 'tray.enableTunMode',
           hidden: kernelApiStore.config.tun.enable,
-          event: envStore.clearSystemProxy
+          event: envStore.clearSystemProxy,
         },
         {
           type: 'item',
           text: 'tray.disableTunMode',
           hidden: !kernelApiStore.config.tun.enable,
-          event: () => kernelApiStore.updateConfig('tun', { enable: false })
-        }
-      ]
+          event: () => kernelApiStore.updateConfig('tun', { enable: false }),
+        },
+      ],
     },
     {
       type: 'item',
@@ -275,21 +275,21 @@ const getTrayMenus = () => {
               type: 'item',
               text: 'settings.theme.dark',
               checked: appSettings.app.theme === Theme.Dark,
-              event: () => (appSettings.app.theme = Theme.Dark)
+              event: () => (appSettings.app.theme = Theme.Dark),
             },
             {
               type: 'item',
               text: 'settings.theme.light',
               checked: appSettings.app.theme === Theme.Light,
-              event: () => (appSettings.app.theme = Theme.Light)
+              event: () => (appSettings.app.theme = Theme.Light),
             },
             {
               type: 'item',
               text: 'settings.theme.auto',
               checked: appSettings.app.theme === Theme.Auto,
-              event: () => (appSettings.app.theme = Theme.Auto)
-            }
-          ]
+              event: () => (appSettings.app.theme = Theme.Auto),
+            },
+          ],
         },
         {
           type: 'item',
@@ -299,45 +299,45 @@ const getTrayMenus = () => {
               type: 'item',
               text: 'settings.color.default',
               checked: appSettings.app.color === Color.Default,
-              event: () => (appSettings.app.color = Color.Default)
+              event: () => (appSettings.app.color = Color.Default),
             },
             {
               type: 'item',
               text: 'settings.color.orange',
               checked: appSettings.app.color === Color.Orange,
-              event: () => (appSettings.app.color = Color.Orange)
+              event: () => (appSettings.app.color = Color.Orange),
             },
             {
               type: 'item',
               text: 'settings.color.pink',
               checked: appSettings.app.color === Color.Pink,
-              event: () => (appSettings.app.color = Color.Pink)
+              event: () => (appSettings.app.color = Color.Pink),
             },
             {
               type: 'item',
               text: 'settings.color.red',
               checked: appSettings.app.color === Color.Red,
-              event: () => (appSettings.app.color = Color.Red)
+              event: () => (appSettings.app.color = Color.Red),
             },
             {
               type: 'item',
               text: 'settings.color.skyblue',
               checked: appSettings.app.color === Color.Skyblue,
-              event: () => (appSettings.app.color = Color.Skyblue)
+              event: () => (appSettings.app.color = Color.Skyblue),
             },
             {
               type: 'item',
               text: 'settings.color.green',
               checked: appSettings.app.color === Color.Green,
-              event: () => (appSettings.app.color = Color.Green)
+              event: () => (appSettings.app.color = Color.Green),
             },
             {
               type: 'item',
               text: 'settings.color.purple',
               checked: appSettings.app.color === Color.Purple,
-              event: () => (appSettings.app.color = Color.Purple)
-            }
-          ]
+              event: () => (appSettings.app.color = Color.Purple),
+            },
+          ],
         },
         {
           type: 'item',
@@ -347,39 +347,39 @@ const getTrayMenus = () => {
               type: 'item',
               text: 'settings.lang.zh',
               checked: appSettings.app.lang === Lang.ZH,
-              event: () => (appSettings.app.lang = Lang.ZH)
+              event: () => (appSettings.app.lang = Lang.ZH),
             },
             {
               type: 'item',
               text: 'settings.lang.en',
               checked: appSettings.app.lang === Lang.EN,
-              event: () => (appSettings.app.lang = Lang.EN)
-            }
-          ]
-        }
-      ]
+              event: () => (appSettings.app.lang = Lang.EN),
+            },
+          ],
+        },
+      ],
     },
     {
       type: 'item',
       text: 'tray.plugins',
       hidden: pluginMenusHidden,
-      children: pluginMenus
+      children: pluginMenus,
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       type: 'item',
       text: 'tray.restart',
       tooltip: 'tray.restartTip',
-      event: RestartApp
+      event: RestartApp,
     },
     {
       type: 'item',
       text: 'tray.exit',
       tooltip: 'tray.exitTip',
-      event: exitApp
-    }
+      event: exitApp,
+    },
   ]
 
   return generateUniqueEventsForMenu(trayMenus)

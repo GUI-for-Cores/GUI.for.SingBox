@@ -51,7 +51,7 @@ const icons = [
   'scheduledTasks',
   'settings2',
   'grant',
-  'preview'
+  'preview',
 ] as const
 
 export default icons

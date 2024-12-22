@@ -11,11 +11,11 @@ import {
   DefaultInboundMixed,
   DefaultInboundHttp,
   DefaultInboundSocks,
-  DefaultInboundTun
+  DefaultInboundTun,
 } from '@/constant/profile'
 
 const model = defineModel<IProfile['inbounds']>({
-  default: DefaultInbounds()
+  default: DefaultInbounds(),
 })
 
 const { t } = useI18n()
@@ -34,9 +34,9 @@ const inbounds = [
         tag: 'mixed-in',
         type: Inbound.Mixed,
         enable: true,
-        mixed: DefaultInboundMixed()
+        mixed: DefaultInboundMixed(),
       })
-    }
+    },
   },
   {
     label: 'Http',
@@ -46,9 +46,9 @@ const inbounds = [
         tag: 'http-in',
         type: Inbound.Http,
         enable: true,
-        http: DefaultInboundHttp()
+        http: DefaultInboundHttp(),
       })
-    }
+    },
   },
   {
     label: 'Socks',
@@ -58,9 +58,9 @@ const inbounds = [
         tag: 'socks-in',
         type: Inbound.Socks,
         enable: true,
-        socks: DefaultInboundSocks()
+        socks: DefaultInboundSocks(),
       })
-    }
+    },
   },
   {
     label: 'Tun',
@@ -70,10 +70,10 @@ const inbounds = [
         tag: 'tun-in',
         type: Inbound.Tun,
         enable: true,
-        tun: DefaultInboundTun()
+        tun: DefaultInboundTun(),
       })
-    }
-  }
+    },
+  },
 ]
 
 const handleAdd = async () => {

@@ -40,9 +40,9 @@ const generateExperimental = (experimental: IExperimental, outbounds: IOutbound[
   return {
     clash_api: {
       ...experimental.clash_api,
-      external_ui_download_detour: getOutbound(experimental.clash_api.external_ui_download_detour)
+      external_ui_download_detour: getOutbound(experimental.clash_api.external_ui_download_detour),
     },
-    cache_file: experimental.cache_file
+    cache_file: experimental.cache_file,
   }
 }
 
@@ -56,15 +56,15 @@ const generateInbounds = (inbounds: IInbound[]) => {
         ...inbound[inbound.type]!.listen,
         users: inbound[inbound.type]!.users.map((user) => ({
           username: user.split(':')[0],
-          password: user.split(':')[1]
-        }))
+          password: user.split(':')[1],
+        })),
       }
     }
     if (inbound.type === Inbound.Tun) {
       return {
         type: inbound.type,
         tag: inbound.tag,
-        ...inbound.tun!
+        ...inbound.tun!,
       }
     }
   })
@@ -90,7 +90,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
   for (const outbound of outbounds) {
     const _outbound: Recordable = {
       type: outbound.type,
-      tag: outbound.tag
+      tag: outbound.tag,
     }
     if (outbound.type === Outbound.Urltest) {
       _outbound.url = outbound.url
@@ -116,7 +116,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
           }
           if (proxy.type === 'Subscription') {
             _outbound.outbounds.push(
-              ...SubscriptionCache[subId].map((v) => v.tag).filter((tag) => isTagMatching(tag))
+              ...SubscriptionCache[subId].map((v) => v.tag).filter((tag) => isTagMatching(tag)),
             )
             SubscriptionCache[subId].forEach((v) => proxiesSet.add(v))
           } else {
@@ -170,7 +170,7 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
       }
       return {
         action: rule.action,
-        ...extra
+        ...extra,
       }
     }),
     rule_set: route.rule_set.map((ruleset) => {
@@ -192,12 +192,12 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
       return {
         tag: ruleset.tag,
         type: ruleset.type,
-        ...extra
+        ...extra,
       }
     }),
     auto_detect_interface: route.auto_detect_interface,
     final: getOutbound(route.final),
-    ...extra
+    ...extra,
   }
 }
 
@@ -205,7 +205,7 @@ const generateDns = (
   dns: IDNS,
   rule_set: IRuleSet[],
   inbounds: IInbound[],
-  outbounds: IOutbound[]
+  outbounds: IOutbound[],
 ) => {
   const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
@@ -230,7 +230,7 @@ const generateDns = (
         address: server.address,
         address_resolver: getDnsServer(server.address_resolver),
         detour: getOutbound(server.detour),
-        ...extra
+        ...extra,
       }
     }),
     rules: dns.rules.map((rule) => {
@@ -243,7 +243,7 @@ const generateDns = (
       return {
         action: rule.action,
         server: getDnsServer(rule.server),
-        ...extra
+        ...extra,
       }
     }),
     fakeip: dns.fakeip,
@@ -251,7 +251,7 @@ const generateDns = (
     disable_expire: dns.disable_expire,
     independent_cache: dns.independent_cache,
     final: getDnsServer(dns.final),
-    ...extra
+    ...extra,
   }
 }
 
@@ -264,7 +264,7 @@ export const generateConfig = async (originalProfile: IProfile) => {
     inbounds: generateInbounds(profile.inbounds),
     outbounds: await generateOutbounds(profile.outbounds),
     route: generateRoute(profile.route, profile.inbounds, profile.outbounds, profile.dns),
-    dns: generateDns(profile.dns, profile.route.rule_set, profile.inbounds, profile.outbounds)
+    dns: generateDns(profile.dns, profile.route.rule_set, profile.inbounds, profile.outbounds),
   }
 
   // step 2
@@ -277,7 +277,7 @@ export const generateConfig = async (originalProfile: IProfile) => {
 
   // step 3
   const fn = new window.AsyncFunction(
-    `${profile.script.code};return await onGenerate(${JSON.stringify(config)})`
+    `${profile.script.code};return await onGenerate(${JSON.stringify(config)})`,
   )
   let _config
   try {

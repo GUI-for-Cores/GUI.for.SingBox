@@ -13,8 +13,8 @@ window.Plugins = {
   ...Stores,
   YAML: {
     parse,
-    stringify
-  }
+    stringify,
+  },
 }
 
 window.AsyncFunction = Object.getPrototypeOf(async function () {}).constructor

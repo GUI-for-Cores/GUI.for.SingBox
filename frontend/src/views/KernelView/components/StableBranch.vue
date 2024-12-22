@@ -18,7 +18,7 @@ import {
   GetEnv,
   Makedir,
   AbsolutePath,
-  BrowserOpenURL
+  BrowserOpenURL,
 } from '@/bridge'
 
 const releaseUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
@@ -56,7 +56,7 @@ const downloadCore = async () => {
   downloadLoading.value = true
   try {
     const { body } = await HttpGet<Record<string, any>>(releaseUrl, {
-      Authorization: getGitHubApiAuthorization()
+      Authorization: getGitHubApiAuthorization(),
     })
     const { os, arch } = await GetEnv()
 
@@ -87,7 +87,7 @@ const downloadCore = async () => {
       (progress, total) => {
         message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
       },
-      { CancelId: 'download-stable-core' }
+      { CancelId: 'download-stable-core' },
     ).catch((err) => {
       message.destroy(id)
       throw err
@@ -113,7 +113,7 @@ const downloadCore = async () => {
         '-C',
         await AbsolutePath(CoreWorkingDirectory),
         '--strip-components',
-        '1'
+        '1',
       ])
     }
 
@@ -164,7 +164,7 @@ const getRemoteVersion = async (showTips = false) => {
   remoteVersionLoading.value = true
   try {
     const { body } = await HttpGet<Record<string, any>>(releaseUrl, {
-      Authorization: getGitHubApiAuthorization()
+      Authorization: getGitHubApiAuthorization(),
     })
     const { name } = body
     return name as string

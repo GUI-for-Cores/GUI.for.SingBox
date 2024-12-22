@@ -11,7 +11,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  icon: 'info'
+  icon: 'info',
 })
 
 defineEmits(['close'])
@@ -22,7 +22,7 @@ const iconMap = {
   info: 'messageInfo',
   success: 'messageSuccess',
   error: 'messageError',
-  warn: 'messageWarn'
+  warn: 'messageWarn',
 }
 
 const icon = computed(() => iconMap[props.icon] as any)

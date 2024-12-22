@@ -47,7 +47,7 @@ export class WebSockets {
 
     return {
       connect: () => Object.values(wsMap).forEach((ws) => ws.open()),
-      disconnect: () => Object.values(wsMap).forEach((ws) => ws.close())
+      disconnect: () => Object.values(wsMap).forEach((ws) => ws.close()),
     }
   }
 }

@@ -75,7 +75,7 @@ const toggleExpanded = (group: string) => {
 const handleFilter = async (group: string) => {
   const keywords =
     (await ignoredError(prompt<string>, 'Tips', filterKeywordsMap.value[group], {
-      placeholder: 'keywords'
+      placeholder: 'keywords',
     })) || ''
   try {
     new RegExp(keywords, 'i')
@@ -102,7 +102,7 @@ const handleGroupDelay = async (group: string) => {
   try {
     await getGroupDelay(
       group,
-      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204'
+      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
     )
     await kernelApiStore.refreshProviderProxies()
   } catch (error: any) {
@@ -115,7 +115,7 @@ const handleProxyDelay = async (proxy: string) => {
   try {
     const { delay } = await getProxyDelay(
       proxy,
-      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204'
+      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
     )
     const _proxy = kernelApiStore.proxies[proxy]
     _proxy.history.push({ delay })
@@ -138,8 +138,8 @@ const handleChangeTestUrl = async () => {
       'home.controller.delayUrl',
       appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
       {
-        placeholder: 'https://www.gstatic.com/generate_204'
-      }
+        placeholder: 'https://www.gstatic.com/generate_204',
+      },
     )
     appSettings.app.kernel.testUrl = url
     message.success('common.success')

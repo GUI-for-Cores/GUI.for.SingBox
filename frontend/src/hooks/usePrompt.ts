@@ -7,7 +7,7 @@ import { type Props as InputProps } from '@/components/Input/index.vue'
 const createPrompt = <T>(
   title: string,
   initialValue: string | number = '',
-  props: Partial<InputProps> = {}
+  props: Partial<InputProps> = {},
 ) => {
   const { t } = i18n.global
 
@@ -31,7 +31,7 @@ const createPrompt = <T>(
       onFinish: () => {
         render(null, dom)
         dom.remove()
-      }
+      },
     })
     document.body.appendChild(dom)
     render(vnode, dom)

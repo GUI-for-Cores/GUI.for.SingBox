@@ -5,43 +5,43 @@ export enum LogLevel {
   Warn = 'warn',
   Error = 'error',
   Fatal = 'fatal',
-  Panic = 'panic'
+  Panic = 'panic',
 }
 
 export enum ClashMode {
   Global = 'global',
   Rule = 'rule',
-  Direct = 'direct'
+  Direct = 'direct',
 }
 
 export enum Inbound {
   Mixed = 'mixed',
   Socks = 'socks',
   Http = 'http',
-  Tun = 'tun'
+  Tun = 'tun',
 }
 
 export enum Outbound {
   Direct = 'direct',
   Selector = 'selector',
-  Urltest = 'urltest'
+  Urltest = 'urltest',
 }
 
 export enum TunStack {
   System = 'system',
   GVisor = 'gvisor',
-  Mixed = 'mixed'
+  Mixed = 'mixed',
 }
 
 export enum RulesetType {
   Inline = 'inline',
   Local = 'local',
-  Remote = 'remote'
+  Remote = 'remote',
 }
 
 export enum RulesetFormat {
   Source = 'source',
-  Binary = 'binary'
+  Binary = 'binary',
 }
 
 export enum RuleType {
@@ -67,7 +67,7 @@ export enum RuleType {
   // dns rule type
   Outbound = 'outbound',
   // GUI
-  Inline = 'inline'
+  Inline = 'inline',
 }
 
 export enum Strategy {
@@ -75,7 +75,7 @@ export enum Strategy {
   PreferIPv4 = 'prefer_ipv4',
   PreferIPv6 = 'prefer_ipv6',
   IPv4Only = 'ipv4_only',
-  IPv6Only = 'ipv6_only'
+  IPv6Only = 'ipv6_only',
 }
 
 export enum RuleAction {
@@ -84,12 +84,12 @@ export enum RuleAction {
   Reject = 'reject',
   HijackDNS = 'hijack-dns',
   Sniff = 'sniff',
-  Resolve = 'resolve'
+  Resolve = 'resolve',
 }
 
 export enum RuleActionReject {
   Default = 'default',
-  Drop = 'drop'
+  Drop = 'drop',
 }
 
 export enum Sniffer {
@@ -98,5 +98,5 @@ export enum Sniffer {
   Quic = 'quic',
   Dns = 'dns',
   Ssh = 'ssh',
-  Rdp = 'rdp'
+  Rdp = 'rdp',
 }

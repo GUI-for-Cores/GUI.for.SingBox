@@ -72,7 +72,7 @@ appSettings.setupAppSettings().then(async () => {
     subscribesStore.setupSubscribes(),
     rulesetsStore.setupRulesets(),
     pluginsStore.setupPlugins(),
-    scheduledTasksStore.setupScheduledTasks()
+    scheduledTasksStore.setupScheduledTasks(),
   ])
 
   if (await IsStartup()) {

@@ -32,7 +32,7 @@ const handleSave = async () => {
     sub.value.proxies = proxiesWithId.map((v) => ({
       id: proxies.find((proxy) => proxy.id === v.__id_in_gui)?.id || sampleID(),
       tag: v.tag,
-      type: v.type
+      type: v.type,
     }))
     await Writefile(path, JSON.stringify(omitArray(proxiesWithId, ['__id_in_gui']), null, 2))
     await subscribeStore.editSubscribe(id, sub.value)
@@ -51,7 +51,7 @@ const initProxiesText = async () => {
   const proxiesWithId = proxies.map((proxy) => {
     return {
       __id_in_gui: sub.value.proxies.find((v) => v.tag === proxy.tag)?.id || sampleID(),
-      ...proxy
+      ...proxy,
     }
   })
   proxiesText.value = JSON.stringify(proxiesWithId, null, 2)

@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
   submit: true,
   cancelText: 'common.cancel',
   submitText: 'common.save',
-  maskClosable: false
+  maskClosable: false,
 })
 
 const { t } = useI18n()
@@ -56,7 +56,7 @@ const contentStyle = computed(() => ({
   minWidth: props.minWidth + '%',
   minHeight: props.minHeight + '%',
   width: props.width + '%',
-  height: props.height + '%'
+  height: props.height + '%',
 }))
 
 provide('cancel', handleCancel)

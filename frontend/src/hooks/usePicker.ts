@@ -7,7 +7,7 @@ const createPicker = <T>(
   type: 'single' | 'multi',
   title: string,
   options: PickerItem[],
-  initialValue: string[]
+  initialValue: string[],
 ): Promise<T> => {
   const { t } = i18n.global
 
@@ -32,7 +32,7 @@ const createPicker = <T>(
       onFinish: () => {
         render(null, dom)
         dom.remove()
-      }
+      },
     })
     document.body.appendChild(dom)
     render(vnode, dom)

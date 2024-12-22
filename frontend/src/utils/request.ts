@@ -5,7 +5,7 @@ type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 enum ResponseType {
   JSON = 'JSON',
   TEXT = 'TEXT',
-  YAML = 'YAML'
+  YAML = 'YAML',
 }
 
 type RequestOptions = {
@@ -33,7 +33,7 @@ export class Request {
 
   private request = async <T>(
     url: string,
-    options: { method: Method; body?: Record<string, any> }
+    options: { method: Method; body?: Record<string, any> },
   ) => {
     this.beforeRequest()
 
@@ -41,7 +41,7 @@ export class Request {
 
     const init: RequestInit = {
       method: options.method,
-      signal: controller.signal
+      signal: controller.signal,
     }
 
     if (this.base) {

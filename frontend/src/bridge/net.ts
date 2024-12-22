@@ -24,7 +24,7 @@ type ResponseType = { status: number; headers: Record<string, string>; body: any
 const transformRequest = async (
   headers: RequestType['headers'],
   body: RequestType['body'],
-  options: RequestType['options']
+  options: RequestType['options'],
 ) => {
   headers = { 'User-Agent': getUserAgent(), ...headers }
 
@@ -44,7 +44,7 @@ const transformRequest = async (
     Insecure: false,
     Timeout: 15,
     CancelId: '',
-    ...options
+    ...options,
   }
   return [headers, body, options]
 }
@@ -52,10 +52,10 @@ const transformRequest = async (
 const transformResponse = <T = any>(
   status: ResponseType['status'],
   headers: Record<string, string[]>,
-  body: ResponseType['body']
+  body: ResponseType['body'],
 ) => {
   Object.entries(headers).forEach(
-    ([key, value]) => (headers[key] = (value.length > 1 ? value : value[0]) as any)
+    ([key, value]) => (headers[key] = (value.length > 1 ? value : value[0]) as any),
   )
 
   if (headers['Content-Type']?.includes('application/json')) {
@@ -71,11 +71,11 @@ const requestWithProgress = (method: 'Download' | 'Upload') => {
     path: string,
     headers: RequestType['headers'] = {},
     progress: (progress: number, total: number) => void = () => 0,
-    options: RequestType['options'] = {}
+    options: RequestType['options'] = {},
   ) => {
     const [_headers, , _options] = await transformRequest(headers, null, {
       Timeout: 20 * 60,
-      ...options
+      ...options,
     })
 
     const event = sampleID()
@@ -86,7 +86,7 @@ const requestWithProgress = (method: 'Download' | 'Upload') => {
       flag,
       status,
       headers: __headers,
-      body
+      body,
     } = await App[method](url, path, _headers, event, _options)
 
     EventsOff(event)
@@ -102,7 +102,7 @@ const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
     url: string,
     headers: RequestType['headers'] = {},
     body = {},
-    options = {}
+    options = {},
   ) => {
     const [_headers, _body, _options] = await transformRequest(headers, body, options)
 
@@ -110,7 +110,7 @@ const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
       flag,
       status,
       headers: __headers,
-      body: __body
+      body: __body,
     } = await App.Requests(method, url, _headers, _body, _options)
 
     if (!flag) throw __body
@@ -127,7 +127,7 @@ const requestWithoutBody = (methd: 'GET' | 'HEAD' | 'DELETE') => {
       flag,
       status,
       headers: __headers,
-      body
+      body,
     } = await App.Requests(methd, url, _headers, '', _options)
 
     if (!flag) throw body
@@ -145,14 +145,14 @@ export const Requests = async (options: RequestType) => {
     Timeout: 15,
     CancelId: '',
     FileField: 'file',
-    ..._options
+    ..._options,
   }
 
   const {
     flag,
     status,
     headers: _headers,
-    body: _body
+    body: _body,
   } = await App.Requests(method.toUpperCase(), url, headers, body, __options)
 
   if (!flag) throw _body
@@ -161,9 +161,9 @@ export const Requests = async (options: RequestType) => {
     status,
     headers: Object.entries(_headers).reduce(
       (p, c) => ({ ...p, [c[0]]: c[1].length > 1 ? c[1] : c[1][0] }),
-      {}
+      {},
     ),
-    body: _body
+    body: _body,
   }
 }
 

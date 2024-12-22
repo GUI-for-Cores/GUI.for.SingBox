@@ -162,8 +162,8 @@ export const deepAssign = (...args: any[]) => {
 export const base64Encode = (str: string) => {
   return btoa(
     encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
-      String.fromCharCode(('0x' + p1) as any)
-    )
+      String.fromCharCode(('0x' + p1) as any),
+    ),
   )
 }
 
@@ -172,7 +172,7 @@ export const base64Decode = (str: string) => {
     atob(str)
       .split('')
       .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
+      .join(''),
   )
 }
 

@@ -15,7 +15,7 @@ withDefaults(defineProps<Props>(), {
   type: 'normal',
   size: 'default',
   loading: false,
-  disabled: false
+  disabled: false,
 })
 </script>
 

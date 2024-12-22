@@ -45,7 +45,7 @@ export default {
     openFile: '打开文件',
     develop: '开发',
     canceled: '已取消',
-    downloading: '下载中...'
+    downloading: '下载中...',
   },
   kernel: {
     rule: '规则',
@@ -65,7 +65,7 @@ export default {
       warn: '警告',
       error: '错误',
       fatal: '致命',
-      panic: '恐慌'
+      panic: '恐慌',
     },
     clash_api: {
       external_controller: 'RESTful Web API监听地址',
@@ -75,7 +75,7 @@ export default {
       secret: 'RESTful API密钥',
       default_mode: '工作模式',
       access_control_allow_origin: '允许的CORS来源',
-      access_control_allow_private_network: '允许从私有网络访问'
+      access_control_allow_private_network: '允许从私有网络访问',
     },
     cache_file: {
       enabled: '启用缓存',
@@ -83,7 +83,7 @@ export default {
       cache_id: '缓存文件中的标识符',
       store_fakeip: '持久化FakeIP',
       store_rdrc: '持久化已拒绝的DNS响应',
-      rdrc_timeout: '拒绝的DNS响应缓存超时'
+      rdrc_timeout: '拒绝的DNS响应缓存超时',
     },
     inbounds: {
       enable: '启用',
@@ -94,7 +94,7 @@ export default {
         listen_port: '端口',
         tcp_fast_open: 'TCP快速打开',
         tcp_multi_path: '多路径TCP',
-        udp_fragment: 'UDP分段'
+        udp_fragment: 'UDP分段',
       },
       tun: {
         interface_name: 'TUN网卡名称',
@@ -107,11 +107,11 @@ export default {
         stack: 'TUN模式堆栈',
         system: 'System',
         gvisor: 'gVisor',
-        mixed: 'Mixed'
+        mixed: 'Mixed',
       },
       mixedPort: '混合代理端口',
       httpPort: 'HTTP(s)代理端口',
-      socksPort: 'SOCKS5代理端口'
+      socksPort: 'SOCKS5代理端口',
     },
     outbounds: {
       name: '出站',
@@ -136,13 +136,13 @@ export default {
       builtIn: '内置',
       subscriptions: '订阅',
       include: '包含',
-      exclude: '排除'
+      exclude: '排除',
     },
     route: {
       tab: {
         common: '通用',
         rules: '规则',
-        rule_set: '规则集'
+        rule_set: '规则集',
       },
       auto_detect_interface: '自动检测出站接口',
       default_interface: '出站接口名称',
@@ -152,20 +152,20 @@ export default {
           name: '类型',
           inline: '内联',
           local: '本地',
-          remote: '远程'
+          remote: '远程',
         },
         tag: '名称',
         format: {
           name: '格式',
           binary: '二进制',
-          source: '源文件'
+          source: '源文件',
         },
         url: '远程链接',
         download_detour: '下载方式',
         update_interval: '自动更新间隔',
         path: '保存路径',
         notFound: '规则集已丢失',
-        empty: '规则集列表为空'
+        empty: '规则集列表为空',
       },
       rules: {
         type: '规则类型',
@@ -179,7 +179,7 @@ export default {
           resolve: '解析DNS',
           rejectMethod: '拒绝方式',
           rejectDefault: '返回NXDOMAIN',
-          rejectDrop: '丢弃请求'
+          rejectDrop: '丢弃请求',
         },
         outbound: '出站标签',
         routeOptions: '路由选项',
@@ -190,12 +190,12 @@ export default {
           quic: 'quic',
           dns: 'dns',
           ssh: 'ssh',
-          rdp: 'rdp'
+          rdp: 'rdp',
         },
         server: 'DNS服务器',
         payload: '载荷',
-        invalid: '无效参数'
-      }
+        invalid: '无效参数',
+      },
     },
     rules: {
       type: {
@@ -220,8 +220,8 @@ export default {
         clash_mode: 'Clash模式(clash_mode)',
         rule_set: '规则集(rule_set)',
         outbound: '出站(outbound)',
-        inline: '内联(Inline)'
-      }
+        inline: '内联(Inline)',
+      },
     },
     strategy: {
       name: '策略',
@@ -230,13 +230,13 @@ export default {
       prefer_ipv4: 'IPV4优先',
       prefer_ipv6: 'IPV6优先',
       ipv4_only: '只使用IPV4',
-      ipv6_only: '只使用IPV6'
+      ipv6_only: '只使用IPV6',
     },
     dns: {
       tab: {
         common: '通用',
         servers: '服务器',
-        rules: '规则'
+        rules: '规则',
       },
       tag: '名称',
       address: '地址',
@@ -251,18 +251,18 @@ export default {
       fakeip: {
         name: 'Fake-IP',
         inet4_range: 'Fake-IP范围(IPv4)',
-        inet6_range: 'Fake-IP范围(IPv6)'
+        inet6_range: 'Fake-IP范围(IPv6)',
       },
       rules: {
         type: '类型',
         payload: '载荷',
         action: '规则动作',
-        server: '目标DNS服务器的标签'
-      }
+        server: '目标DNS服务器的标签',
+      },
     },
     mode: '工作模式',
     'allow-lan': '允许局域网访问',
-    'disallow-lan': '禁止局域网访问'
+    'disallow-lan': '禁止局域网访问',
   },
   router: {
     overview: '概览',
@@ -275,7 +275,7 @@ export default {
     about: '关于',
     profiles: '配置',
     kernel: '内核',
-    scheduledtasks: '计划任务'
+    scheduledtasks: '计划任务',
   },
   home: {
     mode: '代理模式',
@@ -308,7 +308,7 @@ export default {
       settings: '内核设置',
       settingsTips: '暂时生效，持久化请修改配置文件',
       updateGEO: '更新 GEO',
-      needPort: '请先设置代理端口'
+      needPort: '请先设置代理端口',
     },
     controller: {
       name: '控制器',
@@ -317,7 +317,7 @@ export default {
       cardMode: '卡片模式',
       sortBy: '按延迟排序',
       delay: '延迟测试URL',
-      delayUrl: '请输入延迟测试URL'
+      delayUrl: '请输入延迟测试URL',
     },
     connections: {
       type: '类型',
@@ -343,8 +343,8 @@ export default {
       closed: '已关闭',
       closeAll: '关闭所有连接',
       sort: '排序和设置显示字段',
-      details: '连接详情'
-    }
+      details: '连接详情',
+    },
   },
   subscribe: {
     manual: '手动管理',
@@ -365,8 +365,8 @@ export default {
     healthCheck: {
       name: '健康检查',
       interval: '时间间隔(秒)',
-      url: '测试链接'
-    }
+      url: '测试链接',
+    },
   },
   subscribes: {
     download: '下行流量',
@@ -384,8 +384,8 @@ export default {
     proxies: {
       type: '协议',
       name: '名称',
-      add: '添加代理'
-    }
+      add: '添加代理',
+    },
   },
   profile: {
     name: '名称',
@@ -398,7 +398,7 @@ export default {
       outbounds: '出站设置',
       route: '路由设置',
       dns: 'DNS设置',
-      'mixin-script': '混入和脚本'
+      'mixin-script': '混入和脚本',
     },
     proxies: '引用节点',
     use: '引用订阅',
@@ -410,11 +410,11 @@ export default {
       name: '混入配置',
       priority: '优先级',
       mixin: '混入优先',
-      gui: 'GUI优先'
+      gui: 'GUI优先',
     },
     scriptSettings: {
-      name: '脚本操作'
-    }
+      name: '脚本操作',
+    },
   },
   profiles: {
     shouldStop: '当前配置正在使用，无法删除',
@@ -426,21 +426,21 @@ export default {
     inbounds: '入站',
     outbounds: '出站',
     dnsServers: 'DNS服务器',
-    dnsRules: 'DNS规则'
+    dnsRules: 'DNS规则',
   },
   ruleset: {
     manual: '手动管理',
     format: {
       name: '文件格式',
       source: '源文件',
-      binary: '二进制'
+      binary: '二进制',
     },
     rulesetType: '规则集类型',
     name: '名称',
     url: '远程链接',
     path: '保存路径',
     interval: '更新间隔',
-    updating: '更新中'
+    updating: '更新中',
   },
   rulesets: {
     hub: '规则集中心',
@@ -451,7 +451,7 @@ export default {
     empty: '规则集列表为空，请先{action}或从{import}导入。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则集文件',
-    selectRuleType: '选择规则类型'
+    selectRuleType: '选择规则类型',
   },
   plugin: {
     trigger: '触发器',
@@ -482,7 +482,7 @@ export default {
     confKey: '配置标志',
     confDefault: '默认值',
     options: '选项',
-    restore: '恢复为默认值'
+    restore: '恢复为默认值',
   },
   plugins: {
     updating: '更新中',
@@ -495,7 +495,7 @@ export default {
     updateSuccess: '列表更新成功',
     total: '插件数量为',
     removeConfiguration: '是否删除插件配置？',
-    testRun: '运行测试'
+    testRun: '运行测试',
   },
   scheduledtask: {
     name: '名称',
@@ -512,7 +512,7 @@ export default {
     'update::ruleset': '更新规则集',
     'update::plugin': '更新插件',
     'run::plugin': '运行插件',
-    'run::script': '运行脚本'
+    'run::script': '运行脚本',
   },
   scheduledtasks: {
     logs: '日志',
@@ -524,7 +524,7 @@ export default {
     result: '执行结果',
     empty: '计划任务列表为空，请先{action}计划任务。',
     run: '立即运行',
-    log: '查看日志'
+    log: '查看日志',
   },
   settings: {
     general: '通用',
@@ -532,7 +532,7 @@ export default {
       name: '主题',
       light: '浅色',
       dark: '深色',
-      auto: '跟随系统'
+      auto: '跟随系统',
     },
     color: {
       name: '颜色',
@@ -542,37 +542,37 @@ export default {
       red: '红色',
       skyblue: '天蓝色',
       green: '绿色',
-      purple: '紫色'
+      purple: '紫色',
     },
     fontFamily: '字体',
     resetFont: '重置字体',
     appFolder: {
       name: '应用程序文件夹',
-      open: '打开应用程序文件夹'
+      open: '打开应用程序文件夹',
     },
     kernelCache: {
       name: '内核缓存',
-      clear: '清除持久化缓存'
+      clear: '清除持久化缓存',
     },
     lang: {
       name: '语言',
       zh: '简体中文',
-      en: 'English'
+      en: 'English',
     },
     pages: {
-      name: '页面可见性'
+      name: '页面可见性',
     },
     windowState: {
       normal: '以普通窗口启动',
       maximised: '最大化',
       minimised: '最小化窗口启动',
-      fullscreen: '全屏'
+      fullscreen: '全屏',
     },
     webviewGpuPolicy: {
       name: 'Webview GPU 策略',
       always: '启用硬件加速',
       onDemand: '根据Web内容自行决定',
-      never: '禁用硬件加速'
+      never: '禁用硬件加速',
     },
     needRestart: '重启生效',
     needAdmin: '需要管理员权限',
@@ -586,7 +586,7 @@ export default {
     rollingRelease: '启用滚动发行',
     startup: {
       name: '开机时启动',
-      delay: '延迟(秒)'
+      delay: '延迟(秒)',
     },
     kernel: {
       name: 'sing-box',
@@ -597,16 +597,16 @@ export default {
       local: '本地',
       remote: '远程',
       update: '更新',
-      restart: '重启核心'
+      restart: '重启核心',
     },
     userAgent: {
       name: '用户代理(User-Agent)',
-      reset: ' 重置用户代理'
+      reset: ' 重置用户代理',
     },
     githubapi: {
       name: '向 REST API 进行身份验证',
-      tips: '拥有更高的速率限制'
-    }
+      tips: '拥有更高的速率限制',
+    },
   },
   about: {
     new: '新版本',
@@ -616,7 +616,7 @@ export default {
     updateSuccessfulReplace: '下载完成，请手动替换软件',
     updateSuccessful: '更新完成',
     newVersion: '发现新版本',
-    latestVersion: '已经是最新版本了'
+    latestVersion: '已经是最新版本了',
   },
   titlebar: {
     resetSize: '重置窗口',
@@ -624,7 +624,7 @@ export default {
     restart: '重启程序',
     exitApp: '退出程序',
     waiting: '正在等待程序退出...',
-    timeout: '程序退出超时，是否强制退出？\n\n原因：插件退出超时。'
+    timeout: '程序退出超时，是否强制退出？\n\n原因：插件退出超时。',
   },
   format: {
     seconds: '秒',
@@ -640,14 +640,14 @@ export default {
     month: '月',
     year: '年',
     ago: '前',
-    later: '后'
+    later: '后',
   },
   outbound: {
     select: '🚀 节点选择',
     urltest: '🎈 自动选择',
     direct: '🎯 全球直连',
     block: '🛑 全球拦截',
-    fallback: '🐟 漏网之鱼'
+    fallback: '🐟 漏网之鱼',
   },
   tray: {
     showMainWindow: '显示主窗口',
@@ -666,9 +666,9 @@ export default {
     startKernel: '开启内核',
     stopKernel: '关闭内核',
     restartKernel: '重启内核',
-    plugins: '插件'
+    plugins: '插件',
   },
   commands: {
-    noMatching: '没有匹配到命令'
-  }
+    noMatching: '没有匹配到命令',
+  },
 }

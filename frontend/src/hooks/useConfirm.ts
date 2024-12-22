@@ -27,7 +27,7 @@ const createConfirm = (title: string, message: string, options: Options = { type
       onFinish: () => {
         render(null, dom)
         dom.remove()
-      }
+      },
     })
     document.body.appendChild(dom)
     render(vnode, dom)

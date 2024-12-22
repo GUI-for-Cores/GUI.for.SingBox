@@ -21,15 +21,15 @@ const menuList: Menu[] = [
     label: 'scheduledtasks.run',
     handler: (id: string) => {
       scheduledTasksStore.runScheduledTask(id)
-    }
+    },
   },
   {
     label: 'scheduledtasks.log',
     handler: (id: string) => {
       taskFormTaskID.value = id
       showLogs.value = true
-    }
-  }
+    },
+  },
 ]
 
 const [showLogs, toggleLogs] = useBool(false)
@@ -90,7 +90,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       v-model="appSettingsStore.app.scheduledtasksView"
       :options="[
         { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
+        { label: 'common.list', value: View.List },
       ]"
     />
     <Button @click="handleViewLogs" type="text" class="ml-auto">
@@ -104,7 +104,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
   <div
     v-draggable="[
       scheduledTasksStore.scheduledtasks,
-      { ...DraggableOptions, onUpdate: onSortUpdate }
+      { ...DraggableOptions, onUpdate: onSortUpdate },
     ]"
     :class="'grid-list-' + appSettingsStore.app.scheduledtasksView"
   >

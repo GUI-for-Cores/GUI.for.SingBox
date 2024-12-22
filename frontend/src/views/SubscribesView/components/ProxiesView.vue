@@ -67,7 +67,7 @@ const menus: Menu[] = [
       } catch (error: any) {
         message.error(error)
       }
-    }
+    },
   },
   {
     label: 'common.copy',
@@ -79,7 +79,7 @@ const menus: Menu[] = [
       } catch (error: any) {
         message.error(error)
       }
-    }
+    },
   },
   {
     label: 'common.edit',
@@ -93,7 +93,7 @@ const menus: Menu[] = [
       } catch (error: any) {
         message.error(error)
       }
-    }
+    },
   },
   {
     label: 'common.delete',
@@ -102,8 +102,8 @@ const menus: Menu[] = [
       if (idx !== -1) {
         sub.value.proxies.splice(idx, 1)
       }
-    }
-  }
+    },
+  },
 ]
 
 const { t } = useI18n()
@@ -119,7 +119,7 @@ const handleSave = async () => {
     const { path, proxies, id } = sub.value
     await initAllFieldsProxies()
     const filteredProxies = allFieldsProxies.value.filter((v: any) =>
-      proxies.some((vv) => vv.tag === v.tag)
+      proxies.some((vv) => vv.tag === v.tag),
     )
     const sortedArray = proxies.map((v) => filteredProxies.find((vv) => vv.tag === v.tag))
     await Writefile(path, JSON.stringify(sortedArray, null, 2))
@@ -162,14 +162,14 @@ const onEditEnd = async () => {
     allFieldsProxies.value.splice(allFieldsProxiesIdx, 1, proxy)
     sub.value.proxies.splice(subProxiesIdx, 1, {
       ...sub.value.proxies[subProxiesIdx],
-      tag: proxy.tag
+      tag: proxy.tag,
     })
   } else {
     allFieldsProxies.value.push(proxy)
     sub.value.proxies.push({
       id: sampleID(),
       tag: proxy.tag,
-      type: proxy.type
+      type: proxy.type,
     })
   }
 }

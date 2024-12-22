@@ -12,12 +12,12 @@ import {
   RulesetType,
   RulesetFormat,
   RuleAction,
-  RuleActionReject
+  RuleActionReject,
 } from '@/enums/kernel'
 import {
   DnsRuleTypeOptions,
   DnsRuleActionOptions,
-  DnsRuleActionRejectOptions
+  DnsRuleActionRejectOptions,
 } from '@/constant/kernel'
 
 interface Props {
@@ -166,12 +166,12 @@ const renderRule = (rule: IDNSRule) => {
         :options="[
           {
             label: 'kernel.global',
-            value: ClashMode.Global
+            value: ClashMode.Global,
           },
           {
             label: 'kernel.direct',
-            value: ClashMode.Direct
-          }
+            value: ClashMode.Direct,
+          },
         ]"
       />
       <Select

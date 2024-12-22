@@ -14,7 +14,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   id: '',
-  isUpdate: false
+  isUpdate: false,
 })
 
 const loading = ref(false)
@@ -39,7 +39,7 @@ const sub = ref<SubscribeType>({
   disabled: false,
   inSecure: false,
   userAgent: '',
-  proxies: []
+  proxies: [],
 })
 
 const { t } = useI18n()
@@ -89,7 +89,7 @@ if (props.isUpdate) {
         :options="[
           { label: 'common.http', value: 'Http' },
           { label: 'common.file', value: 'File' },
-          { label: 'subscribe.manual', value: 'Manual' }
+          { label: 'subscribe.manual', value: 'Manual' },
         ]"
       />
     </div>

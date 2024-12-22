@@ -10,7 +10,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   trigger: () => ['click'],
-  placement: 'bottom'
+  placement: 'bottom',
 })
 
 const domRef = useTemplateRef('domRef')
@@ -70,7 +70,7 @@ onUnmounted(() => {
         v-show="show"
         :style="{
           bottom: placement === 'top' ? '100%' : '',
-          top: placement === 'top' ? '' : '100%'
+          top: placement === 'top' ? '' : '100%',
         }"
         class="overlay"
       >

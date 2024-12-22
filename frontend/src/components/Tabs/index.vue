@@ -15,7 +15,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   height: '',
-  tabPosition: 'left'
+  tabPosition: 'left',
 })
 
 const emits = defineEmits(['update:activeKey'])

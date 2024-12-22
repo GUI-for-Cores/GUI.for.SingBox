@@ -9,7 +9,7 @@ import {
   RulesetFormat,
   RuleType,
   RuleAction,
-  Strategy
+  Strategy,
 } from '@/enums/kernel'
 import i18n from '@/lang'
 const { t } = i18n.global
@@ -19,12 +19,12 @@ const DefaultOutboundIds = {
   Urltest: 'outbound-urlte',
   Direct: 'outbound-direct',
   Fallback: 'outbound-fallback',
-  Global: 'outbound-global'
+  Global: 'outbound-global',
 }
 
 const DefaultInboundIds = {
   MixedIn: 'mixed-in',
-  Tun: 'tun-in'
+  Tun: 'tun-in',
 }
 
 const DefaultRulesetIds = {
@@ -33,7 +33,7 @@ const DefaultRulesetIds = {
   GEOSITE_CN: 'GeoSite-CN',
   GEOLOCATION_NOT_CN: 'GeoLocation-!CN',
   GEOSITE_PRIVATE: 'GeoSite-Private',
-  GEOIP_PRIVATE: 'GeoIP-Private'
+  GEOIP_PRIVATE: 'GeoIP-Private',
 }
 
 const DefaultDnsServersIds = {
@@ -41,14 +41,14 @@ const DefaultDnsServersIds = {
   RemoteDns: 'Remote-DNS',
   FakeIP: 'Fake-IP',
   LocalDnsResolver: 'Local-DNS-Resolver',
-  RemoteDnsResolver: 'Remote-DNS-Resolver'
+  RemoteDnsResolver: 'Remote-DNS-Resolver',
 }
 
 export const DefaultLog = (): ILog => ({
   disabled: false,
   level: LogLevel.Info,
   output: '',
-  timestamp: false
+  timestamp: false,
 })
 
 export const DefaultExperimental = (): IExperimental => ({
@@ -60,7 +60,7 @@ export const DefaultExperimental = (): IExperimental => ({
     secret: sampleID(),
     default_mode: ClashMode.Rule,
     access_control_allow_origin: ['*'],
-    access_control_allow_private_network: false
+    access_control_allow_private_network: false,
   },
   cache_file: {
     enabled: true,
@@ -68,8 +68,8 @@ export const DefaultExperimental = (): IExperimental => ({
     cache_id: '',
     store_fakeip: true,
     store_rdrc: true,
-    rdrc_timeout: '7d'
-  }
+    rdrc_timeout: '7d',
+  },
 })
 
 export const DefaultInboundSocks = (): IInbound['socks'] => ({
@@ -78,9 +78,9 @@ export const DefaultInboundSocks = (): IInbound['socks'] => ({
     listen_port: 20120,
     tcp_fast_open: false,
     tcp_multi_path: false,
-    udp_fragment: false
+    udp_fragment: false,
   },
-  users: []
+  users: [],
 })
 
 export const DefaultInboundHttp = (): IInbound['http'] => ({
@@ -89,9 +89,9 @@ export const DefaultInboundHttp = (): IInbound['http'] => ({
     listen_port: 20121,
     tcp_fast_open: false,
     tcp_multi_path: false,
-    udp_fragment: false
+    udp_fragment: false,
   },
-  users: []
+  users: [],
 })
 
 export const DefaultInboundMixed = (): IInbound['mixed'] => ({
@@ -100,9 +100,9 @@ export const DefaultInboundMixed = (): IInbound['mixed'] => ({
     listen_port: 20122,
     tcp_fast_open: false,
     tcp_multi_path: false,
-    udp_fragment: false
+    udp_fragment: false,
   },
-  users: []
+  users: [],
 })
 
 export const DefaultInboundTun = (): IInbound['tun'] => ({
@@ -113,7 +113,7 @@ export const DefaultInboundTun = (): IInbound['tun'] => ({
   strict_route: true,
   route_address: ['0.0.0.0/1', '128.0.0.0/1', '::/1', '8000::/1'],
   endpoint_independent_nat: false,
-  stack: TunStack.Mixed
+  stack: TunStack.Mixed,
 })
 
 export const DefaultInbounds = (): IInbound[] => [
@@ -122,15 +122,15 @@ export const DefaultInbounds = (): IInbound[] => [
     type: Inbound.Mixed,
     tag: 'mixed-in',
     enable: true,
-    mixed: DefaultInboundMixed()
+    mixed: DefaultInboundMixed(),
   },
   {
     id: DefaultInboundIds.Tun,
     type: Inbound.Tun,
     tag: 'tun-in',
     enable: false,
-    tun: DefaultInboundTun()
-  }
+    tun: DefaultInboundTun(),
+  },
 ]
 
 export const DefaultOutbound = (): IOutbound => ({
@@ -143,7 +143,7 @@ export const DefaultOutbound = (): IOutbound => ({
   interval: '3m',
   tolerance: 150,
   include: '',
-  exclude: ''
+  exclude: '',
 })
 
 export const DefaultOutbounds = (): IOutbound[] => [
@@ -157,7 +157,7 @@ export const DefaultOutbounds = (): IOutbound[] => [
     interval: '3m',
     tolerance: 150,
     include: '',
-    exclude: ''
+    exclude: '',
   },
   {
     id: DefaultOutboundIds.Urltest,
@@ -169,7 +169,7 @@ export const DefaultOutbounds = (): IOutbound[] => [
     interval: '3m',
     tolerance: 150,
     include: '',
-    exclude: ''
+    exclude: '',
   },
   {
     id: DefaultOutboundIds.Direct,
@@ -181,7 +181,7 @@ export const DefaultOutbounds = (): IOutbound[] => [
     interval: '3m',
     tolerance: 150,
     include: '',
-    exclude: ''
+    exclude: '',
   },
   {
     id: DefaultOutboundIds.Fallback,
@@ -189,14 +189,14 @@ export const DefaultOutbounds = (): IOutbound[] => [
     type: Outbound.Selector,
     outbounds: [
       { id: DefaultOutboundIds.Select, type: 'Built-in', tag: t('outbound.select') },
-      { id: DefaultOutboundIds.Direct, type: 'Built-in', tag: t('outbound.direct') }
+      { id: DefaultOutboundIds.Direct, type: 'Built-in', tag: t('outbound.direct') },
     ],
     interrupt_exist_connections: true,
     url: '',
     interval: '3m',
     tolerance: 150,
     include: '',
-    exclude: ''
+    exclude: '',
   },
   {
     id: DefaultOutboundIds.Global,
@@ -206,15 +206,15 @@ export const DefaultOutbounds = (): IOutbound[] => [
       { id: DefaultOutboundIds.Select, type: 'Built-in', tag: t('outbound.select') },
       { id: DefaultOutboundIds.Urltest, type: 'Built-in', tag: t('outbound.urltest') },
       { id: DefaultOutboundIds.Direct, type: 'Built-in', tag: t('outbound.direct') },
-      { id: DefaultOutboundIds.Fallback, type: 'Built-in', tag: t('outbound.fallback') }
+      { id: DefaultOutboundIds.Fallback, type: 'Built-in', tag: t('outbound.fallback') },
     ],
     interrupt_exist_connections: true,
     url: '',
     interval: '3m',
     tolerance: 150,
     include: '',
-    exclude: ''
-  }
+    exclude: '',
+  },
 ]
 
 export const DefaultRouteRule = (): IRule => ({
@@ -226,7 +226,7 @@ export const DefaultRouteRule = (): IRule => ({
   outbound: '',
   sniffer: [],
   strategy: Strategy.Default,
-  server: ''
+  server: '',
 })
 
 export const DefaultRouteRuleset = (): IRuleSet => ({
@@ -238,7 +238,7 @@ export const DefaultRouteRuleset = (): IRuleSet => ({
   download_detour: '',
   update_interval: '',
   rules: '',
-  path: ''
+  path: '',
 })
 
 export const DefaultRoute = (): IRoute => ({
@@ -263,7 +263,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: '',
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -274,7 +274,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: '',
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -285,7 +285,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Direct,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -296,7 +296,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Global,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -307,7 +307,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: '',
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -318,7 +318,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: '',
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -329,7 +329,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Direct,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -340,7 +340,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Direct,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -351,7 +351,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Direct,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -362,7 +362,7 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Direct,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
+      server: '',
     },
     {
       id: sampleID(),
@@ -373,8 +373,8 @@ export const DefaultRoute = (): IRoute => ({
       outbound: DefaultOutboundIds.Select,
       sniffer: [],
       strategy: Strategy.Default,
-      server: ''
-    }
+      server: '',
+    },
   ],
   rule_set: [
     {
@@ -386,7 +386,7 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
+      path: '',
     },
     {
       id: DefaultRulesetIds.GEOIP_PRIVATE,
@@ -397,7 +397,7 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
+      path: '',
     },
     {
       id: DefaultRulesetIds.GEOSITE_PRIVATE,
@@ -408,7 +408,7 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
+      path: '',
     },
     {
       id: DefaultRulesetIds.GEOIP_CN,
@@ -419,7 +419,7 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
+      path: '',
     },
     {
       id: DefaultRulesetIds.GEOSITE_CN,
@@ -430,7 +430,7 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
+      path: '',
     },
     {
       id: DefaultRulesetIds.GEOLOCATION_NOT_CN,
@@ -441,12 +441,12 @@ export const DefaultRoute = (): IRoute => ({
       download_detour: DefaultOutboundIds.Direct,
       update_interval: '',
       rules: '',
-      path: ''
-    }
+      path: '',
+    },
   ],
   auto_detect_interface: true,
   default_interface: '',
-  final: DefaultOutboundIds.Fallback
+  final: DefaultOutboundIds.Fallback,
 })
 
 export const DefaultDnsServer = (): IDNSServer => ({
@@ -456,7 +456,7 @@ export const DefaultDnsServer = (): IDNSServer => ({
   address_resolver: '',
   detour: '',
   strategy: Strategy.Default,
-  client_subnet: ''
+  client_subnet: '',
 })
 
 export const DefaultDnsServers = (): IDNSServer[] => [
@@ -467,7 +467,7 @@ export const DefaultDnsServers = (): IDNSServer[] => [
     address_resolver: DefaultDnsServersIds.LocalDnsResolver,
     detour: DefaultOutboundIds.Direct,
     strategy: Strategy.Default,
-    client_subnet: ''
+    client_subnet: '',
   },
   {
     id: DefaultDnsServersIds.LocalDnsResolver,
@@ -476,7 +476,7 @@ export const DefaultDnsServers = (): IDNSServer[] => [
     address_resolver: '',
     detour: DefaultOutboundIds.Direct,
     strategy: Strategy.Default,
-    client_subnet: ''
+    client_subnet: '',
   },
   {
     id: DefaultDnsServersIds.RemoteDns,
@@ -485,7 +485,7 @@ export const DefaultDnsServers = (): IDNSServer[] => [
     address_resolver: DefaultDnsServersIds.RemoteDnsResolver,
     detour: DefaultOutboundIds.Select,
     strategy: Strategy.Default,
-    client_subnet: ''
+    client_subnet: '',
   },
   {
     id: DefaultDnsServersIds.RemoteDnsResolver,
@@ -494,8 +494,8 @@ export const DefaultDnsServers = (): IDNSServer[] => [
     address_resolver: '',
     detour: DefaultOutboundIds.Select,
     strategy: Strategy.Default,
-    client_subnet: ''
-  }
+    client_subnet: '',
+  },
   // {
   //   id: DefaultDnsServersIds.FakeIP,
   //   tag: 'fake-ip',
@@ -512,7 +512,7 @@ export const DefaultDnsRule = (): IDNSRule => ({
   type: RuleType.RuleSet,
   payload: '',
   action: RuleAction.Route,
-  server: ''
+  server: '',
 })
 
 export const DefaultDnsRules = (): IDNSRule[] => [
@@ -521,36 +521,36 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     type: RuleType.Outbound,
     payload: 'any',
     action: RuleAction.Route,
-    server: DefaultDnsServersIds.LocalDns
+    server: DefaultDnsServersIds.LocalDns,
   },
   {
     id: sampleID(),
     type: RuleType.ClashMode,
     payload: ClashMode.Direct,
     action: RuleAction.Route,
-    server: DefaultDnsServersIds.LocalDns
+    server: DefaultDnsServersIds.LocalDns,
   },
   {
     id: sampleID(),
     type: RuleType.ClashMode,
     payload: ClashMode.Global,
     action: RuleAction.Route,
-    server: DefaultDnsServersIds.RemoteDns
+    server: DefaultDnsServersIds.RemoteDns,
   },
   {
     id: sampleID(),
     type: RuleType.RuleSet,
     payload: DefaultRulesetIds.GEOSITE_CN,
     action: RuleAction.Route,
-    server: DefaultDnsServersIds.LocalDns
+    server: DefaultDnsServersIds.LocalDns,
   },
   {
     id: sampleID(),
     type: RuleType.RuleSet,
     payload: DefaultRulesetIds.GEOLOCATION_NOT_CN,
     action: RuleAction.Route,
-    server: DefaultDnsServersIds.RemoteDns
-  }
+    server: DefaultDnsServersIds.RemoteDns,
+  },
 ]
 
 export const DefaultDns = (): IDNS => ({
@@ -559,14 +559,14 @@ export const DefaultDns = (): IDNS => ({
   fakeip: {
     enabled: false,
     inet4_range: '198.18.0.0/15',
-    inet6_range: 'fc00::/18'
+    inet6_range: 'fc00::/18',
   },
   disable_cache: false,
   disable_expire: false,
   independent_cache: false,
   client_subnet: '',
   final: DefaultDnsServersIds.RemoteDns,
-  strategy: Strategy.Default
+  strategy: Strategy.Default,
 })
 
 export const DefaultMixin = (): IProfile['mixin'] => {

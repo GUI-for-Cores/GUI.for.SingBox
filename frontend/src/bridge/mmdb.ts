@@ -16,7 +16,7 @@ export const OpenMMDB = async (path: string, id: string) => {
   }
   return {
     close: () => CloseMMDB(path, id),
-    query: (ip: string, type: QueryType) => QueryMMDB(path, ip, type)
+    query: (ip: string, type: QueryType) => QueryMMDB(path, ip, type),
   }
 }
 

@@ -27,7 +27,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
       onClose: () => {
         onClose?.()
         onDestroy()
-      }
+      },
     })
     const dom = document.createElement('div')
     dom.id = id
@@ -36,7 +36,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
     ctx.instances[id] = {
       dom,
       vnode,
-      timer: setTimeout(onDestroy, duration)
+      timer: setTimeout(onDestroy, duration),
     }
 
     ctx.dom.appendChild(dom)
@@ -49,7 +49,7 @@ const buildMessage = (icon: IconType, ctx: MessageContext) => {
       error: (content: string) => ctx.update(id, content, 'error'),
       success: (content: string) => ctx.update(id, content, 'success'),
       update: (content: string, icon?: IconType) => ctx.update(id, content, icon),
-      destroy: onDestroy
+      destroy: onDestroy,
     }
   }
 }

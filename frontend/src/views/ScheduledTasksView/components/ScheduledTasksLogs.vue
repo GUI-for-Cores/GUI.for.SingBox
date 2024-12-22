@@ -23,19 +23,19 @@ const columns: Column[] = [
   {
     title: 'scheduledtasks.name',
     align: 'center',
-    key: 'name'
+    key: 'name',
   },
   {
     title: 'scheduledtasks.startTime',
     align: 'center',
     key: 'startTime',
-    customRender: ({ value }) => formatDate(value, 'YYYY-MM-DD HH:mm:ss')
+    customRender: ({ value }) => formatDate(value, 'YYYY-MM-DD HH:mm:ss'),
   },
   {
     title: 'scheduledtasks.endTime',
     align: 'center',
     key: 'endTime',
-    customRender: ({ value }) => formatDate(value, 'YYYY-MM-DD HH:mm:ss')
+    customRender: ({ value }) => formatDate(value, 'YYYY-MM-DD HH:mm:ss'),
   },
   {
     title: 'scheduledtasks.duration',
@@ -44,21 +44,21 @@ const columns: Column[] = [
     sort: (a, b) => b.endTime - b.startTime - (a.endTime - a.startTime),
     customRender: ({ value, record }) => {
       return ((value - record.startTime) / 1000).toFixed(2) + 's'
-    }
+    },
   },
   {
     title: 'scheduledtasks.result',
-    key: 'result'
-  }
+    key: 'result',
+  },
 ]
 
 const pluginsOptions = computed(() =>
   [{ label: 'All', value: '' }].concat(
     ...pluginsStore.scheduledtasks.map((v) => ({
       label: v.name,
-      value: v.name
-    }))
-  )
+      value: v.name,
+    })),
+  ),
 )
 
 const filteredLogs = computed(() => {

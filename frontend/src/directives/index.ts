@@ -7,7 +7,7 @@ import tips from './tips'
 const directives: any = {
   menu,
   tips,
-  draggable: vDraggable
+  draggable: vDraggable,
 }
 
 export default {
@@ -15,5 +15,5 @@ export default {
     Object.keys(directives).forEach((key) => {
       app.directive(key, directives[key])
     })
-  }
+  },
 } as Plugin

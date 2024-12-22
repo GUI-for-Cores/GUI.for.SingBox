@@ -31,5 +31,5 @@ export default {
     const appStore = useAppStore()
     appStore.tipsShow = false
     el.dataset.showTips = 'false'
-  }
+  },
 } as Directive

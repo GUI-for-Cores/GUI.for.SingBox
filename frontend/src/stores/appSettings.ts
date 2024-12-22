@@ -11,7 +11,7 @@ import {
   Writefile,
   WindowSetSystemDefaultTheme,
   WindowIsMaximised,
-  WindowIsMinimised
+  WindowIsMinimised,
 } from '@/bridge'
 
 type AppSettings = {
@@ -98,7 +98,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
         down: true,
         upload: true,
         download: true,
-        start: true
+        start: true,
       },
       order: [
         'metadata.type',
@@ -114,8 +114,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
         'down',
         'upload',
         'download',
-        'start'
-      ]
+        'start',
+      ],
     },
     kernel: {
       branch: 'latest',
@@ -126,14 +126,14 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       unAvailable: true,
       cardMode: true,
       sortByDelay: false,
-      testUrl: 'https://www.gstatic.com/generate_204'
+      testUrl: 'https://www.gstatic.com/generate_204',
     },
     pluginSettings: {},
     githubApiToken: '',
     multipleInstance: false,
     addPluginToMenu: false,
     rollingRelease: true,
-    pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins']
+    pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins'],
   })
 
   const saveAppSettings = debounce((config: string) => {
@@ -200,7 +200,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
       firstOpen = false
     },
-    { deep: true }
+    { deep: true },
   )
 
   window.addEventListener(
@@ -212,7 +212,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
         app.value.width = document.documentElement.clientWidth
         app.value.height = document.documentElement.clientHeight
       }
-    }, 1000)
+    }, 1000),
   )
 
   watch(
@@ -223,9 +223,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       () => app.value.addPluginToMenu,
       () => app.value.kernel.running,
       () => app.value.kernel.unAvailable,
-      () => app.value.kernel.sortByDelay
+      () => app.value.kernel.sortByDelay,
     ],
-    updateTrayMenus
+    updateTrayMenus,
   )
 
   watch(themeMode, setAppTheme, { immediate: true })

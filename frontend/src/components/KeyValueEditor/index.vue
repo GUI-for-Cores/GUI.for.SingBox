@@ -8,7 +8,7 @@ interface Props {
 const model = defineModel<Record<string, string>>({ default: {} })
 
 withDefaults(defineProps<Props>(), {
-  placeholder: () => ['key', 'value']
+  placeholder: () => ['key', 'value'],
 })
 
 const keys = ref(Object.keys(model.value))
@@ -32,11 +32,11 @@ watch(
         obj[key] = values[index]
         return obj
       },
-      {} as Record<string, string>
+      {} as Record<string, string>,
     )
     model.value = obj
   },
-  { deep: true }
+  { deep: true },
 )
 </script>
 

@@ -35,15 +35,15 @@ const menuList: Menu[] = [
         console.log(error)
         message.error(error)
       }
-    }
+    },
   },
   {
     label: 'common.openFile',
     handler: async (id: string) => {
       const plugin = pluginsStore.getPluginById(id)
       BrowserOpenURL(envStore.env.basePath + '/' + plugin!.path)
-    }
-  }
+    },
+  },
 ]
 
 const { t } = useI18n()
@@ -159,14 +159,14 @@ const generateMenus = (p: PluginType) => {
       handler: async () => {
         pluginFormID.value = p.id
         showPluginConfiguration.value = true
-      }
+      },
     })
   }
 
   if (Object.keys(p.menus).length !== 0) {
     builtInMenus.push({
       label: '',
-      separator: true
+      separator: true,
     })
   }
 
@@ -181,7 +181,7 @@ const generateMenus = (p: PluginType) => {
       } finally {
         p.running = false
       }
-    }
+    },
   }))
 
   return builtInMenus.concat(...pluginMenus)
@@ -213,7 +213,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       v-model="appSettingsStore.app.pluginsView"
       :options="[
         { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
+        { label: 'common.list', value: View.List },
       ]"
     />
     <Button @click="handleImportPlugin" type="link" class="ml-auto">

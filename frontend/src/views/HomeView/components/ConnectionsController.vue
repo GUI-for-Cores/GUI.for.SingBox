@@ -13,7 +13,7 @@ import {
   formatRelativeTime,
   // addToRuleSet,
   // ignoredError,
-  setIntervalImmediately
+  setIntervalImmediately,
 } from '@/utils'
 
 import type { Column } from '@/components/Table/index.vue'
@@ -34,20 +34,20 @@ const columns = computed(() =>
         sort: (a, b) => b.metadata.type.localeCompare(a.metadata.type),
         customRender: ({ value, record }) => {
           return value + '(' + record.metadata.network + ')'
-        }
+        },
       },
       {
         title: 'home.connections.process',
         align: 'center',
         key: 'metadata.process',
         hidden: !appSettingsStore.app.connections.visibility['metadata.process'],
-        sort: (a, b) => b.metadata.process.localeCompare(a.metadata.process)
+        sort: (a, b) => b.metadata.process.localeCompare(a.metadata.process),
       },
       {
         title: 'home.connections.processPath',
         key: 'metadata.processPath',
         hidden: !appSettingsStore.app.connections.visibility['metadata.processPath'],
-        sort: (a, b) => b.metadata.processPath.localeCompare(a.metadata.processPath)
+        sort: (a, b) => b.metadata.processPath.localeCompare(a.metadata.processPath),
       },
       {
         title: 'home.connections.host',
@@ -56,14 +56,14 @@ const columns = computed(() =>
         sort: (a, b) => b.metadata.host.localeCompare(a.metadata.host),
         customRender: ({ value, record }) => {
           return (value || record.metadata.destinationIP) + ':' + record.metadata.destinationPort
-        }
+        },
       },
       {
         title: 'home.connections.sniffHost',
         align: 'center',
         key: 'metadata.sniffHost',
         hidden: !appSettingsStore.app.connections.visibility['metadata.sniffHost'],
-        sort: (a, b) => b.metadata.sniffHost.localeCompare(a.metadata.sniffHost)
+        sort: (a, b) => b.metadata.sniffHost.localeCompare(a.metadata.sniffHost),
       },
       {
         title: 'home.connections.sourceIP',
@@ -73,7 +73,7 @@ const columns = computed(() =>
         sort: (a, b) => b.metadata.sourceIP.localeCompare(a.metadata.sourceIP),
         customRender: ({ value, record }) => {
           return value + ':' + record.metadata.sourcePort
-        }
+        },
       },
       {
         title: 'home.connections.remoteDestination',
@@ -83,7 +83,7 @@ const columns = computed(() =>
         sort: (a, b) => b.metadata.remoteDestination.localeCompare(a.metadata.remoteDestination),
         customRender: ({ value, record }) => {
           return value + ':' + record.metadata.destinationPort
-        }
+        },
       },
       {
         title: 'home.connections.rule',
@@ -93,14 +93,14 @@ const columns = computed(() =>
         sort: (a, b) => b.rule.localeCompare(a.rule),
         customRender: ({ value, record }) => {
           return value + (record.rulePayload ? '::' + record.rulePayload : '')
-        }
+        },
       },
       {
         title: 'home.connections.chains',
         key: 'chains',
         hidden: !appSettingsStore.app.connections.visibility['chains'],
         sort: (a, b) => b.chains[0].localeCompare(a.chains[0]),
-        customRender: ({ value }) => value.slice().reverse().join(' :: ')
+        customRender: ({ value }) => value.slice().reverse().join(' :: '),
       },
       {
         title: 'home.connections.uploadSpeed',
@@ -109,7 +109,7 @@ const columns = computed(() =>
         minWidth: '90px',
         hidden: !appSettingsStore.app.connections.visibility['up'],
         sort: (a, b) => b.upload - b.up - (a.upload - a.up),
-        customRender: ({ value, record }) => formatBytes(record.upload - value) + '/s'
+        customRender: ({ value, record }) => formatBytes(record.upload - value) + '/s',
       },
       {
         title: 'home.connections.downSpeed',
@@ -118,7 +118,7 @@ const columns = computed(() =>
         minWidth: '90px',
         hidden: !appSettingsStore.app.connections.visibility['down'],
         sort: (a, b) => b.download - b.down - (a.download - a.down),
-        customRender: ({ value, record }) => formatBytes(record.download - value) + '/s'
+        customRender: ({ value, record }) => formatBytes(record.download - value) + '/s',
       },
       {
         title: 'home.connections.upload',
@@ -126,7 +126,7 @@ const columns = computed(() =>
         key: 'upload',
         hidden: !appSettingsStore.app.connections.visibility['upload'],
         sort: (a, b) => b.upload - a.upload,
-        customRender: ({ value }) => formatBytes(value)
+        customRender: ({ value }) => formatBytes(value),
       },
       {
         title: 'home.connections.download',
@@ -134,7 +134,7 @@ const columns = computed(() =>
         key: 'download',
         hidden: !appSettingsStore.app.connections.visibility['download'],
         sort: (a, b) => b.download - a.download,
-        customRender: ({ value }) => formatBytes(value)
+        customRender: ({ value }) => formatBytes(value),
       },
       {
         title: 'home.connections.time',
@@ -142,20 +142,20 @@ const columns = computed(() =>
         key: 'start',
         hidden: !appSettingsStore.app.connections.visibility['start'],
         sort: (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-        customRender: ({ value }) => formatRelativeTime(value)
-      }
+        customRender: ({ value }) => formatRelativeTime(value),
+      },
     ] as Column[]
   ).sort(
     (a, b) =>
       appSettingsStore.app.connections.order.indexOf(a.key) -
-      appSettingsStore.app.connections.order.indexOf(b.key)
-  )
+      appSettingsStore.app.connections.order.indexOf(b.key),
+  ),
 )
 
 const columnTitleMap = computed(() => {
   const map: Record<string, string | undefined> = {}
   appSettingsStore.app.connections.order.forEach(
-    (field) => (map[field] = columns.value.find((column) => column.key === field)?.title)
+    (field) => (map[field] = columns.value.find((column) => column.key === field)?.title),
   )
   return map
 })
@@ -166,7 +166,7 @@ const menu: Menu[] = [
     handler: (record: Record<string, any>) => {
       details.value = JSON.stringify(record, null, 2)
       toggleDetails()
-    }
+    },
   },
   {
     label: 'home.connections.close',
@@ -178,12 +178,12 @@ const menu: Menu[] = [
         console.log(error)
         message.error(error)
       }
-    }
+    },
   },
   ...[
     ['home.connections.addToDirect', 'direct'],
     ['home.connections.addToProxy', 'proxy'],
-    ['home.connections.addToReject', 'block']
+    ['home.connections.addToReject', 'block'],
   ].map(([label, ruleset]) => {
     return {
       label,
@@ -193,26 +193,26 @@ const menu: Menu[] = [
           options.push({
             label: t('kernel.rules.type.DOMAIN'),
             value: { domain: record.metadata.host } as any,
-            description: record.metadata.host
+            description: record.metadata.host,
           })
         }
         if (record.metadata.destinationIP) {
           options.push({
             label: t('kernel.rules.type.IP-CIDR'),
             value: { ip_cidr: record.metadata.destinationIP + '/32' } as any,
-            description: record.metadata.destinationIP
+            description: record.metadata.destinationIP,
           })
         }
         if (record.metadata.processPath) {
           options.push({
             label: t('kernel.rules.type.PROCESS-PATH'),
             value: { process_path: record.metadata.processPath } as any,
-            description: record.metadata.processPath
+            description: record.metadata.processPath,
           })
         }
         const payloads = await picker.multi<Record<string, any>[]>(
           'rulesets.selectRuleType',
-          options
+          options,
         )
         try {
           await addToRuleSet(ruleset as any, payloads)
@@ -221,9 +221,9 @@ const menu: Menu[] = [
           message.error(error)
           console.log(error)
         }
-      }
+      },
     }
-  })
+  }),
 ]
 
 const details = ref()
@@ -256,7 +256,7 @@ const onConnections = (data: IKernelConnectionsWS) => {
     result.down = cache?.down || connection.download
     TrafficCache[connection.id] = {
       down: connection.download,
-      up: connection.upload
+      up: connection.upload,
     }
     return result
   })
@@ -266,19 +266,19 @@ const filteredConnections = computed(() => {
   if (!keywords.value) return isActive.value ? dataSource.value : disconnectedData.value
   return (isActive.value ? dataSource.value : disconnectedData.value).filter((connection) =>
     Object.values(connection.metadata).some((v) =>
-      String(v).toLocaleLowerCase().includes(keywords.value.toLocaleLowerCase())
-    )
+      String(v).toLocaleLowerCase().includes(keywords.value.toLocaleLowerCase()),
+    ),
   )
 })
 
 const handleCloseAll = async () => {
   try {
     await Promise.all(
-      filteredConnections.value.map((connection) => deleteConnection(connection.id))
+      filteredConnections.value.map((connection) => deleteConnection(connection.id)),
     )
     disconnectedData.value.push(...filteredConnections.value)
     dataSource.value = dataSource.value.filter(
-      (connection) => !filteredConnections.value.find((c) => c.id === connection.id)
+      (connection) => !filteredConnections.value.find((c) => c.id === connection.id),
     )
   } catch (error: any) {
     message.error(error.message || error)
@@ -305,7 +305,7 @@ onUnmounted(() => {
         v-model="isActive"
         :options="[
           { label: 'home.connections.active', value: true },
-          { label: 'home.connections.closed', value: false }
+          { label: 'home.connections.closed', value: false },
         ]"
         size="small"
       />

@@ -12,8 +12,8 @@ const routes = computed(() =>
   rawRoutes.filter(
     (r) =>
       r.meta?.hidden === false ||
-      (!r.meta?.hidden && appSettings.app.pages.includes(r.name! as string))
-  )
+      (!r.meta?.hidden && appSettings.app.pages.includes(r.name! as string)),
+  ),
 )
 </script>
 

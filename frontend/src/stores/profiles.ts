@@ -26,7 +26,7 @@ export const useProfilesStore = defineStore('profiles', () => {
       Writefile('data/.cache/profiles-backup.yaml', stringify(filteredProfiles))
       alert(
         'Tip',
-        'The incompatible profiles has been saved to the file: data/.cache/profiles-backup.yaml.'
+        'The incompatible profiles has been saved to the file: data/.cache/profiles-backup.yaml.',
       )
     }
   }
@@ -78,6 +78,6 @@ export const useProfilesStore = defineStore('profiles', () => {
     addProfile,
     editProfile,
     deleteProfile,
-    getProfileById
+    getProfileById,
   }
 })

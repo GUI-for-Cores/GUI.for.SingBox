@@ -85,7 +85,7 @@ const handleUse = (ruleset: any) => {
           {{
             t(
               'kernel.route.rule_set.format.' +
-                (ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format)
+                (ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format),
             )
           }}
         </Tag>

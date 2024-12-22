@@ -12,7 +12,7 @@ import {
   type SubscribeType,
   useSubscribesStore,
   useAppSettingsStore,
-  useKernelApiStore
+  useKernelApiStore,
 } from '@/stores'
 
 import ProxiesView from './components/ProxiesView.vue'
@@ -31,11 +31,11 @@ const subFormTitle = computed(() => (subFormIsUpdate.value ? 'common.edit' : 'co
 const menuList: Menu[] = [
   {
     label: 'subscribes.editProxies',
-    handler: (id: string) => handleEditProxies(id)
+    handler: (id: string) => handleEditProxies(id),
   },
   {
     label: 'subscribes.editSourceFile',
-    handler: (id: string) => handleEditProxies(id, true)
+    handler: (id: string) => handleEditProxies(id, true),
   },
   {
     label: 'subscribes.copySub',
@@ -45,8 +45,8 @@ const menuList: Menu[] = [
         await ClipboardSetText(sub.url)
         message.success('common.copied')
       }
-    }
-  }
+    },
+  },
 ]
 
 const { t } = useI18n()
@@ -138,7 +138,7 @@ const _updateAllProviderProxies = async () => {
   if (appSettingsStore.app.kernel.running) {
     await kernelApiStore.refreshProviderProxies()
     const ids = Object.keys(kernelApiStore.providers).filter(
-      (v) => v !== 'default' && !kernelApiStore.proxies[v]
+      (v) => v !== 'default' && !kernelApiStore.proxies[v],
     )
     for (let i = 0; i < ids.length; i++) {
       await updateProvidersProxies(ids[i])
@@ -176,7 +176,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       v-model="appSettingsStore.app.subscribesView"
       :options="[
         { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List }
+        { label: 'common.list', value: View.List },
       ]"
       class="mr-auto"
     />

@@ -17,11 +17,11 @@ interface Props {
 defineProps<Props>()
 
 const model = defineModel<IDNS>({
-  default: DefaultDns()
+  default: DefaultDns(),
 })
 
 const serversOptions = computed(() =>
-  model.value.servers.map((v) => ({ label: v.tag, value: v.id }))
+  model.value.servers.map((v) => ({ label: v.tag, value: v.id })),
 )
 
 const activeKey = ref('common')
@@ -30,7 +30,7 @@ const serversConfigRef = useTemplateRef('serversConfigRef')
 const tabs = [
   { key: 'common', tab: 'kernel.dns.tab.common' },
   { key: 'servers', tab: 'kernel.dns.tab.servers' },
-  { key: 'rules', tab: 'kernel.dns.tab.rules' }
+  { key: 'rules', tab: 'kernel.dns.tab.rules' },
 ]
 
 const { t } = useI18n()
@@ -39,7 +39,7 @@ const handleAdd = () => {
   const handlerMap: Record<string, (() => void) | undefined> = {
     common: () => {},
     rules: rulesConfigRef.value?.handleAdd,
-    servers: serversConfigRef.value?.handleAdd
+    servers: serversConfigRef.value?.handleAdd,
   }
   handlerMap[activeKey.value]?.()
 }

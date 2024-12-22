@@ -21,9 +21,9 @@ const hitCommand = computed(() =>
     ? commands.value.filter(
         (v) =>
           v.cmd.toLocaleLowerCase().includes(userInput.value) ||
-          v.label.toLocaleLowerCase().includes(userInput.value)
+          v.label.toLocaleLowerCase().includes(userInput.value),
       )
-    : commands.value
+    : commands.value,
 )
 
 const { t } = useI18n()

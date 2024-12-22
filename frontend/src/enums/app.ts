@@ -1,28 +1,28 @@
 export enum WindowStartState {
   Normal = 0,
-  Minimised = 2
+  Minimised = 2,
 }
 
 export enum WebviewGpuPolicy {
   Always = 0,
   OnDemand = 1,
-  Never = 2
+  Never = 2,
 }
 
 export enum Theme {
   Auto = 'auto',
   Light = 'light',
-  Dark = 'dark'
+  Dark = 'dark',
 }
 
 export enum Lang {
   EN = 'en',
-  ZH = 'zh'
+  ZH = 'zh',
 }
 
 export enum View {
   Grid = 'grid',
-  List = 'list'
+  List = 'list',
 }
 
 export enum Color {
@@ -32,7 +32,7 @@ export enum Color {
   Red = 'red',
   Skyblue = 'skyblue',
   Green = 'green',
-  Purple = 'purple'
+  Purple = 'purple',
 }
 
 export enum ScheduledTasksType {
@@ -40,7 +40,7 @@ export enum ScheduledTasksType {
   UpdateRuleset = 'update::ruleset',
   UpdatePlugin = 'update::plugin',
   RunPlugin = 'run::plugin',
-  RunScript = 'run::script'
+  RunScript = 'run::script',
 }
 
 export enum PluginTrigger {
@@ -49,7 +49,7 @@ export enum PluginTrigger {
   OnGenerate = 'on::generate',
   OnStartup = 'on::startup',
   OnShutdown = 'on::shutdown',
-  OnReady = 'on::ready'
+  OnReady = 'on::ready',
 }
 
 export enum PluginTriggerEvent {
@@ -62,5 +62,5 @@ export enum PluginTriggerEvent {
   OnShutdown = 'onShutdown',
   OnReady = 'onReady',
   OnTask = 'onTask',
-  OnConfigure = 'onConfigure'
+  OnConfigure = 'onConfigure',
 }

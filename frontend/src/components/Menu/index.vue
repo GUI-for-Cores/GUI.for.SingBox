@@ -60,7 +60,7 @@ watch(
   ({ x, y }) => {
     nextTick(() => fixMenuPos(x, y))
     secondaryMenu.value = undefined
-  }
+  },
 )
 
 watch([() => secondaryMenu.value, () => props.position], () => {

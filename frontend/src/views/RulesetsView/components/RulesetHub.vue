@@ -74,7 +74,7 @@ const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: Rul
       format,
       path: 'data/rulesets/' + file,
       url,
-      count: ruleset.count
+      count: ruleset.count,
     })
     const { success } = message.info('rulesets.updating')
     await rulesetsStore.updateRuleset(id)

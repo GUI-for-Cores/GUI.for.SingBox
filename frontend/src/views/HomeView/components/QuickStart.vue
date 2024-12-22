@@ -10,7 +10,7 @@ import {
   useProfilesStore,
   useAppSettingsStore,
   useSubscribesStore,
-  type SubscribeType
+  type SubscribeType,
 } from '@/stores'
 
 const { t } = useI18n()
@@ -49,7 +49,7 @@ const handleSubmit = async () => {
     disabled: false,
     inSecure: false,
     userAgent: '',
-    proxies: []
+    proxies: [],
   }
 
   loading.value = true
@@ -75,7 +75,7 @@ const handleSubmit = async () => {
     route: Defaults.DefaultRoute(),
     dns: Defaults.DefaultDns(),
     mixin: Defaults.DefaultMixin(),
-    script: Defaults.DefaultScript()
+    script: Defaults.DefaultScript(),
   }
 
   profile.outbounds[0].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })

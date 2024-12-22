@@ -18,7 +18,7 @@ import {
   GetEnv,
   Makedir,
   AbsolutePath,
-  BrowserOpenURL
+  BrowserOpenURL,
 } from '@/bridge'
 
 const latestUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases'
@@ -56,7 +56,7 @@ const downloadCore = async () => {
   downloadLoading.value = true
   try {
     const { body } = await HttpGet<Record<string, any>>(latestUrl, {
-      Authorization: getGitHubApiAuthorization()
+      Authorization: getGitHubApiAuthorization(),
     })
     const { os, arch } = await GetEnv()
 
@@ -89,7 +89,7 @@ const downloadCore = async () => {
       (progress, total) => {
         message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
       },
-      { CancelId: 'download-latest-core' }
+      { CancelId: 'download-latest-core' },
     ).catch((err) => {
       message.destroy(id)
       throw err
@@ -118,7 +118,7 @@ const downloadCore = async () => {
         '-C',
         await AbsolutePath(extractDir),
         '--strip-components',
-        '1'
+        '1',
       ])
       await Movefile(extractDir + '/' + fileName, latestKernelFilePath)
       await Removefile(extractDir)
@@ -171,7 +171,7 @@ const getRemoteVersion = async (showTips = false) => {
   remoteVersionLoading.value = true
   try {
     const { body } = await HttpGet<Record<string, any>>(latestUrl, {
-      Authorization: getGitHubApiAuthorization()
+      Authorization: getGitHubApiAuthorization(),
     })
     const { name, tag_name } = body.find((v: any) => v.prerelease === true)
     return (name || tag_name).replace('v', '')

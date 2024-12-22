@@ -22,13 +22,13 @@ const proxyGroup = ref([
   {
     id: 'Built-in',
     name: 'kernel.outbounds.builtIn',
-    proxies: model.value.map(({ id, tag, type }) => ({ id, tag, type: type as string }))
+    proxies: model.value.map(({ id, tag, type }) => ({ id, tag, type: type as string })),
   },
   {
     id: 'Subscription',
     name: 'kernel.outbounds.subscriptions',
-    proxies: []
-  }
+    proxies: [],
+  },
 ])
 
 const fields = ref<IOutbound>(DefaultOutbound())
@@ -50,7 +50,7 @@ const handleDeleteGroup = (index: number) => {
   model.value.splice(index, 1)
   proxyGroup.value = proxyGroup.value.map((v) => ({
     ...v,
-    proxies: v.proxies.filter((v) => v.id !== id)
+    proxies: v.proxies.filter((v) => v.id !== id),
   }))
 }
 

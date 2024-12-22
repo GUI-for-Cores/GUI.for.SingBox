@@ -15,7 +15,7 @@ export const restoreProfile = (config: Recordable) => {
       rules: [],
       auto_detect_interface: true,
       default_interface: '',
-      final: ''
+      final: '',
     },
     dns: {
       servers: [],
@@ -23,26 +23,26 @@ export const restoreProfile = (config: Recordable) => {
       fakeip: {
         enabled: false,
         inet4_range: '198.18.0.0/15',
-        inet6_range: 'fc00::/18'
+        inet6_range: 'fc00::/18',
       },
       disable_cache: false,
       disable_expire: false,
       independent_cache: false,
       client_subnet: '',
       final: '',
-      strategy: Strategy.Default
+      strategy: Strategy.Default,
     },
     mixin: Defaults.DefaultMixin(),
-    script: Defaults.DefaultScript()
+    script: Defaults.DefaultScript(),
   }
 
   const InboundsIds = config.inbounds.reduce(
     (p: any, c: any) => ({ ...p, [c.tag]: sampleID() }),
-    {}
+    {},
   )
   const OutboundsIds = config.outbounds.reduce(
     (p: any, c: any) => ({ ...p, [c.tag]: sampleID() }),
-    {}
+    {},
   )
   // const RulesetIds = config.route.rule_set.reduce(
   //   (p: any, c: any) => ({ ...p, [c.tag]: sampleID() }),
@@ -50,7 +50,7 @@ export const restoreProfile = (config: Recordable) => {
   // )
   const DnsServersIds = config.dns.servers.reduce(
     (p: any, c: any) => ({ ...p, [c.tag]: sampleID() }),
-    {}
+    {},
   )
 
   Object.entries(config).forEach(([field, value]) => {
@@ -64,7 +64,7 @@ export const restoreProfile = (config: Recordable) => {
           id: InboundsIds[inbound.tag],
           tag: inbound.tag,
           type: inbound.type,
-          enable: true
+          enable: true,
         }
         if (inbound.type === Inbound.Tun) {
           return {
@@ -79,11 +79,11 @@ export const restoreProfile = (config: Recordable) => {
                 '0.0.0.0/1',
                 '128.0.0.0/1',
                 '::/1',
-                '8000::/1'
+                '8000::/1',
               ],
               endpoint_independent_nat: !!inbound.endpoint_independent_nat,
-              stack: inbound.stack || TunStack.Mixed
-            }
+              stack: inbound.stack || TunStack.Mixed,
+            },
           }
         }
         if ([Inbound.Mixed, Inbound.Http, Inbound.Socks].includes(inbound.type)) {
@@ -95,10 +95,10 @@ export const restoreProfile = (config: Recordable) => {
                 listen_port: inbound.listen_port,
                 tcp_fast_open: !!inbound.tcp_fast_open,
                 tcp_multi_path: !!inbound.tcp_multi_path,
-                udp_fragment: !!inbound.udp_fragment
+                udp_fragment: !!inbound.udp_fragment,
               },
-              users: (inbound.users || []).map((user: any) => user.username + ':' + user.password)
-            }
+              users: (inbound.users || []).map((user: any) => user.username + ':' + user.password),
+            },
           }
         }
       })
@@ -118,12 +118,12 @@ export const restoreProfile = (config: Recordable) => {
             return {
               id: OutboundsIds[tag],
               type: 'Built-in',
-              tag
+              tag,
             }
           })
         }
         return {
-          ...extra
+          ...extra,
         }
       })
     } else if (field === 'route') {
@@ -144,7 +144,7 @@ export const restoreProfile = (config: Recordable) => {
             address_resolver: DnsServersIds[server.address_resolver] || '',
             detour: OutboundsIds[server.detour] || '',
             strategy: server.strategy || Strategy.Default,
-            client_subnet: server.client_subnet || ''
+            client_subnet: server.client_subnet || '',
           }
         }),
         rules: value.rules.map((rule: any) => {
@@ -155,9 +155,9 @@ export const restoreProfile = (config: Recordable) => {
             type: '',
             action: rule.action || RuleAction.Route,
             server: DnsServersIds[rule.server] || '',
-            ...extra
+            ...extra,
           }
-        })
+        }),
       }
     }
   })

@@ -14,5 +14,5 @@ export default {
       const name = path.split('/')[1]
       app.component(name, Components[path].default)
     }
-  }
+  },
 } as Plugin

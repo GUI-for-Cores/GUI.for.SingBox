@@ -14,7 +14,7 @@ import {
   isValidSubYAML,
   isValidBase64,
   ignoredError,
-  omitArray
+  omitArray,
 } from '@/utils'
 
 export type SubscribeType = {
@@ -87,7 +87,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       disabled: false,
       inSecure: false,
       userAgent: '',
-      proxies: []
+      proxies: [],
     })
   }
 
@@ -134,9 +134,9 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       const { headers: h, body: b } = await HttpGet(
         s.url,
         {
-          'User-Agent': s.userAgent || getUserAgent()
+          'User-Agent': s.userAgent || getUserAgent(),
         },
-        { Insecure: s.inSecure }
+        { Insecure: s.inSecure },
       )
 
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
@@ -245,6 +245,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     updateSubscribe,
     updateSubscribes,
     getSubscribeById,
-    importSubscribe
+    importSubscribe,
   }
 })

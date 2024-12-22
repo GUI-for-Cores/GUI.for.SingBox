@@ -11,7 +11,7 @@ import {
   WindowReloadApp,
   WindowToggleMaximise,
   WindowIsMaximised,
-  RestartApp
+  RestartApp,
 } from '@/bridge'
 
 const isPinned = ref(false)
@@ -38,20 +38,20 @@ const closeWindow = async () => {
 const menus: Menu[] = [
   {
     label: 'titlebar.resetSize',
-    handler: () => WindowSetSize(800, 540)
+    handler: () => WindowSetSize(800, 540),
   },
   {
     label: 'titlebar.reload',
-    handler: WindowReloadApp
+    handler: WindowReloadApp,
   },
   {
     label: 'titlebar.restart',
-    handler: RestartApp
+    handler: RestartApp,
   },
   {
     label: 'titlebar.exitApp',
-    handler: exitApp
-  }
+    handler: exitApp,
+  },
 ]
 
 const onResize = debounce(async () => {
@@ -86,7 +86,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
     <img class="logo" draggable="false" src="@/assets/logo.png" />
     <div
       :style="{
-        color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)'
+        color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)',
       }"
       class="appname"
     >
@@ -117,7 +117,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   <div v-else-if="envStore.env.os === 'darwin'" class="placeholder" style="--wails-draggable: drag">
     <div
       :style="{
-        color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)'
+        color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)',
       }"
       v-menu="menus"
       class="appname"

@@ -5,7 +5,7 @@ import en from './locale/en'
 
 const messages = {
   zh,
-  en
+  en,
 }
 
 const i18n = createI18n({
@@ -13,7 +13,7 @@ const i18n = createI18n({
   locale: 'en',
   fallbackWarn: false,
   missingWarn: false,
-  messages
+  messages,
 })
 
 export default i18n

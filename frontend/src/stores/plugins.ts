@@ -64,28 +64,28 @@ const PluginsTriggerMap: {
 } = {
   [PluginTrigger.OnManual]: {
     fnName: PluginTriggerEvent.OnManual,
-    observers: []
+    observers: [],
   },
   [PluginTrigger.OnSubscribe]: {
     fnName: PluginTriggerEvent.OnSubscribe,
-    observers: []
+    observers: [],
   },
   [PluginTrigger.OnGenerate]: {
     fnName: PluginTriggerEvent.OnGenerate,
-    observers: []
+    observers: [],
   },
   [PluginTrigger.OnStartup]: {
     fnName: PluginTriggerEvent.OnStartup,
-    observers: []
+    observers: [],
   },
   [PluginTrigger.OnShutdown]: {
     fnName: PluginTriggerEvent.OnShutdown,
-    observers: []
+    observers: [],
   },
   [PluginTrigger.OnReady]: {
     fnName: PluginTriggerEvent.OnReady,
-    observers: []
-  }
+    observers: [],
+  },
 }
 
 const getPluginMetadata = (plugin: PluginType) => {
@@ -145,7 +145,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     const triggers = Object.keys(PluginsTriggerMap) as PluginTrigger[]
     triggers.forEach((trigger) => {
       PluginsTriggerMap[trigger].observers = PluginsTriggerMap[trigger].observers.filter(
-        (v) => v !== plugin.id
+        (v) => v !== plugin.id,
       )
     })
     plugin.triggers.forEach((trigger) => {
@@ -249,7 +249,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const onSubscribeTrigger = async (
     proxies: Record<string, any>[],
-    subscription: SubscribeType
+    subscription: SubscribeType,
   ) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnSubscribe]
 
@@ -293,7 +293,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const metadata = getPluginMetadata(cache.plugin)
       try {
         const fn = new window.AsyncFunction(
-          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}()`,
         )
         const exitCode = await fn()
         if (isNumber(exitCode) && exitCode !== cache.plugin.status) {
@@ -320,7 +320,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const metadata = getPluginMetadata(cache.plugin)
       try {
         const fn = new window.AsyncFunction(
-          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`,
         )
         params = await fn()
       } catch (error: any) {
@@ -347,7 +347,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       const fn = new window.AsyncFunction(
         `const Plugin = ${JSON.stringify(metadata)};
         ${cache.code};
-        return await ${event}(${_args.join(',')})`
+        return await ${event}(${_args.join(',')})`,
       )
       const exitCode = await fn()
       if (isNumber(exitCode) && exitCode !== plugin.status) {
@@ -364,14 +364,14 @@ export const usePluginsStore = defineStore('plugins', () => {
     plugins.value
       .map((v) => v.disabled)
       .sort()
-      .join()
+      .join(),
   )
 
   const _watchMenus = computed(() =>
     plugins.value
       .map((v) => Object.entries(v.menus).map((v) => v[0] + v[1]))
       .sort()
-      .join()
+      .join(),
   )
 
   watch([_watchMenus, _watchDisabled], () => {
@@ -397,6 +397,6 @@ export const usePluginsStore = defineStore('plugins', () => {
     manualTrigger,
     updatePluginTrigger,
     getPluginCodefromCache,
-    getPluginMetadata
+    getPluginMetadata,
   }
 })

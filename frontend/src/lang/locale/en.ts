@@ -45,7 +45,7 @@ export default {
     openFile: 'Open File',
     develop: 'Develop',
     canceled: 'Canceled',
-    downloading: 'Downloading...'
+    downloading: 'Downloading...',
   },
   kernel: {
     rule: 'Rule',
@@ -65,7 +65,7 @@ export default {
       warn: 'warn',
       error: 'error',
       fatal: 'fatal',
-      panic: 'panic'
+      panic: 'panic',
     },
     clash_api: {
       external_controller: 'External Controller',
@@ -75,7 +75,7 @@ export default {
       secret: 'RESTful API Secret',
       default_mode: 'Mode',
       access_control_allow_origin: 'CORS allowed origins',
-      access_control_allow_private_network: 'Allow access from private network'
+      access_control_allow_private_network: 'Allow access from private network',
     },
     cache_file: {
       enabled: 'Enabled',
@@ -83,7 +83,7 @@ export default {
       cache_id: 'Identifier in the cache file',
       store_fakeip: 'Store Fake-IP',
       store_rdrc: 'Store Rejected DNS Response',
-      rdrc_timeout: 'Timeout of rejected DNS response cache'
+      rdrc_timeout: 'Timeout of rejected DNS response cache',
     },
     inbounds: {
       enable: 'Enable',
@@ -94,7 +94,7 @@ export default {
         listen_port: 'Poret',
         tcp_fast_open: 'TCP Fast Open',
         tcp_multi_path: 'TCP Multi Path',
-        udp_fragment: 'UDP Fragmentation'
+        udp_fragment: 'UDP Fragmentation',
       },
       tun: {
         interface_name: 'Interface Name',
@@ -107,11 +107,11 @@ export default {
         stack: 'Stack',
         system: 'System',
         gvisor: 'gVisor',
-        mixed: 'Mixed'
+        mixed: 'Mixed',
       },
       mixedPort: 'Mixed Port',
       httpPort: 'HTTP(s) Port',
-      socksPort: 'SOCKS5 Port'
+      socksPort: 'SOCKS5 Port',
     },
     outbounds: {
       name: 'Outbound',
@@ -136,13 +136,13 @@ export default {
       builtIn: 'Built-In',
       subscriptions: 'Subscriptions',
       include: 'Include',
-      exclude: 'Exclude'
+      exclude: 'Exclude',
     },
     route: {
       tab: {
         common: 'Common',
         rules: 'Rules',
-        rule_set: 'Rule-Set'
+        rule_set: 'Rule-Set',
       },
       auto_detect_interface: 'Auto Detect Interface',
       default_interface: 'Default Interface',
@@ -152,20 +152,20 @@ export default {
           name: 'Name',
           inline: 'Inline',
           local: 'Local',
-          remote: 'Remote'
+          remote: 'Remote',
         },
         tag: 'Tag',
         format: {
           name: 'Format',
           binary: 'Binary',
-          source: 'Source'
+          source: 'Source',
         },
         url: 'URL',
         download_detour: 'Download Detour',
         update_interval: 'Update Interval',
         path: 'Path',
         notFound: 'The rule set has been lost.',
-        empty: 'The rule set list is empty.'
+        empty: 'The rule set list is empty.',
       },
       rules: {
         type: 'Type',
@@ -179,7 +179,7 @@ export default {
           resolve: 'Resolve DNS',
           rejectMethod: 'Method',
           rejectDefault: 'NXDOMAIN',
-          rejectDrop: 'Drop'
+          rejectDrop: 'Drop',
         },
         outbound: 'Outbound Tag',
         routeOptions: 'Route Options',
@@ -190,13 +190,13 @@ export default {
           quic: 'quic',
           dns: 'dns',
           ssh: 'ssh',
-          rdp: 'rdp'
+          rdp: 'rdp',
         },
         server: 'DNS Server',
         payload: 'Payload',
         notFound: 'Outbound tag is missing.',
-        invalid: 'Invalid Parameter'
-      }
+        invalid: 'Invalid Parameter',
+      },
     },
     rules: {
       type: {
@@ -221,8 +221,8 @@ export default {
         clash_mode: 'clash_mode',
         rule_set: 'rule_set',
         outbound: 'outbound',
-        inline: 'Inline'
-      }
+        inline: 'Inline',
+      },
     },
     strategy: {
       name: 'Strategy',
@@ -231,13 +231,13 @@ export default {
       prefer_ipv4: 'Prefer IPV4',
       prefer_ipv6: 'Prefer IPV6',
       ipv4_only: 'IPV4 Only',
-      ipv6_only: 'IPV6 Only'
+      ipv6_only: 'IPV6 Only',
     },
     dns: {
       tab: {
         common: 'Common',
         servers: 'Servers',
-        rules: 'Rules'
+        rules: 'Rules',
       },
       tag: 'Tag',
       address: 'Address',
@@ -252,18 +252,18 @@ export default {
       fakeip: {
         name: 'Fake-IP',
         inet4_range: 'Fake-IP Range(IPv4)',
-        inet6_range: 'Fake-IP Range(IPv6)'
+        inet6_range: 'Fake-IP Range(IPv6)',
       },
       rules: {
         type: 'Type',
         payload: 'Payload',
         action: 'Action',
-        server: 'Server'
-      }
+        server: 'Server',
+      },
     },
     mode: 'Mode',
     'allow-lan': 'Allow LAN',
-    'disallow-lan': 'Disallow LAN'
+    'disallow-lan': 'Disallow LAN',
   },
   router: {
     overview: 'OverView',
@@ -276,7 +276,7 @@ export default {
     about: 'About',
     profiles: 'Profiles',
     kernel: 'Kernel',
-    scheduledtasks: 'Tasks'
+    scheduledtasks: 'Tasks',
   },
   home: {
     mode: 'Proxy Mode',
@@ -309,7 +309,7 @@ export default {
       settings: 'Kernel Settings',
       settingsTips: 'Effective temporarily, for persistence, please modify the `profile` settings.',
       updateGEO: 'Update GEO',
-      needPort: 'Please set the proxy port first'
+      needPort: 'Please set the proxy port first',
     },
     controller: {
       name: 'Controller',
@@ -318,7 +318,7 @@ export default {
       cardMode: 'Card Mode',
       sortBy: 'Sort By Delay',
       delay: 'Delay test URL',
-      delayUrl: 'Please enter the delayed test URL'
+      delayUrl: 'Please enter the delayed test URL',
     },
     connections: {
       type: 'Type',
@@ -344,8 +344,8 @@ export default {
       closed: 'Closed',
       closeAll: 'Close all connections',
       sort: 'Sorting and Setting Visibility',
-      details: 'Connection Details'
-    }
+      details: 'Connection Details',
+    },
   },
   subscribe: {
     manual: 'MANUAL',
@@ -366,8 +366,8 @@ export default {
     healthCheck: {
       name: 'Health Check',
       interval: 'interval(s)',
-      url: 'url'
-    }
+      url: 'url',
+    },
   },
   subscribes: {
     download: 'Download',
@@ -385,8 +385,8 @@ export default {
     proxies: {
       type: 'Protocol',
       name: 'Name',
-      add: 'Add Proxy'
-    }
+      add: 'Add Proxy',
+    },
   },
   profile: {
     name: 'Name',
@@ -399,7 +399,7 @@ export default {
       outbounds: 'Outbounds',
       route: 'Route',
       dns: 'DNS',
-      'mixin-script': 'Mixin & Script'
+      'mixin-script': 'Mixin & Script',
     },
     proxies: 'Reference proxies',
     use: 'Reference subscriptions',
@@ -411,11 +411,11 @@ export default {
       name: 'Mixin',
       priority: 'Priority',
       mixin: 'Mixin',
-      gui: 'GUI'
+      gui: 'GUI',
     },
     scriptSettings: {
-      name: 'Script'
-    }
+      name: 'Script',
+    },
   },
   profiles: {
     shouldStop: 'Unable to delete, this profile is in use.',
@@ -427,21 +427,21 @@ export default {
     inbounds: 'Inbounds',
     outbounds: 'Outbounds',
     dnsServers: 'DNS Servers',
-    dnsRules: 'DNS Rules'
+    dnsRules: 'DNS Rules',
   },
   ruleset: {
     manual: 'MANUAL',
     format: {
       name: 'Format',
       source: 'Source',
-      binary: 'Binary'
+      binary: 'Binary',
     },
     rulesetType: 'Ruleset Type',
     name: 'Name',
     url: 'Remote Url',
     path: 'Save Path',
     interval: 'Interval',
-    updating: 'Updating'
+    updating: 'Updating',
   },
   rulesets: {
     hub: 'Ruleset-Hub',
@@ -452,7 +452,7 @@ export default {
     empty: 'The ruleset list is empty. Please{action}or import from the{import}first.',
     rulesetCount: 'Ruleset Count',
     editRuleset: 'Edit Rules',
-    selectRuleType: 'Select Rule Type'
+    selectRuleType: 'Select Rule Type',
   },
   plugin: {
     trigger: 'Trigger',
@@ -483,7 +483,7 @@ export default {
     confKey: 'Key',
     confDefault: 'Default',
     options: 'Options',
-    restore: 'Reset to default'
+    restore: 'Reset to default',
   },
   plugins: {
     updating: 'Updating',
@@ -496,7 +496,7 @@ export default {
     updateSuccess: 'updated successfully',
     total: 'Number of plug-ins',
     removeConfiguration: 'Do you want to remove the plugin configuration?',
-    testRun: 'TestRun'
+    testRun: 'TestRun',
   },
   scheduledtask: {
     name: 'Name',
@@ -513,7 +513,7 @@ export default {
     'update::ruleset': 'update::ruleset',
     'update::plugin': 'update::plugin',
     'run::plugin': 'run::plugin',
-    'run::script': 'run::script'
+    'run::script': 'run::script',
   },
   scheduledtasks: {
     logs: 'Logs',
@@ -525,7 +525,7 @@ export default {
     result: 'Result',
     empty: 'The scheduled task list is empty. Please{action}a scheduled task first.',
     run: 'Run now',
-    log: 'View log'
+    log: 'View log',
   },
   settings: {
     general: 'General',
@@ -533,7 +533,7 @@ export default {
       name: 'Theme',
       light: 'Light Mode',
       dark: 'Dark Mode',
-      auto: 'System'
+      auto: 'System',
     },
     color: {
       name: 'Color',
@@ -543,37 +543,37 @@ export default {
       red: 'Red',
       skyblue: 'Skyblue',
       green: 'Green',
-      purple: 'Purple'
+      purple: 'Purple',
     },
     fontFamily: 'Font-Family',
     resetFont: 'Reset Font-Family',
     appFolder: {
       name: 'App Folder',
-      open: 'Open application folder'
+      open: 'Open application folder',
     },
     kernelCache: {
       name: 'Kernel Cache',
-      clear: 'Clear kernel cache'
+      clear: 'Clear kernel cache',
     },
     lang: {
       name: 'Language',
       zh: '简体中文',
-      en: 'English'
+      en: 'English',
     },
     pages: {
-      name: 'Page visibility'
+      name: 'Page visibility',
     },
     windowState: {
       normal: 'Normal window',
       maximised: 'Maximised',
       minimised: 'Minimize window',
-      fullscreen: 'Fullscreen'
+      fullscreen: 'Fullscreen',
     },
     webviewGpuPolicy: {
       name: 'Webview Gpu Policy',
       always: 'Always',
       onDemand: 'OnDemand',
-      never: 'Never'
+      never: 'Never',
     },
     needRestart: 'Restart Required',
     needAdmin: 'Admin required',
@@ -587,7 +587,7 @@ export default {
     rollingRelease: 'Enable Rolling Release',
     startup: {
       name: 'Startup on boot',
-      delay: 'Delay(s)'
+      delay: 'Delay(s)',
     },
     kernel: {
       name: 'sing-box',
@@ -598,16 +598,16 @@ export default {
       local: 'Local',
       remote: 'Remote',
       update: 'Update',
-      restart: 'Restart Core'
+      restart: 'Restart Core',
     },
     userAgent: {
       name: 'User-Agent',
-      reset: 'Reset User-Agent'
+      reset: 'Reset User-Agent',
     },
     githubapi: {
       name: 'Authenticating to the REST API',
-      tips: 'have a higher rate limit'
-    }
+      tips: 'have a higher rate limit',
+    },
   },
   about: {
     new: 'New',
@@ -617,7 +617,7 @@ export default {
     updateSuccessfulReplace: 'Download completed, please manually replace the App',
     updateSuccessful: 'Update completed',
     newVersion: 'New version found',
-    latestVersion: 'Already the latest version'
+    latestVersion: 'Already the latest version',
   },
   titlebar: {
     resetSize: 'Reset Window',
@@ -625,7 +625,7 @@ export default {
     restart: 'Restart App',
     exitApp: 'Exit App',
     waiting: 'Waiting for the program to exit...',
-    timeout: 'Exit timed out. Force exit？\n\nReason: Plugin exit timed out.'
+    timeout: 'Exit timed out. Force exit？\n\nReason: Plugin exit timed out.',
   },
   format: {
     seconds: 'Seconds',
@@ -641,14 +641,14 @@ export default {
     month: 'Month',
     year: 'Year',
     ago: 'Ago',
-    later: 'Later'
+    later: 'Later',
   },
   outbound: {
     select: '🚀 Select',
     urltest: '🎈 Auto',
     direct: '🎯 Direct',
     block: '🛑 Block',
-    fallback: '🐟 Fallback'
+    fallback: '🐟 Fallback',
   },
   tray: {
     showMainWindow: 'Show Main Window',
@@ -667,9 +667,9 @@ export default {
     startKernel: 'Start Kernel',
     stopKernel: 'Stop Kernel',
     restartKernel: 'Restart Kernel',
-    plugins: 'Plugins'
+    plugins: 'Plugins',
   },
   commands: {
-    noMatching: 'No matching commands'
-  }
+    noMatching: 'No matching commands',
+  },
 }

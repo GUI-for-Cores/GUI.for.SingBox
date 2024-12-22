@@ -101,9 +101,9 @@ export const useRulesetsStore = defineStore('rulesets', () => {
         (p: number, c: string[]) =>
           Object.values(c).reduce(
             (p, c: string[] | string) => (Array.isArray(c) ? p + c.length : p + 1),
-            0
+            0,
           ) + p,
-        0
+        0,
       )
 
       if (
@@ -166,6 +166,6 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     deleteRuleset,
     updateRuleset,
     updateRulesets,
-    getRulesetById
+    getRulesetById,
   }
 })

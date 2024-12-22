@@ -28,13 +28,13 @@ enum Step {
   Outbounds = 3,
   Route = 4,
   Dns = 5,
-  MixinScript = 6
+  MixinScript = 6,
 }
 
 const props = withDefaults(defineProps<Props>(), {
   id: '',
   isUpdate: false,
-  step: Step.Name
+  step: Step.Name,
 })
 
 const loading = ref(false)
@@ -51,7 +51,7 @@ const stepItems = [
   { title: 'profile.step.outbounds' },
   { title: 'profile.step.route' },
   { title: 'profile.step.dns' },
-  { title: 'profile.step.mixin-script' }
+  { title: 'profile.step.mixin-script' },
 ]
 
 const profile = ref<IProfile>({
@@ -64,19 +64,19 @@ const profile = ref<IProfile>({
   route: Defaults.DefaultRoute(),
   dns: Defaults.DefaultDns(),
   mixin: Defaults.DefaultMixin(),
-  script: Defaults.DefaultScript()
+  script: Defaults.DefaultScript(),
 })
 
 const inboundOptions = computed(() =>
-  profile.value.inbounds.map((v) => ({ label: v.tag, value: v.id }))
+  profile.value.inbounds.map((v) => ({ label: v.tag, value: v.id })),
 )
 
 const outboundOptions = computed(() =>
-  profile.value.outbounds.map((v) => ({ label: v.tag, value: v.id }))
+  profile.value.outbounds.map((v) => ({ label: v.tag, value: v.id })),
 )
 
 const serverOptions = computed(() =>
-  profile.value.dns.servers.map((v) => ({ label: v.tag, value: v.id }))
+  profile.value.dns.servers.map((v) => ({ label: v.tag, value: v.id })),
 )
 
 const generalConfig = computed({
@@ -86,7 +86,7 @@ const generalConfig = computed({
   set({ log, experimental }) {
     profile.value.log = log
     profile.value.experimental = experimental
-  }
+  },
 })
 
 const mixinAndScriptConfig = computed({
@@ -96,7 +96,7 @@ const mixinAndScriptConfig = computed({
   set({ mixin, script }) {
     profile.value.mixin = mixin
     profile.value.script = script
-  }
+  },
 })
 
 const { t } = useI18n()
@@ -131,7 +131,7 @@ const handleAdd = () => {
     [Step.Inbounds]: inboundsRef,
     [Step.Outbounds]: outboundsRef,
     [Step.Route]: routeRef,
-    [Step.Dns]: dnsRef
+    [Step.Dns]: dnsRef,
   }
   map[currentStep.value].value.handleAdd()
 }

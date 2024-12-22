@@ -19,5 +19,5 @@ export default {
         appStore.menuShow = true
       }
     }
-  }
+  },
 } as Directive

@@ -5,7 +5,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  color: 'default'
+  color: 'default',
 })
 </script>
 

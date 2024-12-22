@@ -24,7 +24,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   cancel: true,
-  options: () => ({ type: 'text' })
+  options: () => ({ type: 'text' }),
 })
 
 const emits = defineEmits(['confirm', 'cancel', 'finish'])
@@ -87,7 +87,7 @@ marked.use({
         columns: header.map(({ text, align }) => ({
           title: text,
           key: text,
-          align: align || 'center'
+          align: align || 'center',
         })),
         dataSource: rows.map((row) => {
           const record: Record<string, any> = {}
@@ -95,12 +95,12 @@ marked.use({
             record[text] = this.parser.parseInline(row[index]?.tokens || [])
           })
           return record
-        })
+        }),
       })
       mountCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
-    }
-  }
+    },
+  },
 })
 
 const mountCustomComp = (containerId: string, comp: VNode) => {

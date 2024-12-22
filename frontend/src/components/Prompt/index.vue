@@ -10,7 +10,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
-  initialValue: ''
+  initialValue: '',
 })
 
 const emits = defineEmits(['submit', 'cancel', 'finish'])

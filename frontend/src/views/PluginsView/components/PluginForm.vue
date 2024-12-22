@@ -15,7 +15,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   id: '',
-  isUpdate: false
+  isUpdate: false,
 })
 
 const loading = ref(false)
@@ -34,7 +34,7 @@ const plugin = ref<PluginType>({
   configuration: [],
   disabled: false,
   install: false,
-  installed: false
+  installed: false,
 })
 
 const { t } = useI18n()
@@ -76,7 +76,7 @@ const handleAddParam = async () => {
     key: '',
     component: '',
     value: [],
-    options: []
+    options: [],
   })
 }
 
@@ -143,7 +143,7 @@ if (props.isUpdate) {
         v-model="plugin.type"
         :options="[
           { label: 'common.http', value: 'Http' },
-          { label: 'common.file', value: 'File' }
+          { label: 'common.file', value: 'File' },
         ]"
       />
     </div>
@@ -250,7 +250,7 @@ if (props.isUpdate) {
                 { label: 'KeyValueEditor', value: 'KeyValueEditor' },
                 { label: 'Radio', value: 'Radio' },
                 { label: 'Select', value: 'Select' },
-                { label: 'Switch', value: 'Switch' }
+                { label: 'Switch', value: 'Switch' },
               ]"
               placeholder="plugin.selectComponent"
             />
