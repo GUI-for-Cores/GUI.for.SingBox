@@ -79,7 +79,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     height: 0,
     exitOnClose: true,
     closeKernelOnExit: true,
-    autoSetSystemProxy: false,
+    autoSetSystemProxy: true,
     autoStartKernel: false,
     userAgent: APP_TITLE,
     startupDelay: 30,
