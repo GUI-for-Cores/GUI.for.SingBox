@@ -118,7 +118,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       ]
     },
     kernel: {
-      branch: 'main',
+      branch: 'latest',
       profile: '',
       pid: 0,
       running: false,
@@ -137,16 +137,12 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   })
 
   const saveAppSettings = debounce((config: string) => {
-    console.log('save app settings')
     Writefile('data/user.yaml', config)
   }, 1500)
 
   const setupAppSettings = async () => {
     const data = await ignoredError(Readfile, 'data/user.yaml')
     data && (app.value = Object.assign(app.value, parse(data)))
-
-    // compatibility code
-    app.value.pages = app.value.pages ?? ['Overview', 'Profiles', 'Subscriptions', 'Plugins']
 
     firstOpen = !!data
 
