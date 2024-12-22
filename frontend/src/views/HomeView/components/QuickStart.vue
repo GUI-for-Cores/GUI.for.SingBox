@@ -5,6 +5,7 @@ import { computed, inject, ref } from 'vue'
 import { useMessage } from '@/hooks'
 import * as Defaults from '@/constant/profile'
 import { sampleID } from '@/utils'
+import { DefaultExcludeProtocols } from '@/constant/kernel'
 import {
   useProfilesStore,
   useAppSettingsStore,
@@ -28,22 +29,6 @@ const canSubmit = computed(() => url.value && url.value.toLocaleLowerCase().star
 const handleSubmit = async () => {
   const subscribeID = sampleID()
 
-  const profile: IProfile = {
-    id: sampleID(),
-    name: '',
-    log: Defaults.DefaultLog(),
-    experimental: Defaults.DefaultExperimental(),
-    inbounds: Defaults.DefaultInbounds(),
-    outbounds: Defaults.DefaultOutbounds(),
-    route: Defaults.DefaultRoute(),
-    dns: Defaults.DefaultDns(),
-    mixin: Defaults.DefaultMixin(),
-    script: Defaults.DefaultScript()
-  }
-
-  // profile.proxyGroupsConfig[0].use = [subscribeID]
-  // profile.proxyGroupsConfig[1].use = [subscribeID]
-
   const subscribe: SubscribeType = {
     id: subscribeID,
     name: subscribeID,
@@ -59,7 +44,7 @@ const handleSubmit = async () => {
     include: '',
     exclude: '',
     includeProtocol: '',
-    excludeProtocol: '', // Defaults.DefaultExcludeProtocols,
+    excludeProtocol: DefaultExcludeProtocols,
     proxyPrefix: '',
     disabled: false,
     inSecure: false,
@@ -71,25 +56,35 @@ const handleSubmit = async () => {
 
   try {
     await subscribeStore.addSubscribe(subscribe)
-
-    await profilesStore.addProfile(profile)
-
-    appSettingsStore.app.kernel.profile = profile.name
+    await subscribeStore.updateSubscribe(subscribeID)
   } catch (error: any) {
     console.log(error)
     message.error(error)
+    subscribeStore.deleteSubscribe(subscribeID)
     return
   }
 
-  message.success('home.initSuccessful')
-
-  try {
-    await subscribeStore.updateSubscribe(subscribe.id)
-  } catch (error: any) {
-    console.log(error)
-    message.warn(error, 10_000)
-    message.warn('home.initFailed', 10_000)
+  const profile: IProfile = {
+    id: sampleID(),
+    name: sampleID(),
+    log: Defaults.DefaultLog(),
+    experimental: Defaults.DefaultExperimental(),
+    inbounds: Defaults.DefaultInbounds(),
+    outbounds: Defaults.DefaultOutbounds(),
+    route: Defaults.DefaultRoute(),
+    dns: Defaults.DefaultDns(),
+    mixin: Defaults.DefaultMixin(),
+    script: Defaults.DefaultScript()
   }
+
+  profile.outbounds[0].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
+  profile.outbounds[1].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
+
+  await profilesStore.addProfile(profile)
+
+  appSettingsStore.app.kernel.profile = profile.id
+
+  message.success('home.initSuccessful')
 
   loading.value = false
 
@@ -110,5 +105,3 @@ const handleSubmit = async () => {
     </Button>
   </div>
 </template>
-
-<style lang="less" scoped></style>
