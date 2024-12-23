@@ -150,7 +150,7 @@ const handleUseProfile = async (p: IProfile) => {
 const onEditProfileEnd = async () => {
   const { running, profile } = appSettingsStore.app.kernel
   if (running && profile === profileID.value) {
-    await kernelApiStore.restartKernel()
+    await kernelApiStore.restartKernel(undefined, false)
   }
 }
 

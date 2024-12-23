@@ -284,10 +284,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     logsStore.clearKernelLog()
   }
 
-  const restartKernel = async (cleanupTask?: () => Promise<any>) => {
+  const restartKernel = async (cleanupTask?: () => Promise<any>, keepRuntimeProfile = true) => {
     await stopKernel()
     await cleanupTask?.()
-    await startKernel(runtimeProfile)
+    await startKernel(keepRuntimeProfile ? runtimeProfile : undefined)
   }
 
   const getProxyPort = ():
