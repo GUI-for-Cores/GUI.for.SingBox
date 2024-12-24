@@ -3,7 +3,7 @@ import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useBool, useMessage } from '@/hooks'
-import { deepClone, ignoredError, sampleID } from '@/utils'
+import { deepClone, sampleID } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 import { PluginsTriggerOptions, DraggableOptions } from '@/constant/app'
 import { PluginTrigger } from '@/enums/app'
@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const loading = ref(false)
-const oldPluginTriggers = ref()
 const pluginID = sampleID()
 const plugin = ref<PluginType>({
   id: pluginID,
@@ -51,14 +50,8 @@ const handleSubmit = async () => {
       // Refresh the key to re-render the view
       plugin.value.key = sampleID()
       await pluginsStore.editPlugin(props.id, plugin.value)
-      if (plugin.value.triggers.sort().join('') !== oldPluginTriggers.value) {
-        pluginsStore.updatePluginTrigger(plugin.value)
-      }
     } else {
       await pluginsStore.addPlugin(plugin.value)
-      // Try to autoload the plugin
-      await ignoredError(pluginsStore.reloadPlugin, plugin.value)
-      pluginsStore.updatePluginTrigger(plugin.value)
     }
     handleCancel()
   } catch (error: any) {
@@ -128,7 +121,6 @@ if (props.isUpdate) {
   const p = pluginsStore.getPluginById(props.id)
   if (p) {
     plugin.value = deepClone(p)
-    oldPluginTriggers.value = p.triggers.sort().join('')
   }
 }
 </script>

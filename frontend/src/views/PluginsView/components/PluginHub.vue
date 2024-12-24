@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { ignoredError } from '@/utils'
+import { ignoredError, sleep } from '@/utils'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { usePluginsStore, type PluginType } from '@/stores'
 
@@ -45,17 +45,14 @@ const getList = async () => {
 }
 
 const handleAddPlugin = async (plugin: PluginType) => {
+  const { success, error, destroy } = message.info('plugins.updating', 60 * 1000)
   try {
     await pluginsStore.addPlugin(plugin)
-    // Try to autoload the plugin
-    await ignoredError(pluginsStore.reloadPlugin, plugin)
-    pluginsStore.updatePluginTrigger(plugin)
-    const { id } = message.info('plugins.updating')
-    await pluginsStore.updatePlugin(plugin.id)
-    message.update(id, 'common.success', 'success')
-  } catch (error: any) {
-    console.error(error)
-    message.error(error.message || error)
+    success('common.success')
+  } catch (err: any) {
+    error(err.message || err)
+  } finally {
+    sleep(1000).then(destroy)
   }
 }
 

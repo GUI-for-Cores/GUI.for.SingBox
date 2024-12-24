@@ -31,7 +31,7 @@ const handleSave = async () => {
   loading.value = true
   try {
     await Writefile(plugin.value.path, code.value)
-    await pluginsStore.reloadPlugin(plugin.value, code.value)
+    await pluginsStore.reloadPlugin(plugin.value, code.value, false)
     handleSubmit()
   } catch (error: any) {
     message.error(error)

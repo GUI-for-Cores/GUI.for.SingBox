@@ -2,9 +2,9 @@
 import { ref, computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { useMessage, useConfirm } from '@/hooks'
-import { debounce, ignoredError } from '@/utils'
-import { Removefile, BrowserOpenURL } from '@/bridge'
+import { useMessage } from '@/hooks'
+import { debounce } from '@/utils'
+import { BrowserOpenURL } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, useEnvStore, type PluginType } from '@/stores'
@@ -48,7 +48,6 @@ const menuList: Menu[] = [
 
 const { t } = useI18n()
 const { message } = useMessage()
-const { confirm } = useConfirm()
 
 const envStore = useEnvStore()
 const pluginsStore = usePluginsStore()
@@ -90,17 +89,7 @@ const handleUpdatePlugin = async (s: PluginType) => {
 
 const handleDeletePlugin = async (p: PluginType) => {
   try {
-    if (p.path.startsWith('data')) {
-      await ignoredError(Removefile, p.path)
-    }
     await pluginsStore.deletePlugin(p.id)
-
-    // Remove configuration
-    if (appSettingsStore.app.pluginSettings[p.id]) {
-      if (await confirm('Tips', 'plugins.removeConfiguration').catch(() => 0)) {
-        delete appSettingsStore.app.pluginSettings[p.id]
-      }
-    }
   } catch (error: any) {
     console.error('handleDeletePlugin: ', error)
     message.error(error)
