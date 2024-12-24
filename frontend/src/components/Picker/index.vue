@@ -88,7 +88,7 @@ const handleSelectAll = () => {
           class="item"
         >
           <div class="label">
-            <div>{{ o.label }}</div>
+            <div>{{ t(o.label) }}</div>
             <Icon
               v-show="isSelected(o.value)"
               :size="32"
