@@ -110,6 +110,8 @@ const renderRule = (rule: IDNSRule) => {
   if (type === RuleType.RuleSet) {
     const tag = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
     children.push(tag)
+  } else if (type === RuleType.Inline && payload.includes('__is_fake_ip')) {
+    children.push('FakeIP')
   } else {
     children.push(payload)
   }

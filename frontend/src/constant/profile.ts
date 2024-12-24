@@ -507,6 +507,32 @@ export const DefaultDnsServers = (): IDNSServer[] => [
   // }
 ]
 
+export const DefaultFakeIPDnsRule = () => ({
+  __is_fake_ip: true,
+  type: 'logical',
+  mode: 'and',
+  rules: [
+    {
+      domain_suffix: [
+        '.lan',
+        '.localdomain',
+        '.example',
+        '.invalid',
+        '.localhost',
+        '.test',
+        '.local',
+        '.home.arpa',
+        '.msftconnecttest.com',
+        '.msftncsi.com',
+      ],
+      invert: true,
+    },
+    {
+      query_type: ['A', 'AAAA'],
+    },
+  ],
+})
+
 export const DefaultDnsRule = (): IDNSRule => ({
   id: sampleID(),
   type: RuleType.RuleSet,

@@ -253,6 +253,8 @@ export default {
         name: 'Fake-IP',
         inet4_range: 'Fake-IP Range(IPv4)',
         inet6_range: 'Fake-IP Range(IPv6)',
+        addServer: 'Add FakeIP DNS server',
+        addRules: 'Add FakeIP DNS rules',
       },
       rules: {
         type: 'Type',

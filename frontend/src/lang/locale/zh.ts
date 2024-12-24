@@ -252,6 +252,8 @@ export default {
         name: 'Fake-IP',
         inet4_range: 'Fake-IP范围(IPv4)',
         inet6_range: 'Fake-IP范围(IPv6)',
+        addServer: '添加FakeIP DNS服务器',
+        addRules: '添加FakeIP DNS规则',
       },
       rules: {
         type: '类型',

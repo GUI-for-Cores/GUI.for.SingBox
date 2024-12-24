@@ -217,7 +217,8 @@ const generateDns = (
     extra.client_subnet = dns.client_subnet
   }
   return {
-    servers: dns.servers.map((server) => {
+    servers: dns.servers.flatMap((server) => {
+      if (server.address === 'fakeip' && !dns.fakeip.enabled) return []
       const extra: Recordable = {}
       if (server.client_subnet) {
         extra.client_subnet = server.client_subnet
@@ -233,8 +234,12 @@ const generateDns = (
         ...extra,
       }
     }),
-    rules: dns.rules.map((rule) => {
+    rules: dns.rules.flatMap((rule) => {
       const extra: Recordable = _generateRule(rule as IRule, rule_set, inbounds)
+      if (rule.type === RuleType.Inline && rule.payload.includes('__is_fake_ip')) {
+        if (!dns.fakeip.enabled) return []
+        delete extra.__is_fake_ip
+      }
       if (rule.action === RuleAction.RouteOptions) {
         deepAssign(extra, JSON.parse(rule.server))
       } else if (rule.action === RuleAction.Reject) {
