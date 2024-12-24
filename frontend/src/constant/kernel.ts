@@ -228,4 +228,4 @@ export const EmptyRuleSet = {
   rules: [],
 }
 
-export const DefaultExcludeProtocols = 'direct|reject|selector|urltest|block|dns'
+export const DefaultExcludeProtocols = 'direct|reject|selector|urltest|block|dns|shadowsocksr'
