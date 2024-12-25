@@ -76,7 +76,7 @@ jobs:
           sed -i "" "s/\[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular\]/[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory]/g" vendor/github.com/wailsapp/wails/v2/internal/frontend/desktop/darwin/AppDelegate.m
 
       - name: Build Frontend
-        run: cd frontend && pnpm build
+        run: cd frontend && pnpm build-only
 
       # Build
       - name: Build for ${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}
