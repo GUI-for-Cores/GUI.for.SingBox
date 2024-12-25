@@ -127,10 +127,10 @@ export const useProfilesStore = defineStore('profiles', () => {
 
     if (profilesCount !== profiles.value.length) {
       const { alert } = useAlert()
-      Writefile('data/.cache/profiles-backup.yaml', stringify(filteredProfiles))
+      Writefile('data/.cache/profiles-backup-new.yaml', stringify(filteredProfiles))
       alert(
         'Tip',
-        'The incompatible profiles has been saved to the file: data/.cache/profiles-backup.yaml.'
+        'The incompatible profiles has been saved to the file: data/.cache/profiles-backup-new.yaml.'
       )
     }
 
