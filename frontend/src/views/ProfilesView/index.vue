@@ -143,7 +143,7 @@ const handleUseProfile = async (p: IProfile) => {
   appSettingsStore.app.kernel.profile = p.id
 
   if (appSettingsStore.app.kernel.running) {
-    await kernelApiStore.restartKernel()
+    await kernelApiStore.restartKernel(undefined, false)
   }
 }
 
