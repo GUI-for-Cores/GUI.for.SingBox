@@ -196,6 +196,7 @@ export default {
         payload: 'Payload',
         notFound: 'Outbound tag is missing.',
         invalid: 'Invalid Parameter',
+        invert: 'Invert',
       },
     },
     rules: {

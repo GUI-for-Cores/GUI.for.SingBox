@@ -195,6 +195,7 @@ export default {
         server: 'DNS服务器',
         payload: '载荷',
         invalid: '无效参数',
+        invert: '反向匹配',
       },
     },
     rules: {

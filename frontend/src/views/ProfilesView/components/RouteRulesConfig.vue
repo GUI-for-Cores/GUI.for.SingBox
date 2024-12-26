@@ -86,18 +86,18 @@ const hasLost = (rule: IRule) => {
 }
 
 const renderRule = (rule: IRule) => {
-  const { type, payload, outbound, action } = rule
+  const { type, payload, outbound, action, invert } = rule
   const children: string[] = [type]
+  let _payload = payload
   if (type === RuleType.RuleSet) {
-    const tag = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
-    children.push(tag)
+    _payload = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
   } else if (type === RuleType.Inbound) {
-    const tag = props.inboundOptions.find((v) => v.value === rule.payload)?.label || rule.payload
-    children.push(tag)
-  } else {
-    children.push(payload)
+    _payload = props.inboundOptions.find((v) => v.value === rule.payload)?.label || rule.payload
   }
-  children.push(action)
+  if (invert) {
+    _payload += ` (invert) `
+  }
+  children.push(_payload, action)
   if (outbound) {
     const proxy = props.outboundOptions.find((v) => v.value === outbound)?.label || outbound
     children.push(proxy)
@@ -142,6 +142,10 @@ const renderRule = (rule: IRule) => {
     <div class="form-item">
       {{ t('kernel.route.rules.action.name') }}
       <Radio v-model="fields.action" :options="RuleActionOptions" class="ml-8" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.route.rules.invert') }}
+      <Switch v-model="fields.invert" />
     </div>
     <template v-if="fields.action === RuleAction.Route">
       <div class="form-item">

@@ -92,6 +92,7 @@ const onFakeIPChange = async (enabled: boolean) => {
       payload: JSON.stringify(DefaultFakeIPDnsRule(), null, 2),
       action: RuleAction.Route,
       server: _fakeip_server,
+      invert: false,
     }
     const idx = model.value.rules.findIndex((v) => v.payload === 'any')
     model.value.rules.splice(idx + 1, 0, fakeip_rule)

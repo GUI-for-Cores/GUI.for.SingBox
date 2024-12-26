@@ -29,6 +29,15 @@ export const useProfilesStore = defineStore('profiles', () => {
         'The incompatible profiles has been saved to the file: data/.cache/profiles-backup.yaml.',
       )
     }
+
+    // Fix missing invert field
+    profiles.value.forEach((profile) => {
+      profile.dns.rules.forEach((rule) => {
+        if (typeof rule.invert === 'undefined') {
+          rule.invert = false
+        }
+      })
+    })
   }
 
   const saveProfiles = debounce(async () => {

@@ -105,17 +105,19 @@ const hasLost = (rule: IDNSRule) => {
 }
 
 const renderRule = (rule: IDNSRule) => {
-  const { type, payload, server, action } = rule
+  const { type, payload, server, action, invert } = rule
   const children: string[] = [type]
+  let _payload = payload
   if (type === RuleType.RuleSet) {
     const tag = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
-    children.push(tag)
+    _payload = tag
   } else if (type === RuleType.Inline && payload.includes('__is_fake_ip')) {
-    children.push('FakeIP')
-  } else {
-    children.push(payload)
+    _payload = 'FakeIP'
   }
-  children.push(action)
+  if (invert) {
+    _payload += ` (invert) `
+  }
+  children.push(_payload, action)
   if (server) {
     const proxy = props.serversOptions.find((v) => v.value === server)?.label || server
     children.push(proxy)
@@ -159,6 +161,10 @@ const renderRule = (rule: IDNSRule) => {
     <div class="form-item">
       {{ t('kernel.dns.rules.action') }}
       <Radio v-model="fields.action" :options="DnsRuleActionOptions" />
+    </div>
+    <div class="form-item">
+      {{ t('kernel.route.rules.invert') }}
+      <Switch v-model="fields.invert" />
     </div>
     <div v-if="fields.type !== RuleType.RuleSet" class="form-item">
       {{ t('kernel.dns.rules.payload') }}

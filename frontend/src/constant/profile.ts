@@ -539,6 +539,7 @@ export const DefaultDnsRule = (): IDNSRule => ({
   payload: '',
   action: RuleAction.Route,
   server: '',
+  invert: false,
 })
 
 export const DefaultDnsRules = (): IDNSRule[] => [
@@ -548,6 +549,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     payload: 'any',
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
+    invert: false,
   },
   {
     id: sampleID(),
@@ -555,6 +557,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     payload: ClashMode.Direct,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
+    invert: false,
   },
   {
     id: sampleID(),
@@ -562,6 +565,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     payload: ClashMode.Global,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,
+    invert: false,
   },
   {
     id: sampleID(),
@@ -569,6 +573,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     payload: DefaultRulesetIds.GEOSITE_CN,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
+    invert: false,
   },
   {
     id: sampleID(),
@@ -576,6 +581,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     payload: DefaultRulesetIds.GEOLOCATION_NOT_CN,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,
+    invert: false,
   },
 ]
 

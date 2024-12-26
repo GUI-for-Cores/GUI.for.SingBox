@@ -8,7 +8,7 @@ const _generateRule = (rule: IRule, rule_set: IRuleSet[], inbounds: IInbound[]) 
   const getInbound = (id: string) => inbounds.find((v) => v.id === id)?.tag
   const getRuleset = (id: string) => rule_set.find((v) => v.id === id)?.tag
 
-  const extra: Recordable = {}
+  const extra: Recordable = { invert: rule.invert ? true : undefined }
   if (rule.type === RuleType.Inline) {
     deepAssign(extra, JSON.parse(rule.payload))
   } else if (rule.type === RuleType.RuleSet) {

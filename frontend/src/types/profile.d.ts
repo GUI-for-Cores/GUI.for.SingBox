@@ -172,6 +172,7 @@ interface IDNSRule {
   payload: string
   action: DnsRuleAction
   server: string
+  invert: boolean
 }
 
 interface IDNS {
