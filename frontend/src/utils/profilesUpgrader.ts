@@ -1,19 +1,10 @@
-import { RuleAction, Strategy } from '@/enums/kernel'
+import { DefaultFakeIPDnsRule } from '@/constant/profile'
+import { RuleAction, RuleType, Strategy } from '@/enums/kernel'
 import { useRulesetsStore, useSubscribesStore } from '@/stores'
 
 export const transformProfileV189To190 = (config: Recordable) => {
   const rulesetsStore = useRulesetsStore()
   const subscribesStore = useSubscribesStore()
-
-  const getOutbound = (id: string) => {
-    const tag = config.proxyGroupsConfig.find((group: any) => group.id === id)?.tag
-    return tag
-  }
-
-  const getRuleSet = (id: string) => {
-    const tag = rulesets.find((rule) => rule.id === id)?.tag
-    return tag
-  }
 
   const local_rule_sets: IRuleSet[] = [...config.rulesConfig, ...config.dnsRulesConfig]
     .filter((rule) => rule.type === 'rule_set')
@@ -25,7 +16,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         tag: ruleset?.tag || rule.id,
         format: ruleset?.format || 'binary',
         url: ruleset?.url || '',
-        download_detour: getOutbound(rule['download-detour']),
+        download_detour: rule['download-detour'],
         update_interval: '',
         rules: '',
         path: '',
@@ -41,7 +32,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         tag: rule['ruleset-name'],
         format: rule['ruleset-format'],
         url: rule.payload,
-        download_detour: getOutbound(rule['download-detour']),
+        download_detour: rule['download-detour'],
         update_interval: '',
         rules: '',
         path: '',
@@ -87,7 +78,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         enable: true,
         mixed: {
           listen: {
-            listen: '127.0.0.1',
+            listen: config.generalConfig['allow-lan'] ? '0.0.0.0' : '127.0.0.1',
             listen_port: config.generalConfig['mixed-port'] || 20122,
             tcp_fast_open: config.advancedConfig['tcp-fast-open'],
             tcp_multi_path: config.advancedConfig['tcp-multi-path'],
@@ -112,9 +103,41 @@ export const transformProfileV189To190 = (config: Recordable) => {
           stack: 'mixed',
         },
       },
+      {
+        id: 'http-in',
+        type: 'http',
+        tag: 'http-in',
+        enable: config.advancedConfig.port !== 0,
+        http: {
+          listen: {
+            listen: config.generalConfig['allow-lan'] ? '0.0.0.0' : '127.0.0.1',
+            listen_port: config.advancedConfig['port'] || 20121,
+            tcp_fast_open: config.advancedConfig['tcp-fast-open'],
+            tcp_multi_path: config.advancedConfig['tcp-multi-path'],
+            udp_fragment: config.advancedConfig['udp-fragment'],
+          },
+          users: [],
+        },
+      },
+      {
+        id: 'socks-in',
+        type: 'socks',
+        tag: 'socks-in',
+        enable: config.advancedConfig['socks-port'] !== 0,
+        socks: {
+          listen: {
+            listen: config.generalConfig['allow-lan'] ? '0.0.0.0' : '127.0.0.1',
+            listen_port: config.advancedConfig['socks-port'] || 20120,
+            tcp_fast_open: config.advancedConfig['tcp-fast-open'],
+            tcp_multi_path: config.advancedConfig['tcp-multi-path'],
+            udp_fragment: config.advancedConfig['udp-fragment'],
+          },
+          users: [],
+        },
+      },
     ],
     outbounds: config.proxyGroupsConfig.flatMap((group: any) => {
-      if (!['selector', 'direct', 'urltest'].includes(group.type)) return []
+      if (!['selector', 'urltest'].includes(group.type)) return []
       return {
         id: group.id,
         tag: group.tag,
@@ -148,17 +171,29 @@ export const transformProfileV189To190 = (config: Recordable) => {
     }),
     route: {
       rule_set: rulesets,
-      rules: config.rulesConfig.map((rule: any) => {
+      rules: config.rulesConfig.flatMap((rule: any) => {
+        if (rule.type === 'final') return []
+        const extra: Recordable = {}
+        if (rule.type === 'rule_set_url' || rule.type === 'rule_set') {
+          extra.type = 'rule_set'
+          extra.payload = rule.id
+        }
         return {
           id: rule.id,
           type: rule.type,
           payload: rule.payload,
           invert: rule.invert,
-          action: rule.proxy === 'block' ? RuleAction.Reject : RuleAction.Route,
-          outbound: getOutbound(rule.proxy),
+          action:
+            rule.proxy === 'block'
+              ? RuleAction.Reject
+              : rule.proxy === 'dns-out'
+                ? RuleAction.HijackDNS
+                : RuleAction.Route,
+          outbound: rule.proxy === 'dns-out' ? '' : rule.proxy,
           sniffer: [],
           strategy: Strategy.Default,
           server: '',
+          ...extra,
         }
       }),
       auto_detect_interface: true,
@@ -181,7 +216,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
           tag: 'local-dns',
           address: config.dnsConfig['local-dns'],
           address_resolver: 'resolver-dns',
-          detour: getOutbound(config.dnsConfig['local-dns-detour']),
+          detour: config.dnsConfig['local-dns-detour'],
           strategy: Strategy.Default,
           client_subnet: '',
         },
@@ -190,7 +225,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
           tag: 'resolver-dns',
           address: config.dnsConfig['resolver-dns'],
           address_resolver: '',
-          detour: getOutbound(config.dnsConfig['remote-dns-detour']),
+          detour: config.dnsConfig['remote-dns-detour'],
           strategy: Strategy.Default,
           client_subnet: '',
         },
@@ -203,12 +238,27 @@ export const transformProfileV189To190 = (config: Recordable) => {
           strategy: Strategy.Default,
           client_subnet: '',
         },
+        {
+          id: 'fakeip',
+          tag: 'fakeip-dns',
+          address: 'fakeip',
+          address_resolver: '',
+          detour: '',
+          strategy: Strategy.Default,
+          client_subnet: '',
+        },
       ],
       rules: config.dnsRulesConfig.map((rule: any, index: number) => {
         const extra: Recordable = {}
         if (rule.type === 'rule_set_url' || rule.type === 'rule_set') {
           extra.type = 'rule_set'
-          extra.payload = getRuleSet(rule.id)
+          extra.payload = rule.id
+        } else if (rule.type === 'fakeip') {
+          extra.type = RuleType.Inline
+          const fakeip = DefaultFakeIPDnsRule()
+          fakeip.rules[0].domain_suffix = config.dnsConfig['fake-ip-filter']
+          extra.payload = JSON.stringify(fakeip, null, 2)
+          extra.server = 'fakeip'
         } else {
           extra.payload = rule.payload
         }
