@@ -35,6 +35,16 @@ export const useProfilesStore = defineStore('profiles', () => {
     }
 
     if (needsDiskSync) {
+      // Remove duplicates
+      profiles.value = profiles.value.reduce((p, c) => {
+        const x = p.find((item) => item.id === c.id)
+        if (!x) {
+          return p.concat([c])
+        } else {
+          return p
+        }
+      }, [] as IProfile[])
+
       await saveProfiles()
       const { alert } = useAlert()
       alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
