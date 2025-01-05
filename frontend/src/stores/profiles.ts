@@ -2,8 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
-import { debounce, ignoredError } from '@/utils'
-import { Readfile, Writefile } from '@/bridge'
+import { debounce, ignoredError, transformProfileV189To190 } from '@/utils'
+import { Readfile, Writefile, Readdir, Movefile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAlert } from '@/hooks'
 
@@ -14,20 +14,30 @@ export const useProfilesStore = defineStore('profiles', () => {
     const data = await ignoredError(Readfile, ProfilesFilePath)
     data && (profiles.value = parse(data))
 
-    const profilesCount = profiles.value.length
-    const filteredProfiles = profiles.value.filter((profile) => !(profile as any).route)
-
-    profiles.value = profiles.value.filter((profile) => {
-      return (profile as any).route
+    let needsDiskSync = false
+    profiles.value.forEach((profile, index) => {
+      if (!(profile as any).route) {
+        profiles.value[index] = transformProfileV189To190(profile)
+        needsDiskSync = true
+      }
     })
 
-    if (profilesCount !== profiles.value.length) {
+    const dirs = await Readdir('data/.cache')
+    const backupProfiles = dirs.find((file) => file.name === 'profiles-backup.yaml')
+    if (backupProfiles) {
+      const txt = await Readfile('data/.cache/profiles-backup.yaml')
+      const oldProfiles = parse(txt)
+      for (const p of oldProfiles) {
+        profiles.value.push(transformProfileV189To190(p))
+        needsDiskSync = true
+      }
+    }
+
+    if (needsDiskSync) {
+      await saveProfiles()
+      await Movefile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
       const { alert } = useAlert()
-      Writefile('data/.cache/profiles-backup.yaml', stringify(filteredProfiles))
-      alert(
-        'Tip',
-        'The incompatible profiles has been saved to the file: data/.cache/profiles-backup.yaml.',
-      )
+      alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
     }
 
     // Fix missing invert field
