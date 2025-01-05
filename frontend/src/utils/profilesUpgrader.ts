@@ -131,11 +131,14 @@ export const transformProfileV189To190 = (config: Recordable) => {
         enable: config.tunConfig['enable'],
         tun: {
           interface_name: config.tunConfig['interface-name'] || '',
-          address: config.tunConfig['address'],
+          address: config.tunConfig['address'] || [
+            config.tunConfig['inet4-address'],
+            config.tunConfig['inet6-address'],
+          ],
           mtu: config.tunConfig.mtu,
           auto_route: config.tunConfig['auto-route'],
           strict_route: config.tunConfig['strict-route'],
-          route_address: config.tunConfig['address'],
+          route_address: ['0.0.0.0/1', '128.0.0.0/1', '::/1', '8000::/1'],
           endpoint_independent_nat: config.tunConfig['endpoint-independent-nat'],
           stack: 'mixed',
         },

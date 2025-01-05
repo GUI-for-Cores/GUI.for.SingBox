@@ -31,11 +31,11 @@ export const useProfilesStore = defineStore('profiles', () => {
         profiles.value.push(transformProfileV189To190(p))
         needsDiskSync = true
       }
+      await Movefile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
     }
 
     if (needsDiskSync) {
       await saveProfiles()
-      await Movefile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
       const { alert } = useAlert()
       alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
     }
