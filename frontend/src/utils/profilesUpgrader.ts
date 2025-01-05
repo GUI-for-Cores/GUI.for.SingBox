@@ -19,7 +19,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         download_detour: rule['download-detour'],
         update_interval: '',
         rules: '',
-        path: '',
+        path: rule.payload || '',
       }
     })
 
@@ -39,7 +39,44 @@ export const transformProfileV189To190 = (config: Recordable) => {
       }
     })
 
-  const rulesets = [...remote_rule_sets, ...local_rule_sets]
+  const rulesetsIdMap: Recordable = {}
+  const rulesets = [...remote_rule_sets, ...local_rule_sets].reduce((p: any, c: any) => {
+    const x = p.find((item: any) => item.tag === c.tag)
+    if (!x) {
+      rulesetsIdMap[c.id] = c.id
+      return p.concat([c])
+    } else {
+      rulesetsIdMap[c.id] = x.id
+      return p
+    }
+  }, [])
+
+  const deprecatedReject = config.proxyGroupsConfig.find((v: any) =>
+    ['🛑 全球拦截', '🛑 Block'].includes(v.tag),
+  )
+
+  if (deprecatedReject) {
+    deprecatedReject.proxies = []
+    deprecatedReject.use = []
+    config.proxyGroupsConfig.forEach((group: any) => {
+      group.proxies = group.proxies.filter((proxy: any) => proxy.id !== deprecatedReject.id)
+    })
+  }
+
+  const deprecatedDirect = config.proxyGroupsConfig.find((v: any) =>
+    ['🎯 全球直连', '🎯 Direct'].includes(v.tag),
+  )
+
+  if (deprecatedReject) {
+    deprecatedDirect.proxies = []
+    deprecatedDirect.use = []
+    config.proxyGroupsConfig.forEach((group: any) => {
+      group.proxies = group.proxies.filter((proxy: any) => proxy.id !== deprecatedDirect.id)
+    })
+    config.proxyGroupsConfig = config.proxyGroupsConfig.filter(
+      (group: any) => group.id !== deprecatedReject.id,
+    )
+  }
 
   const profile: IProfile = {
     id: config.id,
@@ -138,10 +175,14 @@ export const transformProfileV189To190 = (config: Recordable) => {
     ],
     outbounds: config.proxyGroupsConfig.flatMap((group: any) => {
       if (!['selector', 'urltest'].includes(group.type)) return []
+      let type = group.type
+      if (['🎯 全球直连', '🎯 Direct'].includes(group.tag)) {
+        type = 'direct'
+      }
       return {
         id: group.id,
         tag: group.tag,
-        type: group.type,
+        type,
         outbounds: [
           ...group.proxies.flatMap((proxy: any) => {
             if (['block', 'direct'].includes(proxy.tag)) return []
@@ -176,7 +217,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         const extra: Recordable = {}
         if (rule.type === 'rule_set_url' || rule.type === 'rule_set') {
           extra.type = 'rule_set'
-          extra.payload = rule.id
+          extra.payload = rulesetsIdMap[rule.id]
         }
         return {
           id: rule.id,
@@ -188,8 +229,14 @@ export const transformProfileV189To190 = (config: Recordable) => {
               ? RuleAction.Reject
               : rule.proxy === 'dns-out'
                 ? RuleAction.HijackDNS
-                : RuleAction.Route,
-          outbound: rule.proxy === 'dns-out' ? '' : rule.proxy,
+                : rule.proxy === deprecatedReject?.id
+                  ? RuleAction.Reject
+                  : RuleAction.Route,
+          outbound: ['dns-out', deprecatedReject?.id].includes(rule.proxy)
+            ? ''
+            : rule.proxy === 'direct'
+              ? deprecatedDirect?.id
+              : rule.proxy,
           sniffer: [],
           strategy: Strategy.Default,
           server: '',
@@ -252,7 +299,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         const extra: Recordable = {}
         if (rule.type === 'rule_set_url' || rule.type === 'rule_set') {
           extra.type = 'rule_set'
-          extra.payload = rule.id
+          extra.payload = rulesetsIdMap[rule.id]
         } else if (rule.type === 'fakeip') {
           extra.type = RuleType.Inline
           const fakeip = DefaultFakeIPDnsRule()
