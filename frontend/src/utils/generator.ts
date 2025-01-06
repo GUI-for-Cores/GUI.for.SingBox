@@ -140,6 +140,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
 const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound[], dns: IDNS) => {
   const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
+  const isInboundEnabled = (id: string) => inbounds.find((v) => v.id === id)?.enable
 
   const rulesetsStore = useRulesetsStore()
 
@@ -148,7 +149,10 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
     extra.default_interface = route.default_interface
   }
   return {
-    rules: route.rules.map((rule) => {
+    rules: route.rules.flatMap((rule) => {
+      if (rule.type === RuleType.Inbound && !isInboundEnabled(rule.payload)) {
+        return []
+      }
       const extra: Recordable = _generateRule(rule, route.rule_set, inbounds)
 
       if (rule.action === RuleAction.Route) {
