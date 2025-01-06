@@ -76,6 +76,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       runtimeProfile.route.final = _profile.route.final
       runtimeProfile.route.rule_set = _profile.route.rule_set
       runtimeProfile.route.rules = _profile.route.rules
+      runtimeProfile.mixin = _profile.mixin
+      runtimeProfile.script = _profile.script
     }
 
     const mixed = runtimeProfile.inbounds.find((v) => v.mixed)
@@ -217,7 +219,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     if (!profile) throw 'Choose a profile first'
 
     await stopKernel()
-    await generateConfigFile(profile || _profile)
+    await generateConfigFile(profile)
 
     if (!_profile) {
       runtimeProfile = undefined
