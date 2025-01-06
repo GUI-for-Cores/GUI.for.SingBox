@@ -39,7 +39,7 @@ type AppSettings = {
     order: string[]
   }
   kernel: {
-    branch: 'main' | 'latest'
+    branch: 'main' | 'alpha'
     profile: string
     pid: number
     running: boolean
@@ -118,7 +118,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       ],
     },
     kernel: {
-      branch: 'latest',
+      branch: 'main',
       profile: '',
       pid: 0,
       running: false,
@@ -143,6 +143,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const setupAppSettings = async () => {
     const data = await ignoredError(Readfile, 'data/user.yaml')
     data && (app.value = Object.assign(app.value, parse(data)))
+
+    if ((app.value.kernel.branch as any) === 'latest') {
+      app.value.kernel.branch = 'alpha'
+    }
 
     firstOpen = !!data
 

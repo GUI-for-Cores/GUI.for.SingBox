@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import StableBranch from './components/StableBranch.vue'
-import LatestBranch from './components/LatestBranch.vue'
+import AlphaBranch from './components/AlphaBranch.vue'
 import SwitchBranch from './components/SwitchBranch.vue'
 </script>
 
 <template>
   <div>
     <StableBranch />
-    <LatestBranch />
+    <AlphaBranch />
     <SwitchBranch />
   </div>
 </template>
-
-<style lang="less" scoped></style>

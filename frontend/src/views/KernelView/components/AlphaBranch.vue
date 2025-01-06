@@ -33,7 +33,7 @@ const downloadSuccessful = ref(false)
 const needRestart = computed(() => {
   const { running, branch } = appSettings.app.kernel
   if (!running) return false
-  return localVersion.value && downloadSuccessful.value && branch === 'latest'
+  return localVersion.value && downloadSuccessful.value && branch === 'alpha'
 })
 
 const needUpdate = computed(() => remoteVersion.value && localVersion.value !== remoteVersion.value)
@@ -78,7 +78,7 @@ const downloadCore = async () => {
     await Makedir('data/sing-box')
 
     const { id } = message.info(t('common.downloading'), 10 * 60 * 1_000, () => {
-      HttpCancel('download-latest-core')
+      HttpCancel('download-alpha-core')
       setTimeout(() => Removefile(tmp), 1000)
     })
 
@@ -89,7 +89,7 @@ const downloadCore = async () => {
       (progress, total) => {
         message.update(id, t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
       },
-      { CancelId: 'download-latest-core' },
+      { CancelId: 'download-alpha-core' },
     ).catch((err) => {
       message.destroy(id)
       throw err
@@ -98,16 +98,16 @@ const downloadCore = async () => {
     message.destroy(id)
 
     const fileName = await getKernelFileName() // sing-box.exe
-    const latestFileName = await getKernelFileName(true) // sing-box-latest.exe
+    const alphaFileName = await getKernelFileName(true) // sing-box-latest.exe
 
-    const latestKernelFilePath = CoreWorkingDirectory + '/' + latestFileName
+    const alphaKernelFilePath = CoreWorkingDirectory + '/' + alphaFileName
 
-    await ignoredError(Movefile, latestKernelFilePath, latestKernelFilePath + '.bak')
+    await ignoredError(Movefile, alphaKernelFilePath, alphaKernelFilePath + '.bak')
 
     if (suffix === '.zip') {
       await UnzipZIPFile(tmp, CoreWorkingDirectory)
       const tmpPath = CoreWorkingDirectory + `/sing-box-${version}-${os}-${arch}${legacy}`
-      await Movefile(tmpPath + '/' + fileName, latestKernelFilePath)
+      await Movefile(tmpPath + '/' + fileName, alphaKernelFilePath)
       await Removefile(tmpPath)
     } else {
       const extractDir = 'data/.cache/latest'
@@ -120,14 +120,14 @@ const downloadCore = async () => {
         '--strip-components',
         '1',
       ])
-      await Movefile(extractDir + '/' + fileName, latestKernelFilePath)
+      await Movefile(extractDir + '/' + fileName, alphaKernelFilePath)
       await Removefile(extractDir)
     }
 
     await Removefile(tmp)
 
     if (['darwin', 'linux'].includes(os)) {
-      await ignoredError(Exec, 'chmod', ['+x', await AbsolutePath(latestKernelFilePath)])
+      await ignoredError(Exec, 'chmod', ['+x', await AbsolutePath(alphaKernelFilePath)])
     }
 
     downloadSuccessful.value = true

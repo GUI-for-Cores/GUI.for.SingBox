@@ -413,10 +413,10 @@ export const exitApp = async () => {
   }
 }
 
-export const getKernelFileName = async (isLatest = false) => {
+export const getKernelFileName = async (isAlpha = false) => {
   const envStore = useEnvStore()
   const { os } = envStore.env
   const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
-  const latest = isLatest ? '-latest' : ''
+  const latest = isAlpha ? '-latest' : ''
   return `sing-box${latest}${fileSuffix}`
 }

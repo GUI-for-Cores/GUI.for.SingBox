@@ -34,8 +34,8 @@ const handleUseBranch = async (branch: any) => {
       {{ t('settings.kernel.stable') }}
     </Card>
     <Card
-      :selected="appSettings.app.kernel.branch === 'latest'"
-      @click="handleUseBranch('latest')"
+      :selected="appSettings.app.kernel.branch === 'alpha'"
+      @click="handleUseBranch('alpha')"
       title="Alpha"
       class="branch-item"
     >
