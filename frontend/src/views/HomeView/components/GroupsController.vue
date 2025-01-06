@@ -22,7 +22,7 @@ const kernelApiStore = useKernelApiStore()
 const groups = computed(() => {
   const { proxies } = kernelApiStore
   return Object.values(proxies)
-    .filter((v) => ['Selector', 'URLTest', 'Direct'].includes(v.type) && v.name !== 'GLOBAL')
+    .filter((v) => ['Selector', 'URLTest'].includes(v.type) && v.name !== 'GLOBAL')
     .concat(proxies.GLOBAL || [])
     .map((group) => {
       const all = (group.all || [])
@@ -209,15 +209,6 @@ onActivated(() => {
         <span class="group-name">{{ group.name }}</span>
         <span class="group-type">
           {{ group.type }}
-          <!-- {{
-            t(
-              {
-                [Outbound.Selector]: 'kernel.proxyGroups.type.Selector',
-                [Outbound.Urltest]: 'kernel.proxyGroups.type.UrlTest',
-                [Outbound.Direct]: 'kernel.proxyGroups.type.Fallback'
-              }[group.type]!
-            )
-          }} -->
         </span>
         <span> :: </span>
         <template v-for="(chain, index) in group.chains" :key="chain">

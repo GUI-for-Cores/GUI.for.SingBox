@@ -81,7 +81,7 @@ const getTrayMenus = () => {
   const groupsMenus: MenuItem[] = (() => {
     if (!proxies) return []
     return Object.values(proxies)
-      .filter((v) => ['Selector', 'URLTest', 'Direct'].includes(v.type) && v.name !== 'GLOBAL')
+      .filter((v) => ['Selector', 'URLTest'].includes(v.type) && v.name !== 'GLOBAL')
       .concat(proxies.GLOBAL || [])
       .map((group) => {
         const all = (group.all || [])
