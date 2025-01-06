@@ -87,10 +87,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     config.value['mixed-port'] = mixed?.mixed?.listen.listen_port || 0
     config.value['port'] = http?.http?.listen.listen_port || 0
     config.value['socks-port'] = socks?.socks?.listen.listen_port || 0
-    config.value['allow-lan'] =
-      mixed?.mixed?.listen.listen === '0.0.0.0' ||
-      http?.http?.listen.listen === '0.0.0.0' ||
-      socks?.socks?.listen.listen === '0.0.0.0'
+    config.value['allow-lan'] = [
+      mixed?.mixed?.listen.listen,
+      http?.http?.listen.listen,
+      socks?.socks?.listen.listen,
+    ].some((address) => address === '0.0.0.0' || address === '::')
 
     config.value.tun.enable = !!tun?.enable
     config.value.tun.device = tun?.tun?.interface_name || ''
