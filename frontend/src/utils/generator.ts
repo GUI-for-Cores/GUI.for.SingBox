@@ -304,9 +304,7 @@ const _adaptToStableBranch = (config: Recordable) => {
     } else if (rule.action === RuleAction.Reject) {
       rule.outbound = 'block'
     } else if (rule.action === RuleAction.HijackDNS) {
-      if (rule.protocol === 'dns') {
-        rule.outbound = 'dns-out'
-      }
+      rule.outbound = 'dns-out'
     }
     rule.action = undefined
     return rule
