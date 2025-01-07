@@ -267,6 +267,7 @@ export default {
     mode: 'Mode',
     'allow-lan': 'Allow LAN',
     'disallow-lan': 'Disallow LAN',
+    notFound: 'Core Not Found',
   },
   router: {
     overview: 'OverView',

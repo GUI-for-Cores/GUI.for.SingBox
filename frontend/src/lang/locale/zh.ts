@@ -266,6 +266,7 @@ export default {
     mode: '工作模式',
     'allow-lan': '允许局域网访问',
     'disallow-lan': '禁止局域网访问',
+    notFound: '无核心',
   },
   router: {
     overview: '概览',
