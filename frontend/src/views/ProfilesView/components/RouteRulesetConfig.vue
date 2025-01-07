@@ -148,7 +148,7 @@ const handleUse = (ruleset: any) => {
       </div>
       <div class="form-item">
         {{ t('kernel.route.rule_set.download_detour') }}
-        <Select v-model="fields.download_detour" :options="outboundOptions" />
+        <Select v-model="fields.download_detour" :options="outboundOptions" clearable />
       </div>
       <div class="form-item">
         {{ t('kernel.route.rule_set.update_interval') }}

@@ -107,7 +107,7 @@ const renderServer = (server: IDNSServer) => {
     </div>
     <div class="form-item">
       {{ t('kernel.dns.address_resolver') }}
-      <Select v-model="fields.address_resolver" :options="serversOptions" />
+      <Select v-model="fields.address_resolver" :options="serversOptions" clearable />
     </div>
     <div class="form-item">
       {{ t('kernel.dns.client_subnet') }}

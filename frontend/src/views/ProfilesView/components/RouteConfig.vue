@@ -50,11 +50,11 @@ defineExpose({ handleAdd })
       </div>
       <div v-if="!model.auto_detect_interface" class="form-item">
         {{ t('kernel.route.default_interface') }}
-        <InterfaceSelect v-model="model.default_interface" />
+        <InterfaceSelect v-model="model.default_interface" clearable />
       </div>
       <div class="form-item">
         {{ t('kernel.route.final') }}
-        <Select v-model="model.final" :options="outboundOptions" />
+        <Select v-model="model.final" :options="outboundOptions" clearable />
       </div>
     </template>
     <template #rule_set>

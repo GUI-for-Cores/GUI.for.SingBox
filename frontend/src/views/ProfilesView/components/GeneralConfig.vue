@@ -71,6 +71,7 @@ const [showMore, toggleMore] = useBool(false)
         <Select
           v-model="model.experimental.clash_api.external_ui_download_detour"
           :options="outboundOptions"
+          clearable
         />
       </div>
       <div class="form-item">

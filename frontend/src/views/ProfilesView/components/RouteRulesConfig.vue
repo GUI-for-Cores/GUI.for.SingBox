@@ -150,7 +150,7 @@ const renderRule = (rule: IRule) => {
     <template v-if="fields.action === RuleAction.Route">
       <div class="form-item">
         {{ t('kernel.route.rules.outbound') }}
-        <Select v-model="fields.outbound" :options="outboundOptions" />
+        <Select v-model="fields.outbound" :options="outboundOptions" clearable />
       </div>
     </template>
     <template v-else-if="fields.action === RuleAction.RouteOptions">

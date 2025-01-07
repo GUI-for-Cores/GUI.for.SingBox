@@ -255,11 +255,11 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       </div>
       <div class="form-item">
         {{ t('kernel.outbounds.include') }}
-        <Input v-model="fields.include" />
+        <Input v-model="fields.include" placeholder="keywords1|keywords2" />
       </div>
       <div class="form-item">
         {{ t('kernel.outbounds.exclude') }}
-        <Input v-model="fields.exclude" />
+        <Input v-model="fields.exclude" placeholder="keywords1|keywords2" />
       </div>
     </template>
     <template v-if="fields.type === Outbound.Direct">
@@ -268,11 +268,11 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     <template v-else-if="fields.type === Outbound.Urltest">
       <div class="form-item">
         {{ t('kernel.outbounds.url') }}
-        <Input v-model="fields.url" />
+        <Input v-model="fields.url" placeholder="http(s)://" />
       </div>
       <div class="form-item">
         {{ t('kernel.outbounds.interval') }}
-        <Input v-model="fields.interval" />
+        <Input v-model="fields.interval" placeholder="3m" />
       </div>
       <div class="form-item">
         {{ t('kernel.outbounds.tolerance') }}
