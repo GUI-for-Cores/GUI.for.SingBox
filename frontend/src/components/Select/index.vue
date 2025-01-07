@@ -7,6 +7,7 @@ interface Props {
   size?: 'default' | 'small'
   placeholder?: string
   autoSize?: boolean
+  clearable?: boolean
 }
 
 const model = defineModel<string>({ default: '' })
@@ -16,11 +17,16 @@ withDefaults(defineProps<Props>(), {
   border: true,
   size: 'default',
   autoSize: false,
+  clearable: false,
 })
 
 const emits = defineEmits(['change'])
 
 const { t } = useI18n()
+
+const handleClear = () => {
+  model.value = ''
+}
 </script>
 
 <template>
@@ -31,13 +37,20 @@ const { t } = useI18n()
         {{ t(o.label) }}
       </option>
     </select>
+    <Button
+      v-show="clearable && model"
+      @click="handleClear"
+      icon="close"
+      type="text"
+      size="small"
+    />
   </div>
 </template>
 
 <style lang="less" scoped>
 .select {
+  display: inline-flex;
   min-width: 120px;
-  display: inline-block;
   border-radius: 4px;
   font-size: 12px;
   background: var(--select-bg);
