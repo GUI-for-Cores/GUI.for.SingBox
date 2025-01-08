@@ -65,7 +65,19 @@ const handleDeleteRule = (index: number) => {
 }
 
 const handleUse = (ruleset: any) => {
-  fields.value.payload = ruleset.id
+  const ids = fields.value.payload.split(',').filter((v) => v)
+  const idx = ids.findIndex((v) => v === ruleset.id)
+  if (idx === -1) {
+    ids.push(ruleset.id)
+  } else {
+    ids.splice(idx, 1)
+  }
+  fields.value.payload = ids.join(',')
+}
+
+const handleClearRuleset = (ruleset: any) => {
+  const ids = fields.value.payload.split(',').filter((id) => props.ruleSet.find((v) => v.id === id))
+  ruleset.payload = ids.join(',')
 }
 
 const showLost = () => message.warn('kernel.route.rules.invalid')
@@ -93,7 +105,10 @@ const hasLost = (rule: IDNSRule) => {
       return rule.payload !== 'any' && !props.outboundOptions.find((v) => v.value === rule.payload)
     }
     if (rule.type === RuleType.RuleSet) {
-      return !props.ruleSet.find((v) => v.id === rule.payload)
+      const hasMissingRuleset = rule.payload
+        .split(',')
+        .some((id) => !props.ruleSet.find((v) => v.id === id))
+      return hasMissingRuleset
     }
     if (rule.type === RuleType.Inline) {
       return !isValidJson(rule.payload)
@@ -140,7 +155,14 @@ const renderRule = (rule: IDNSRule) => {
         <span v-if="hasLost(rule)" @click="showLost" class="warn"> [ ! ] </span>
         {{ renderRule(rule) }}
       </div>
-      <div class="ml-auto">
+      <div class="flex text-nowrap ml-auto">
+        <Button
+          v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
+          @click="handleClearRuleset(rule)"
+          type="text"
+        >
+          {{ t('common.clear') }}
+        </Button>
         <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
         <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
       </div>
@@ -234,7 +256,7 @@ const renderRule = (rule: IDNSRule) => {
             :key="ruleset.tag"
             :title="ruleset.tag"
             @click="handleUse(ruleset)"
-            :selected="fields.payload === ruleset.id"
+            :selected="fields.payload.includes(ruleset.id)"
             v-tips="ruleset.type"
             class="ruleset"
           >

@@ -17,7 +17,7 @@ const _generateRule = (rule: IRule, rule_set: IRuleSet[], inbounds: IInbound[]) 
   if (rule.type === RuleType.Inline) {
     deepAssign(extra, JSON.parse(rule.payload))
   } else if (rule.type === RuleType.RuleSet) {
-    extra[rule.type] = getRuleset(rule.payload)
+    extra[rule.type] = rule.payload.split(',').map((id) => getRuleset(id))
   } else if (rule.type === RuleType.Inbound) {
     extra[rule.type] = getInbound(rule.payload)
   } else if (rule.type === RuleType.IpIsPrivate) {

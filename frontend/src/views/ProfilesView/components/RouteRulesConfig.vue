@@ -55,7 +55,19 @@ const handleEdit = (index: number) => {
 }
 
 const handleUse = (ruleset: any) => {
-  fields.value.payload = ruleset.id
+  const ids = fields.value.payload.split(',').filter((v) => v)
+  const idx = ids.findIndex((v) => v === ruleset.id)
+  if (idx === -1) {
+    ids.push(ruleset.id)
+  } else {
+    ids.splice(idx, 1)
+  }
+  fields.value.payload = ids.join(',')
+}
+
+const handleClearRuleset = (ruleset: any) => {
+  const ids = fields.value.payload.split(',').filter((id) => props.ruleSet.find((v) => v.id === id))
+  ruleset.payload = ids.join(',')
 }
 
 const handleDelete = (index: number) => {
@@ -69,20 +81,31 @@ const isSupportPayload = computed(() => {
 })
 
 const hasLost = (rule: IRule) => {
-  if (rule.type === RuleType.Protocol) {
-    return false
+  const rulesValidationFlags: boolean[] = []
+  const hasMissingInbound = !props.inboundOptions.find((v) => v.value === rule.payload)
+  const hasMissingOutbound = !props.outboundOptions.find((v) => v.value === rule.outbound)
+  const hasMissingRuleset = rule.payload
+    .split(',')
+    .some((id) => !props.ruleSet.find((v) => v.id === id))
+  if (rule.action === RuleAction.Route) {
+    rulesValidationFlags.push(hasMissingOutbound)
+  } else if (rule.action === RuleAction.RouteOptions) {
+    let isValid = true
+    try {
+      JSON.parse(rule.outbound)
+    } catch {
+      isValid = false
+    }
+    rulesValidationFlags.push(!isValid)
   }
   if (rule.type === RuleType.Inbound) {
-    return !props.inboundOptions.find((v) => v.value === rule.payload)
+    rulesValidationFlags.push(hasMissingInbound)
+  } else if (rule.type === RuleType.IpIsPrivate) {
+    rulesValidationFlags.push(!['true', 'false'].includes(rule.payload))
+  } else if (rule.type === RuleType.RuleSet) {
+    rulesValidationFlags.push(hasMissingRuleset)
   }
-  if (rule.action !== RuleAction.Route) {
-    return false
-  }
-  const outboundLost = !props.outboundOptions.find((v) => v.value === rule.outbound)
-  if (rule.type === RuleType.RuleSet) {
-    return !props.ruleSet.find((v) => v.id === rule.payload) || outboundLost
-  }
-  return outboundLost
+  return rulesValidationFlags.some((v) => v) || !rule.payload
 }
 
 const renderRule = (rule: IRule) => {
@@ -121,7 +144,14 @@ const renderRule = (rule: IRule) => {
         <span v-if="hasLost(rule)" @click="showLost" class="warn"> [ ! ] </span>
         {{ renderRule(rule) }}
       </div>
-      <div class="ml-auto">
+      <div class="flex text-nowrap ml-auto">
+        <Button
+          v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
+          @click="handleClearRuleset(rule)"
+          type="text"
+        >
+          {{ t('common.clear') }}
+        </Button>
         <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
         <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
       </div>
@@ -227,7 +257,7 @@ const renderRule = (rule: IRule) => {
             :key="ruleset.tag"
             :title="ruleset.tag"
             @click="handleUse(ruleset)"
-            :selected="fields.payload === ruleset.id"
+            :selected="fields.payload.includes(ruleset.id)"
             v-tips="ruleset.type"
             class="ruleset"
           >
