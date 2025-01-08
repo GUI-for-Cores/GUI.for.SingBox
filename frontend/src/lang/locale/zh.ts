@@ -144,6 +144,7 @@ export default {
         rules: '规则',
         rule_set: '规则集',
       },
+      find_process: '查找进程信息',
       auto_detect_interface: '自动检测出站接口',
       default_interface: '出站接口名称',
       final: '默认出站标签',

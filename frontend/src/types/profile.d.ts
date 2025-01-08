@@ -152,6 +152,7 @@ interface IRoute {
   final: string
   auto_detect_interface: boolean
   default_interface: string
+  find_process: boolean
 }
 
 type Strategy = 'default' | 'prefer_ipv4' | 'prefer_ipv6' | 'ipv4_only' | 'ipv6_only'

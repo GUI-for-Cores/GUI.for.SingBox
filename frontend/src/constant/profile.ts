@@ -447,6 +447,7 @@ export const DefaultRoute = (): IRoute => ({
   auto_detect_interface: true,
   default_interface: '',
   final: DefaultOutboundIds.Fallback,
+  find_process: false,
 })
 
 export const DefaultDnsServer = (): IDNSServer => ({

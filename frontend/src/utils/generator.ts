@@ -205,6 +205,7 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
       }
     }),
     auto_detect_interface: route.auto_detect_interface,
+    find_process: route.find_process,
     final: getOutbound(route.final),
     ...extra,
   }

@@ -45,6 +45,10 @@ defineExpose({ handleAdd })
   <Tabs v-model:active-key="activeKey" :items="tabs" tab-position="top">
     <template #common>
       <div class="form-item">
+        {{ t('kernel.route.find_process') }}
+        <Switch v-model="model.find_process" />
+      </div>
+      <div class="form-item">
         {{ t('kernel.route.auto_detect_interface') }}
         <Switch v-model="model.auto_detect_interface" />
       </div>

@@ -144,6 +144,7 @@ export default {
         rules: 'Rules',
         rule_set: 'Rule-Set',
       },
+      find_process: 'Find Process',
       auto_detect_interface: 'Auto Detect Interface',
       default_interface: 'Default Interface',
       final: 'Final Outbound Tag',

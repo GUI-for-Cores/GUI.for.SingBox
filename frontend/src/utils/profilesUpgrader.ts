@@ -247,6 +247,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         }
       }),
       auto_detect_interface: true,
+      find_process: false,
       default_interface: config.generalConfig['interface-name'],
       final: config.rulesConfig.find((v: any) => v.type === 'final')?.proxy || '',
     },
