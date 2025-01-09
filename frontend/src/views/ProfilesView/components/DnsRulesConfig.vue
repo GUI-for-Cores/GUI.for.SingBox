@@ -124,8 +124,10 @@ const renderRule = (rule: IDNSRule) => {
   const children: string[] = [type]
   let _payload = payload
   if (type === RuleType.RuleSet) {
-    const tag = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
-    _payload = tag
+    _payload = rule.payload
+      .split(',')
+      .map((id) => props.ruleSet.find((v) => v.id === id)?.tag || id)
+      .join(',')
   } else if (type === RuleType.Inline && payload.includes('__is_fake_ip')) {
     _payload = 'FakeIP'
   }

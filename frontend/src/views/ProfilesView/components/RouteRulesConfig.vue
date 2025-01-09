@@ -113,7 +113,10 @@ const renderRule = (rule: IRule) => {
   const children: string[] = [type]
   let _payload = payload
   if (type === RuleType.RuleSet) {
-    _payload = props.ruleSet.find((v) => v.id === rule.payload)?.tag || rule.payload
+    _payload = rule.payload
+      .split(',')
+      .map((id) => props.ruleSet.find((v) => v.id === id)?.tag || id)
+      .join(',')
   } else if (type === RuleType.Inbound) {
     _payload = props.inboundOptions.find((v) => v.value === rule.payload)?.label || rule.payload
   }
