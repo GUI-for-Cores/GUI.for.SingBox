@@ -70,7 +70,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           }
         })
         const tunInbound = _profile.inbounds.find((v) => v.type === Inbound.Tun)
-        if (tunInbound) {
+        if (tunInbound && !runtimeProfile.inbounds.find((v) => v.type === Inbound.Tun)) {
           runtimeProfile.inbounds.push(tunInbound)
         }
         runtimeProfile.outbounds = _profile.outbounds
