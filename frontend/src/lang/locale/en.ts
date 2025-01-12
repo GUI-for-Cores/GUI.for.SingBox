@@ -315,6 +315,7 @@ export default {
       settingsTips: 'Effective temporarily, for persistence, please modify the `profile` settings.',
       updateGEO: 'Update GEO',
       needPort: 'Please set the proxy port first',
+      needTun: 'Please add a TUN inbound first',
     },
     controller: {
       name: 'Controller',

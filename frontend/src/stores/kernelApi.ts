@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
-import { DefaultInboundMixed, DefaultInboundTun } from '@/constant/profile'
+import { DefaultInboundMixed } from '@/constant/profile'
 import { ProcessInfo, KillProcess, ExecBackground, Readfile } from '@/bridge'
 import { CoreConfigFilePath, CoreWorkingDirectory } from '@/constant/kernel'
 import { getProxies, getProviders, getConfigs, setConfigs } from '@/api/kernel'
@@ -60,24 +60,27 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     if (!runtimeProfile) {
       const txt = await Readfile(CoreConfigFilePath)
       runtimeProfile = restoreProfile(JSON.parse(txt))
-    }
-
-    const profile = profilesStore.getProfileById(appSettingsStore.app.kernel.profile)
-    if (profile) {
-      const _profile = deepClone(profile)
-      runtimeProfile.inbounds.forEach((inbound) => {
-        const _in = _profile.inbounds.find((v) => v.tag === inbound.tag)
-        if (_in) {
-          inbound.id = _in.id
+      const profile = profilesStore.getProfileById(appSettingsStore.app.kernel.profile)
+      if (profile) {
+        const _profile = deepClone(profile)
+        runtimeProfile.inbounds.forEach((inbound) => {
+          const _in = _profile.inbounds.find((v) => v.tag === inbound.tag)
+          if (_in) {
+            inbound.id = _in.id
+          }
+        })
+        const tunInbound = _profile.inbounds.find((v) => v.type === Inbound.Tun)
+        if (tunInbound) {
+          runtimeProfile.inbounds.push(tunInbound)
         }
-      })
-      runtimeProfile.outbounds = _profile.outbounds
-      runtimeProfile.dns = _profile.dns
-      runtimeProfile.route.final = _profile.route.final
-      runtimeProfile.route.rule_set = _profile.route.rule_set
-      runtimeProfile.route.rules = _profile.route.rules
-      runtimeProfile.mixin = _profile.mixin
-      runtimeProfile.script = _profile.script
+        runtimeProfile.outbounds = _profile.outbounds
+        runtimeProfile.dns = _profile.dns
+        runtimeProfile.route.final = _profile.route.final
+        runtimeProfile.route.rule_set = _profile.route.rule_set
+        runtimeProfile.route.rules = _profile.route.rules
+        runtimeProfile.mixin = _profile.mixin
+        runtimeProfile.script = _profile.script
+      }
     }
 
     const mixed = runtimeProfile.inbounds.find((v) => v.mixed)
@@ -141,18 +144,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       interface_name: string
     }) => {
       if (!runtimeProfile) return
+      const inbound = runtimeProfile.inbounds.find((v) => v.type === Inbound.Tun)
+      if (!inbound) throw 'home.overview.needTun'
       options = { ...config.value.tun, ...options }
-      let inbound = runtimeProfile.inbounds.find((v) => v.type === Inbound.Tun)
-      if (!inbound) {
-        inbound = {
-          id: 'tun-in',
-          tag: 'tun-in',
-          type: Inbound.Tun,
-          enable: false,
-          tun: DefaultInboundTun(),
-        }
-        runtimeProfile.inbounds.push(inbound)
-      }
       inbound.enable = options.enable
       inbound.tun!.stack = options.stack || TunStack.Mixed
       inbound.tun!.interface_name = options.device || ''

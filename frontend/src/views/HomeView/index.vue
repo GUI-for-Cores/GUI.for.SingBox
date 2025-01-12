@@ -74,6 +74,7 @@ const onTunSwitchChange = async (enable: boolean) => {
   try {
     await kernelApiStore.updateConfig('tun', { enable })
   } catch (error: any) {
+    kernelApiStore.config.tun.enable = !kernelApiStore.config.tun.enable
     console.error(error)
     message.error(error)
   }

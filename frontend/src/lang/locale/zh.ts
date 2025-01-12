@@ -314,6 +314,7 @@ export default {
       settingsTips: '暂时生效，持久化请修改配置文件',
       updateGEO: '更新 GEO',
       needPort: '请先设置代理端口',
+      needTun: '请先添加一个TUN入站',
     },
     controller: {
       name: '控制器',
