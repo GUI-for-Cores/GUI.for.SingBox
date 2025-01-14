@@ -111,7 +111,7 @@ export const DefaultInboundTun = (): IInbound['tun'] => ({
   mtu: 9000,
   auto_route: true,
   strict_route: true,
-  route_address: ['0.0.0.0/1', '128.0.0.0/1', '::/1', '8000::/1'],
+  route_address: [],
   endpoint_independent_nat: false,
   stack: TunStack.Mixed,
 })

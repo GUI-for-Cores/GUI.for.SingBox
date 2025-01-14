@@ -167,7 +167,7 @@ defineExpose({ handleAdd })
         </div>
         <div :class="{ 'flex-start': inbound.tun.route_address.length }" class="form-item">
           {{ t('kernel.inbounds.tun.route_address') }}
-          <InputList v-model="inbound.tun.route_address" />
+          <InputList v-model="inbound.tun.route_address" placeholder="0.0.0.0/1 ::1" />
         </div>
       </div>
     </Card>
