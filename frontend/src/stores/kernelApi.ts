@@ -75,9 +75,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         }
         runtimeProfile.outbounds = _profile.outbounds
         runtimeProfile.dns = _profile.dns
-        runtimeProfile.route.final = _profile.route.final
-        runtimeProfile.route.rule_set = _profile.route.rule_set
-        runtimeProfile.route.rules = _profile.route.rules
+        runtimeProfile.route = _profile.route
         runtimeProfile.mixin = _profile.mixin
         runtimeProfile.script = _profile.script
       }
