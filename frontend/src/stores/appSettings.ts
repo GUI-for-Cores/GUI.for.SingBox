@@ -138,7 +138,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
   const saveAppSettings = debounce((config: string) => {
     Writefile('data/user.yaml', config)
-  }, 1500)
+  }, 500)
 
   const setupAppSettings = async () => {
     const data = await ignoredError(Readfile, 'data/user.yaml')
