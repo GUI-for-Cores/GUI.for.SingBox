@@ -60,7 +60,7 @@ export const restoreProfile = (config: Recordable) => {
     } else if (field === 'experimental') {
       deepAssign(profile[field], value)
     } else if (field === 'inbounds') {
-      profile.inbounds = value.map((inbound: any) => {
+      profile.inbounds = value.reduce((inbounds: any[], inbound: any) => {
         const extra = {
           id: InboundsIds[inbound.tag],
           tag: inbound.tag,
@@ -68,7 +68,7 @@ export const restoreProfile = (config: Recordable) => {
           enable: true,
         }
         if (inbound.type === Inbound.Tun) {
-          return {
+          inbounds.push({
             ...extra,
             tun: {
               interface_name: inbound.interface_name || '',
@@ -85,10 +85,10 @@ export const restoreProfile = (config: Recordable) => {
               endpoint_independent_nat: !!inbound.endpoint_independent_nat,
               stack: inbound.stack || TunStack.Mixed,
             },
-          }
+          })
         }
         if ([Inbound.Mixed, Inbound.Http, Inbound.Socks].includes(inbound.type)) {
-          return {
+          inbounds.push({
             ...extra,
             [inbound.type]: {
               listen: {
@@ -100,9 +100,10 @@ export const restoreProfile = (config: Recordable) => {
               },
               users: (inbound.users || []).map((user: any) => user.username + ':' + user.password),
             },
-          }
+          })
         }
-      })
+        return inbounds
+      }, [])
     } else if (field === 'outbounds') {
       profile.outbounds = value.flatMap((outbound: any) => {
         if (![Outbound.Selector, Outbound.Direct, Outbound.Urltest].includes(outbound.type)) {
