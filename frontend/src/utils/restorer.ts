@@ -60,7 +60,10 @@ export const restoreProfile = (config: Recordable) => {
     } else if (field === 'experimental') {
       deepAssign(profile[field], value)
     } else if (field === 'inbounds') {
-      profile.inbounds = value.map((inbound: any) => {
+      profile.inbounds = value.flatMap((inbound: any) => {
+        if (![Inbound.Http, Inbound.Mixed, Inbound.Socks, Inbound.Tun].includes(inbound.type)) {
+          return []
+        }
         const extra = {
           id: InboundsIds[inbound.tag],
           tag: inbound.tag,
