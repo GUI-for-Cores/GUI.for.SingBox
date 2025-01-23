@@ -129,7 +129,7 @@ export default {
       needToAdd: 'At least reference one outbound tag or proxy.',
       refsSubscription: 'Reference subscription',
       refsOutbound: 'Reference outbound',
-      sort: 'Viwe and Sort',
+      sort: 'View and Sort',
       refs: 'Reference subscription & outbound',
       noSubs: 'The subscription list is empty.',
       empty: 'No available proxies under this subscription.',
