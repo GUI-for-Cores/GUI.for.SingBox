@@ -91,7 +91,7 @@ export default {
       users: 'Http/Socks users',
       listen: {
         listen: 'Listen',
-        listen_port: 'Poret',
+        listen_port: 'Port',
         tcp_fast_open: 'TCP Fast Open',
         tcp_multi_path: 'TCP Multi Path',
         udp_fragment: 'UDP Fragmentation',
