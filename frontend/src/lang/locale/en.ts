@@ -271,7 +271,7 @@ export default {
     notFound: 'Core Not Found',
   },
   router: {
-    overview: 'OverView',
+    overview: 'Overview',
     subscriptions: 'Subscriptions',
     rulesets: 'Rulesets',
     plugins: 'Plugins',
