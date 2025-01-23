@@ -56,9 +56,9 @@ export default {
     directDesc: 'Directly connect all traffic',
     log: {
       disabled: 'Disabled',
-      level: 'level',
-      output: 'output',
-      timestamp: 'timestamp',
+      level: 'Level',
+      output: 'Output',
+      timestamp: 'Timestamp',
       trace: 'trace',
       debug: 'debug',
       info: 'info',
