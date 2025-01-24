@@ -56,9 +56,9 @@ export default {
     directDesc: 'Directly connect all traffic',
     log: {
       disabled: 'Disabled',
-      level: 'level',
-      output: 'output',
-      timestamp: 'timestamp',
+      level: 'Level',
+      output: 'Output',
+      timestamp: 'Timestamp',
       trace: 'trace',
       debug: 'debug',
       info: 'info',
@@ -91,7 +91,7 @@ export default {
       users: 'Http/Socks users',
       listen: {
         listen: 'Listen',
-        listen_port: 'Poret',
+        listen_port: 'Port',
         tcp_fast_open: 'TCP Fast Open',
         tcp_multi_path: 'TCP Multi Path',
         udp_fragment: 'UDP Fragmentation',
@@ -129,7 +129,7 @@ export default {
       needToAdd: 'At least reference one outbound tag or proxy.',
       refsSubscription: 'Reference subscription',
       refsOutbound: 'Reference outbound',
-      sort: 'Viwe and Sort',
+      sort: 'View and Sort',
       refs: 'Reference subscription & outbound',
       noSubs: 'The subscription list is empty.',
       empty: 'No available proxies under this subscription.',
@@ -229,7 +229,7 @@ export default {
     strategy: {
       name: 'Strategy',
       default: 'Default',
-      byDnsRules: 'Decided by DNS rules',
+      byDnsRules: 'Determined by DNS rules',
       prefer_ipv4: 'Prefer IPV4',
       prefer_ipv6: 'Prefer IPV6',
       ipv4_only: 'IPV4 Only',
@@ -271,7 +271,7 @@ export default {
     notFound: 'Core Not Found',
   },
   router: {
-    overview: 'OverView',
+    overview: 'Overview',
     subscriptions: 'Subscriptions',
     rulesets: 'Rulesets',
     plugins: 'Plugins',
@@ -312,7 +312,7 @@ export default {
       transmit: 'Transmit',
       receive: 'Receive',
       settings: 'Kernel Settings',
-      settingsTips: 'Effective temporarily, for persistence, please modify the `profile` settings.',
+      settingsTips: 'Takes effect temporarily. For persistent changes, please modify the `profile` settings.',
       updateGEO: 'Update GEO',
       needPort: 'Please set the proxy port first',
       needTun: 'Please add a TUN inbound first',
@@ -368,7 +368,7 @@ export default {
     updating: 'Updating',
     useragent: 'User-Agent',
     resetUserAgent: 'Reset User-Agent',
-    inSecure: 'InsecureSkipVerify',
+    inSecure: 'Skip TLS Verification',
     healthCheck: {
       name: 'Health Check',
       interval: 'interval(s)',
@@ -412,7 +412,7 @@ export default {
     noSubs: 'There are no available subscriptions.',
     group: 'Group Details',
     rule: 'Rule Details',
-    auto: 'This configuration is managed by subscription and will be overwritten when the subscription is updated!\nIf you want to modify this profile, please use the plugin system.',
+    auto: 'This configuration is managed by your subscription and will be overwritten upon update!\nUse the plugin system to make permanent changes.',
     mixinSettings: {
       name: 'Mixin',
       priority: 'Priority',
@@ -612,7 +612,7 @@ export default {
     },
     githubapi: {
       name: 'Authenticating to the REST API',
-      tips: 'have a higher rate limit',
+      tips: 'Provides a higher rate limit',
     },
   },
   about: {
@@ -631,7 +631,7 @@ export default {
     restart: 'Restart App',
     exitApp: 'Exit App',
     waiting: 'Waiting for the program to exit...',
-    timeout: 'Exit timed out. Force exit？\n\nReason: Plugin exit timed out.',
+    timeout: 'Exit timed out. Force exit?\n\nReason: Plugin exit timed out.',
   },
   format: {
     seconds: 'Seconds',
