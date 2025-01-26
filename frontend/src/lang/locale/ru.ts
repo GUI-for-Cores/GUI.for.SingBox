@@ -495,7 +495,7 @@ export default {
   },
   plugins: {
     updating: 'Обновление',
-    empty: 'Список плагинов. Нужно{action}вручную или импортировать из{import}.',
+    empty: 'Список плагинов пуст. Нужно{action}вручную или импортировать из{import}.',
     source: 'Источник',
     reload: 'Перезагрузить',
     configuration: 'Настроить',
