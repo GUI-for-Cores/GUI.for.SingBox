@@ -13,35 +13,35 @@ export function formatBytes(bytes: number, decimals: number = 1): string {
 }
 
 export function formatRelativeTime(d: string | number) {
-	const date = new Date(d);
-	const now = Date.now();
-	const diffMs = date.getTime() - now;
+  const date = new Date(d)
+  const now = Date.now()
+  const diffMs = date.getTime() - now
 
-	const units: { unit: Intl.RelativeTimeFormatUnit; threshold: number }[] = [
-		{ unit: "year", threshold: 365 * 24 * 60 * 60 * 1000 },
-		{ unit: "month", threshold: 30 * 24 * 60 * 60 * 1000 },
-		{ unit: "day", threshold: 24 * 60 * 60 * 1000 },
-		{ unit: "hour", threshold: 60 * 60 * 1000 },
-		{ unit: "minute", threshold: 60 * 1000 },
-		{ unit: "second", threshold: 0 },
-	];
+  const units: { unit: Intl.RelativeTimeFormatUnit; threshold: number }[] = [
+    { unit: 'year', threshold: 365 * 24 * 60 * 60 * 1000 },
+    { unit: 'month', threshold: 30 * 24 * 60 * 60 * 1000 },
+    { unit: 'day', threshold: 24 * 60 * 60 * 1000 },
+    { unit: 'hour', threshold: 60 * 60 * 1000 },
+    { unit: 'minute', threshold: 60 * 1000 },
+    { unit: 'second', threshold: 0 },
+  ]
 
-	const { unit, value } = units.reduce<{
-		unit: Intl.RelativeTimeFormatUnit;
-		value: number
-	}>(
-		(acc, { unit, threshold }) => {
-			if (acc.value !== 0) return acc;
+  const { unit, value } = units.reduce<{
+    unit: Intl.RelativeTimeFormatUnit
+    value: number
+  }>(
+    (acc, { unit, threshold }) => {
+      if (acc.value !== 0) return acc
 
-			const amount = Math.trunc(diffMs / threshold);
-			return Math.abs(amount) > 0 ? { unit, value: amount } : acc;
-		},
-		{ unit: "second", value: 0 }
-	);
+      const amount = Math.trunc(diffMs / threshold)
+      return Math.abs(amount) > 0 ? { unit, value: amount } : acc
+    },
+    { unit: 'second', value: 0 },
+  )
 
-	return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
-		 numeric: "auto"
-	}).format(value, unit);
+  return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
+    numeric: 'auto',
+  }).format(value, unit)
 }
 
 export function formatDate(timestamp: number | string, format: string) {

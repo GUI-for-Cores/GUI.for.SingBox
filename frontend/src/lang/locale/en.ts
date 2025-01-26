@@ -312,7 +312,8 @@ export default {
       transmit: 'Transmit',
       receive: 'Receive',
       settings: 'Kernel Settings',
-      settingsTips: 'Takes effect temporarily. For persistent changes, please modify the `profile` settings.',
+      settingsTips:
+        'Takes effect temporarily. For persistent changes, please modify the `profile` settings.',
       updateGEO: 'Update GEO',
       needPort: 'Please set the proxy port first',
       needTun: 'Please add a TUN inbound first',
@@ -565,7 +566,7 @@ export default {
       name: 'Language',
       zh: '简体中文',
       en: 'English',
-			ru: 'Русский'
+      ru: 'Русский',
     },
     pages: {
       name: 'Page visibility',

@@ -564,7 +564,7 @@ export default {
       name: '语言',
       zh: '简体中文',
       en: 'English',
-			ru: 'Русский'
+      ru: 'Русский',
     },
     pages: {
       name: '页面可见性',

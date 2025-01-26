@@ -7,7 +7,7 @@ import ru from './locale/ru'
 const messages = {
   zh,
   en,
-	ru
+  ru,
 }
 
 const i18n = createI18n({
