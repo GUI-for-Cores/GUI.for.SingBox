@@ -17,31 +17,34 @@ export function formatRelativeTime(d: string | number) {
   const now = Date.now()
   const diffMs = date.getTime() - now
 
+  // now
+  if (diffMs === 0) {
+    return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
+      numeric: 'auto',
+    }).format(0, 'second')
+  }
+
   const units: { unit: Intl.RelativeTimeFormatUnit; threshold: number }[] = [
     { unit: 'year', threshold: 365 * 24 * 60 * 60 * 1000 },
     { unit: 'month', threshold: 30 * 24 * 60 * 60 * 1000 },
     { unit: 'day', threshold: 24 * 60 * 60 * 1000 },
     { unit: 'hour', threshold: 60 * 60 * 1000 },
     { unit: 'minute', threshold: 60 * 1000 },
-    { unit: 'second', threshold: 0 },
+    { unit: 'second', threshold: 1000 },
   ]
 
-  const { unit, value } = units.reduce<{
-    unit: Intl.RelativeTimeFormatUnit
-    value: number
-  }>(
-    (acc, { unit, threshold }) => {
-      if (acc.value !== 0) return acc
-
-      const amount = Math.trunc(diffMs / threshold)
-      return Math.abs(amount) > 0 ? { unit, value: amount } : acc
-    },
-    { unit: 'second', value: 0 },
-  )
+  for (const { unit, threshold } of units) {
+    const amount = Math.round(diffMs / threshold)
+    if (Math.abs(amount) > 0) {
+      return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
+        numeric: 'auto',
+      }).format(amount, unit)
+    }
+  }
 
   return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
     numeric: 'auto',
-  }).format(value, unit)
+  }).format(Math.round(diffMs / 1000), 'second')
 }
 
 export function formatDate(timestamp: number | string, format: string) {
