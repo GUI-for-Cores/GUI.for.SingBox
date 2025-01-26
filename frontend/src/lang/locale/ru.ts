@@ -43,7 +43,7 @@ export default {
     http: 'Удалённый',
     file: 'Локальный',
     openFile: 'Открыть файл',
-    develop: 'Разработать',
+    develop: 'Усовершенствовать',
     canceled: 'Отменено',
     downloading: 'Скачивание...',
   },
@@ -158,7 +158,7 @@ export default {
         tag: 'Тег',
         format: {
           name: 'Формат',
-					binary: 'Двоичный',
+					binary: 'Бинарный',
           source: 'Источник',
         },
 				url: 'URL-адрес',
@@ -371,8 +371,8 @@ export default {
 		inSecure: 'Пропустить проверку TLS',
     healthCheck: {
 			name: 'Проверка работоспособности',
-      interval: 'интервал (сек.)',
-      url: 'ссылка',
+      interval: 'Интервал (сек.)',
+      url: 'URL-ссылка',
     },
   },
   subscribes: {
@@ -450,12 +450,12 @@ export default {
     updating: 'Обновление',
   },
   rulesets: {
-    hub: 'Центр плагинов',
+    hub: 'Центр наборов правил',
 		total: 'Количество наборов правил',
 		noDesc: 'Нет описания',
 		updating: 'Обновление',
     fetching: 'Получение...',
-		empty: 'Список наборов правил пуст. Сначала{action}или испортируйте из{import}.',
+		empty: 'Список наборов правил пуст. Нужно{action}вручную или импортировать из{import}.',
 		rulesetCount: 'Количество наборов правил',
 		editRuleset: 'Редактировать правила',
 		selectRuleType: 'Выбрать тип правила',
@@ -493,7 +493,7 @@ export default {
   },
   plugins: {
     updating: 'Обновление',
-    empty: 'Список плагинов. Сперва{action}или импортируйте из{import}.',
+    empty: 'Список плагинов. Нужно{action}вручную или импортировать из{import}.',
     source: 'Источник',
     reload: 'Перезагрузить',
     configuration: 'Настроить',
