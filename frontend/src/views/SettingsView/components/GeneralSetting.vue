@@ -82,6 +82,10 @@ const langs = [
     label: 'settings.lang.en',
     value: Lang.EN,
   },
+	{
+    label: 'settings.lang.ru',
+    value: Lang.RU,
+  },
 ]
 
 const pages = routes.flatMap((route) => {

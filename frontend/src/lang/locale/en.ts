@@ -565,6 +565,7 @@ export default {
       name: 'Language',
       zh: '简体中文',
       en: 'English',
+			ru: 'Русский'
     },
     pages: {
       name: 'Page visibility',
@@ -632,22 +633,6 @@ export default {
     exitApp: 'Exit App',
     waiting: 'Waiting for the program to exit...',
     timeout: 'Exit timed out. Force exit?\n\nReason: Plugin exit timed out.',
-  },
-  format: {
-    seconds: 'Seconds',
-    minutes: 'Minutes',
-    hours: 'Hours',
-    days: 'Days',
-    months: 'Months',
-    years: 'Years',
-    second: 'Second',
-    minute: 'Minute',
-    hour: 'Hour',
-    day: 'Day',
-    month: 'Month',
-    year: 'Year',
-    ago: 'Ago',
-    later: 'Later',
   },
   outbound: {
     select: '🚀 Select',

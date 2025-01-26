@@ -1,5 +1,3 @@
-import { useI18n } from 'vue-i18n'
-
 import i18n from '@/lang'
 
 export function formatBytes(bytes: number, decimals: number = 1): string {
@@ -15,41 +13,35 @@ export function formatBytes(bytes: number, decimals: number = 1): string {
 }
 
 export function formatRelativeTime(d: string | number) {
-  const diffInMilliseconds = new Date().getTime() - new Date(d).getTime()
-  const seconds = Math.abs(Math.floor(diffInMilliseconds / 1000))
-  const minutes = Math.abs(Math.floor(seconds / 60))
-  const hours = Math.abs(Math.floor(minutes / 60))
-  const days = Math.abs(Math.floor(hours / 24))
-  const months = Math.abs(Math.floor(days / 30))
-  const years = Math.abs(Math.floor(months / 12))
+	const date = new Date(d);
+	const now = Date.now();
+	const diffMs = date.getTime() - now;
 
-  const { t } = useI18n()
+	const units: { unit: Intl.RelativeTimeFormatUnit; threshold: number }[] = [
+		{ unit: "year", threshold: 365 * 24 * 60 * 60 * 1000 },
+		{ unit: "month", threshold: 30 * 24 * 60 * 60 * 1000 },
+		{ unit: "day", threshold: 24 * 60 * 60 * 1000 },
+		{ unit: "hour", threshold: 60 * 60 * 1000 },
+		{ unit: "minute", threshold: 60 * 1000 },
+		{ unit: "second", threshold: 0 },
+	];
 
-  const prefix = i18n.global.locale.value === 'en' ? ' ' : ''
+	const { unit, value } = units.reduce<{
+		unit: Intl.RelativeTimeFormatUnit;
+		value: number
+	}>(
+		(acc, { unit, threshold }) => {
+			if (acc.value !== 0) return acc;
 
-  const suffix =
-    (i18n.global.locale.value === 'en' ? ' ' : '') +
-    (diffInMilliseconds >= 0 ? t('format.ago') : t('format.later'))
+			const amount = Math.trunc(diffMs / threshold);
+			return Math.abs(amount) > 0 ? { unit, value: amount } : acc;
+		},
+		{ unit: "second", value: 0 }
+	);
 
-  if (seconds < 60) {
-    const s = seconds > 1 ? t('format.seconds') : t('format.second')
-    return `${seconds}${prefix}${s}${suffix}`
-  } else if (minutes < 60) {
-    const m = minutes > 1 ? t('format.minutes') : t('format.minute')
-    return `${minutes}${prefix}${m}${suffix}`
-  } else if (hours < 24) {
-    const h = hours > 1 ? t('format.hours') : t('format.hour')
-    return `${hours}${prefix}${h}${suffix}`
-  } else if (days < 30) {
-    const d = days > 1 ? t('format.days') : t('format.day')
-    return `${days}${prefix}${d}${suffix}`
-  } else if (months < 12) {
-    const m = months > 1 ? t('format.months') : t('format.month')
-    return `${months}${prefix}${m}${suffix}`
-  } else {
-    const y = years > 1 ? t('format.years') : t('format.year')
-    return `${years}${prefix}${y}${suffix}`
-  }
+	return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
+		 numeric: "auto"
+	}).format(value, unit);
 }
 
 export function formatDate(timestamp: number | string, format: string) {
