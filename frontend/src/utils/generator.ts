@@ -272,52 +272,7 @@ const generateDns = (
 }
 
 const _adaptToStableBranch = (config: Recordable) => {
-  config.outbounds.push(
-    {
-      type: 'direct',
-      tag: 'direct',
-    },
-    {
-      type: 'dns',
-      tag: 'dns-out',
-    },
-    {
-      type: 'block',
-      tag: 'block',
-    },
-  )
-  config.route.rules = config.route.rules.flatMap((rule: any) => {
-    if (rule.action === RuleAction.Sniff) {
-      if (rule.inbound) {
-        const inbound = config.inbounds.find((v: any) => v.tag === rule.inbound)
-        if (inbound) {
-          inbound.sniff = true
-        }
-      }
-      return []
-    } else if (rule.action === RuleAction.Resolve) {
-      if (rule.inbound) {
-        const inbound = config.inbounds.find((v: any) => v.tag === rule.inbound)
-        if (inbound) {
-          inbound.domain_strategy = rule.strategy
-        }
-      }
-      return []
-    } else if (rule.action === RuleAction.Reject) {
-      rule.outbound = 'block'
-    } else if (rule.action === RuleAction.HijackDNS) {
-      rule.outbound = 'dns-out'
-    }
-    rule.action = undefined
-    return rule
-  })
-
-  config.dns.rules.forEach((rule: any) => {
-    if (rule.action === RuleAction.Reject) {
-      rule.outbound = 'block'
-    }
-    rule.action = undefined
-  })
+  config
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {
