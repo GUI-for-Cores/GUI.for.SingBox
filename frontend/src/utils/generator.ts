@@ -55,14 +55,15 @@ const generateInbounds = (inbounds: IInbound[]) => {
   return inbounds.flatMap((inbound) => {
     if (!inbound.enable) return []
     if (inbound.type !== Inbound.Tun) {
+      const users = inbound[inbound.type]!.users.map((user) => ({
+        username: user.split(':')[0],
+        password: user.split(':')[1],
+      }))
       return {
         type: inbound.type,
         tag: inbound.tag,
         ...inbound[inbound.type]!.listen,
-        users: inbound[inbound.type]!.users.map((user) => ({
-          username: user.split(':')[0],
-          password: user.split(':')[1],
-        })),
+        users: users.length > 0 ? users : undefined,
       }
     }
     if (inbound.type === Inbound.Tun) {
@@ -206,7 +207,7 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
       }
     }),
     auto_detect_interface: route.auto_detect_interface,
-    find_process: route.find_process,
+    find_process: route.find_process ? true : undefined,
     final: getOutbound(route.final),
     ...extra,
   }
