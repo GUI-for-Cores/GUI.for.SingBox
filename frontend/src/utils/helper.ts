@@ -170,49 +170,90 @@ async function setLinuxSystemProxy(server: string, enabled: boolean, proxyType: 
   const httpEnabled = enabled && ['mixed', 'http'].includes(proxyType)
   const socksEnabled = enabled && ['mixed', 'socks'].includes(proxyType)
 
-  const p1 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy',
-    'mode',
-    enabled ? 'manual' : 'none',
-  ])
-  const p2 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.http',
-    'host',
-    httpEnabled ? serverName : '',
-  ])
-  const p3 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.http',
-    'port',
-    httpEnabled ? serverPort : '0',
-  ])
-  const p4 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.https',
-    'host',
-    httpEnabled ? serverName : '',
-  ])
-  const p5 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.https',
-    'port',
-    httpEnabled ? serverPort : '0',
-  ])
-  const p6 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.socks',
-    'host',
-    socksEnabled ? serverName : '',
-  ])
-  const p7 = ignoredError(Exec, 'gsettings', [
-    'set',
-    'org.gnome.system.proxy.socks',
-    'port',
-    socksEnabled ? serverPort : '0',
-  ])
-  await Promise.all([p1, p2, p3, p4, p5, p6, p7])
+  const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+  if (desktop.includes('KDE')) {
+    const p1 = ignoredError(Exec, 'kwriteconfig5', [
+      '--file',
+      'kioslaverc',
+      '--group',
+      'Proxy Settings',
+      '--key',
+      'ProxyType',
+      enabled ? '1' : '0',
+    ])
+    const p2 = ignoredError(Exec, 'kwriteconfig5', [
+      '--file',
+      'kioslaverc',
+      '--group',
+      'Proxy Settings',
+      '--key',
+      'httpProxy',
+      httpEnabled ? `http://${server}` : '',
+    ])
+    const p3 = ignoredError(Exec, 'kwriteconfig5', [
+      '--file',
+      'kioslaverc',
+      '--group',
+      'Proxy Settings',
+      '--key',
+      'httpsProxy',
+      httpEnabled ? `http://${server}` : '',
+    ])
+    const p4 = ignoredError(Exec, 'kwriteconfig5', [
+      '--file',
+      'kioslaverc',
+      '--group',
+      'Proxy Settings',
+      '--key',
+      'socksProxy',
+      socksEnabled ? `socks://${server}` : '',
+    ])
+    await Promise.all([p1, p2, p3, p4])
+  } else if (desktop.includes('GNOME')) {
+    const p1 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy',
+      'mode',
+      enabled ? 'manual' : 'none',
+    ])
+    const p2 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.http',
+      'host',
+      httpEnabled ? serverName : '',
+    ])
+    const p3 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.http',
+      'port',
+      httpEnabled ? serverPort : '0',
+    ])
+    const p4 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.https',
+      'host',
+      httpEnabled ? serverName : '',
+    ])
+    const p5 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.https',
+      'port',
+      httpEnabled ? serverPort : '0',
+    ])
+    const p6 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.socks',
+      'host',
+      socksEnabled ? serverName : '',
+    ])
+    const p7 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy.socks',
+      'port',
+      socksEnabled ? serverPort : '0',
+    ])
+    await Promise.all([p1, p2, p3, p4, p5, p6, p7])
+  }
 }
 
 export const GetSystemProxy = async () => {
@@ -270,26 +311,64 @@ export const GetSystemProxy = async () => {
     }
 
     if (os === 'linux') {
-      const out = await Exec('gsettings', ['get', 'org.gnome.system.proxy', 'mode'])
-      if (out.includes('none')) {
-        return ''
-      }
-
-      if (out.includes('manual')) {
-        const out1 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.http', 'host'])
-        const out2 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.http', 'port'])
-        const httpHost = out1.replace(/['"\n]/g, '')
-        const httpPort = out2.replace(/['"\n]/g, '')
-        if (httpHost && httpPort !== '0') {
-          return 'http://' + httpHost + ':' + httpPort
+      const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+      if (desktop.includes('KDE')) {
+        const out = await Exec('kreadconfig5', [
+          '--file',
+          'kioslaverc',
+          '--group',
+          'Proxy Settings',
+          '--key',
+          'ProxyType',
+        ])
+        if (out.includes('1')) {
+          const out1 = await Exec('kreadconfig5', [
+            '--file',
+            'kioslaverc',
+            '--group',
+            'Proxy Settings',
+            '--key',
+            'httpProxy',
+          ])
+          const http = out1.replace(/['"\n]/g, '')
+          if (http) {
+            return http.replace(' ', ':')
+          }
+          const out2 = await Exec('kreadconfig5', [
+            '--file',
+            'kioslaverc',
+            '--group',
+            'Proxy Settings',
+            '--key',
+            'socksProxy',
+          ])
+          const socks = out2.replace(/['"\n]/g, '')
+          if (socks) {
+            return socks.replace(' ', ':')
+          }
+        }
+      } else if (desktop.includes('GNOME')) {
+        const out = await Exec('gsettings', ['get', 'org.gnome.system.proxy', 'mode'])
+        if (out.includes('none')) {
+          return ''
         }
 
-        const out3 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.socks', 'host'])
-        const out4 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.socks', 'port'])
-        const socksHost = out3.replace(/['"\n]/g, '')
-        const socksPort = out4.replace(/['"\n]/g, '')
-        if (socksHost && socksPort !== '0') {
-          return 'socks5://' + socksHost + ':' + socksPort
+        if (out.includes('manual')) {
+          const out1 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.http', 'host'])
+          const out2 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.http', 'port'])
+          const httpHost = out1.replace(/['"\n]/g, '')
+          const httpPort = out2.replace(/['"\n]/g, '')
+          if (httpHost && httpPort !== '0') {
+            return 'http://' + httpHost + ':' + httpPort
+          }
+
+          const out3 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.socks', 'host'])
+          const out4 = await Exec('gsettings', ['get', 'org.gnome.system.proxy.socks', 'port'])
+          const socksHost = out3.replace(/['"\n]/g, '')
+          const socksPort = out4.replace(/['"\n]/g, '')
+          if (socksHost && socksPort !== '0') {
+            return 'socks5://' + socksHost + ':' + socksPort
+          }
         }
       }
     }
