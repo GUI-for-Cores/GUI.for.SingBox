@@ -13,18 +13,18 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@codemirror/autocomplete": "^6.18.3",
+    "@codemirror/autocomplete": "6.18.3",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-json": "^6.0.1",
-    "@codemirror/lang-yaml": "^6.1.1",
+    "@codemirror/lang-yaml": "6.1.1",
     "@codemirror/theme-one-dark": "^6.1.2",
     "codemirror": "6.0.1",
     "marked": "^15.0.6",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
-    "vue-codemirror6": "^1.3.4",
+    "vue-codemirror6": "1.3.4",
     "vue-draggable-plus": "^0.6.0",
-    "vue-i18n": "^10.0.5",
+    "vue-i18n": "^11.1.0",
     "vue-router": "^4.5.0",
     "yaml": "^2.7.0"
   },
@@ -32,7 +32,7 @@
     "@rushstack/eslint-patch": "^1.10.5",
     "@tsconfig/node22": "^22.0.0",
     "@types/dom-view-transitions": "^1.0.5",
-    "@types/node": "^22.13.0",
+    "@types/node": "^22.13.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.3.0",
@@ -46,6 +46,6 @@
     "typescript": "~5.7.3",
     "unplugin-vue-components": "^0.27.5",
     "vite": "^6.0.11",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^2.2.0"
   }
 }
