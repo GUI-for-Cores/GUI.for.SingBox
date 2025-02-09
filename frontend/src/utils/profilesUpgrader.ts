@@ -138,7 +138,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
           mtu: config.tunConfig.mtu,
           auto_route: config.tunConfig['auto-route'],
           strict_route: config.tunConfig['strict-route'],
-          route_address: ['0.0.0.0/1', '128.0.0.0/1', '::/1', '8000::/1'],
+          route_address: [],
           endpoint_independent_nat: config.tunConfig['endpoint-independent-nat'],
           stack: 'mixed',
         },
