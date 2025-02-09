@@ -38,14 +38,14 @@
     "@vue/eslint-config-typescript": "^14.3.0",
     "@vue/runtime-core": "^3.5.13",
     "@vue/tsconfig": "^0.7.0",
-    "eslint": "^9.19.0",
+    "eslint": "^9.20.0",
     "eslint-plugin-vue": "^9.32.0",
     "less": "^4.2.2",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.4.2",
     "typescript": "~5.7.3",
     "unplugin-vue-components": "^0.27.5",
-    "vite": "^6.0.11",
+    "vite": "^6.1.0",
     "vue-tsc": "^2.2.0"
   }
 }
