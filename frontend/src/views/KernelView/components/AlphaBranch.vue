@@ -60,7 +60,7 @@ const downloadCore = async () => {
     })
     const { os, arch } = await GetEnv()
 
-    const { assets, name, tag_name, message: msg } = body[0]
+    const { assets, name, tag_name, message: msg } = body.find((v: any) => v.prerelease === true)
     if (msg) throw msg
 
     const version = (name || tag_name).replace('v', '')
