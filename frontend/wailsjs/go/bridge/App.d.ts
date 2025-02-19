@@ -10,7 +10,7 @@ export function CloseMMDB(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Copyfile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
-export function Download(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
+export function Download(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
 export function Exec(arg1:string,arg2:Array<string>,arg3:bridge.ExecOptions):Promise<bridge.FlagResult>;
 
@@ -50,7 +50,7 @@ export function RemoveScheduledTask(arg1:number):Promise<void>;
 
 export function Removefile(arg1:string):Promise<bridge.FlagResult>;
 
-export function Requests(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
+export function Requests(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
 export function RestartApp():Promise<bridge.FlagResult>;
 
@@ -68,7 +68,7 @@ export function UpdateTray(arg1:bridge.TrayContent):Promise<void>;
 
 export function UpdateTrayMenus(arg1:Array<bridge.MenuItem>):Promise<void>;
 
-export function Upload(arg1:string,arg2:string,arg3:{[key: string]: string},arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
+export function Upload(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
 export function ValidateCron(arg1:string):Promise<bridge.FlagResult>;
 

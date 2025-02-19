@@ -27,8 +27,10 @@ withDefaults(defineProps<Props>(), { size: 16 })
 
 <template>
   <Component
+    v-bind="$attrs"
     :is="IconsMap[icon] || IconsMap['error']"
-    v-bind="{ ...$attrs, width: size + 'px', height: size + 'px' }"
+    :width="size + 'px'"
+    :height="size + 'px'"
     fill="var(--color)"
   />
 </template>

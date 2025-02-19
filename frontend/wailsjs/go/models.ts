@@ -22,7 +22,7 @@ export namespace bridge {
 	}
 	export class ExecOptions {
 	    convert: boolean;
-	    env: {[key: string]: string};
+	    env: Record<string, string>;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExecOptions(source);
@@ -51,7 +51,7 @@ export namespace bridge {
 	export class HTTPResult {
 	    flag: boolean;
 	    status: number;
-	    headers: {[key: string]: string[]};
+	    headers: Record<string, string[]>;
 	    body: string;
 	
 	    static createFrom(source: any = {}) {
