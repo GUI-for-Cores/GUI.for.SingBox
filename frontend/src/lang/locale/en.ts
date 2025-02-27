@@ -607,6 +607,8 @@ export default {
       remote: 'Remote',
       update: 'Update',
       restart: 'Restart Core',
+      risk: 'This version is not auto-built by GitHub and may pose a security risk.',
+      stillDownload: 'Still download',
     },
     userAgent: {
       name: 'User-Agent',

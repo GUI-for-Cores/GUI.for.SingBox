@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref } from 'vue'
 
-import { useMessage } from '@/hooks'
+import { useConfirm, useMessage } from '@/hooks'
 import { CoreWorkingDirectory } from '@/constant/kernel'
 import { getKernelFileName } from '@/utils'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
@@ -40,6 +40,7 @@ const needUpdate = computed(() => remoteVersion.value && localVersion.value !== 
 
 const { t } = useI18n()
 const { message } = useMessage()
+const { confirm } = useConfirm()
 const envStore = useEnvStore()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
@@ -72,6 +73,13 @@ const downloadCore = async () => {
 
     const asset = assets.find((v: any) => v.name === assetName)
     if (!asset) throw 'Asset Not Found:' + assetName
+
+    if (asset.uploader.type !== 'Bot') {
+      await confirm('common.warning', 'settings.kernel.risk', {
+        type: 'text',
+        okText: 'settings.kernel.stillDownload',
+      })
+    }
 
     const tmp = `data/core-latest${suffix}` // data/core-latest.zip or data/core-latest.gz
 
@@ -132,7 +140,7 @@ const downloadCore = async () => {
 
     downloadSuccessful.value = true
 
-    message.success('Download Successful')
+    message.success('common.success')
   } catch (error: any) {
     console.log(error)
     message.error(error)

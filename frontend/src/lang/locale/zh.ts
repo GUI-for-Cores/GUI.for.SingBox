@@ -605,6 +605,8 @@ export default {
       remote: '远程',
       update: '更新',
       restart: '重启核心',
+      risk: '该版本非GitHub自动构建，有安全风险。',
+      stillDownload: '仍要下载',
     },
     userAgent: {
       name: '用户代理(User-Agent)',
