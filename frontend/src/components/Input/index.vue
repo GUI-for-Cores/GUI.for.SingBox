@@ -118,6 +118,7 @@ defineExpose({
         :value="modelValue"
         :lang="lang"
         :editable="!disabled"
+        :placeholder="placeholder"
         class="code"
       />
       <input
