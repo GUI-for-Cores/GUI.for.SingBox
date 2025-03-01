@@ -90,7 +90,7 @@ watch(
 )
 
 watch(model, (content) => {
-  if (content != editorView.state.doc.toString()) {
+  if (editorView && content != editorView.state.doc.toString()) {
     editorView.dispatch({
       changes: {
         from: 0,
@@ -140,7 +140,7 @@ const initEditor = () => {
       ...(props.lang === 'json' ? [linter(jsonParseLinter())] : []),
       // lang
       ...(['javascript', 'json', 'yaml'].includes(props.lang)
-        ? [{ javascript: javascript(), json: json(), yaml: yaml() }[props.lang]]
+        ? [{ javascript, json, yaml }[props.lang]()]
         : []),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
@@ -159,6 +159,9 @@ const initEditor = () => {
 </template>
 
 <style lang="less" scoped>
+:deep(.cm-editor) {
+  height: 100%;
+}
 :deep(.cm-scroller) {
   font-family: monaco, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

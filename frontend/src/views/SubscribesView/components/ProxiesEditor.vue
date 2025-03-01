@@ -62,7 +62,7 @@ initProxiesText()
 
 <template>
   <div class="proxies-view">
-    <CodeViewer v-model="proxiesText" lang="javascript" editable class="code" />
+    <CodeViewer v-model="proxiesText" lang="json" editable class="code" />
     <div class="form-action">
       <Button @click="handleCancel" :disabled="loading">
         {{ t('common.cancel') }}
