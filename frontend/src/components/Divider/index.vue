@@ -14,6 +14,7 @@
 .divider {
   display: flex;
   align-items: center;
+  width: 100%;
   .line {
     flex: 1;
     border-top: 1px solid var(--divider-color);

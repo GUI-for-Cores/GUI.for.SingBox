@@ -105,7 +105,10 @@ onUnmounted(() => document.removeEventListener('click', onClick))
             @click.stop="handleClick(m)"
             class="menu-item"
           >
-            {{ t(m.label) }}
+            <Divider v-if="m.separator" :key="m.label + '_divider'" size="small">
+              {{ t(m.label) }}
+            </Divider>
+            <div v-else>{{ t(m.label) }}</div>
           </div>
         </div>
       </Transition>
