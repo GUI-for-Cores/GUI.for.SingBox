@@ -226,7 +226,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   >
     <Card
       v-for="p in pluginsStore.plugins"
-      :key="p.id + p.key"
+      :key="p.id"
       :title="p.name"
       :disabled="p.disabled"
       v-menu="generateMenus(p)"

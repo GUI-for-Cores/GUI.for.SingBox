@@ -481,6 +481,7 @@ export default {
     path: 'Save Path',
     type: 'Type',
     menus: 'Menus',
+    context: 'Context',
     configuration: ' Configuration',
     menuKey: 'Menu Title',
     menuValue: 'Trigger function name',

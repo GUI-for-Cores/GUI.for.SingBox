@@ -13,6 +13,7 @@ import {
   useSubscribesStore,
   useAppSettingsStore,
   useKernelApiStore,
+  usePluginsStore,
 } from '@/stores'
 
 import ProxiesView from './components/ProxiesView.vue'
@@ -54,6 +55,52 @@ const { message } = useMessage()
 const subscribeStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
+const pluginsStore = usePluginsStore()
+
+const generateMenus = (subscription: SubscribeType) => {
+  const builtInMenus: Menu[] = menuList.map((v) => ({
+    ...v,
+    handler: () => v.handler?.(subscription.id),
+  }))
+
+  const contextMenus = pluginsStore.plugins.filter(
+    (plugin) => Object.keys(plugin.context.subscriptions).length !== 0,
+  )
+
+  if (contextMenus.length !== 0) {
+    builtInMenus.push(
+      {
+        label: '',
+        separator: true,
+      },
+      {
+        label: 'common.more',
+        children: contextMenus.reduce((prev, plugin) => {
+          const menus = Object.entries(plugin.context.subscriptions)
+          return prev.concat(
+            menus.map(([title, fn]) => {
+              return {
+                label: title,
+                handler: async () => {
+                  try {
+                    plugin.running = true
+                    await pluginsStore.manualTrigger(plugin.id, fn as any, subscription)
+                  } catch (error: any) {
+                    message.error(error)
+                  } finally {
+                    plugin.running = false
+                  }
+                },
+              }
+            }),
+          )
+        }, [] as Menu[]),
+      },
+    )
+  }
+
+  return builtInMenus
+}
 
 const handleAddSub = async () => {
   subFormIsUpdate.value = false
@@ -201,7 +248,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       :key="s.id"
       :title="s.name"
       :disabled="s.disabled"
-      v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
+      v-menu="generateMenus(s)"
       class="item"
     >
       <template #title-prefix>

@@ -37,13 +37,19 @@ export type PluginType = {
   path: string
   triggers: PluginTrigger[]
   menus: Record<string, string>
+  context: {
+    profiles: Recordable
+    subscriptions: Recordable
+    rulesets: Recordable
+    plugins: Recordable
+    scheduledtasks: Recordable
+  }
   configuration: PluginConfiguration[]
   disabled: boolean
   install: boolean
   installed: boolean
   status: number // 0: Normal 1: Running 2: Stopped
   // Not Config
-  key?: string
   updating?: boolean
   loading?: boolean
   running?: boolean
@@ -94,13 +100,23 @@ export const usePluginsStore = defineStore('plugins', () => {
     data && (plugins.value = parse(data))
 
     for (let i = 0; i < plugins.value.length; i++) {
-      const { id, triggers, path } = plugins.value[i]
+      const { id, triggers, path, context } = plugins.value[i]
       const code = await ignoredError(Readfile, path)
       if (code) {
         PluginsCache[id] = { plugin: plugins.value[i], code }
         triggers.forEach((trigger) => {
           PluginsTriggerMap[trigger].observers.push(id)
         })
+      }
+
+      if (!context) {
+        plugins.value[i].context = {
+          profiles: {},
+          subscriptions: {},
+          rulesets: {},
+          plugins: {},
+          scheduledtasks: {},
+        }
       }
     }
   }
@@ -148,7 +164,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   const savePlugins = debounce(async () => {
-    const p = omitArray(plugins.value, ['key', 'updating', 'loading', 'running'])
+    const p = omitArray(plugins.value, ['updating', 'loading', 'running'])
     await Writefile(PluginsFilePath, stringify(p))
   }, 100)
 

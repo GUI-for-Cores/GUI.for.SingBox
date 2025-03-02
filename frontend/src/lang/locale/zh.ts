@@ -479,6 +479,7 @@ export default {
     path: '保存路径',
     type: '类型',
     menus: '菜单',
+    context: '上下文',
     configuration: '配置',
     menuKey: '菜单名称',
     menuValue: '触发方法名',

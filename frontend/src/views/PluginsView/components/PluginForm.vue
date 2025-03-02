@@ -30,6 +30,13 @@ const plugin = ref<PluginType>({
   path: `data/plugins/plugin-${pluginID}.js`,
   triggers: [PluginTrigger.OnManual],
   menus: {},
+  context: {
+    profiles: {},
+    subscriptions: {},
+    rulesets: {},
+    plugins: {},
+    scheduledtasks: {},
+  },
   configuration: [],
   disabled: false,
   install: false,
@@ -47,8 +54,6 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     if (props.isUpdate) {
-      // Refresh the key to re-render the view
-      plugin.value.key = sampleID()
       await pluginsStore.editPlugin(props.id, plugin.value)
     } else {
       await pluginsStore.addPlugin(plugin.value)
@@ -185,6 +190,26 @@ if (props.isUpdate) {
         <div class="name">{{ t('plugin.menus') }}</div>
         <KeyValueEditor
           v-model="plugin.menus"
+          :placeholder="[t('plugin.menuKey'), t('plugin.menuValue')]"
+        />
+      </div>
+      <div
+        :class="{ 'flex-start': Object.keys(plugin.context.profiles).length !== 0 }"
+        class="form-item"
+      >
+        <div class="name">{{ t('plugin.context') }} - {{ t('router.profiles') }}</div>
+        <KeyValueEditor
+          v-model="plugin.context.profiles"
+          :placeholder="[t('plugin.menuKey'), t('plugin.menuValue')]"
+        />
+      </div>
+      <div
+        :class="{ 'flex-start': Object.keys(plugin.context.subscriptions).length !== 0 }"
+        class="form-item"
+      >
+        <div class="name">{{ t('plugin.context') }} - {{ t('router.subscriptions') }}</div>
+        <KeyValueEditor
+          v-model="plugin.context.subscriptions"
           :placeholder="[t('plugin.menuKey'), t('plugin.menuValue')]"
         />
       </div>

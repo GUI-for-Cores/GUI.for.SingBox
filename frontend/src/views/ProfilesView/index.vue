@@ -12,6 +12,7 @@ import {
   useAppSettingsStore,
   useKernelApiStore,
   useSubscribesStore,
+  usePluginsStore,
 } from '@/stores'
 
 import ProfileForm from './components/ProfileForm.vue'
@@ -28,8 +29,29 @@ const profilesStore = useProfilesStore()
 const subscribesStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
+const pluginsStore = usePluginsStore()
 
-const secondaryMenus: Menu[] = [
+const menuList: Menu[] = [
+  ...[
+    'profile.step.name',
+    'profile.step.general',
+    'profile.step.inbounds',
+    'profile.step.outbounds',
+    'profile.step.route',
+    'profile.step.dns',
+    'profile.step.mixin-script',
+  ].map((v, i) => {
+    return {
+      label: v,
+      handler: (id: string) => {
+        const p = profilesStore.getProfileById(id)
+        p && handleEditProfile(p, i)
+      },
+    }
+  }),
+]
+
+const secondaryMenusList: Menu[] = [
   {
     label: 'profiles.start',
     handler: async (id: string) => {
@@ -81,33 +103,58 @@ const secondaryMenus: Menu[] = [
   },
 ]
 
-const menus: Menu[] = [
-  ...[
-    'profile.step.name',
-    'profile.step.general',
-    'profile.step.inbounds',
-    'profile.step.outbounds',
-    'profile.step.route',
-    'profile.step.dns',
-    'profile.step.mixin-script',
-  ].map((v, i) => {
-    return {
-      label: v,
-      handler: (id: string) => {
-        const p = profilesStore.getProfileById(id)
-        p && handleEditProfile(p, i)
+const generateMenus = (profile: IProfile) => {
+  const moreMenus: Menu[] = secondaryMenusList.map((v) => ({
+    ...v,
+    handler: () => v.handler?.(profile.id),
+  }))
+  const builtInMenus: Menu[] = [
+    ...menuList.map((v) => ({ ...v, handler: () => v.handler?.(profile.id) })),
+    {
+      label: '',
+      separator: true,
+    },
+    {
+      label: 'common.more',
+      children: moreMenus,
+    },
+  ]
+
+  const contextMenus = pluginsStore.plugins.filter(
+    (plugin) => Object.keys(plugin.context.profiles).length !== 0,
+  )
+
+  if (contextMenus.length !== 0) {
+    moreMenus.push(
+      {
+        label: '',
+        separator: true,
       },
-    }
-  }),
-  {
-    label: '',
-    separator: true,
-  },
-  {
-    label: 'common.more',
-    children: secondaryMenus,
-  },
-]
+      ...contextMenus.reduce((prev, plugin) => {
+        const menus = Object.entries(plugin.context.profiles)
+        return prev.concat(
+          menus.map(([title, fn]) => {
+            return {
+              label: title,
+              handler: async () => {
+                try {
+                  plugin.running = true
+                  await pluginsStore.manualTrigger(plugin.id, fn as any, profile)
+                } catch (error: any) {
+                  message.error(error)
+                } finally {
+                  plugin.running = false
+                }
+              },
+            }
+          }),
+        )
+      }, [] as Menu[]),
+    )
+  }
+
+  return builtInMenus
+}
 
 const handleAddProfile = async () => {
   isUpdate.value = false
@@ -193,13 +240,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
       :title="p.name"
       :selected="appSettingsStore.app.kernel.profile === p.id"
       @dblclick="handleUseProfile(p)"
-      v-menu="
-        menus.map((v) => ({
-          ...v,
-          handler: () => v.handler?.(p.id),
-          children: v.children?.map((vv) => ({ ...vv, handler: () => vv.handler?.(p.id) })),
-        }))
-      "
+      v-menu="generateMenus(p)"
       class="item"
     >
       <template #title-prefix>
