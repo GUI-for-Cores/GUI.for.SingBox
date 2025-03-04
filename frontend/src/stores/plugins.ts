@@ -222,11 +222,8 @@ export const usePluginsStore = defineStore('plugins', () => {
   const _doUpdatePlugin = async (plugin: PluginType) => {
     const isFromPluginHub = plugin.id.startsWith('plugin-')
     if (isFromPluginHub) {
-      console.log('from hub')
-
       const newPlugin = pluginHub.value.find((v) => v.id === plugin.id)
       if (!newPlugin) throw 'Plugin not found. Please update the Plugin-Hub.'
-      console.log('do update')
       await editPlugin(plugin.id, newPlugin)
     }
 
