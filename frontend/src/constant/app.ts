@@ -10,6 +10,8 @@ export const PluginsFilePath = 'data/plugins.yaml'
 
 export const ScheduledTasksFilePath = 'data/scheduledtasks.yaml'
 
+export const PluginHubFilePath = 'data/.cache/plugin-list.json'
+
 export const DefaultFontFamily =
   'system-ui, "Microsoft YaHei UI", "Source Han Sans CN", "Twemoji Mozilla", sans-serif'
 

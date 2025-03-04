@@ -233,6 +233,10 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       class="item"
     >
       <template #title-prefix>
+        <Tag v-if="pluginsStore.isDeprecated(p)" color="red"> {{ t('plugins.deprecated') }} </Tag>
+        <Tag v-if="pluginsStore.hasNewPluginVersion(p)" size="small" color="cyan">
+          {{ t('plugins.newVersion') }}
+        </Tag>
         <div
           v-show="p.status !== 0"
           :class="{ 0: '', 1: 'running', 2: 'stopped' }[p.status]"

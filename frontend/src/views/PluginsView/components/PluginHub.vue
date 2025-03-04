@@ -1,48 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { ignoredError, sleep } from '@/utils'
-import { HttpGet, Readfile, Writefile } from '@/bridge'
+import { sleep } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
-
-const loading = ref(false)
-const list = ref<PluginType[]>([])
-const cacheFile = 'data/.cache/plugin-list.json'
-const hubUrl =
-  'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json'
-const gfsUrl = 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json'
 
 const { t } = useI18n()
 const { message } = useMessage()
 const pluginsStore = usePluginsStore()
-
-const updateList = async () => {
-  loading.value = true
-  try {
-    const { body: body1 } = await HttpGet<string>(hubUrl)
-    const { body: body2 } = await HttpGet<string>(gfsUrl)
-    const list1 = JSON.parse(body1)
-    const list2 = JSON.parse(body2)
-    list.value = [...list1, ...list2]
-    await Writefile(cacheFile, JSON.stringify(list.value))
-    message.success('plugins.updateSuccess')
-  } catch (error: any) {
-    message.error(error)
-  }
-  loading.value = false
-}
-
-const getList = async () => {
-  const body = await ignoredError(Readfile, cacheFile)
-  if (body) {
-    list.value = JSON.parse(body)
-    return
-  }
-
-  updateList()
-}
 
 const handleAddPlugin = async (plugin: PluginType) => {
   const { success, error, destroy } = message.info('plugins.updating', 60 * 1000)
@@ -56,24 +21,36 @@ const handleAddPlugin = async (plugin: PluginType) => {
   }
 }
 
-const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)
+const handleUpdatePluginHub = async () => {
+  try {
+    await pluginsStore.updatePluginHub()
+    message.success('plugins.updateSuccess')
+  } catch (err: any) {
+    message.error(err.message || err)
+  }
+}
 
-getList()
+const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)
 </script>
 
 <template>
   <div class="plugin-hub">
-    <div v-if="loading" class="loading">
+    <div v-if="pluginsStore.pluginHubLoading" class="loading">
       <Button type="text" loading></Button>
     </div>
     <template v-else>
       <div class="header">
-        <Button type="text">{{ t('plugins.total') }} : {{ list.length }}</Button>
-        <Button @click="updateList" type="link" class="ml-auto">
+        <Button type="text">{{ t('plugins.total') }} : {{ pluginsStore.pluginHub.length }}</Button>
+        <Button @click="handleUpdatePluginHub" type="link" class="ml-auto">
           {{ t('plugins.update') }}
         </Button>
       </div>
-      <Card v-for="plugin in list" :key="plugin.id" :title="plugin.name" class="plugin-item">
+      <Card
+        v-for="plugin in pluginsStore.pluginHub"
+        :key="plugin.id"
+        :title="plugin.name"
+        class="plugin-item"
+      >
         <div v-tips="plugin.description" class="description">{{ plugin.description }}</div>
         <div class="action">
           <Button v-if="isAlreadyAdded(plugin.id)" type="text" size="small">

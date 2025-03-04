@@ -22,6 +22,7 @@ const loading = ref(false)
 const pluginID = sampleID()
 const plugin = ref<PluginType>({
   id: pluginID,
+  version: 'v1.0.0',
   name: '',
   description: '',
   type: 'File',
@@ -158,6 +159,10 @@ if (props.isUpdate) {
       <div class="name">{{ t('plugin.name') }} *</div>
       <Input v-model="plugin.name" auto-size autofocus class="input" />
     </div>
+    <div class="form-item">
+      <div class="name">{{ t('plugin.version') }} *</div>
+      <Input v-model="plugin.version" auto-size class="input" />
+    </div>
     <div v-show="plugin.type === 'Http'" class="form-item">
       <div class="name">{{ t('plugin.url') }} *</div>
       <Input
@@ -285,7 +290,9 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disabled="!plugin.name || !plugin.path || (plugin.type === 'Http' && !plugin.url)"
+      :disabled="
+        !plugin.name || !plugin.version || !plugin.path || (plugin.type === 'Http' && !plugin.url)
+      "
       type="primary"
     >
       {{ t('common.save') }}

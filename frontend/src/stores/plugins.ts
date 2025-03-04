@@ -3,7 +3,7 @@ import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
 import { useConfirm } from '@/hooks'
-import { PluginsFilePath } from '@/constant/app'
+import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
 import { HttpGet, Readfile, Removefile, Writefile } from '@/bridge'
 import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
 import { useAppSettingsStore, type SubscribeType } from '@/stores'
@@ -30,6 +30,7 @@ export type PluginConfiguration = {
 
 export type PluginType = {
   id: string
+  version: string
   name: string
   description: string
   type: 'Http' | 'File'
@@ -94,10 +95,14 @@ export const usePluginsStore = defineStore('plugins', () => {
   const appSettingsStore = useAppSettingsStore()
 
   const plugins = ref<PluginType[]>([])
+  const pluginHub = ref<PluginType[]>([])
 
   const setupPlugins = async () => {
     const data = await ignoredError(Readfile, PluginsFilePath)
     data && (plugins.value = parse(data))
+
+    const list = await ignoredError(Readfile, PluginHubFilePath)
+    list && (pluginHub.value = JSON.parse(list))
 
     for (let i = 0; i < plugins.value.length; i++) {
       const { id, triggers, path, context } = plugins.value[i]
@@ -215,6 +220,16 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   const _doUpdatePlugin = async (plugin: PluginType) => {
+    const isFromPluginHub = plugin.id.startsWith('plugin-')
+    if (isFromPluginHub) {
+      console.log('from hub')
+
+      const newPlugin = pluginHub.value.find((v) => v.id === plugin.id)
+      if (!newPlugin) throw 'Plugin not found. Please update the Plugin-Hub.'
+      console.log('do update')
+      await editPlugin(plugin.id, newPlugin)
+    }
+
     let code = ''
 
     if (plugin.type === 'File') {
@@ -259,6 +274,35 @@ export const usePluginsStore = defineStore('plugins', () => {
       }
     }
     if (needSave) savePlugins()
+  }
+
+  const pluginHubLoading = ref(false)
+  const findPluginInHubById = (id: string) => pluginHub.value.find((v) => v.id === id)
+  const isDeprecated = (plugin: PluginType) => {
+    if (!plugin.id.startsWith('plugin-')) return false
+    return !findPluginInHubById(plugin.id)
+  }
+  const hasNewPluginVersion = (plugin: PluginType) => {
+    if (!plugin.version) return false
+    const p = findPluginInHubById(plugin.id)
+    if (!p) return false
+    if (!p.version) return false
+    return p.version !== plugin.version
+  }
+  const updatePluginHub = async () => {
+    pluginHubLoading.value = true
+    try {
+      const { body: body1 } = await HttpGet<string>(
+        'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json',
+      )
+      const { body: body2 } = await HttpGet<string>(
+        'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json',
+      )
+      pluginHub.value = [...JSON.parse(body1), ...JSON.parse(body2)]
+      await Writefile(PluginHubFilePath, JSON.stringify(pluginHub.value))
+    } finally {
+      pluginHubLoading.value = false
+    }
   }
 
   const getPluginById = (id: string) => plugins.value.find((v) => v.id === id)
@@ -418,5 +462,12 @@ export const usePluginsStore = defineStore('plugins', () => {
     updatePluginTrigger,
     getPluginCodefromCache,
     getPluginMetadata,
+
+    pluginHub,
+    pluginHubLoading,
+    updatePluginHub,
+    hasNewPluginVersion,
+    findPluginInHubById,
+    isDeprecated,
   }
 })
