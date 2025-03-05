@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
-import { sleep } from '@/utils'
+import { deepClone, sleep } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 
 const { t } = useI18n()
@@ -12,7 +12,7 @@ const pluginsStore = usePluginsStore()
 const handleAddPlugin = async (plugin: PluginType) => {
   const { success, error, destroy } = message.info('plugins.updating', 60 * 1000)
   try {
-    await pluginsStore.addPlugin(plugin)
+    await pluginsStore.addPlugin(deepClone(plugin))
     success('common.success')
   } catch (err: any) {
     error(err.message || err)

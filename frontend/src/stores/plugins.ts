@@ -7,7 +7,7 @@ import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
 import { HttpGet, Readfile, Removefile, Writefile } from '@/bridge'
 import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
 import { useAppSettingsStore, type SubscribeType } from '@/stores'
-import { debounce, ignoredError, updateTrayMenus, isNumber, omitArray } from '@/utils'
+import { debounce, ignoredError, updateTrayMenus, isNumber, omitArray, deepClone } from '@/utils'
 
 export type PluginConfiguration = {
   id: string
@@ -224,7 +224,32 @@ export const usePluginsStore = defineStore('plugins', () => {
     if (isFromPluginHub) {
       const newPlugin = pluginHub.value.find((v) => v.id === plugin.id)
       if (!newPlugin) throw 'Plugin not found. Please update the Plugin-Hub.'
-      await editPlugin(plugin.id, newPlugin)
+
+      const [major_now, minor_now, patch_now] = (plugin.version || '').substring(1).split('.')
+      const [major_new, minor_new, patch_new] = (newPlugin.version || '').substring(1).split('.')
+
+      if (major_now !== major_new) {
+        await editPlugin(plugin.id, deepClone(newPlugin))
+        const userSettigns = appSettingsStore.app.pluginSettings[plugin.id]
+        if (userSettigns) {
+          appSettingsStore.app.pluginSettings[plugin.id] = newPlugin.configuration.reduce(
+            (p, c) => {
+              const value_now = userSettigns[c.key]
+              const value_new = c.value
+              const type_now = Array.isArray(value_now) ? 'array' : typeof value_now
+              const type_new = Array.isArray(value_new) ? 'array' : typeof value_new
+              return {
+                ...p,
+                [c.key]: type_now === type_new ? value_now : value_new,
+              }
+            },
+            {},
+          )
+        }
+      } else if (minor_now !== minor_new || patch_now !== patch_new) {
+        plugin.version = newPlugin.version
+        await editPlugin(plugin.id, plugin)
+      }
     }
 
     let code = ''
@@ -280,10 +305,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     return !findPluginInHubById(plugin.id)
   }
   const hasNewPluginVersion = (plugin: PluginType) => {
-    if (!plugin.version) return false
     const p = findPluginInHubById(plugin.id)
     if (!p) return false
-    if (!p.version) return false
     return p.version !== plugin.version
   }
   const updatePluginHub = async () => {

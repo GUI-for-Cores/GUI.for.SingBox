@@ -81,6 +81,7 @@ const handleUpdatePlugins = async () => {
 const handleUpdatePlugin = async (s: PluginType) => {
   try {
     await pluginsStore.updatePlugin(s.id)
+    message.success('common.success')
   } catch (error: any) {
     console.error('handleUpdatePlugin: ', error)
     message.error(error)
