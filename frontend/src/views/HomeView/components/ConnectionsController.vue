@@ -191,21 +191,21 @@ const menu: Menu[] = [
         const options: PickerItem[] = []
         if (record.metadata.host) {
           options.push({
-            label: t('kernel.rules.type.DOMAIN'),
+            label: t('kernel.rules.type.domain'),
             value: { domain: record.metadata.host } as any,
             description: record.metadata.host,
           })
         }
         if (record.metadata.destinationIP) {
           options.push({
-            label: t('kernel.rules.type.IP-CIDR'),
+            label: t('kernel.rules.type.ip_cidr'),
             value: { ip_cidr: record.metadata.destinationIP + '/32' } as any,
             description: record.metadata.destinationIP,
           })
         }
         if (record.metadata.processPath) {
           options.push({
-            label: t('kernel.rules.type.PROCESS-PATH'),
+            label: t('kernel.rules.type.process_path'),
             value: { process_path: record.metadata.processPath } as any,
             description: record.metadata.processPath,
           })

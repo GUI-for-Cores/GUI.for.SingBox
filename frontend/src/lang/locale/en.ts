@@ -455,6 +455,7 @@ export default {
     total: 'Number of rule-sets',
     noDesc: 'No description',
     updating: 'Updating',
+    updateSuccess: 'Ruleset-Hub updated successfully',
     fetching: 'fetching...',
     empty: 'The ruleset list is empty. Please{action}or import from the{import}first.',
     rulesetCount: 'Ruleset Count',

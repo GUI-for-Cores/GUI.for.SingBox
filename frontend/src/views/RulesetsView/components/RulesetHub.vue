@@ -37,7 +37,7 @@ const updateList = async () => {
     const { body } = await HttpGet<string>(hubUrl)
     rulesetHub.value = JSON.parse(body)
     await Writefile(cacheFile, body)
-    message.success('plugins.updateSuccess')
+    message.success('rulesets.updateSuccess')
   } catch (error: any) {
     message.error(error)
   }
