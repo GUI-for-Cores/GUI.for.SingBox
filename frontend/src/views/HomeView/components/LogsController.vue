@@ -57,13 +57,13 @@ const menus: Menu[] = [
         const address = match.split(':')[0]
         if (isValidIPv4(address) || isValidIPv6(address)) {
           options.push({
-            label: t('kernel.rules.type.IP-CIDR'),
+            label: t('kernel.rules.type.ip_cidr'),
             value: { ip_cidr: address + '/32' } as any,
             description: address,
           })
         } else {
           options.push({
-            label: t('kernel.rules.type.DOMAIN'),
+            label: t('kernel.rules.type.domain'),
             value: { domain: address } as any,
             description: address,
           })
