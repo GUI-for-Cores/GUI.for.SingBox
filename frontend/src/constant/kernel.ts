@@ -13,6 +13,7 @@ import {
   RuleActionReject,
 } from '@/enums/kernel'
 
+export const CoreStopOutputKeyword = 'sing-box started'
 export const CoreWorkingDirectory = 'data/sing-box'
 export const CoreConfigFilePath = CoreWorkingDirectory + '/config.json'
 export const CoreCacheFilePath = CoreWorkingDirectory + '/cache.db'

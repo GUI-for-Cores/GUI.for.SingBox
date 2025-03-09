@@ -3,11 +3,15 @@ package bridge
 import (
 	"bufio"
 	"errors"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/shirou/gopsutil/process"
@@ -77,26 +81,31 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	}
 
 	if outEvent != "" {
-		wg := sync.WaitGroup{}
+		var keywordFound int32 = 0
+		wg := &sync.WaitGroup{}
 		wg.Add(2)
 
-		outScanner := bufio.NewScanner(stdout)
-		go func() {
+		scanAndEmit := func(reader io.Reader) {
 			defer wg.Done()
-			for outScanner.Scan() {
-				text := outScanner.Text()
+			scanner := bufio.NewScanner(reader)
+			for scanner.Scan() {
+				if atomic.LoadInt32(&keywordFound) == 1 {
+					continue
+				}
+				text := scanner.Text()
+				if options.StopOutputKeyword != "" {
+					if strings.Contains(text, options.StopOutputKeyword) {
+						atomic.StoreInt32(&keywordFound, 1)
+						runtime.EventsEmit(a.Ctx, outEvent, text)
+						continue
+					}
+				}
 				runtime.EventsEmit(a.Ctx, outEvent, text)
 			}
-		}()
+		}
 
-		errScanner := bufio.NewScanner(stderr)
-		go func() {
-			defer wg.Done()
-			for errScanner.Scan() {
-				text := errScanner.Text()
-				runtime.EventsEmit(a.Ctx, outEvent, text)
-			}
-		}()
+		go scanAndEmit(stdout)
+		go scanAndEmit(stderr)
 
 		go func() {
 			wg.Wait()
@@ -155,15 +164,16 @@ func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int64) er
 		done <- err
 	}()
 
+	timeout := time.After(time.Duration(timeoutSeconds) * time.Second)
+
 	select {
 	case err := <-done:
-		if err != nil {
-			return err
+		return err
+	case <-timeout:
+		if killErr := process.Kill(); killErr != nil {
+			return fmt.Errorf("timeout reached and failed to kill process: %w", killErr)
 		}
-	case <-time.After(time.Duration(timeoutSeconds) * time.Second):
-		process.Kill()
+		<-done
 		return errors.New("timeout waiting for process to exit")
 	}
-
-	return nil
 }

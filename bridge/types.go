@@ -28,8 +28,9 @@ type RequestOptions struct {
 }
 
 type ExecOptions struct {
-	Convert bool              `json:"convert"`
-	Env     map[string]string `json:"env"`
+	StopOutputKeyword string            `json:"stopOutputKeyword"`
+	Convert           bool              `json:"convert"`
+	Env               map[string]string `json:"env"`
 }
 
 type IOOptions struct {

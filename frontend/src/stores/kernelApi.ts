@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import { DefaultInboundMixed } from '@/constant/profile'
 import { ProcessInfo, KillProcess, ExecBackground, Readfile } from '@/bridge'
-import { CoreConfigFilePath, CoreWorkingDirectory } from '@/constant/kernel'
+import { CoreConfigFilePath, CoreStopOutputKeyword, CoreWorkingDirectory } from '@/constant/kernel'
 import { getProxies, getProviders, getConfigs, setConfigs } from '@/api/kernel'
 import { useAppSettingsStore, useProfilesStore, useLogsStore, useEnvStore } from '@/stores'
 import {
@@ -226,7 +226,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     const onOut = async (out: string, pid: number) => {
       logsStore.recordKernelLog(out)
-      if (out.toLowerCase().includes('sing-box started')) {
+      if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
         loading.value = false
         appSettingsStore.app.kernel.pid = pid
         appSettingsStore.app.kernel.running = true
@@ -257,6 +257,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         (out: string) => onOut(out, pid),
         // end
         onEnd,
+        {
+          stopOutputKeyword: CoreStopOutputKeyword,
+        },
       )
     } catch (error) {
       loading.value = false

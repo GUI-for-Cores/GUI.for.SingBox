@@ -5,13 +5,14 @@ import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 type ExecOptions = {
   convert: boolean
   env: Record<string, any>
+  stopOutputKeyword: string
 }
 
 export const Exec = async (path: string, args: string[], options: Partial<ExecOptions> = {}) => {
   const { flag, data } = await App.Exec(
     path,
     args,
-    Object.assign({}, { convert: false, env: {} }, options),
+    Object.assign({}, { convert: false, env: {}, stopOutputKeyword: '' }, options),
   )
   if (!flag) {
     throw data
@@ -33,7 +34,7 @@ export const ExecBackground = async (
     args,
     outEvent,
     endEvent,
-    Object.assign({}, { convert: false, env: {} }, options),
+    Object.assign({}, { convert: false, env: {}, stopOutputKeyword: '' }, options),
   )
   if (!flag) {
     throw data
