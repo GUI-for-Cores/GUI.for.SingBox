@@ -13,16 +13,13 @@ export function formatBytes(bytes: number, decimals: number = 1): string {
 }
 
 export function formatRelativeTime(d: string | number) {
+  const formatter = new Intl.RelativeTimeFormat(i18n.global.locale.value, { numeric: 'auto' })
   const date = new Date(d)
   const now = Date.now()
   const diffMs = date.getTime() - now
 
   // now
-  if (diffMs === 0) {
-    return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
-      numeric: 'auto',
-    }).format(0, 'second')
-  }
+  if (diffMs === 0) return formatter.format(0, 'second')
 
   const units: { unit: Intl.RelativeTimeFormatUnit; threshold: number }[] = [
     { unit: 'year', threshold: 365 * 24 * 60 * 60 * 1000 },
@@ -35,16 +32,10 @@ export function formatRelativeTime(d: string | number) {
 
   for (const { unit, threshold } of units) {
     const amount = Math.round(diffMs / threshold)
-    if (Math.abs(amount) > 0) {
-      return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
-        numeric: 'auto',
-      }).format(amount, unit)
-    }
+    if (Math.abs(amount) > 0) return formatter.format(amount, unit)
   }
 
-  return new Intl.RelativeTimeFormat(i18n.global.locale.value, {
-    numeric: 'auto',
-  }).format(Math.round(diffMs / 1000), 'second')
+  return formatter.format(Math.round(diffMs / 1000), 'second')
 }
 
 export function formatDate(timestamp: number | string, format: string) {
