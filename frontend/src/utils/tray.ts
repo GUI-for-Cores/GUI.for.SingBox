@@ -361,6 +361,12 @@ const getTrayMenus = () => {
               checked: appSettings.app.lang === Lang.RU,
               event: () => (appSettings.app.lang = Lang.RU),
             },
+            {
+              type: 'item',
+              text: 'settings.lang.fa',
+              checked: appSettings.app.lang === Lang.FA,
+              event: () => (appSettings.app.lang = Lang.FA),
+            },
           ],
         },
       ],

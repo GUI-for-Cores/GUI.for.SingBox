@@ -573,6 +573,7 @@ export default {
       zh: '简体中文',
       en: 'English',
       ru: 'Русский',
+      fa: 'فارسی',
     },
     pages: {
       name: 'Видимость страницы',
