@@ -1,5 +1,3 @@
-import type fa from "./fa";
-
 export default {
   common: {
     grid: 'Grid',
