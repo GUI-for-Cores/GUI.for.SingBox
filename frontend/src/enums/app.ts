@@ -19,6 +19,7 @@ export enum Lang {
   EN = 'en',
   ZH = 'zh',
   RU = 'ru',
+  FA = 'fa',
 }
 
 export enum View {
