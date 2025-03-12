@@ -93,10 +93,27 @@ func main() {
 			app.Ctx = ctx
 			bridge.InitScheduledTasks()
 			trayStart()
+
+			// Continuously check if the window is minimized, then hide it
+			go func() {
+				for {
+					if runtime.WindowIsMinimised(ctx) { // Corrected: Only one return value
+						runtime.Hide(ctx) // Hide from taskbar when minimized
+					}
+				}
+			}()
+
+			// Handle Tray Icon Clicks
+			go func() {
+				for {
+					<-bridge.TrayClick // Wait for a click event on the tray icon
+					runtime.Show(ctx)  // Show the window when the tray icon is clicked
+				}
+			}()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
-			runtime.EventsEmit(ctx, "onBeforeExitApp")
-			return true
+			runtime.Hide(ctx) // Hide the window instead of closing
+			return true       // Prevent application from closing
 		},
 		Bind: []interface{}{
 			app,

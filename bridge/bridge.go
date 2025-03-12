@@ -25,6 +25,8 @@ func NewApp() *App {
 
 var isStartup = true
 
+var TrayClick = make(chan bool, 1) // Channel to listen for tray icon clicks
+
 var Env = &EnvResult{
 	BasePath:    "",
 	AppName:     "",
