@@ -502,6 +502,7 @@ export default {
     configuration: '配置插件',
     hub: '插件中心',
     update: '更新列表',
+    checkForUpdates: '检查更新',
     updateSuccess: '插件中心更新成功',
     total: '插件数量为',
     removeConfiguration: '是否删除插件配置？',

@@ -504,6 +504,7 @@ export default {
     configuration: 'Настроить',
     hub: 'Центр плагинов',
     update: 'Обновить список',
+    checkForUpdates: 'Проверить обновления',
     updateSuccess: 'Центр плагинов успешно обновлён',
     total: 'Число плагинов',
     removeConfiguration: 'Вы хотите удалить конфигурацию плагина?',

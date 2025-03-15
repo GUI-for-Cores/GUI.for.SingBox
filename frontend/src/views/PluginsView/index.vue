@@ -68,6 +68,16 @@ const handleEditPlugin = (p: PluginType) => {
   showPluginForm.value = true
 }
 
+const handleUpdatePluginHub = async () => {
+  try {
+    await pluginsStore.updatePluginHub()
+    message.success('plugins.updateSuccess')
+  } catch (error: any) {
+    console.error('handleUpdatePluginHub: ', error)
+    message.error(error)
+  }
+}
+
 const handleUpdatePlugins = async () => {
   try {
     await pluginsStore.updatePlugins()
@@ -209,13 +219,20 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     <Button @click="handleImportPlugin" type="link" class="ml-auto">
       {{ t('plugins.hub') }}
     </Button>
-    <Button
-      @click="handleUpdatePlugins"
-      :disabled="noUpdateNeeded"
-      :type="noUpdateNeeded ? 'text' : 'link'"
-    >
-      {{ t('common.updateAll') }}
-    </Button>
+    <Dropdown :trigger="['hover', 'click']">
+      <Button @click="handleUpdatePluginHub" :loading="pluginsStore.pluginHubLoading" type="link">
+        {{ t('plugins.checkForUpdates') }}
+      </Button>
+      <template #overlay>
+        <Button
+          @click="handleUpdatePlugins"
+          :disabled="noUpdateNeeded"
+          :type="noUpdateNeeded ? 'text' : 'link'"
+        >
+          {{ t('common.updateAll') }}
+        </Button>
+      </template>
+    </Dropdown>
     <Button @click="handleAddPlugin" type="primary">
       {{ t('common.add') }}
     </Button>

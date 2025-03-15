@@ -503,6 +503,7 @@ export default {
     configuration: 'Configure',
     hub: 'Plugin-Hub',
     update: 'Update List',
+    checkForUpdates: 'Check for updates',
     updateSuccess: 'Plugin-Hub updated successfully',
     total: 'Number of plug-ins',
     removeConfiguration: 'Do you want to remove the plugin configuration?',
