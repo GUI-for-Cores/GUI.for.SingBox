@@ -1,5 +1,5 @@
 import { DefaultFakeIPDnsRule } from '@/constant/profile'
-import { RuleAction, RuleType, Strategy } from '@/enums/kernel'
+import { DnsServer, RuleAction, RuleType, Strategy } from '@/enums/kernel'
 import { useRulesetsStore, useSubscribesStore } from '@/stores'
 
 export const transformProfileV189To190 = (config: Recordable) => {
@@ -213,6 +213,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         exclude: '',
       }
     }),
+    // @ts-expect-error(Deprecated)
     route: {
       rule_set: rulesets,
       rules: config.rulesConfig.flatMap((rule: any) => {
@@ -256,6 +257,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         {
           id: 'remote-dns',
           tag: 'remote-dns',
+          // @ts-expect-error(Deprecated)
           address: config.dnsConfig['remote-dns'],
           address_resolver: 'remote-resolver-dns',
           detour: config.dnsConfig['remote-dns-detour'],
@@ -265,6 +267,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         {
           id: 'local-dns',
           tag: 'local-dns',
+          // @ts-expect-error(Deprecated)
           address: config.dnsConfig['local-dns'],
           address_resolver: 'resolver-dns',
           detour: config.dnsConfig['local-dns-detour'],
@@ -274,6 +277,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         {
           id: 'resolver-dns',
           tag: 'resolver-dns',
+          // @ts-expect-error(Deprecated)
           address: config.dnsConfig['resolver-dns'],
           address_resolver: '',
           detour: config.dnsConfig['local-dns-detour'],
@@ -283,6 +287,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         {
           id: 'remote-resolver-dns',
           tag: 'remote-resolver-dns',
+          // @ts-expect-error(Deprecated)
           address: config.dnsConfig['remote-resolver-dns'],
           address_resolver: '',
           detour: '',
@@ -292,6 +297,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         {
           id: 'fakeip',
           tag: 'fakeip-dns',
+          // @ts-expect-error(Deprecated)
           address: 'fakeip',
           address_resolver: '',
           detour: '',
@@ -339,4 +345,94 @@ export const transformProfileV189To190 = (config: Recordable) => {
   }
 
   return profile
+}
+
+export const transformProfileV194 = (config: Recordable) => {
+  const outboundServer = config.dns.rules.find((rule: Recordable) => rule.type === 'outbound')
+
+  config.route.default_domain_resolver = {
+    server: outboundServer?.server || '',
+    client_subnet: '',
+  }
+
+  config.dns.servers = config.dns.servers.flatMap((server: Recordable) => {
+    const _server: IDNSServer = {
+      id: server.id,
+      tag: server.tag,
+      type: DnsServer.Local,
+      detour: server.detour,
+      domain_resolver: server.address_resolver,
+      hosts_path: [],
+      predefined: {},
+      server: server.address,
+      server_port: '',
+      path: '',
+      interface: '',
+      inet4_range: '',
+      inet6_range: '',
+    }
+    if (server.address === 'local') {
+      server.type = DnsServer.Local
+    } else if (server.address.startsWith('tcp://')) {
+      const url = new URL(server.address)
+      _server.type = DnsServer.Tcp
+      _server.server = url.hostname
+      _server.server_port = url.port
+    } else if (server.address.startsWith('tls://')) {
+      const url = new URL(server.address)
+      _server.type = DnsServer.Tls
+      _server.server = url.hostname
+      _server.server_port = url.port
+    } else if (server.address.startsWith('quic://')) {
+      const url = new URL(server.address)
+      server.type = DnsServer.Quic
+      _server.server = url.hostname
+      _server.server_port = url.port
+    } else if (server.address.startsWith('https://')) {
+      const url = new URL(server.address)
+      _server.type = DnsServer.Https
+      _server.server = url.hostname
+      _server.server_port = url.port
+      _server.path = url.pathname
+    } else if (server.address.startsWith('h3://')) {
+      const url = new URL(server.address)
+      _server.type = DnsServer.H3
+      _server.server = url.hostname
+      _server.server_port = url.port
+      _server.path = url.pathname
+    } else if (server.address.startsWith('dhcp://')) {
+      const url = new URL(server.address)
+      _server.type = DnsServer.Dhcp
+      _server.interface = url.hostname
+    } else if (server.address === 'fakeip') {
+      _server.type = DnsServer.FakeIP
+      _server.inet4_range = config.dns.fakeip.inet4_range
+      _server.inet6_range = config.dns.fakeip.inet6_range
+    } else if (server.address.startsWith('rcode://')) {
+      return [] // skip
+    } else {
+      _server.type = DnsServer.Udp
+    }
+    return _server
+  })
+
+  config.dns.rules = config.dns.rules.flatMap((rule: Recordable) => {
+    if (rule.type === 'outbound') return []
+    const _rule: IDNSRule = {
+      id: rule.id,
+      type: rule.type,
+      payload: rule.payload,
+      action: rule.action,
+      invert: rule.invert,
+      server: rule.server,
+      strategy: Strategy.Default,
+      disable_cache: false,
+      client_subnet: '',
+    }
+    return _rule
+  })
+
+  delete config.dns.fakeip
+
+  return config as IProfile
 }

@@ -92,7 +92,7 @@ interface IInbound {
 type OutboundType = 'direct' | 'selector' | 'urltest'
 
 type RuleAction = 'route' | 'route-options' | 'reject' | 'hijack-dns' | 'sniff' | 'resolve'
-type DnsRuleAction = 'route' | 'route-options' | 'reject'
+type DnsRuleAction = 'route' | 'route-options' | 'reject' | 'predefined'
 
 interface IOutbound {
   id: string
@@ -153,18 +153,46 @@ interface IRoute {
   auto_detect_interface: boolean
   default_interface: string
   find_process: boolean
+  default_domain_resolver: {
+    server: string
+    client_subnet: string
+  }
 }
 
 type Strategy = 'default' | 'prefer_ipv4' | 'prefer_ipv6' | 'ipv4_only' | 'ipv6_only'
+type DNSServer =
+  | 'local'
+  | 'hosts'
+  | 'tcp'
+  | 'udp'
+  | 'tls'
+  | 'quic'
+  | 'https'
+  | 'h3'
+  | 'dhcp'
+  | 'fakeip'
+  | 'tailscale'
 
 interface IDNSServer {
   id: string
   tag: string
-  address: string
-  address_resolver: string
+  type: DNSServer
+  // [local,tcp,udp,tls,quic,https/h3,dhcp]
   detour: string
-  strategy: Strategy
-  client_subnet: string
+  domain_resolver: string
+  // hosts
+  hosts_path: string[]
+  predefined: Recordable
+  // [tcp,udp,tls,quic/https,h3]
+  server: string
+  server_port: string
+  // [https,h3]
+  path: string
+  // dhcp
+  interface: string
+  // fakeip
+  inet4_range: string
+  inet6_range: string
 }
 
 interface IDNSRule {
@@ -172,8 +200,13 @@ interface IDNSRule {
   type: RuleType
   payload: string
   action: DnsRuleAction
-  server: string
   invert: boolean
+  // route
+  server: string
+  strategy: Strategy
+  // route/route-options
+  disable_cache: boolean
+  client_subnet: string
 }
 
 interface IDNS {
@@ -183,11 +216,6 @@ interface IDNS {
   disable_expire: boolean
   independent_cache: boolean
   client_subnet: string
-  fakeip: {
-    enabled: boolean
-    inet4_range: string
-    inet6_range: string
-  }
   final: string
   strategy: Strategy
 }

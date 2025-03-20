@@ -64,8 +64,7 @@ export enum RuleType {
   ProcessPathRegex = 'process_path_regex',
   ClashMode = 'clash_mode',
   RuleSet = 'rule_set',
-  // dns rule type
-  Outbound = 'outbound',
+  IpAcceptAny = 'ip_accept_any',
   // GUI
   Inline = 'inline',
 }
@@ -78,6 +77,19 @@ export enum Strategy {
   IPv6Only = 'ipv6_only',
 }
 
+export enum DnsServer {
+  Local = 'local',
+  Hosts = 'hosts',
+  Tcp = 'tcp',
+  Udp = 'udp',
+  Tls = 'tls',
+  Https = 'https',
+  Quic = 'quic',
+  H3 = 'h3',
+  Dhcp = 'dhcp',
+  FakeIP = 'fakeip',
+}
+
 export enum RuleAction {
   Route = 'route',
   RouteOptions = 'route-options',
@@ -85,6 +97,7 @@ export enum RuleAction {
   HijackDNS = 'hijack-dns',
   Sniff = 'sniff',
   Resolve = 'resolve',
+  Predefined = 'predefined',
 }
 
 export enum RuleActionReject {

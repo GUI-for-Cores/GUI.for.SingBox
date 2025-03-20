@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
-import { debounce, ignoredError, transformProfileV189To190 } from '@/utils'
+import { debounce, ignoredError, transformProfileV189To190, transformProfileV194 } from '@/utils'
 import { Readfile, Writefile, Readdir, Movefile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAlert } from '@/hooks'
@@ -50,14 +50,24 @@ export const useProfilesStore = defineStore('profiles', () => {
       alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
     }
 
-    // Fix missing invert field
-    profiles.value.forEach((profile) => {
+    needsDiskSync = false
+    profiles.value.forEach((profile, index) => {
+      // Fix missing invert field
       profile.dns.rules.forEach((rule) => {
         if (typeof rule.invert === 'undefined') {
           rule.invert = false
         }
       })
+      // @ts-expect-error(Deprecated)
+      if (profile.dns.fakeip) {
+        needsDiskSync = true
+        profiles.value[index] = transformProfileV194(profile)
+      }
     })
+
+    if (needsDiskSync) {
+      await saveProfiles()
+    }
   }
 
   const saveProfiles = debounce(async () => {

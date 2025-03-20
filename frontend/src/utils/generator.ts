@@ -1,7 +1,15 @@
 import { Readfile, Writefile } from '@/bridge'
 import { CoreConfigFilePath } from '@/constant/kernel'
 import { deepAssign, deepClone } from './others'
-import { Inbound, Outbound, RuleAction, RulesetType, RuleType, Strategy } from '@/enums/kernel'
+import {
+  DnsServer,
+  Inbound,
+  Outbound,
+  RuleAction,
+  RulesetType,
+  RuleType,
+  Strategy,
+} from '@/enums/kernel'
 import {
   useAppSettingsStore,
   usePluginsStore,
@@ -9,11 +17,11 @@ import {
   useSubscribesStore,
 } from '@/stores'
 
-const _generateRule = (rule: IRule, rule_set: IRuleSet[], inbounds: IInbound[]) => {
+const _generateRule = (rule: IRule | IDNSRule, rule_set: IRuleSet[], inbounds: IInbound[]) => {
   const getInbound = (id: string) => inbounds.find((v) => v.id === id)?.tag
   const getRuleset = (id: string) => rule_set.find((v) => v.id === id)?.tag
 
-  const extra: Recordable = { invert: rule.invert ? true : undefined }
+  const extra: Recordable = { action: rule.action, invert: rule.invert ? true : undefined }
   if (rule.type === RuleType.Inline) {
     deepAssign(extra, JSON.parse(rule.payload))
   } else if (rule.type === RuleType.RuleSet) {
@@ -179,10 +187,7 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
       if (rule.invert) {
         extra.invert = true
       }
-      return {
-        action: rule.action,
-        ...extra,
-      }
+      return extra
     }),
     rule_set: route.rule_set.map((ruleset) => {
       const extra: Recordable = {}
@@ -209,6 +214,9 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
     auto_detect_interface: route.auto_detect_interface,
     find_process: route.find_process ? true : undefined,
     final: getOutbound(route.final),
+    default_domain_resolver: {
+      server: getDnsServer(route.default_domain_resolver.server),
+    },
     ...extra,
   }
 }
@@ -230,40 +238,80 @@ const generateDns = (
   }
   return {
     servers: dns.servers.flatMap((server) => {
-      if (server.address === 'fakeip' && !dns.fakeip.enabled) return []
       const extra: Recordable = {}
-      if (server.client_subnet) {
-        extra.client_subnet = server.client_subnet
+      if (
+        [
+          DnsServer.Local,
+          DnsServer.Tcp,
+          DnsServer.Udp,
+          DnsServer.Tls,
+          DnsServer.Quic,
+          DnsServer.Https,
+          DnsServer.H3,
+          DnsServer.Dhcp,
+        ].includes(server.type as any)
+      ) {
+        server.detour && (extra.detour = getOutbound(server.detour))
+        server.domain_resolver && (extra.domain_resolver = getDnsServer(server.domain_resolver))
+        if (
+          [
+            DnsServer.Tcp,
+            DnsServer.Udp,
+            DnsServer.Tls,
+            DnsServer.Quic,
+            DnsServer.Https,
+            DnsServer.H3,
+          ].includes(server.type as any)
+        ) {
+          server.server_port && (extra.server_port = Number(server.server_port))
+          extra.server = server.server
+          if ([DnsServer.Https, DnsServer.H3].includes(server.type as any)) {
+            server.path && (extra.path = server.path)
+          }
+        }
       }
-      if (server.strategy !== Strategy.Default) {
-        extra.strategy = server.strategy
+      if (server.type === DnsServer.Hosts) {
+        extra.path = server.hosts_path.reduce((p, c) => p.concat(c.split(',')), [] as string[])
+        extra.predefined = Object.entries(server.predefined).reduce(
+          (p, [k, v]) => ({ ...p, [k]: v.split(',') }),
+          {},
+        )
+      } else if (server.type === DnsServer.Dhcp) {
+        server.interface && (extra.interface = server.interface)
+      } else if (server.type === DnsServer.FakeIP) {
+        server.inet4_range && (extra.inet4_range = server.inet4_range)
+        server.inet6_range && (extra.inet6_range = server.inet6_range)
       }
       return {
         tag: server.tag,
-        address: server.address,
-        address_resolver: getDnsServer(server.address_resolver),
-        detour: getOutbound(server.detour),
+        type: server.type,
         ...extra,
       }
     }),
     rules: dns.rules.flatMap((rule) => {
-      const extra: Recordable = _generateRule(rule as IRule, rule_set, inbounds)
+      const extra: Recordable = _generateRule(rule, rule_set, inbounds)
       if (rule.type === RuleType.Inline && rule.payload.includes('__is_fake_ip')) {
-        if (!dns.fakeip.enabled) return []
+        if (!dns.servers.find((v) => v.type === DnsServer.FakeIP)) {
+          return []
+        }
         delete extra.__is_fake_ip
       }
-      if (rule.action === RuleAction.RouteOptions) {
-        deepAssign(extra, JSON.parse(rule.server))
+      if ([RuleAction.Route, RuleAction.RouteOptions].includes(rule.action as any)) {
+        rule.disable_cache && (extra.disable_cache = rule.disable_cache)
+        rule.client_subnet && (extra.client_subnet = rule.client_subnet)
+        if (rule.action === RuleAction.Route) {
+          extra.server = getDnsServer(rule.server)
+          if (rule.strategy !== Strategy.Default) {
+            extra.strategy = rule.strategy
+          }
+        } else if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(rule.action as any)) {
+          deepAssign(extra, JSON.parse(rule.server))
+        }
       } else if (rule.action === RuleAction.Reject) {
         extra.method = rule.server
       }
-      return {
-        action: rule.action,
-        server: getDnsServer(rule.server),
-        ...extra,
-      }
+      return extra
     }),
-    fakeip: dns.fakeip,
     disable_cache: dns.disable_cache,
     disable_expire: dns.disable_expire,
     independent_cache: dns.independent_cache,
@@ -272,8 +320,50 @@ const generateDns = (
   }
 }
 
+export const generateDnsServerURL = (dnsServer: IDNSServer) => {
+  const { type, server_port, path, server, interface: _interface } = dnsServer
+  let address = ''
+  if ([DnsServer.Https, DnsServer.H3].includes(type as any)) {
+    address = `https://${server}${server_port ? ':' + server_port : ''}${path ? path : ''}`
+  } else if (type == DnsServer.Dhcp) {
+    address = `dhcp://${_interface}`
+  } else if (type == DnsServer.FakeIP) {
+    address =
+      'fake-ip://' +
+      (dnsServer.inet4_range ? dnsServer.inet4_range : '') +
+      (dnsServer.inet6_range ? (dnsServer.inet4_range ? ',' : '') + dnsServer.inet6_range : '')
+  } else if (type === DnsServer.Local) {
+    address = 'local'
+  } else {
+    address = `${type}://${server}${server_port ? ':' + server_port : ''}`
+  }
+  return address
+}
+
 const _adaptToStableBranch = (config: Recordable) => {
-  config
+  config.dns.rules.unshift({
+    action: 'route',
+    server: config.route.default_domain_resolver.server,
+    outbound: 'any',
+  })
+  delete config.route.default_domain_resolver
+  config.dns.servers = config.dns.servers.map((server: IDNSServer) => {
+    const isFakeIP = server.type === DnsServer.FakeIP
+    if (isFakeIP) {
+      config.dns.fakeip = {
+        enabled: true,
+        inet4_range: server.inet4_range,
+        inet6_range: server.inet6_range,
+      }
+    }
+    return {
+      tag: server.tag,
+      address: isFakeIP ? 'fakeip' : generateDnsServerURL(server),
+      address_resolver: server.domain_resolver,
+      detour: server.detour,
+    }
+  })
+  console.log(config)
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {

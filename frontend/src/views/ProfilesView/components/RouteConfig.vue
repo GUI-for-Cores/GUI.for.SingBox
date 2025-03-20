@@ -57,6 +57,14 @@ defineExpose({ handleAdd })
         <InterfaceSelect v-model="model.default_interface" clearable />
       </div>
       <div class="form-item">
+        {{ t('kernel.route.default_domain_resolver.server') }}
+        <Select v-model="model.default_domain_resolver.server" :options="serverOptions" clearable />
+      </div>
+      <!-- <div class="form-item">
+        {{ t('kernel.route.default_domain_resolver.client_subnet') }}
+        <Input v-model="model.default_domain_resolver.client_subnet" editable />
+      </div> -->
+      <div class="form-item">
         {{ t('kernel.route.final') }}
         <Select v-model="model.final" :options="outboundOptions" clearable />
       </div>

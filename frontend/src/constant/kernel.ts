@@ -11,6 +11,7 @@ import {
   Sniffer,
   Strategy,
   RuleActionReject,
+  DnsServer,
 } from '@/enums/kernel'
 
 export const CoreStopOutputKeyword = 'sing-box started'
@@ -165,8 +166,8 @@ export const RulesTypeOptions = [
 
 export const DnsRuleTypeOptions = RulesTypeOptions.concat([
   {
-    label: 'kernel.rules.type.outbound',
-    value: RuleType.Outbound,
+    label: 'kernel.rules.type.ip_accept_any',
+    value: RuleType.IpAcceptAny,
   },
 ])
 
@@ -204,10 +205,24 @@ export const RuleActionOptions = [
   { label: 'kernel.route.rules.action.resolve', value: RuleAction.Resolve },
 ]
 
+export const DnsServerTypeOptions = [
+  { label: 'kernel.dns.type.local', value: DnsServer.Local },
+  { label: 'kernel.dns.type.hosts', value: DnsServer.Hosts },
+  { label: 'kernel.dns.type.tcp', value: DnsServer.Tcp },
+  { label: 'kernel.dns.type.udp', value: DnsServer.Udp },
+  { label: 'kernel.dns.type.tls', value: DnsServer.Tls },
+  { label: 'kernel.dns.type.quic', value: DnsServer.Quic },
+  { label: 'kernel.dns.type.https', value: DnsServer.Https },
+  { label: 'kernel.dns.type.h3', value: DnsServer.H3 },
+  { label: 'kernel.dns.type.dhcp', value: DnsServer.Dhcp },
+  { label: 'kernel.dns.type.fakeip', value: DnsServer.FakeIP },
+]
+
 export const DnsRuleActionOptions = [
   { label: 'kernel.route.rules.action.route', value: RuleAction.Route },
   { label: 'kernel.route.rules.action.route-options', value: RuleAction.RouteOptions },
   { label: 'kernel.route.rules.action.reject', value: RuleAction.Reject },
+  { label: 'kernel.route.rules.action.predefined', value: RuleAction.Predefined },
 ]
 
 export const DnsRuleActionRejectOptions = [

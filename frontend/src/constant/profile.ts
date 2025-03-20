@@ -10,6 +10,7 @@ import {
   RuleType,
   RuleAction,
   Strategy,
+  DnsServer,
 } from '@/enums/kernel'
 import i18n from '@/lang'
 const { t } = i18n.global
@@ -243,17 +244,6 @@ export const DefaultRouteRuleset = (): IRuleSet => ({
 
 export const DefaultRoute = (): IRoute => ({
   rules: [
-    // {
-    //   id: sampleID(),
-    //   type: RuleType.Inbound,
-    //   payload: DefaultInboundIds.MixedIn,
-    //   invert: false,
-    //   action: RuleAction.Resolve,
-    //   outbound: '',
-    //   sniffer: [],
-    //   strategy: Strategy.Default,
-    //   server: ''
-    // },
     {
       id: sampleID(),
       type: RuleType.Inbound,
@@ -448,64 +438,89 @@ export const DefaultRoute = (): IRoute => ({
   default_interface: '',
   final: DefaultOutboundIds.Fallback,
   find_process: false,
+  default_domain_resolver: {
+    server: DefaultDnsServersIds.LocalDns,
+    client_subnet: '',
+  },
 })
 
 export const DefaultDnsServer = (): IDNSServer => ({
   id: sampleID(),
   tag: '',
-  address: '',
-  address_resolver: '',
+  type: DnsServer.Local,
   detour: '',
-  strategy: Strategy.Default,
-  client_subnet: '',
+  domain_resolver: '',
+  server: '',
+  server_port: '',
+  path: '',
+  interface: '',
+  inet4_range: '',
+  inet6_range: '',
+  hosts_path: [],
+  predefined: {},
 })
 
 export const DefaultDnsServers = (): IDNSServer[] => [
   {
     id: DefaultDnsServersIds.LocalDns,
     tag: DefaultDnsServersIds.LocalDns,
-    address: 'https://223.5.5.5/dns-query',
-    address_resolver: DefaultDnsServersIds.LocalDnsResolver,
     detour: DefaultOutboundIds.Direct,
-    strategy: Strategy.Default,
-    client_subnet: '',
+    type: DnsServer.Https,
+    domain_resolver: DefaultDnsServersIds.LocalDnsResolver,
+    server: '223.5.5.5',
+    server_port: '443',
+    path: '/dns-query',
+    interface: '',
+    inet4_range: '',
+    inet6_range: '',
+    hosts_path: [],
+    predefined: {},
   },
   {
     id: DefaultDnsServersIds.LocalDnsResolver,
     tag: DefaultDnsServersIds.LocalDnsResolver,
-    address: '223.5.5.5',
-    address_resolver: '',
     detour: DefaultOutboundIds.Direct,
-    strategy: Strategy.Default,
-    client_subnet: '',
+    type: DnsServer.Udp,
+    domain_resolver: '',
+    server: '223.5.5.5',
+    server_port: '53',
+    path: '',
+    interface: '',
+    inet4_range: '',
+    inet6_range: '',
+    hosts_path: [],
+    predefined: {},
   },
   {
     id: DefaultDnsServersIds.RemoteDns,
     tag: DefaultDnsServersIds.RemoteDns,
-    address: 'tls://8.8.8.8',
-    address_resolver: DefaultDnsServersIds.RemoteDnsResolver,
     detour: DefaultOutboundIds.Select,
-    strategy: Strategy.Default,
-    client_subnet: '',
+    type: DnsServer.Tls,
+    domain_resolver: DefaultDnsServersIds.RemoteDnsResolver,
+    server: '8.8.8.8',
+    server_port: '853',
+    path: '',
+    interface: '',
+    inet4_range: '',
+    inet6_range: '',
+    hosts_path: [],
+    predefined: {},
   },
   {
     id: DefaultDnsServersIds.RemoteDnsResolver,
     tag: DefaultDnsServersIds.RemoteDnsResolver,
-    address: '8.8.8.8',
-    address_resolver: '',
     detour: DefaultOutboundIds.Select,
-    strategy: Strategy.Default,
-    client_subnet: '',
+    type: DnsServer.Udp,
+    domain_resolver: '',
+    server: '8.8.8.8',
+    server_port: '53',
+    path: '',
+    interface: '',
+    inet4_range: '',
+    inet6_range: '',
+    hosts_path: [],
+    predefined: {},
   },
-  // {
-  //   id: DefaultDnsServersIds.FakeIP,
-  //   tag: 'fake-ip',
-  //   address: 'fakeip',
-  //   address_resolver: '',
-  //   detour: '',
-  //   strategy: Strategy.Default,
-  //   client_subnet: ''
-  // }
 ]
 
 export const DefaultFakeIPDnsRule = () => ({
@@ -539,19 +554,16 @@ export const DefaultDnsRule = (): IDNSRule => ({
   type: RuleType.RuleSet,
   payload: '',
   action: RuleAction.Route,
-  server: '',
   invert: false,
+  // route
+  server: '',
+  strategy: Strategy.Default,
+  // route/route-options
+  disable_cache: false,
+  client_subnet: '',
 })
 
 export const DefaultDnsRules = (): IDNSRule[] => [
-  {
-    id: sampleID(),
-    type: RuleType.Outbound,
-    payload: 'any',
-    action: RuleAction.Route,
-    server: DefaultDnsServersIds.LocalDns,
-    invert: false,
-  },
   {
     id: sampleID(),
     type: RuleType.ClashMode,
@@ -559,6 +571,9 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
     invert: false,
+    strategy: Strategy.Default,
+    disable_cache: false,
+    client_subnet: '',
   },
   {
     id: sampleID(),
@@ -567,6 +582,9 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,
     invert: false,
+    strategy: Strategy.Default,
+    disable_cache: false,
+    client_subnet: '',
   },
   {
     id: sampleID(),
@@ -575,6 +593,9 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
     invert: false,
+    strategy: Strategy.Default,
+    disable_cache: false,
+    client_subnet: '',
   },
   {
     id: sampleID(),
@@ -583,17 +604,15 @@ export const DefaultDnsRules = (): IDNSRule[] => [
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,
     invert: false,
+    strategy: Strategy.Default,
+    disable_cache: false,
+    client_subnet: '',
   },
 ]
 
 export const DefaultDns = (): IDNS => ({
   servers: DefaultDnsServers(),
   rules: DefaultDnsRules(),
-  fakeip: {
-    enabled: false,
-    inet4_range: '198.18.0.0/15',
-    inet6_range: 'fc00::/18',
-  },
   disable_cache: false,
   disable_expire: false,
   independent_cache: false,

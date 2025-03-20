@@ -17,15 +17,14 @@ export const restoreProfile = (config: Recordable) => {
       find_process: false,
       default_interface: '',
       final: '',
+      default_domain_resolver: {
+        server: '',
+        client_subnet: '',
+      },
     },
     dns: {
       servers: [],
       rules: [],
-      fakeip: {
-        enabled: false,
-        inet4_range: '198.18.0.0/15',
-        inet6_range: 'fc00::/18',
-      },
       disable_cache: false,
       disable_expire: false,
       independent_cache: false,
@@ -133,23 +132,14 @@ export const restoreProfile = (config: Recordable) => {
     } else if (field === 'route') {
     } else if (field === 'dns') {
       profile.dns = {
-        fakeip: value.fakeip,
         disable_cache: value.disable_cache ?? false,
         disable_expire: value.disable_expire ?? false,
         independent_cache: value.independent_cache ?? false,
         final: DnsServersIds[value.final] || Strategy.Default,
         strategy: value.strategy || Strategy.Default,
         client_subnet: value.client_subnet || '',
-        servers: value.servers.map((server: any) => {
-          return {
-            id: DnsServersIds[server.tag],
-            tag: server.tag,
-            address: server.address,
-            address_resolver: DnsServersIds[server.address_resolver] || '',
-            detour: OutboundsIds[server.detour] || '',
-            strategy: server.strategy || Strategy.Default,
-            client_subnet: server.client_subnet || '',
-          }
+        servers: value.servers.map(() => {
+          return {} as IDNSServer
         }),
         rules: value.rules.map((rule: any) => {
           const extra: Recordable = {}
