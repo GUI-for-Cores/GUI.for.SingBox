@@ -79,7 +79,7 @@ const generateInbounds = (inbounds: IInbound[]) => {
         type: inbound.type,
         tag: inbound.tag,
         ...inbound.tun!,
-        route_address: inbound.tun!.route_address.length ? inbound.tun!.route_address : undefined,
+        route_address: inbound.tun!.route_address?.length ? inbound.tun!.route_address : undefined,
       }
     }
   })
