@@ -144,12 +144,12 @@ func (a *App) KillProcess(pid int) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	err = KillProcessImpl(process)
+	err = SendExitSignal(process)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		log.Printf("SendExitSignal Err: %s", err.Error())
 	}
 
-	err = waitForProcessExitWithTimeout(process, 15)
+	err = waitForProcessExitWithTimeout(process, 10)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}

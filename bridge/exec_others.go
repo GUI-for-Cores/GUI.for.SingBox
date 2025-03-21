@@ -11,6 +11,6 @@ import (
 func HideExecWindow(cmd *exec.Cmd) {
 }
 
-func KillProcessImpl(process *os.Process) error {
+func SendExitSignal(process *os.Process) error {
 	return process.Signal(syscall.SIGINT)
 }

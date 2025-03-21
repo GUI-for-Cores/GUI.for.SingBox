@@ -17,48 +17,47 @@ func HideExecWindow(cmd *exec.Cmd) {
 	}
 }
 
-// https://github.com/UIforFreedom/UIF/blob/master/uifd/uif/process_windows.go#L54
-func KillProcessImpl(p *os.Process) error {
-	dll, err := windows.LoadDLL("kernel32.dll")
+func SendExitSignal(p *os.Process) error {
+	kernel32DLL, err := windows.LoadDLL("kernel32.dll")
 	if err != nil {
 		return err
 	}
-	defer dll.Release()
+	defer kernel32DLL.Release()
 
-	freeConsoleProc, err := dll.FindProc("FreeConsole")
-	if err != nil {
-		return err
-	}
-
-	r, _, err := freeConsoleProc.Call()
-	if r == 0 {
-		return err
+	freeConsoleProc, err := kernel32DLL.FindProc("FreeConsole")
+	if err == nil {
+		if result, _, err := freeConsoleProc.Call(); result == 0 {
+			if err != windows.ERROR_INVALID_HANDLE {
+				return err
+			}
+		}
 	}
 
-	f, err := dll.FindProc("AttachConsole")
+	attachConsoleProc, err := kernel32DLL.FindProc("AttachConsole")
 	if err != nil {
 		return err
 	}
-	r1, _, err := f.Call(uintptr(p.Pid))
-	if r1 == 0 && err != syscall.ERROR_ACCESS_DENIED {
+	if result, _, err := attachConsoleProc.Call(uintptr(p.Pid)); result == 0 {
+		if err != windows.ERROR_ACCESS_DENIED {
+			return err
+		}
+	}
+
+	setConsoleCtrlHandlerProc, err := kernel32DLL.FindProc("SetConsoleCtrlHandler")
+	if err != nil {
+		return err
+	}
+	if result, _, err := setConsoleCtrlHandlerProc.Call(0, 1); result == 0 {
 		return err
 	}
 
-	f, err = dll.FindProc("SetConsoleCtrlHandler")
+	generateConsoleCtrlEventProc, err := kernel32DLL.FindProc("GenerateConsoleCtrlEvent")
 	if err != nil {
 		return err
 	}
-	r1, _, err = f.Call(0, 1)
-	if r1 == 0 {
+	if result, _, err := generateConsoleCtrlEventProc.Call(windows.CTRL_BREAK_EVENT, uintptr(p.Pid)); result == 0 {
 		return err
 	}
-	f, err = dll.FindProc("GenerateConsoleCtrlEvent")
-	if err != nil {
-		return err
-	}
-	r1, _, err = f.Call(windows.CTRL_BREAK_EVENT, uintptr(p.Pid))
-	if r1 == 0 {
-		return err
-	}
+
 	return nil
 }

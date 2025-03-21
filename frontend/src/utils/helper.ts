@@ -482,7 +482,7 @@ export const exitApp = async () => {
     timedout = true
     canceled = !(await confirm('Tips', 'titlebar.timeout').catch(() => destroy()))
     !canceled && ExitApp()
-  }, 5_000)
+  }, 10_000)
 
   try {
     await pluginsStore.onShutdownTrigger()
