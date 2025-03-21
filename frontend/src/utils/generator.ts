@@ -28,7 +28,7 @@ const _generateRule = (rule: IRule | IDNSRule, rule_set: IRuleSet[], inbounds: I
     extra[rule.type] = rule.payload.split(',').map((id) => getRuleset(id))
   } else if (rule.type === RuleType.Inbound) {
     extra[rule.type] = getInbound(rule.payload)
-  } else if (rule.type === RuleType.IpIsPrivate) {
+  } else if ([RuleType.IpIsPrivate, RuleType.IpAcceptAny].includes(rule.type as any)) {
     extra[rule.type] = rule.payload === 'true'
   } else if (rule.type === RuleType.ClashMode) {
     extra[rule.type] = rule.payload
