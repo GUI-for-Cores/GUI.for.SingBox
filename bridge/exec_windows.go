@@ -25,6 +25,16 @@ func KillProcessImpl(p *os.Process) error {
 	}
 	defer dll.Release()
 
+	freeConsoleProc, err := dll.FindProc("FreeConsole")
+	if err != nil {
+		return err
+	}
+
+	r, _, err := freeConsoleProc.Call()
+	if r == 0 {
+		return err
+	}
+
 	f, err := dll.FindProc("AttachConsole")
 	if err != nil {
 		return err
