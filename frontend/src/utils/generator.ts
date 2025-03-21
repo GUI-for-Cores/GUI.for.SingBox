@@ -332,6 +332,8 @@ export const generateDnsServerURL = (dnsServer: IDNSServer) => {
       'fake-ip://' +
       (dnsServer.inet4_range ? dnsServer.inet4_range : '') +
       (dnsServer.inet6_range ? (dnsServer.inet4_range ? ',' : '') + dnsServer.inet6_range : '')
+  } else if (type === DnsServer.Hosts) {
+    address = 'hosts'
   } else if (type === DnsServer.Local) {
     address = 'local'
   } else {
@@ -363,7 +365,7 @@ const _adaptToStableBranch = (config: Recordable) => {
       detour: server.detour,
     }
   })
-  console.log(config)
+  config.dns.rules = config.dns.rules.filter((rule: Recordable) => rule.ip_accept_any === undefined)
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {
