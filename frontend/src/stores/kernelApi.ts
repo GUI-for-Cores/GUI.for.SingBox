@@ -211,12 +211,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     const profile = _profile || profilesStore.getProfileById(profileID)
     if (!profile) throw 'Choose a profile first'
 
-    await stopKernel()
-    await generateConfigFile(profile)
-
     if (!_profile) {
       runtimeProfile = undefined
     }
+
+    await stopKernel()
 
     const fileName = await getKernelFileName(branch === 'alpha')
     const kernelFilePath = CoreWorkingDirectory + '/' + fileName
@@ -250,6 +249,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
 
     try {
+      await generateConfigFile(profile)
       const pid = await ExecBackground(
         kernelFilePath,
         ['run', '--disable-color', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
@@ -261,9 +261,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           stopOutputKeyword: CoreStopOutputKeyword,
         },
       )
-    } catch (error) {
+    } finally {
       loading.value = false
-      throw error
     }
   }
 

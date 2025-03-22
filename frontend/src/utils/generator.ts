@@ -4,6 +4,7 @@ import { deepAssign, deepClone } from './others'
 import {
   DnsServer,
   Inbound,
+  LogLevel,
   Outbound,
   RuleAction,
   RulesetType,
@@ -421,7 +422,7 @@ export const generateConfigFile = async (profile: IProfile) => {
   const config = await generateConfig(profile)
 
   config.log.disabled = false
-  config.log.level = 'debug'
+  config.log.level = LogLevel.Info
   config.log.output = ''
 
   await Writefile(CoreConfigFilePath, JSON.stringify(config, null, 2))
