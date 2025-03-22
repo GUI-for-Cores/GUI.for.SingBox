@@ -109,7 +109,11 @@ export enum Sniffer {
   Http = 'http',
   Tls = 'tls',
   Quic = 'quic',
+  Stun = 'stun',
   Dns = 'dns',
+  Bittorrent = 'bittorrent',
+  Dtls = 'dtls',
   Ssh = 'ssh',
   Rdp = 'rdp',
+  Ntp = 'ntp',
 }

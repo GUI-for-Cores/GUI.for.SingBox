@@ -234,9 +234,13 @@ export const RuleSnifferOptions = [
   { label: 'kernel.route.rules.sniffer.http', value: Sniffer.Http },
   { label: 'kernel.route.rules.sniffer.tls', value: Sniffer.Tls },
   { label: 'kernel.route.rules.sniffer.quic', value: Sniffer.Quic },
+  { label: 'kernel.route.rules.sniffer.stun', value: Sniffer.Stun },
   { label: 'kernel.route.rules.sniffer.dns', value: Sniffer.Dns },
+  { label: 'kernel.route.rules.sniffer.bittorrent', value: Sniffer.Bittorrent },
+  { label: 'kernel.route.rules.sniffer.dtls', value: Sniffer.Dtls },
   { label: 'kernel.route.rules.sniffer.ssh', value: Sniffer.Ssh },
   { label: 'kernel.route.rules.sniffer.rdp', value: Sniffer.Rdp },
+  { label: 'kernel.route.rules.sniffer.ntp', value: Sniffer.Ntp },
 ]
 
 export const EmptyRuleSet = {
