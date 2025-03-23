@@ -3,6 +3,7 @@ import { watch, onUnmounted, onMounted, useTemplateRef } from 'vue'
 import { EditorView, basicSetup } from 'codemirror'
 import { keymap, placeholder as Placeholder } from '@codemirror/view'
 import { linter } from '@codemirror/lint'
+import { MergeView } from '@codemirror/merge'
 import { Compartment } from '@codemirror/state'
 import { indentWithTab } from '@codemirror/commands'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -24,6 +25,7 @@ import { getCompletions } from '@/utils/completion'
 interface Props {
   editable?: boolean
   lang?: 'json' | 'javascript' | 'yaml'
+  mode?: 'editor' | 'diff'
   placeholder?: string
   plugin?: Record<string, any>
 }
@@ -32,10 +34,12 @@ const model = defineModel<string>({ default: '' })
 const emit = defineEmits(['change'])
 const props = withDefaults(defineProps<Props>(), {
   lang: 'json',
+  mode: 'editor',
   placeholder: '',
 })
 
 let editorView: EditorView
+let mergeView: MergeView
 const themeCompartment = new Compartment()
 const domRef = useTemplateRef('domRef')
 const { message } = useMessage()
@@ -81,20 +85,24 @@ const formatDoc = async (view: EditorView) => {
 watch(
   () => appSettings.themeMode,
   (theme) => {
-    editorView.dispatch({
-      effects: themeCompartment.reconfigure(
-        theme === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
-      ),
+    const views = editorView ? [editorView] : [mergeView.a, mergeView.b]
+    views.forEach((view) => {
+      view.dispatch({
+        effects: themeCompartment.reconfigure(
+          theme === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
+        ),
+      })
     })
   },
 )
 
 watch(model, (content) => {
-  if (editorView && content != editorView.state.doc.toString()) {
-    editorView.dispatch({
+  const view = editorView || mergeView?.b
+  if (view && content != view.state.doc.toString()) {
+    view.dispatch({
       changes: {
         from: 0,
-        to: editorView.state.doc.length,
+        to: view.state.doc.length,
         insert: content,
       },
     })
@@ -102,53 +110,67 @@ watch(model, (content) => {
 })
 
 onMounted(() => setTimeout(() => initEditor(), 100))
-onUnmounted(() => editorView.destroy())
+onUnmounted(() => (editorView || mergeView).destroy())
 
 const initEditor = () => {
   domRef.value!.innerHTML = ''
 
-  editorView = new EditorView({
-    doc: model.value,
-    parent: domRef.value!,
-    extensions: [
-      basicSetup,
-      // keymap
-      keymap.of([
-        indentWithTab,
-        {
-          key: 'Shift-Alt-f',
-          run: function (v: EditorView) {
-            formatDoc(v)
-            return true
-          },
+  const extensions = [
+    basicSetup,
+    // keymap
+    keymap.of([
+      indentWithTab,
+      {
+        key: 'Shift-Alt-f',
+        run: function (v: EditorView) {
+          formatDoc(v)
+          return true
         },
-      ]),
-      // code wrap
-      EditorView.lineWrapping,
-      // editable
-      EditorView.editable.of(props.editable),
-      // placeholder
-      Placeholder(props.placeholder),
-      // theme
-      themeCompartment.of(
-        appSettings.themeMode === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
-      ),
-      ...(props.lang === 'javascript'
-        ? [autocompletion({ override: getCompletions(props.plugin) })]
-        : []),
-      // lint
-      ...(props.lang === 'json' ? [linter(jsonParseLinter())] : []),
-      // lang
-      ...(['javascript', 'json', 'yaml'].includes(props.lang)
-        ? [{ javascript, json, yaml }[props.lang]()]
-        : []),
-      EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-          onChange(update.state.doc.toString())
-        }
-      }),
-    ],
-  })
+      },
+    ]),
+    // code wrap
+    EditorView.lineWrapping,
+    // placeholder
+    Placeholder(props.placeholder),
+    // theme
+    themeCompartment.of(
+      appSettings.themeMode === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
+    ),
+    ...(props.lang === 'javascript'
+      ? [autocompletion({ override: getCompletions(props.plugin) })]
+      : []),
+    // lint
+    ...(props.lang === 'json' ? [linter(jsonParseLinter())] : []),
+    // lang
+    ...(['javascript', 'json', 'yaml'].includes(props.lang)
+      ? [{ javascript, json, yaml }[props.lang]()]
+      : []),
+    EditorView.updateListener.of((update) => {
+      if (update.docChanged) {
+        onChange(update.state.doc.toString())
+      }
+    }),
+  ]
+
+  if (props.mode === 'editor') {
+    editorView = new EditorView({
+      doc: model.value,
+      parent: domRef.value!,
+      extensions: [...extensions, EditorView.editable.of(props.editable)],
+    })
+  } else {
+    mergeView = new MergeView({
+      parent: domRef.value!,
+      a: {
+        doc: model.value,
+        extensions: [...extensions, EditorView.editable.of(false)],
+      },
+      b: {
+        doc: model.value,
+        extensions: [...extensions, EditorView.editable.of(props.editable)],
+      },
+    })
+  }
 }
 </script>
 
