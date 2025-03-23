@@ -21,7 +21,7 @@ export const useModal = (options: Partial<Props>) => {
   const api = {
     open: () => (open.value = true),
     close: () => (open.value = false),
-    setProps(options: Partial<Props>) {
+    setProps(options: Partial<Props> & Recordable) {
       props.value = options
       return this
     },

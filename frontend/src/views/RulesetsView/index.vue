@@ -1,28 +1,20 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { useMessage } from '@/hooks'
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
 import { debounce, formatRelativeTime, ignoredError, formatDate } from '@/utils'
-import { getProvidersRules, updateProvidersRules } from '@/api/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { View } from '@/enums/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
 import { type RuleSetType, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
 
+import { useModal } from '@/components/Modal'
 import RulesetForm from './components/RulesetForm.vue'
 import RulesetView from './components/RulesetView.vue'
 import RulesetHub from './components/RulesetHub.vue'
-
-const showRulesetForm = ref(false)
-const showRulesetList = ref(false)
-const showRulesetHub = ref(false)
-const rulesetTitle = ref('')
-const rulesetFormID = ref()
-const rulesetFormIsUpdate = ref(false)
-const subFormTitle = computed(() => (rulesetFormIsUpdate.value ? 'common.edit' : 'common.add'))
 
 const sourceMenuList: Menu[] = [
   {
@@ -54,23 +46,40 @@ const binaryMenuList: Menu[] = [
 
 const { t } = useI18n()
 const { message } = useMessage()
+const [Modal, modalApi] = useModal({})
 const envStore = useEnvStore()
 const rulesetsStore = useRulesetsStore()
 const appSettingsStore = useAppSettingsStore()
 
 const handleImportRuleset = async () => {
-  showRulesetHub.value = true
+  modalApi
+    .setProps({
+      title: 'rulesets.hub',
+      cancelText: 'common.close',
+      height: '90',
+      width: '90',
+      submit: false,
+      maskClosable: true,
+    })
+    .setComponent(h(RulesetHub))
+    .open()
 }
 
-const handleAddRuleset = async () => {
-  rulesetFormIsUpdate.value = false
-  showRulesetForm.value = true
+const handleShowRulesetForm = async (id?: string, isUpdate = false) => {
+  modalApi
+    .setProps({
+      title: isUpdate ? 'common.edit' : 'common.add',
+      maxHeight: '90',
+      minWidth: '70',
+      footer: false,
+    })
+    .setComponent(h(RulesetForm, { id, isUpdate }))
+    .open()
 }
 
 const handleUpdateRulesets = async () => {
   try {
     await rulesetsStore.updateRulesets()
-    await _updateAllProvidersRules()
     message.success('common.success')
   } catch (error: any) {
     console.error('updateRulesets: ', error)
@@ -78,25 +87,21 @@ const handleUpdateRulesets = async () => {
   }
 }
 
-const handleEditRuleset = (r: RuleSetType) => {
-  rulesetFormIsUpdate.value = true
-  rulesetFormID.value = r.id
-  showRulesetForm.value = true
-}
-
 const handleEditRulesetList = (id: string) => {
-  const r = rulesetsStore.getRulesetById(id)
-  if (r) {
-    rulesetFormID.value = r.id
-    rulesetTitle.value = r.tag
-    showRulesetList.value = true
-  }
+  modalApi
+    .setProps({
+      title: rulesetsStore.getRulesetById(id)?.tag,
+      footer: false,
+      height: '90',
+      width: '90',
+    })
+    .setComponent(h(RulesetView, { id }))
+    .open()
 }
 
 const handleUpdateRuleset = async (r: RuleSetType) => {
   try {
     await rulesetsStore.updateRuleset(r.id)
-    await _updateProvidersRules(r.tag)
   } catch (error: any) {
     console.error('updateRuleset: ', error)
     message.error(error)
@@ -125,39 +130,10 @@ const handleClearRuleset = async (id: string) => {
 
   try {
     await Writefile(r.path, JSON.stringify(EmptyRuleSet, null, 2))
-    await _updateProvidersRules(r.tag)
     rulesetsStore.editRuleset(r.id, r)
   } catch (error: any) {
     message.error(error)
     console.error(error)
-  }
-}
-
-const onEditRuelsetListEnd = async () => {
-  try {
-    await _updateProvidersRules(rulesetTitle.value)
-  } catch (error: any) {
-    message.error(error)
-    console.error(error)
-  }
-}
-
-const _updateProvidersRules = async (ruleset: string) => {
-  if (appSettingsStore.app.kernel.running) {
-    const { providers } = await getProvidersRules()
-    if (providers[ruleset]) {
-      await updateProvidersRules(ruleset)
-    }
-  }
-}
-
-const _updateAllProvidersRules = async () => {
-  if (appSettingsStore.app.kernel.running) {
-    const { providers } = await getProvidersRules()
-    const rulesets = Object.keys(providers)
-    for (let i = 0; i < rulesets.length; i++) {
-      await updateProvidersRules(rulesets[i])
-    }
   }
 }
 
@@ -179,7 +155,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       <template #description>
         <I18nT keypath="rulesets.empty" tag="p" scope="global">
           <template #action>
-            <Button @click="handleAddRuleset" type="link">{{ t('common.add') }}</Button>
+            <Button @click="handleShowRulesetForm()" type="link">{{ t('common.add') }}</Button>
           </template>
           <template #import>
             <Button @click="handleImportRuleset" type="link">{{ t('rulesets.hub') }}</Button>
@@ -207,7 +183,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     >
       {{ t('common.updateAll') }}
     </Button>
-    <Button @click="handleAddRuleset" type="primary">
+    <Button @click="handleShowRulesetForm()" type="primary">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -246,7 +222,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
             <Button type="link" size="small" @click="handleDisableRuleset(r)">
               {{ r.disabled ? t('common.enable') : t('common.disable') }}
             </Button>
-            <Button type="link" size="small" @click="handleEditRuleset(r)">
+            <Button type="link" size="small" @click="handleShowRulesetForm(r.id, true)">
               {{ t('common.edit') }}
             </Button>
             <Button type="link" size="small" @click="handleDeleteRuleset(r)">
@@ -269,7 +245,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
         <Button type="link" size="small" @click="handleDisableRuleset(r)">
           {{ r.disabled ? t('common.enable') : t('common.disable') }}
         </Button>
-        <Button type="link" size="small" @click="handleEditRuleset(r)">
+        <Button type="link" size="small" @click="handleShowRulesetForm(r.id, true)">
           {{ t('common.edit') }}
         </Button>
         <Button type="link" size="small" @click="handleDeleteRuleset(r)">
@@ -310,38 +286,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     </Card>
   </div>
 
-  <Modal
-    v-model:open="showRulesetForm"
-    :title="subFormTitle"
-    max-height="90"
-    min-width="70"
-    :footer="false"
-  >
-    <RulesetForm :is-update="rulesetFormIsUpdate" :id="rulesetFormID" />
-  </Modal>
-
-  <Modal
-    v-model:open="showRulesetHub"
-    title="rulesets.hub"
-    :submit="false"
-    mask-closable
-    cancel-text="common.close"
-    height="90"
-    width="90"
-  >
-    <RulesetHub />
-  </Modal>
-
-  <Modal
-    v-model:open="showRulesetList"
-    :title="rulesetTitle"
-    :footer="false"
-    @ok="onEditRuelsetListEnd"
-    height="90"
-    width="90"
-  >
-    <RulesetView :id="rulesetFormID" />
-  </Modal>
+  <Modal />
 </template>
 
 <style lang="less" scoped></style>

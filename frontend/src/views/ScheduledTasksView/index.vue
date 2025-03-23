@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { View } from '@/enums/app'
-import { useMessage, useBool } from '@/hooks'
+import { useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
 import { debounce, formatRelativeTime, formatDate } from '@/utils'
 import { type ScheduledTaskType, useAppSettingsStore, useScheduledTasksStore } from '@/stores'
 
+import { useModal } from '@/components/Modal'
 import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
 import ScheduledTasksLogs from './components/ScheduledTasksLogs.vue'
-
-const showTaskForm = ref(false)
-const taskFormTaskID = ref()
-const taskFormIsUpdate = ref(false)
-const taskFormTitle = computed(() => (taskFormIsUpdate.value ? 'common.edit' : 'common.add'))
 
 const menuList: Menu[] = [
   {
@@ -26,28 +22,43 @@ const menuList: Menu[] = [
   {
     label: 'scheduledtasks.log',
     handler: (id: string) => {
-      taskFormTaskID.value = id
-      showLogs.value = true
+      handleShowTaskLogs(id)
     },
   },
 ]
 
-const [showLogs, toggleLogs] = useBool(false)
-
 const { t } = useI18n()
 const { message } = useMessage()
+const [Modal, modalApi] = useModal({})
 const scheduledTasksStore = useScheduledTasksStore()
 const appSettingsStore = useAppSettingsStore()
 
-const handleAddTask = async () => {
-  taskFormIsUpdate.value = false
-  showTaskForm.value = true
+const handleShowTaskLogs = (id?: string) => {
+  modalApi
+    .setProps({
+      title: 'scheduledtasks.logs',
+      cancelText: 'common.close',
+      maskClosable: true,
+      submit: false,
+      width: '90',
+      height: '90',
+    })
+    .setComponent(h(ScheduledTasksLogs, { id }))
+    .open()
 }
 
-const handleEditTask = (s: ScheduledTaskType) => {
-  taskFormIsUpdate.value = true
-  taskFormTaskID.value = s.id
-  showTaskForm.value = true
+const handleShowTaskForm = (id?: string, isUpdate = false) => {
+  modalApi
+    .setProps({
+      title: isUpdate ? 'common.edit' : 'common.add',
+      maxHeight: '90',
+      minWidth: '70',
+      maxWidth: '90',
+      submit: false,
+      footer: false,
+    })
+    .setComponent(h(ScheduledTaskForm, { id, isUpdate }))
+    .open()
 }
 
 const handleDeleteTask = async (s: ScheduledTaskType) => {
@@ -64,11 +75,6 @@ const handleDisableTask = async (s: ScheduledTaskType) => {
   scheduledTasksStore.editScheduledTask(s.id, s)
 }
 
-const handleViewLogs = () => {
-  taskFormTaskID.value = ''
-  toggleLogs()
-}
-
 const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
 </script>
 
@@ -78,7 +84,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       <template #description>
         <I18nT keypath="scheduledtasks.empty" tag="p" scope="global">
           <template #action>
-            <Button @click="handleAddTask" type="link">{{ t('common.add') }}</Button>
+            <Button @click="handleShowTaskForm()" type="link">{{ t('common.add') }}</Button>
           </template>
         </I18nT>
       </template>
@@ -93,10 +99,10 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
         { label: 'common.list', value: View.List },
       ]"
     />
-    <Button @click="handleViewLogs" type="text" class="ml-auto">
+    <Button @click="handleShowTaskLogs()" type="text" class="ml-auto">
       {{ t('scheduledtasks.logs') }}
     </Button>
-    <Button @click="handleAddTask" type="primary">
+    <Button @click="handleShowTaskForm()" type="primary">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -123,7 +129,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
             <Button type="link" size="small" @click="handleDisableTask(s)">
               {{ s.disabled ? t('common.enable') : t('common.disable') }}
             </Button>
-            <Button type="link" size="small" @click="handleEditTask(s)">
+            <Button type="link" size="small" @click="handleShowTaskForm(s.id, true)">
               {{ t('common.edit') }}
             </Button>
             <Button type="link" size="small" @click="handleDeleteTask(s)">
@@ -137,7 +143,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
         <Button type="link" size="small" @click="handleDisableTask(s)">
           {{ s.disabled ? t('common.enable') : t('common.disable') }}
         </Button>
-        <Button type="link" size="small" @click="handleEditTask(s)">
+        <Button type="link" size="small" @click="handleShowTaskForm(s.id, true)">
           {{ t('common.edit') }}
         </Button>
         <Button type="link" size="small" @click="handleDeleteTask(s)">
@@ -167,28 +173,5 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
     </Card>
   </div>
 
-  <Modal
-    v-model:open="showTaskForm"
-    :title="taskFormTitle"
-    max-height="90"
-    min-width="70"
-    max-width="90"
-    :footer="false"
-  >
-    <ScheduledTaskForm :is-update="taskFormIsUpdate" :id="taskFormTaskID" />
-  </Modal>
-
-  <Modal
-    v-model:open="showLogs"
-    :submit="false"
-    mask-closable
-    cancel-text="common.close"
-    title="scheduledtasks.logs"
-    width="90"
-    height="90"
-  >
-    <ScheduledTasksLogs :id="taskFormTaskID" />
-  </Modal>
+  <Modal />
 </template>
-
-<style lang="less" scoped></style>

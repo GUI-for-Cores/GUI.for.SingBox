@@ -485,7 +485,7 @@ export default {
     fetching: '获取中...',
     empty: '规则集列表为空，请先{action}或从{import}导入。',
     rulesetCount: '规则数量',
-    editRuleset: '编辑规则集文件',
+    editRuleset: '编辑规则',
     selectRuleType: '选择规则类型',
   },
   plugin: {
