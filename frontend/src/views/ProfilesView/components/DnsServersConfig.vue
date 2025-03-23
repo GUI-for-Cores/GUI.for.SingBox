@@ -212,11 +212,29 @@ const renderServer = (server: IDNSServer) => {
       <template v-else-if="fields.type === DnsServer.FakeIP">
         <div class="form-item">
           {{ t('kernel.dns.inet4_range') }}
-          <Input v-model="fields.inet4_range" placeholder="198.18.0.0/15" />
+          <Input v-model="fields.inet4_range" placeholder="198.18.0.0/15" clearable>
+            <template #extra>
+              <Button
+                @click="fields.inet4_range = '198.18.0.0/15'"
+                size="small"
+                type="text"
+                icon="reset"
+              />
+            </template>
+          </Input>
         </div>
         <div class="form-item">
           {{ t('kernel.dns.inet6_range') }}
-          <Input v-model="fields.inet6_range" placeholder="fc00::/18" />
+          <Input v-model="fields.inet6_range" placeholder="fc00::/18" clearable>
+            <template #extra>
+              <Button
+                @click="fields.inet6_range = 'fc00::/18'"
+                size="small"
+                type="text"
+                icon="reset"
+              />
+            </template>
+          </Input>
         </div>
       </template>
     </div>
