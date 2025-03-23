@@ -4,7 +4,7 @@ import { computed, provide } from 'vue'
 
 import { WindowToggleMaximise } from '@/bridge'
 
-interface Props {
+export interface Props {
   open: boolean
   title?: string
   footer?: boolean
@@ -24,8 +24,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   title: '',
   footer: true,
-  maxHeight: '',
-  maxWidth: '',
+  maxHeight: '90',
+  maxWidth: '90',
   minWidth: '60',
   minHeight: '',
   width: '',

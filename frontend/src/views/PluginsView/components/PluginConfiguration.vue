@@ -117,7 +117,7 @@ if (p) {
 .form {
   padding: 0 8px;
   overflow-y: auto;
-  max-height: 58vh;
+  max-height: 70vh;
   .name {
     font-size: 14px;
     padding: 8px 0;
