@@ -464,7 +464,7 @@ export const DefaultDnsServers = (): IDNSServer[] => [
   {
     id: DefaultDnsServersIds.LocalDns,
     tag: DefaultDnsServersIds.LocalDns,
-    detour: DefaultOutboundIds.Direct,
+    detour: '',
     type: DnsServer.Https,
     domain_resolver: DefaultDnsServersIds.LocalDnsResolver,
     server: '223.5.5.5',
@@ -479,7 +479,7 @@ export const DefaultDnsServers = (): IDNSServer[] => [
   {
     id: DefaultDnsServersIds.LocalDnsResolver,
     tag: DefaultDnsServersIds.LocalDnsResolver,
-    detour: DefaultOutboundIds.Direct,
+    detour: '',
     type: DnsServer.Udp,
     domain_resolver: '',
     server: '223.5.5.5',

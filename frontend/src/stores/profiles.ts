@@ -6,6 +6,7 @@ import { debounce, ignoredError, transformProfileV189To190, transformProfileV194
 import { Readfile, Writefile, Readdir, Movefile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAlert } from '@/hooks'
+import { Outbound } from '@/enums/kernel'
 
 export const useProfilesStore = defineStore('profiles', () => {
   const profiles = ref<IProfile[]>([])
@@ -63,6 +64,16 @@ export const useProfilesStore = defineStore('profiles', () => {
         needsDiskSync = true
         profiles.value[index] = transformProfileV194(profile)
       }
+      // Remove meaningless detour configurations
+      profile.dns.servers.forEach((server) => {
+        if (server.detour) {
+          const type = profile.outbounds.find((v) => v.id === server.detour)?.type
+          if (type === Outbound.Direct) {
+            needsDiskSync = true
+            server.detour = ''
+          }
+        }
+      })
     })
 
     if (needsDiskSync) {

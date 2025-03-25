@@ -172,7 +172,7 @@ const renderServer = (server: IDNSServer) => {
         </div>
         <div class="form-item">
           {{ t('kernel.dns.detour') }}
-          <Select v-model="fields.detour" :options="outboundOptions" />
+          <Select v-model="fields.detour" :options="outboundOptions" clearable />
         </div>
         <template v-if="isSupportServerAndPort">
           <div class="form-item">
