@@ -13,6 +13,7 @@ import { useModal } from '@/components/Modal'
 import PluginForm from './components/PluginForm.vue'
 import PluginView from './components/PluginView.vue'
 import PluginHub from './components/PluginHub.vue'
+import PluginChangelog from './components/PluginChangelog.vue'
 import PluginConfiguration from './components/PluginConfiguration.vue'
 
 const menuList: Menu[] = [
@@ -68,6 +69,13 @@ const handleEditPlugin = (id: string) => {
   modalApi
     .setProps({ title: 'common.edit', footer: false })
     .setComponent(h(PluginForm, { id, isUpdate: true }))
+    .open()
+}
+
+const handleViewChangelog = (id: string) => {
+  modalApi
+    .setProps({ title: 'Changelog', cancelText: 'common.close', submit: false, maskClosable: true })
+    .setComponent(h(PluginChangelog, { id }))
     .open()
 }
 
@@ -258,7 +266,13 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
     >
       <template #title-prefix>
         <Tag v-if="pluginsStore.isDeprecated(p)" color="red"> {{ t('plugins.deprecated') }} </Tag>
-        <Tag v-if="pluginsStore.hasNewPluginVersion(p)" size="small" color="cyan">
+        <Tag
+          v-if="pluginsStore.hasNewPluginVersion(p)"
+          @click="handleViewChangelog(p.id)"
+          size="small"
+          color="cyan"
+          class="cursor-pointer"
+        >
           {{ t('plugins.newVersion') }}
         </Tag>
         <div
