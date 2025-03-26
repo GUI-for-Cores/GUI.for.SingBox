@@ -228,7 +228,7 @@ const generateDns = (
   inbounds: IInbound[],
   outbounds: IOutbound[],
 ) => {
-  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)
+  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
   const extra: Recordable = {}
   if (dns.strategy !== Strategy.Default) {
@@ -252,12 +252,7 @@ const generateDns = (
           DnsServer.Dhcp,
         ].includes(server.type as any)
       ) {
-        if (server.detour) {
-          const outbound = getOutbound(server.detour)
-          if (outbound?.type !== Outbound.Direct) {
-            extra.detour = outbound?.tag
-          }
-        }
+        server.detour && (extra.detour = getOutbound(server.detour))
         server.domain_resolver && (extra.domain_resolver = getDnsServer(server.domain_resolver))
         if (
           [
