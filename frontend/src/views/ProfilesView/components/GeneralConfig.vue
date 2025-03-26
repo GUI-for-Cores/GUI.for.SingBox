@@ -3,7 +3,6 @@ import { useI18n } from 'vue-i18n'
 
 import { useBool } from '@/hooks'
 import { ModeOptions, LogLevelOptions } from '@/constant/kernel'
-import { DefaultLog, DefaultExperimental } from '@/constant/profile'
 
 interface Props {
   outboundOptions: { label: string; value: string }[]
@@ -12,10 +11,7 @@ interface Props {
 defineProps<Props>()
 
 const model = defineModel<{ log: IProfile['log']; experimental: IProfile['experimental'] }>({
-  default: {
-    log: DefaultLog(),
-    experimental: DefaultExperimental(),
-  },
+  required: true,
 })
 
 const { t } = useI18n()

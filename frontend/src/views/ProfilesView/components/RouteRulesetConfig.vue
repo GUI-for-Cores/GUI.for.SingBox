@@ -16,7 +16,7 @@ interface Props {
 
 defineProps<Props>()
 
-const model = defineModel<IRuleSet[]>({ default: DefaultRouteRuleset() })
+const model = defineModel<IRuleSet[]>({ required: true })
 
 let rulesetId = 0
 const fields = ref<IRuleSet>(DefaultRouteRuleset())

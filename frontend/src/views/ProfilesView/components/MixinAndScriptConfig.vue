@@ -2,16 +2,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { DefaultMixin, DefaultScript } from '@/constant/profile'
-
-const model = defineModel<{
-  mixin: IProfile['mixin']
-  script: IProfile['script']
-}>({
-  default: {
-    mixin: DefaultMixin(),
-    script: DefaultScript(),
-  },
+const model = defineModel<{ mixin: IProfile['mixin']; script: IProfile['script'] }>({
+  required: true,
 })
 
 const { t } = useI18n()
@@ -43,5 +35,3 @@ const MixinPriorityOptions = [
     </template>
   </Tabs>
 </template>
-
-<style lang="less" scoped></style>

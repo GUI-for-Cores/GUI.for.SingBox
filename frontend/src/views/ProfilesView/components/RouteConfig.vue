@@ -2,7 +2,6 @@
 import { useI18n } from 'vue-i18n'
 import { ref, useTemplateRef } from 'vue'
 
-import { DefaultRoute } from '@/constant/profile'
 import RouteRulesConfig from './RouteRulesConfig.vue'
 import RouteRulesetConfig from './RouteRulesetConfig.vue'
 
@@ -14,9 +13,7 @@ interface Props {
 
 defineProps<Props>()
 
-const model = defineModel<IProfile['route']>({
-  default: DefaultRoute(),
-})
+const model = defineModel<IProfile['route']>({ required: true })
 
 const activeKey = ref('common')
 const rulesConfigRef = useTemplateRef('rulesConfigRef')

@@ -74,7 +74,14 @@ const handleEditPlugin = (id: string) => {
 
 const handleViewChangelog = (id: string) => {
   modalApi
-    .setProps({ title: 'Changelog', cancelText: 'common.close', submit: false, maskClosable: true })
+    .setProps({
+      title: 'Changelog',
+      cancelText: 'common.close',
+      width: '90',
+      height: '90',
+      submit: false,
+      maskClosable: true,
+    })
     .setComponent(h(PluginChangelog, { id }))
     .open()
 }

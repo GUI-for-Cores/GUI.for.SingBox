@@ -2,7 +2,7 @@
 import { ref, watch, useTemplateRef, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { APP_TITLE, sleep } from '@/utils'
+import { APP_TITLE } from '@/utils'
 import { useMessage } from '@/hooks'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore, useEnvStore } from '@/stores'
 
@@ -14,7 +14,6 @@ import LogsController from './components/LogsController.vue'
 import GroupsController from './components/GroupsController.vue'
 import CommonController from './components/CommonController.vue'
 
-const kernelLoading = ref(false)
 const showController = ref(false)
 const controllerRef = useTemplateRef('controllerRef')
 
@@ -28,19 +27,12 @@ const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 
 const handleStartKernel = async () => {
-  kernelLoading.value = true
-
   try {
     await kernelApiStore.startKernel()
   } catch (error: any) {
     console.error(error)
     message.error(error.message || error)
-    kernelLoading.value = false
   }
-
-  await sleep(4000)
-
-  kernelLoading.value = false
 }
 
 const handleRestartKernel = async () => {

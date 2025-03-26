@@ -7,16 +7,13 @@ import { Inbound } from '@/enums/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { TunStackOptions } from '@/constant/kernel'
 import {
-  DefaultInbounds,
   DefaultInboundMixed,
   DefaultInboundHttp,
   DefaultInboundSocks,
   DefaultInboundTun,
 } from '@/constant/profile'
 
-const model = defineModel<IProfile['inbounds']>({
-  default: DefaultInbounds(),
-})
+const model = defineModel<IProfile['inbounds']>({ required: true })
 
 const { t } = useI18n()
 const { picker } = usePicker()

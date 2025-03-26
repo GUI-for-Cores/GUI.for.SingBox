@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { deepClone, isValidJson } from '@/utils'
 import { useBool, useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
-import { DefaultDnsRule, DefaultDnsRules } from '@/constant/profile'
+import { DefaultDnsRule } from '@/constant/profile'
 import {
   RuleType,
   ClashMode,
@@ -30,7 +30,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const model = defineModel<IDNSRule[]>({ default: DefaultDnsRules() })
+const model = defineModel<IDNSRule[]>({ required: true })
 
 let ruleId = 0
 const fields = ref<IDNSRule>(DefaultDnsRule())

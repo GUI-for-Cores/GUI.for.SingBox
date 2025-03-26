@@ -23,7 +23,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const model = defineModel<IRule[]>({ default: DefaultRouteRule() })
+const model = defineModel<IRule[]>({ required: true })
 
 let ruleId = 0
 const fields = ref<IRule>(DefaultRouteRule())

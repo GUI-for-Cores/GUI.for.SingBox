@@ -307,5 +307,3 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 
   <Modal />
 </template>
-
-<style lang="less" scoped></style>

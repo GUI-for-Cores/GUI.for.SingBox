@@ -8,9 +8,9 @@ import { Outbound } from '@/enums/kernel'
 import { useSubscribesStore } from '@/stores'
 import { DraggableOptions } from '@/constant/app'
 import { OutboundOptions } from '@/constant/kernel'
-import { DefaultOutbound, DefaultOutbounds } from '@/constant/profile'
+import { DefaultOutbound } from '@/constant/profile'
 
-const model = defineModel<IProfile['outbounds']>({ default: DefaultOutbounds() })
+const model = defineModel<IProfile['outbounds']>({ required: true })
 
 let updateGroupId = 0
 const showEditModal = ref(false)

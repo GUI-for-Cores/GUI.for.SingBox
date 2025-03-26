@@ -288,5 +288,3 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
 
   <Modal />
 </template>
-
-<style lang="less" scoped></style>

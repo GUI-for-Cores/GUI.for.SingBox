@@ -2,7 +2,6 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref, useTemplateRef } from 'vue'
 
-import { DefaultDns } from '@/constant/profile'
 import { DomainStrategyOptions } from '@/constant/kernel'
 
 import DnsRulesConfig from './DnsRulesConfig.vue'
@@ -16,9 +15,7 @@ interface Props {
 
 defineProps<Props>()
 
-const model = defineModel<IDNS>({
-  default: DefaultDns(),
-})
+const model = defineModel<IDNS>({ required: true })
 
 const serversOptions = computed(() =>
   model.value.servers.map((v) => ({ label: v.tag, value: v.id })),

@@ -35,5 +35,3 @@ const appStore = useAppStore()
     </template>
   </Tabs>
 </template>
-
-<style lang="less" scoped></style>

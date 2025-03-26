@@ -6,7 +6,7 @@ import { useBool, useConfirm, useMessage } from '@/hooks'
 import { sampleID, deepClone, generateDnsServerURL } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
 import { DnsServerTypeOptions } from '@/constant/kernel'
-import { DefaultDnsServer, DefaultDnsServers } from '@/constant/profile'
+import { DefaultDnsServer } from '@/constant/profile'
 import { RuleAction, RuleType, Strategy } from '@/enums/kernel'
 import { DefaultFakeIPDnsRule } from '@/constant/profile'
 
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (e: 'addRule', rule: IDNSRule): void
 }>()
 
-const model = defineModel<IDNSServer[]>({ default: DefaultDnsServers() })
+const model = defineModel<IDNSServer[]>({ required: true })
 
 let serverId = 0
 const fields = ref<IDNSServer>(DefaultDnsServer())
