@@ -119,6 +119,8 @@ const handleSelectAll = () => {
 
 <style lang="less" scoped>
 .picker {
+  display: flex;
+  flex-direction: column;
   min-width: 340px;
   max-width: 60%;
   padding: 8px;
@@ -132,7 +134,7 @@ const handleSelectAll = () => {
   }
 
   .options {
-    max-height: 300px;
+    flex: 1;
     overflow: auto;
   }
   .item {
