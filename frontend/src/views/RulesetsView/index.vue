@@ -2,9 +2,8 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
-import { debounce, formatRelativeTime, ignoredError, formatDate } from '@/utils'
+import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
 import { View } from '@/enums/app'
 import { EmptyRuleSet } from '@/constant/kernel'
@@ -45,7 +44,6 @@ const binaryMenuList: Menu[] = [
 ]
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [Modal, modalApi] = useModal({})
 const envStore = useEnvStore()
 const rulesetsStore = useRulesetsStore()

@@ -2,8 +2,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage, useAlert } from '@/hooks'
-import { ignoredError } from '@/utils'
+import { ignoredError, message, alert } from '@/utils'
 import { useRulesetsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { RulesetFormat } from '@/enums/kernel'
@@ -20,8 +19,6 @@ const cacheFile = 'data/.cache/ruleset-list.json'
 const hubUrl = 'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing.json'
 
 const { t } = useI18n()
-const { alert } = useAlert()
-const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const keywords = ref('')

@@ -2,9 +2,8 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
 import { Readfile, Writefile } from '@/bridge'
-import { deepClone, ignoredError, omitArray, sampleID } from '@/utils'
+import { deepClone, ignoredError, message, omitArray, sampleID } from '@/utils'
 import { type SubscribeType, useSubscribesStore } from '@/stores'
 
 interface Props {
@@ -18,7 +17,6 @@ const proxiesText = ref('')
 const sub = ref(deepClone(props.sub))
 
 const { t } = useI18n()
-const { message } = useMessage()
 const subscribeStore = useSubscribesStore()
 
 const handleCancel = inject('cancel') as any

@@ -2,8 +2,7 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
-import { deepClone, sampleID } from '@/utils'
+import { deepClone, message, sampleID } from '@/utils'
 import { ValidateCron } from '@/bridge/scheduledTasks'
 import { ScheduledTaskOptions } from '@/constant/app'
 import { ScheduledTasksType } from '@/enums/app'
@@ -42,7 +41,6 @@ const task = ref<ScheduledTaskType>({
 })
 
 const { t } = useI18n()
-const { message } = useMessage()
 const scheduledTasksStore = useScheduledTasksStore()
 const subscribesStore = useSubscribesStore()
 const rulesetsStore = useRulesetsStore()

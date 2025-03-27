@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { ref, inject, computed, useTemplateRef, type Ref } from 'vue'
 
-import { useMessage, useAlert } from '@/hooks'
-import { deepClone, generateConfig, sampleID } from '@/utils'
+import { deepClone, generateConfig, message, sampleID, alert } from '@/utils'
 import * as Defaults from '@/constant/profile'
 import { WindowToggleMaximise } from '@/bridge'
 import { useProfilesStore } from '@/stores'
@@ -100,8 +99,6 @@ const mixinAndScriptConfig = computed({
 })
 
 const { t } = useI18n()
-const { alert } = useAlert()
-const { message } = useMessage()
 const profilesStore = useProfilesStore()
 
 const handleCancel = inject('cancel') as any

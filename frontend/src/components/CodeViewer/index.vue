@@ -16,8 +16,7 @@ import * as parserBabel from 'prettier/parser-babel'
 import * as parserYaml from 'prettier/parser-yaml'
 import estreePlugin from 'prettier/plugins/estree'
 
-import { useMessage } from '@/hooks'
-import { debounce } from '@/utils'
+import { debounce, message } from '@/utils'
 import { Theme } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
 import { getCompletions } from '@/utils/completion'
@@ -42,7 +41,6 @@ let editorView: EditorView
 let mergeView: MergeView
 const themeCompartment = new Compartment()
 const domRef = useTemplateRef('domRef')
-const { message } = useMessage()
 const appSettings = useAppSettingsStore()
 
 const onChange = debounce((content: string) => {

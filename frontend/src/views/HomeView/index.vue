@@ -2,8 +2,7 @@
 import { ref, watch, useTemplateRef, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { APP_TITLE } from '@/utils'
-import { useMessage } from '@/hooks'
+import { APP_TITLE, message } from '@/utils'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore, useEnvStore } from '@/stores'
 
 import { useModal } from '@/components/Modal'
@@ -18,7 +17,6 @@ const showController = ref(false)
 const controllerRef = useTemplateRef('controllerRef')
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [Modal, modalApi] = useModal({})
 
 const appSettingsStore = useAppSettingsStore()

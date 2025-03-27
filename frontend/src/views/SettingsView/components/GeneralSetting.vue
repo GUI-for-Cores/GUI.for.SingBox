@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
 import routes from '@/router/routes'
 import { CoreCacheFilePath } from '@/constant/kernel'
-import { APP_TITLE, APP_VERSION, getTaskSchXmlString } from '@/utils'
+import { APP_TITLE, APP_VERSION, getTaskSchXmlString, message } from '@/utils'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import { BrowserOpenURL, GetEnv, Writefile, Removefile, AbsolutePath } from '@/bridge'
 import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
@@ -22,7 +21,6 @@ const isAdmin = ref(false)
 const isTaskScheduled = ref(false)
 
 const { t } = useI18n()
-const { message } = useMessage()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()

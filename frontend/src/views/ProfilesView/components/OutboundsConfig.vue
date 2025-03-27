@@ -2,8 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone } from '@/utils'
-import { useMessage } from '@/hooks'
+import { deepClone, message } from '@/utils'
 import { Outbound } from '@/enums/kernel'
 import { useSubscribesStore } from '@/stores'
 import { DraggableOptions } from '@/constant/app'
@@ -34,7 +33,6 @@ const proxyGroup = ref([
 const fields = ref<IOutbound>(DefaultOutbound())
 
 const { t } = useI18n()
-const { message } = useMessage()
 const subscribesStore = useSubscribesStore()
 
 const handleAdd = () => {

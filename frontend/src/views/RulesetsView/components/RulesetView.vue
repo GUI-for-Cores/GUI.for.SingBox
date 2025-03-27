@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
-import { useMessage } from '@/hooks'
-import { deepClone, ignoredError, isValidJson } from '@/utils'
+import { deepClone, ignoredError, isValidJson, message } from '@/utils'
 import { Readfile, Writefile } from '@/bridge'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
 
@@ -22,7 +21,6 @@ const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
 
 const { t } = useI18n()
-const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleSave = async () => {

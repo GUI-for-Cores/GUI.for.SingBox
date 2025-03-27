@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 
-import { sampleID } from '@/utils'
-import { usePicker } from '@/hooks'
+import { picker, sampleID } from '@/utils'
 import { Inbound } from '@/enums/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { TunStackOptions } from '@/constant/kernel'
@@ -16,7 +15,6 @@ import {
 const model = defineModel<IProfile['inbounds']>({ required: true })
 
 const { t } = useI18n()
-const { picker } = usePicker()
 
 const handleDelete = (index: number) => {
   model.value.splice(index, 1)

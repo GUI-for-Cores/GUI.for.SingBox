@@ -2,8 +2,8 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useBool, useMessage } from '@/hooks'
-import { deepClone, sampleID, getUserAgent } from '@/utils'
+import { useBool } from '@/hooks'
+import { deepClone, sampleID, getUserAgent, message } from '@/utils'
 import { type SubscribeType, useSubscribesStore } from '@/stores'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 
@@ -43,7 +43,6 @@ const sub = ref<SubscribeType>({
 })
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
 

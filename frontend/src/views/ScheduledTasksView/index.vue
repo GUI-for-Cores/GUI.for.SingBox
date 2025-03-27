@@ -3,9 +3,8 @@ import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { View } from '@/enums/app'
-import { useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
-import { debounce, formatRelativeTime, formatDate } from '@/utils'
+import { debounce, formatRelativeTime, formatDate, message } from '@/utils'
 import { type ScheduledTaskType, useAppSettingsStore, useScheduledTasksStore } from '@/stores'
 
 import { useModal } from '@/components/Modal'
@@ -28,7 +27,6 @@ const menuList: Menu[] = [
 ]
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [Modal, modalApi] = useModal({})
 const scheduledTasksStore = useScheduledTasksStore()
 const appSettingsStore = useAppSettingsStore()

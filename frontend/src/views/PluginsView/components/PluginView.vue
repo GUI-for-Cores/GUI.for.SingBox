@@ -2,10 +2,9 @@
 import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
-import { useMessage } from '@/hooks'
 import { Readfile, Writefile } from '@/bridge'
 import { PluginTriggerEvent } from '@/enums/app'
-import { deepClone, ignoredError } from '@/utils'
+import { deepClone, ignoredError, message } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 
 interface Props {
@@ -20,7 +19,6 @@ const metadata = ref<Record<string, any>>()
 const code = ref('')
 
 const { t } = useI18n()
-const { message } = useMessage()
 const pluginsStore = usePluginsStore()
 
 const handleCancel = inject('cancel') as any

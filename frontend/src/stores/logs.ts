@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useMessage } from '@/hooks'
+
+import { message } from '@/utils'
 
 type TaskLogType = {
   name: string
@@ -12,7 +13,6 @@ type TaskLogType = {
 export const useLogsStore = defineStore('logs', () => {
   const kernelLogs = ref<string[]>([])
   const scheduledtasksLogs = ref<TaskLogType[]>([])
-  const { message } = useMessage()
 
   const recordKernelLog = (msg: string) => {
     msg.includes('FATAL') && message.error(msg)

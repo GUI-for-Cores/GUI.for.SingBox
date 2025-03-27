@@ -1,4 +1,4 @@
-import { ignoredError } from '@/utils'
+import { ignoredError, message, confirm } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import {
   type ProxyType,
@@ -8,7 +8,6 @@ import {
   usePluginsStore,
 } from '@/stores'
 import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
-import { useConfirm, useMessage } from '@/hooks'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -463,8 +462,6 @@ export const exitApp = async () => {
   const pluginsStore = usePluginsStore()
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
-  const { message } = useMessage()
-  const { confirm } = useConfirm()
 
   if (appSettings.app.kernel.running && appSettings.app.closeKernelOnExit) {
     await kernelApiStore.stopKernel()

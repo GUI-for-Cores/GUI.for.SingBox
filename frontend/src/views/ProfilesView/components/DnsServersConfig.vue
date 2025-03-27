@@ -2,8 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { computed, h, ref, type VNode } from 'vue'
 
-import { useBool, useConfirm, useMessage } from '@/hooks'
-import { sampleID, deepClone, generateDnsServerURL } from '@/utils'
+import { useBool } from '@/hooks'
+import { sampleID, deepClone, generateDnsServerURL, message, confirm } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
 import { DnsServerTypeOptions } from '@/constant/kernel'
 import { DefaultDnsServer } from '@/constant/profile'
@@ -59,8 +59,6 @@ const isSupportPath = computed(() =>
 )
 
 const { t } = useI18n()
-const { confirm } = useConfirm()
-const { message } = useMessage()
 const [showEditModal] = useBool(false)
 
 const handleAdd = () => {

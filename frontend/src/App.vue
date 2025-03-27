@@ -2,9 +2,8 @@
 import { ref } from 'vue'
 
 import * as Stores from '@/stores'
-import { exitApp, sampleID, sleep } from '@/utils'
+import { exitApp, sampleID, sleep, message } from '@/utils'
 import { EventsOn, WindowHide, IsStartup } from '@/bridge'
-import { useMessage, usePicker, useConfirm, usePrompt, useAlert } from '@/hooks'
 
 import AboutView from '@/views/AboutView.vue'
 import SplashView from '@/views/SplashView.vue'
@@ -22,18 +21,6 @@ const appSettings = Stores.useAppSettingsStore()
 const kernelApiStore = Stores.useKernelApiStore()
 const subscribesStore = Stores.useSubscribesStore()
 const scheduledTasksStore = Stores.useScheduledTasksStore()
-
-const { message } = useMessage()
-const { picker } = usePicker()
-const { confirm } = useConfirm()
-const { prompt } = usePrompt()
-const { alert } = useAlert()
-
-window.Plugins.message = message
-window.Plugins.picker = picker
-window.Plugins.confirm = confirm
-window.Plugins.prompt = prompt
-window.Plugins.alert = alert
 
 EventsOn('launchArgs', async (args: string[]) => {
   const url = new URL(args[0])

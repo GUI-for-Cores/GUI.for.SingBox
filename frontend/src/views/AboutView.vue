@@ -2,7 +2,6 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed } from 'vue'
 
-import { useMessage, useAlert } from '@/hooks'
 import { useEnvStore } from '@/stores'
 import {
   Download,
@@ -25,6 +24,8 @@ import {
   APP_VERSION_API,
   getGitHubApiAuthorization,
   ignoredError,
+  message,
+  alert,
 } from '@/utils'
 
 let downloadUrl = ''
@@ -36,8 +37,6 @@ const remoteVersion = ref(APP_VERSION)
 const needUpdate = computed(() => APP_VERSION !== remoteVersion.value)
 
 const { t } = useI18n()
-const { alert } = useAlert()
-const { message } = useMessage()
 const envStore = useEnvStore()
 
 const downloadApp = async () => {

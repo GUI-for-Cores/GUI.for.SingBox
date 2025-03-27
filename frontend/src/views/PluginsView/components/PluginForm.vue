@@ -2,8 +2,8 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useBool, useMessage } from '@/hooks'
-import { deepClone, sampleID } from '@/utils'
+import { useBool } from '@/hooks'
+import { deepClone, message, sampleID } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 import { PluginsTriggerOptions, DraggableOptions } from '@/constant/app'
 import { PluginTrigger } from '@/enums/app'
@@ -45,7 +45,6 @@ const plugin = ref<PluginType>({
 })
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [showMore, toggleShowMore] = useBool(false)
 const pluginsStore = usePluginsStore()
 

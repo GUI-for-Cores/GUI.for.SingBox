@@ -2,8 +2,7 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
-import { deepClone, sampleID } from '@/utils'
+import { deepClone, message, sampleID } from '@/utils'
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, type PluginConfiguration } from '@/stores'
 
@@ -20,7 +19,6 @@ const oldSettings = ref<Record<string, any>>({})
 const configuration = ref<PluginConfiguration[]>([])
 
 const { t } = useI18n()
-const { message } = useMessage()
 const pluginsStore = usePluginsStore()
 const appSettingsStore = useAppSettingsStore()
 

@@ -2,8 +2,7 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
-import { debounce } from '@/utils'
+import { debounce, message } from '@/utils'
 import { BrowserOpenURL } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
@@ -40,7 +39,6 @@ const menuList: Menu[] = [
 ]
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [Modal, modalApi] = useModal({})
 
 const envStore = useEnvStore()

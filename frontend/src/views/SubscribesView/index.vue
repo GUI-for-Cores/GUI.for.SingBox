@@ -3,10 +3,16 @@ import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { View } from '@/enums/app'
-import { useMessage } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
 import { BrowserOpenURL, ClipboardSetText, Removefile } from '@/bridge'
-import { formatBytes, formatRelativeTime, debounce, ignoredError, formatDate } from '@/utils'
+import {
+  formatBytes,
+  formatRelativeTime,
+  debounce,
+  ignoredError,
+  formatDate,
+  message,
+} from '@/utils'
 import {
   type SubscribeType,
   useSubscribesStore,
@@ -41,7 +47,6 @@ const menuList: Menu[] = [
 ]
 
 const { t } = useI18n()
-const { message } = useMessage()
 const [Modal, modalApi] = useModal({})
 const subscribeStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()

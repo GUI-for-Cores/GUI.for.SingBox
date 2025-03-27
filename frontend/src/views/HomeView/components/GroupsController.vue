@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onActivated } from 'vue'
 
-import { useMessage, usePrompt } from '@/hooks'
-import { ignoredError, sleep, handleUseProxy } from '@/utils'
+import { ignoredError, sleep, handleUseProxy, message, prompt } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { getGroupDelay, getProxyDelay } from '@/api/kernel'
 
@@ -14,8 +13,6 @@ const filterKeywordsMap = ref<Record<string, string>>({})
 const loading = ref(false)
 
 const { t } = useI18n()
-const { message } = useMessage()
-const { prompt } = usePrompt()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 

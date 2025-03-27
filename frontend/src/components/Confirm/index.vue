@@ -9,7 +9,7 @@ import Divider from '@/components/Divider/index.vue'
 import Tag from '@/components/Tag/index.vue'
 import Table from '@/components/Table/index.vue'
 
-export type Options = {
+export type ConfirmOptions = {
   type: 'text' | 'markdown'
   cancelText?: string
   okText?: string
@@ -18,7 +18,7 @@ export type Options = {
 interface Props {
   title: string
   message: string | Record<string, any>
-  options?: Options
+  options?: ConfirmOptions
   cancel?: boolean
 }
 

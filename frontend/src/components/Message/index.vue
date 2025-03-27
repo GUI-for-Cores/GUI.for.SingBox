@@ -3,10 +3,10 @@ import { computed } from 'vue'
 
 import i18n from '@/lang'
 
-export type IconType = 'info' | 'warn' | 'error' | 'success'
+export type MessageIcon = 'info' | 'warn' | 'error' | 'success'
 
 interface Props {
-  icon?: IconType
+  icon?: MessageIcon
   content: string
 }
 

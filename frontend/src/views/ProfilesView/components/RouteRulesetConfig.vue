@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone } from '@/utils'
+import { deepClone, message } from '@/utils'
 import { useRulesetsStore } from '@/stores'
-import { useBool, useMessage } from '@/hooks'
+import { useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
 import { DefaultRouteRuleset } from '@/constant/profile'
 import { RulesetFormat, RulesetType } from '@/enums/kernel'
@@ -23,7 +23,6 @@ const fields = ref<IRuleSet>(DefaultRouteRuleset())
 
 const { t } = useI18n()
 const [showEditModal] = useBool(false)
-const { message } = useMessage()
 const rulesetsStore = useRulesetsStore()
 
 const handleAdd = () => {

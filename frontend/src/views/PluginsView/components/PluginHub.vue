@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import { useMessage } from '@/hooks'
-import { deepClone, sleep } from '@/utils'
+import { deepClone, message, sleep } from '@/utils'
 import { usePluginsStore, type PluginType } from '@/stores'
 
 const { t } = useI18n()
-const { message } = useMessage()
 const pluginsStore = usePluginsStore()
 
 const handleAddPlugin = async (plugin: PluginType) => {

@@ -2,9 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { computed, inject, ref } from 'vue'
 
-import { useMessage } from '@/hooks'
 import * as Defaults from '@/constant/profile'
-import { sampleID } from '@/utils'
+import { message, sampleID } from '@/utils'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 import {
   useProfilesStore,
@@ -14,7 +13,6 @@ import {
 } from '@/stores'
 
 const { t } = useI18n()
-const { message } = useMessage()
 const subscribeStore = useSubscribesStore()
 const profilesStore = useProfilesStore()
 const appSettingsStore = useAppSettingsStore()

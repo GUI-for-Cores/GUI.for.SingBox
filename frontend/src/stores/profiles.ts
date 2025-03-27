@@ -2,10 +2,15 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
-import { debounce, ignoredError, transformProfileV189To190, transformProfileV194 } from '@/utils'
 import { Readfile, Writefile, Readdir, Movefile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
-import { useAlert } from '@/hooks'
+import {
+  debounce,
+  ignoredError,
+  transformProfileV189To190,
+  transformProfileV194,
+  alert,
+} from '@/utils'
 
 export const useProfilesStore = defineStore('profiles', () => {
   const profiles = ref<IProfile[]>([])
@@ -46,7 +51,6 @@ export const useProfilesStore = defineStore('profiles', () => {
       }, [] as IProfile[])
 
       await saveProfiles()
-      const { alert } = useAlert()
       alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
     }
 

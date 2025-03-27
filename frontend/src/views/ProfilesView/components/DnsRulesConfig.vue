@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, isValidJson } from '@/utils'
-import { useBool, useMessage } from '@/hooks'
+import { deepClone, isValidJson, message } from '@/utils'
+import { useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
 import { DefaultDnsRule } from '@/constant/profile'
 import {
@@ -37,7 +37,6 @@ const fields = ref<IDNSRule>(DefaultDnsRule())
 
 const { t } = useI18n()
 const [showEditModal] = useBool(false)
-const { message } = useMessage()
 
 const handleAdd = () => {
   ruleId = -1
