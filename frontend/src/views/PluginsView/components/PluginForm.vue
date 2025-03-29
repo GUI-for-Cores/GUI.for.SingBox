@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useBool } from '@/hooks'
@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   isUpdate: false,
 })
 
+const official = computed(() => pluginsStore.findPluginInHubById(plugin.value.id))
 const loading = ref(false)
 const pluginID = sampleID()
 const plugin = ref<PluginType>({
@@ -49,6 +50,13 @@ const [showMore, toggleShowMore] = useBool(false)
 const pluginsStore = usePluginsStore()
 
 const handleCancel = inject('cancel') as any
+
+const handleRestore = () => {
+  if (official.value) {
+    plugin.value = deepClone(official.value)
+    message.success('common.success')
+  }
+}
 
 const handleSubmit = async () => {
   loading.value = true
@@ -285,6 +293,9 @@ if (props.isUpdate) {
     </div>
   </div>
   <div class="form-action">
+    <Button @click="handleRestore" v-if="official" type="link" class="mr-auto">
+      {{ t('plugin.restore') }}
+    </Button>
     <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
     <Button
       @click="handleSubmit"
