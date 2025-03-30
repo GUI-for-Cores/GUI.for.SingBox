@@ -228,7 +228,7 @@ const generateDns = (
   inbounds: IInbound[],
   outbounds: IOutbound[],
 ) => {
-  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
+  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
   const extra: Recordable = {}
   if (dns.strategy !== Strategy.Default) {
@@ -252,7 +252,12 @@ const generateDns = (
           DnsServer.Dhcp,
         ].includes(server.type as any)
       ) {
-        server.detour && (extra.detour = getOutbound(server.detour))
+        if (server.detour) {
+          const outbound = getOutbound(server.detour)
+          if (outbound?.type !== Outbound.Direct) {
+            extra.detour = outbound?.tag
+          }
+        }
         server.domain_resolver && (extra.domain_resolver = getDnsServer(server.domain_resolver))
         if (
           [
@@ -363,7 +368,7 @@ const _adaptToStableBranch = (config: Recordable) => {
       tag: server.tag,
       address: isFakeIP ? 'fakeip' : generateDnsServerURL(server),
       address_resolver: server.domain_resolver,
-      detour: server.detour,
+      detour: server.detour || config.outbounds.find((v: any) => v.type === 'direct')?.tag,
     }
   })
   config.dns.rules = config.dns.rules.filter((rule: Recordable) => rule.ip_accept_any === undefined)
