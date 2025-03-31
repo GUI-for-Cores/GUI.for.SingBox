@@ -364,11 +364,25 @@ const _adaptToStableBranch = (config: Recordable) => {
         inet6_range: server.inet6_range,
       }
     }
+    let detour = server.detour
+    if (!detour) {
+      const isSupportDetour = [
+        DnsServer.Local,
+        DnsServer.Tcp,
+        DnsServer.Udp,
+        DnsServer.Tls,
+        DnsServer.Quic,
+        DnsServer.Https,
+        DnsServer.H3,
+        DnsServer.Dhcp,
+      ].includes(server.type as any)
+      isSupportDetour && (detour = config.outbounds.find((v: any) => v.type === 'direct')?.tag)
+    }
     return {
       tag: server.tag,
       address: isFakeIP ? 'fakeip' : generateDnsServerURL(server),
       address_resolver: server.domain_resolver,
-      detour: server.detour || config.outbounds.find((v: any) => v.type === 'direct')?.tag,
+      detour: detour,
     }
   })
   config.dns.rules = config.dns.rules.filter((rule: Recordable) => rule.ip_accept_any === undefined)
