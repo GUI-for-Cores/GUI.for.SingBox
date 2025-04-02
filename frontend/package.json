@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.18.6",
-    "@codemirror/commands": "^6.8.0",
+    "@codemirror/commands": "^6.8.1",
     "@codemirror/lang-javascript": "^6.2.3",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-yaml": "6.1.2",
-    "@codemirror/lint": "^6.8.4",
+    "@codemirror/lint": "^6.8.5",
     "@codemirror/merge": "^6.10.0",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.2",
-    "@codemirror/view": "^6.36.4",
+    "@codemirror/view": "^6.36.5",
     "codemirror": "6.0.1",
     "marked": "^15.0.7",
     "pinia": "^3.0.1",
@@ -31,25 +31,25 @@
     "vue-draggable-plus": "^0.6.0",
     "vue-i18n": "^11.1.2",
     "vue-router": "^4.5.0",
-    "yaml": "^2.7.0"
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.10.5",
-    "@tsconfig/node22": "^22.0.0",
+    "@rushstack/eslint-patch": "^1.11.0",
+    "@tsconfig/node22": "^22.0.1",
     "@types/dom-view-transitions": "^1.0.6",
-    "@types/node": "^22.13.10",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@types/node": "^22.13.17",
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/runtime-core": "^3.5.13",
     "@vue/tsconfig": "^0.7.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-plugin-vue": "^10.0.0",
     "less": "^4.2.2",
     "npm-run-all2": "^7.0.2",
     "typescript": "~5.8.2",
     "unplugin-vue-components": "^28.4.1",
-    "vite": "^6.2.1",
-    "vue-tsc": "^2.2.2"
+    "vite": "^6.2.4",
+    "vue-tsc": "^2.2.8"
   }
 }
