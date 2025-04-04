@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ignoredError, message, alert } from '@/utils'
@@ -13,19 +13,32 @@ type RulesetHub = {
   list: { name: string; type: 'geosite' | 'geoip'; description: string; count: number }[]
 }
 
+const pageSize = 27
 const loading = ref(false)
+const currentPage = ref(1)
 const rulesetHub = ref<RulesetHub>({ geosite: '', geoip: '', list: [] })
 const cacheFile = 'data/.cache/ruleset-list.json'
-const hubUrl = 'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing.json'
+const hubUrl =
+  'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing-full.json'
 
 const { t } = useI18n()
 const rulesetsStore = useRulesetsStore()
 
 const keywords = ref('')
+const handleCancel = inject('cancel') as any
+
+watch(keywords, () => (currentPage.value = 1))
 
 const filteredList = computed(() => {
   if (!keywords.value) return rulesetHub.value.list
   return rulesetHub.value.list.filter((ruleset) => ruleset.name.includes(keywords.value))
+})
+
+const currentList = computed(() => {
+  return filteredList.value.slice(
+    (currentPage.value - 1) * pageSize,
+    (currentPage.value - 1) * pageSize + pageSize,
+  )
 })
 
 const updateList = async () => {
@@ -120,7 +133,7 @@ getList()
 
       <div class="list">
         <Card
-          v-for="ruleset in filteredList"
+          v-for="ruleset in currentList"
           :key="ruleset.name + ruleset.type"
           :title="ruleset.name"
           class="ruleset-item"
@@ -177,14 +190,24 @@ getList()
         </Card>
       </div>
     </template>
+    <div class="flex justify-between items-center pt-4">
+      <Pagination
+        v-if="!loading"
+        v-model:current="currentPage"
+        :total="filteredList.length"
+        :page-size="pageSize"
+        size="small"
+      />
+      <Button @click="handleCancel" type="text" class="ml-auto">{{ t('common.close') }}</Button>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 .ruleset-hub {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
 
   .ruleset-item {
     display: inline-block;
@@ -220,6 +243,7 @@ getList()
 }
 
 .list {
+  flex: 1;
   padding-bottom: 16px;
   overflow: auto;
 }
