@@ -9,6 +9,7 @@ const icons = [
   'maximize',
   'maximize2',
   'close',
+  'arrowLeft',
   'arrowDown',
   'arrowRight',
   'speedTest',
