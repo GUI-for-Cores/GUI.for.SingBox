@@ -400,6 +400,13 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
     dns: generateDns(profile.dns, profile.route.rule_set, profile.inbounds, profile.outbounds),
   }
 
+  // adapt to stable branch
+  const appSettings = useAppSettingsStore()
+  const isStableBranch = appSettings.app.kernel.branch === 'main'
+  if ((isStableBranch && adaptToStableCore === undefined) || adaptToStableCore) {
+    _adaptToStableBranch(config)
+  }
+
   // step 2
   const { priority, config: mixin } = originalProfile.mixin
   if (priority === 'mixin') {
@@ -426,13 +433,6 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   // step 4
   const pluginsStore = usePluginsStore()
   const result = await pluginsStore.onGenerateTrigger(_config, originalProfile)
-
-  // adapt to stable branch
-  const appSettings = useAppSettingsStore()
-  const isStableBranch = appSettings.app.kernel.branch === 'main'
-  if ((isStableBranch && adaptToStableCore === undefined) || adaptToStableCore) {
-    _adaptToStableBranch(result)
-  }
 
   return result
 }
