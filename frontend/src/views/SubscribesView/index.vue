@@ -111,7 +111,7 @@ const handleShowSubForm = (id?: string, isUpdate = false) => {
 const handleUpdateSubs = async () => {
   try {
     await subscribeStore.updateSubscribes()
-    message.success('success')
+    message.success('common.success')
   } catch (error: any) {
     console.error('updateSubscribes: ', error)
     message.error(error)
