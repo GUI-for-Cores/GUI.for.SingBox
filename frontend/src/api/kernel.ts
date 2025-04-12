@@ -75,13 +75,6 @@ export const useProxy = (group: string, proxy: string) => {
   return request.put<null>(Api.Proxies + '/' + group, { name: proxy })
 }
 
-export const getGroupDelay = (group: string, url: string) => {
-  return request.get<Record<string, number>>(Api.GroupDelay.replace('{0}', group), {
-    url,
-    timeout: 5000,
-  })
-}
-
 export const getProxyDelay = (proxy: string, url: string) => {
   return request.get<Record<string, number>>(Api.ProxyDelay.replace('{0}', proxy), {
     url,

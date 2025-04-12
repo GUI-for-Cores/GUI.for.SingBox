@@ -63,6 +63,32 @@ export const getValue = (obj: Record<string, any>, expr: string) => {
   }, obj)
 }
 
+export const asyncPool = async <T>(
+  poolLimit: number,
+  array: T[],
+  iteratorFn: (item: T, array: T[]) => Promise<any>,
+) => {
+  const results: Promise<any>[] = []
+  const activePromises = new Set<Promise<any>>()
+
+  for (const item of array) {
+    const promise = Promise.resolve().then(() => iteratorFn(item, array))
+    results.push(promise)
+
+    if (poolLimit < array.length) {
+      activePromises.add(promise)
+      const cleanup = () => activePromises.delete(promise)
+      promise.then(cleanup, cleanup)
+
+      if (activePromises.size >= poolLimit) {
+        await Promise.race(activePromises)
+      }
+    }
+  }
+
+  return Promise.all(results)
+}
+
 export const getUserAgent = () => {
   const appSettings = useAppSettingsStore()
   return appSettings.app.userAgent || APP_TITLE + '/' + APP_VERSION

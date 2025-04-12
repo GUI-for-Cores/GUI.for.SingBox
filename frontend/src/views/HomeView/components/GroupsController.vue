@@ -2,9 +2,9 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, onActivated } from 'vue'
 
-import { ignoredError, sleep, handleUseProxy, message, prompt } from '@/utils'
+import { ignoredError, sleep, handleUseProxy, message, prompt, asyncPool } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { getGroupDelay, getProxyDelay } from '@/api/kernel'
+import { getProxyDelay } from '@/api/kernel'
 
 const expandedSet = ref<Set<string>>(new Set())
 const loadingSet = ref<Set<string>>(new Set())
@@ -95,23 +95,43 @@ const isLoading = (group: string) => loadingSet.value.has(group)
 const isFiltered = (group: string) => filterKeywordsMap.value[group]
 
 const handleGroupDelay = async (group: string) => {
-  loadingSet.value.add(group)
-  try {
-    await getGroupDelay(
-      group,
-      appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
-    )
-    await kernelApiStore.refreshProviderProxies()
-  } catch (error: any) {
-    message.error(error)
+  const _group = groups.value.find((v) => v.name === group)
+  if (_group) {
+    let index = 0
+    let success = 0
+    let failure = 0
+
+    const delayTest = async (proxy: string) => {
+      index += 1
+      update(`Testing... ${index} / ${proxies.length}, success: ${success} failure: ${failure}`)
+      try {
+        const { delay } = await getProxyDelay(
+          encodeURIComponent(proxy),
+          appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
+        )
+        success += 1
+        const _proxy = kernelApiStore.proxies[proxy]
+        _proxy.history.push({ delay })
+      } catch {
+        failure += 1
+      }
+    }
+
+    const { update, destroy } = message.info('Testing...', 99999)
+    loadingSet.value.add(group)
+    const proxies = _group.all.map((v) => v.name)
+    await asyncPool(5, proxies, delayTest)
+    loadingSet.value.delete(group)
+    update(`Completed. ${index} / ${proxies.length}, success: ${success} failure: ${failure}`)
+    await sleep(3000)
+    destroy()
   }
-  loadingSet.value.delete(group)
 }
 
 const handleProxyDelay = async (proxy: string) => {
   try {
     const { delay } = await getProxyDelay(
-      proxy,
+      encodeURIComponent(proxy),
       appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
     )
     const _proxy = kernelApiStore.proxies[proxy]
