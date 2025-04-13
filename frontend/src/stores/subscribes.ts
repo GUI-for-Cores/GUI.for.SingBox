@@ -15,6 +15,7 @@ import {
   isValidBase64,
   ignoredError,
   omitArray,
+  asyncPool,
 } from '@/utils'
 
 export type SubscribeType = {
@@ -219,9 +220,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
   const updateSubscribes = async () => {
     let needSave = false
-    for (let i = 0; i < subscribes.value.length; i++) {
-      const s = subscribes.value[i]
-      if (s.disabled) continue
+
+    const update = async (s: SubscribeType) => {
       try {
         s.updating = true
         await _doUpdateSub(s)
@@ -230,6 +230,13 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         s.updating = false
       }
     }
+
+    await asyncPool(
+      5,
+      subscribes.value.filter((v) => !v.disabled),
+      update,
+    )
+
     if (needSave) saveSubscribes()
   }
 
