@@ -95,7 +95,7 @@ const isLoading = (group: string) => loadingSet.value.has(group)
 const isFiltered = (group: string) => filterKeywordsMap.value[group]
 
 const handleGroupDelay = async (group: string) => {
-  const _group = groups.value.find((v) => v.name === group)
+  const _group = kernelApiStore.proxies[group]
   if (_group) {
     let index = 0
     let success = 0
@@ -103,8 +103,9 @@ const handleGroupDelay = async (group: string) => {
 
     const delayTest = async (proxy: string) => {
       index += 1
-      update(`Testing... ${index} / ${proxies.length}, success: ${success} failure: ${failure}`)
+      update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
       try {
+        loadingSet.value.add(proxy)
         const { delay } = await getProxyDelay(
           encodeURIComponent(proxy),
           appSettings.app.kernel.testUrl || 'https://www.gstatic.com/generate_204',
@@ -115,20 +116,22 @@ const handleGroupDelay = async (group: string) => {
       } catch {
         failure += 1
       }
+      loadingSet.value.delete(proxy)
     }
-
-    const { update, destroy } = message.info('Testing...', 99999)
+    const { update, destroy, success: msgSuccess } = message.info('Testing...', 99999)
     loadingSet.value.add(group)
-    const proxies = _group.all.map((v) => v.name)
-    await asyncPool(5, proxies, delayTest)
+    await asyncPool(5, _group.all, delayTest)
     loadingSet.value.delete(group)
-    update(`Completed. ${index} / ${proxies.length}, success: ${success} failure: ${failure}`)
+    msgSuccess(
+      `Completed. ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`,
+    )
     await sleep(3000)
     destroy()
   }
 }
 
 const handleProxyDelay = async (proxy: string) => {
+  loadingSet.value.add(proxy)
   try {
     const { delay } = await getProxyDelay(
       encodeURIComponent(proxy),
@@ -137,8 +140,9 @@ const handleProxyDelay = async (proxy: string) => {
     const _proxy = kernelApiStore.proxies[proxy]
     _proxy.history.push({ delay })
   } catch (error: any) {
-    message.error(error)
+    message.error(error + ': ' + proxy)
   }
+  loadingSet.value.delete(proxy)
 }
 
 const handleRefresh = async () => {
@@ -273,6 +277,7 @@ onActivated(() => {
             <Button
               @click.stop="handleProxyDelay(proxy.name)"
               :style="{ color: delayColor(proxy.delay) }"
+              :loading="isLoading(proxy.name)"
               type="text"
               class="delay"
             >
@@ -290,7 +295,9 @@ onActivated(() => {
             :style="{ background: delayColor(proxy.delay) }"
             :class="{ selected: proxy.name === group.now }"
             class="proxy-square"
-          ></div>
+          >
+            <Icon v-if="isLoading(proxy.name)" class="rotation" icon="loading" />
+          </div>
         </template>
       </div>
     </Transition>
@@ -371,10 +378,17 @@ onActivated(() => {
     }
 
     .proxy-square {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 12px;
       height: 12px;
       margin: 4px;
       border-radius: 4px;
+
+      .rotation {
+        animation: rotate 2s infinite linear;
+      }
     }
 
     .selected {
