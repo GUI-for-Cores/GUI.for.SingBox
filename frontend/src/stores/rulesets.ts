@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 
-import { debounce, ignoredError, isValidRulesJson, omitArray } from '@/utils'
+import { asyncPool, debounce, ignoredError, isValidRulesJson, omitArray } from '@/utils'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetsFilePath } from '@/constant/app'
 import { RulesetFormat } from '@/enums/kernel'
@@ -141,9 +141,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
 
   const updateRulesets = async () => {
     let needSave = false
-    for (let i = 0; i < rulesets.value.length; i++) {
-      const r = rulesets.value[i]
-      if (r.disabled) continue
+
+    const update = async (r: RuleSetType) => {
       try {
         r.updating = true
         await _doUpdateRuleset(r)
@@ -152,6 +151,13 @@ export const useRulesetsStore = defineStore('rulesets', () => {
         r.updating = false
       }
     }
+
+    await asyncPool(
+      5,
+      rulesets.value.filter((v) => !v.disabled),
+      update,
+    )
+
     if (needSave) saveRulesets()
   }
 
