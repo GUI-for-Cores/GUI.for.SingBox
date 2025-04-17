@@ -386,6 +386,9 @@ const _adaptToStableBranch = (config: Recordable) => {
     }
   })
   config.dns.rules = config.dns.rules.filter((rule: Recordable) => rule.ip_accept_any === undefined)
+  config.dns.rules.forEach((rule: Recordable) => {
+    delete rule.strategy
+  })
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {
