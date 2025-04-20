@@ -27,7 +27,7 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 
 	req.Header = GetHeader(headers)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
 		log.Printf("Requests Canceled: %v %v", method, url)
 		cancel()
 	})
@@ -59,7 +59,7 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 
 	req.Header = GetHeader(headers)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
 		log.Printf("Download Canceled: %v %v", url, path)
 		cancel()
 	})
@@ -84,7 +84,12 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 	}
 	defer file.Close()
 
-	reader := io.TeeReader(resp.Body, &WriteTracker{Total: resp.ContentLength, ProgressChange: event, App: a})
+	reader := io.TeeReader(resp.Body, &WriteTracker{
+		Total:          resp.ContentLength,
+		EmitThreshold:  128 * 1024, // 128KB
+		ProgressChange: event,
+		App:            a,
+	})
 
 	_, err = io.Copy(file, reader)
 	if err != nil {
@@ -118,7 +123,12 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
-	reader := io.TeeReader(file, &WriteTracker{Total: fileStat.Size(), ProgressChange: event, App: a})
+	reader := io.TeeReader(file, &WriteTracker{
+		Total:          fileStat.Size(),
+		EmitThreshold:  128 * 1024, // 128KB
+		ProgressChange: event,
+		App:            a,
+	})
 
 	_, err = io.Copy(part, reader)
 	if err != nil {
@@ -132,7 +142,7 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 
 	client, ctx, cancel := withRequestOptionsClient(options)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...interface{}) {
+	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
 		log.Printf("Upload Canceled: %v %v", url, path)
 		cancel()
 	})
@@ -161,11 +171,20 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 }
 
 func (wt *WriteTracker) Write(p []byte) (n int, err error) {
-	wt.Progress += int64(len(p))
-	if wt.ProgressChange != "" {
-		runtime.EventsEmit(wt.App.Ctx, wt.ProgressChange, wt.Progress, wt.Total)
+	n = len(p)
+	wt.Progress += int64(n)
+
+	if wt.ProgressChange == "" {
+		return n, nil
 	}
-	return
+
+	shouldEmit := wt.Total <= 0 || wt.Progress-wt.LastEmitted >= wt.EmitThreshold || wt.Progress == wt.Total
+	if shouldEmit {
+		runtime.EventsEmit(wt.App.Ctx, wt.ProgressChange, wt.Progress, wt.Total)
+		wt.LastEmitted = wt.Progress
+	}
+
+	return n, nil
 }
 
 func withRequestOptionsClient(options RequestOptions) (*http.Client, context.Context, context.CancelFunc) {

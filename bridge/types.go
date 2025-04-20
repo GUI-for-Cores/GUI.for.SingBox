@@ -73,6 +73,8 @@ type TrayContent struct {
 type WriteTracker struct {
 	Total          int64
 	Progress       int64
+	LastEmitted    int64
+	EmitThreshold  int64
 	ProgressChange string
 	App            *App
 }
