@@ -88,7 +88,7 @@ func (a *App) QueryMMDB(path string, ip string, types string) FlagResult {
 		return FlagResult{false, "Database file is not open: " + path}
 	}
 
-	var record interface{}
+	var record any
 	var err error
 	switch types {
 	case "ASN":

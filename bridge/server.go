@@ -40,7 +40,7 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 
 			defer close(respChan)
 
-			runtime.EventsOn(a.Ctx, requestID, func(data ...interface{}) {
+			runtime.EventsOn(a.Ctx, requestID, func(data ...any) {
 				runtime.EventsOff(a.Ctx, requestID)
 				resp := ResponseData{200, make(map[string]string), "A sample http server"}
 				if len(data) >= 4 {

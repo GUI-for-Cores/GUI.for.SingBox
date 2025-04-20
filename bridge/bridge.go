@@ -78,7 +78,7 @@ func InitBridge(fs embed.FS) {
 		fileName := file.Name()
 		path := GetPath(icon_dst + "/" + fileName)
 		if _, err := os.Stat(path); os.IsNotExist(err) {
-			log.Printf("InitTray [Icon]: %s", icon_dst+"/"+fileName)
+			log.Printf("InitResources [Icon]: %s", icon_dst+"/"+fileName)
 			b, _ := fs.ReadFile(icon_src + "/" + fileName)
 			os.WriteFile(path, b, os.ModePerm)
 		}
@@ -88,7 +88,7 @@ func InitBridge(fs embed.FS) {
 		fileName := file.Name()
 		path := GetPath(img_dst + "/" + fileName)
 		if _, err := os.Stat(path); os.IsNotExist(err) {
-			log.Printf("InitTray [Imgs]: %s", img_dst+"/"+fileName)
+			log.Printf("InitResources [Imgs]: %s", img_dst+"/"+fileName)
 			b, _ := fs.ReadFile(img_src + "/" + fileName)
 			os.WriteFile(path, b, os.ModePerm)
 		}
