@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 
 import { DefaultInboundMixed } from '@/constant/profile'
@@ -318,10 +318,14 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     return undefined
   }
 
-  watch(
-    [() => config.value.mode, () => config.value.tun.enable, () => proxies.value],
-    updateTrayMenus,
+  const _watchProxies = computed(() =>
+    Object.values(proxies.value)
+      .map((group) => group.name + group.now)
+      .sort()
+      .join(),
   )
+
+  watch([() => config.value.mode, () => config.value.tun.enable, _watchProxies], updateTrayMenus)
 
   return {
     startKernel,
