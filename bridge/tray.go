@@ -55,7 +55,7 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 			m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
 		}
 
-		m.Click(func() { go runtime.EventsEmit(a.Ctx, menu.Event) })
+		m.Click(func() { go runtime.EventsEmit(a.Ctx, "onMenuItemClick", menu.Event) })
 
 		if menu.Checked {
 			m.Check()

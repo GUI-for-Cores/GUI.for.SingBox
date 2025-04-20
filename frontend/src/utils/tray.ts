@@ -15,7 +15,6 @@ import {
   debounce,
   exitApp,
   handleChangeMode,
-  sampleID,
   APP_TITLE,
   APP_VERSION,
   handleUseProxy,
@@ -41,29 +40,28 @@ const getTrayIcons = () => {
   return icon
 }
 
-const menuEvents: string[] = []
-
 const generateUniqueEventsForMenu = (menus: MenuItem[]) => {
   const { t } = i18n.global
+  const MenuItemHandlerMap: Recordable<() => void> = {}
 
-  menuEvents.forEach((event) => EventsOff(event))
-  menuEvents.splice(0)
+  EventsOff('onMenuItemClick')
+  EventsOn('onMenuItemClick', (id) => MenuItemHandlerMap[id]?.())
 
+  let index = 0
   function processMenu(menu: MenuItem) {
     const _menu = { ...menu, text: t(menu.text || ''), tooltip: t(menu.tooltip || '') }
     const { event, children } = menu
 
     if (event) {
-      const _event = sampleID()
-      _menu.event = _event
-      menuEvents.push(_event)
-      EventsOn(_event, event as any)
+      _menu.event = index + '_' + menu.text
+      MenuItemHandlerMap[_menu.event] = event as any
     }
 
     if (children && children.length > 0) {
       _menu.children = children.map(processMenu)
     }
 
+    index += 1
     return _menu
   }
 
