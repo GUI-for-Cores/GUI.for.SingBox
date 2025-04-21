@@ -74,6 +74,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           tunInbound.enable = false
           runtimeProfile.inbounds.push(tunInbound)
         }
+        runtimeProfile.id = _profile.id
         runtimeProfile.outbounds = _profile.outbounds
         runtimeProfile.dns = _profile.dns
         runtimeProfile.route = _profile.route
