@@ -72,3 +72,5 @@ export const ScheduledTaskOptions = [
   { label: 'scheduledtask.run::plugin', value: ScheduledTasksType.RunPlugin },
   { label: 'scheduledtask.run::script', value: ScheduledTasksType.RunScript },
 ]
+
+export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subscription) => {\n  return { proxies, subscription }\n}`

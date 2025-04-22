@@ -411,31 +411,31 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   }
 
   // step 2
-  const { priority, config: mixin } = originalProfile.mixin
-  if (priority === 'mixin') {
-    deepAssign(config, JSON.parse(mixin))
-  } else if (priority === 'gui') {
-    deepAssign(config, deepAssign(JSON.parse(mixin), config))
-  }
+  const pluginsStore = usePluginsStore()
+  const _config = await pluginsStore.onGenerateTrigger(config, originalProfile)
 
   // step 3
+  const { priority, config: mixin } = originalProfile.mixin
+  if (priority === 'mixin') {
+    deepAssign(_config, JSON.parse(mixin))
+  } else if (priority === 'gui') {
+    deepAssign(_config, deepAssign(JSON.parse(mixin), _config))
+  }
+
+  // step 4
   const fn = new window.AsyncFunction(
-    `${profile.script.code};return await onGenerate(${JSON.stringify(config)})`,
+    `${profile.script.code};return await onGenerate(${JSON.stringify(_config)})`,
   )
-  let _config
+  let result
   try {
-    _config = await fn()
+    result = await fn()
   } catch (error: any) {
     throw error.message || error
   }
 
-  if (typeof _config !== 'object') {
+  if (typeof result !== 'object') {
     throw 'Wrong result'
   }
-
-  // step 4
-  const pluginsStore = usePluginsStore()
-  const result = await pluginsStore.onGenerateTrigger(_config, originalProfile)
 
   return result
 }

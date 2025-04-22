@@ -416,6 +416,7 @@ export default {
     editProxies: 'Редактировать прокси-сервера',
     editSourceFile: 'Редактировать прокси-сервера (источник)',
     copySub: 'Скопировать ссылку',
+    script: 'скрипт',
     proxies: {
       type: 'Протокол',
       name: 'Имя',

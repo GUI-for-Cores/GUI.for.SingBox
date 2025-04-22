@@ -415,6 +415,7 @@ export default {
     editProxies: '编辑节点',
     editSourceFile: '编辑节点(源文件)',
     copySub: '复制订阅链接',
+    script: '脚本',
     proxies: {
       type: '协议',
       name: '名称',

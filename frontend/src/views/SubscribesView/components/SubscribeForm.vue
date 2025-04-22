@@ -6,6 +6,7 @@ import { useBool } from '@/hooks'
 import { deepClone, sampleID, getUserAgent, message } from '@/utils'
 import { type SubscribeType, useSubscribesStore } from '@/stores'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
+import { DefaultSubscribeScript } from '@/constant/app'
 
 interface Props {
   id?: string
@@ -40,6 +41,7 @@ const sub = ref<SubscribeType>({
   inSecure: false,
   userAgent: '',
   proxies: [],
+  script: DefaultSubscribeScript,
 })
 
 const { t } = useI18n()

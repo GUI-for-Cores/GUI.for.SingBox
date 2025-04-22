@@ -416,6 +416,7 @@ export default {
     editProxies: 'Edit Proxies',
     editSourceFile: 'Edit Proxies(Source)',
     copySub: 'Copy Link',
+    script: 'Script',
     proxies: {
       type: 'Protocol',
       name: 'Name',

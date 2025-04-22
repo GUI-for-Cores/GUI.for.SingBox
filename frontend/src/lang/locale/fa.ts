@@ -416,6 +416,7 @@ export default {
     editProxies: 'ویرایش پروکسی‌ها',
     editSourceFile: 'ویرایش فایل پروکسی‌ها (منبع)',
     copySub: 'کپی لینک',
+    script: 'اسکریپت',
     proxies: {
       type: 'پروتکل',
       name: 'نام',

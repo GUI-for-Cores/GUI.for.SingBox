@@ -4,6 +4,7 @@ import { computed, inject, ref } from 'vue'
 
 import * as Defaults from '@/constant/profile'
 import { message, sampleID } from '@/utils'
+import { DefaultSubscribeScript } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 import {
   useProfilesStore,
@@ -48,6 +49,7 @@ const handleSubmit = async () => {
     inSecure: false,
     userAgent: '',
     proxies: [],
+    script: DefaultSubscribeScript,
   }
 
   loading.value = true
