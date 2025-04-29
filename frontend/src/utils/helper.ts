@@ -499,10 +499,18 @@ export const exitApp = async () => {
   }
 }
 
-export const getKernelFileName = async (isAlpha = false) => {
+export const getKernelFileName = (isAlpha = false) => {
   const envStore = useEnvStore()
   const { os } = envStore.env
   const fileSuffix = { windows: '.exe', linux: '', darwin: '' }[os]
   const latest = isAlpha ? '-latest' : ''
   return `sing-box${latest}${fileSuffix}`
+}
+
+export const getKernelAssetFileName = (version: string) => {
+  const envStore = useEnvStore()
+  const { os, arch } = envStore.env
+  const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
+  const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
+  return `sing-box-${version}-${os}-${arch}${legacy}${suffix}`
 }

@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import StableBranch from './components/StableBranch.vue'
-import AlphaBranch from './components/AlphaBranch.vue'
+import BranchDetail from './components/BranchDetail.vue'
 import SwitchBranch from './components/SwitchBranch.vue'
 </script>
 
 <template>
   <div>
-    <StableBranch />
-    <AlphaBranch />
+    <BranchDetail :is-alpha="false" />
+    <BranchDetail :is-alpha="true" />
     <SwitchBranch />
   </div>
 </template>
