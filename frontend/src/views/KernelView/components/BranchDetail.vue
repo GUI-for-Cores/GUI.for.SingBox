@@ -17,6 +17,7 @@ const {
   restartable,
   updatable,
   grantable,
+  rollbackable,
   versionDetail,
   localVersion,
   localVersionLoading,
@@ -27,6 +28,7 @@ const {
   refreshRemoteVersion,
   downloadCore,
   restartCore,
+  rollbackCore,
   grantCorePermission,
   openReleasePage,
 } = useCoreBranch(props.isAlpha)
@@ -44,14 +46,22 @@ const {
       icon="grant"
     />
     <Button @click="openReleasePage" icon="link" type="text" size="small" />
+    <Button
+      @click="rollbackCore"
+      v-if="rollbackable"
+      v-tips="'settings.kernel.rollbackTip'"
+      icon="rollback"
+      type="text"
+      size="small"
+    />
   </div>
   <div class="tags">
-    <Tag @click="refreshLocalVersion(true)" style="cursor: pointer">
+    <Tag @click="refreshLocalVersion(true)" class="cursor-pointer">
       {{ t('settings.kernel.local') }}
       :
       {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
     </Tag>
-    <Tag @click="refreshRemoteVersion(true)" style="cursor: pointer">
+    <Tag @click="refreshRemoteVersion(true)" class="cursor-pointer">
       {{ t('settings.kernel.remote') }}
       :
       {{ remoteVersionLoading ? 'Loading' : remoteVersion }}

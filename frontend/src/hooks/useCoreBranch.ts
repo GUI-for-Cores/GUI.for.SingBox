@@ -8,8 +8,9 @@ import {
   GrantTUNPermission,
   ignoredError,
   confirm,
-  getKernelFileName,
   message,
+  debounce,
+  getKernelFileName,
   getKernelAssetFileName,
 } from '@/utils'
 
@@ -24,6 +25,7 @@ import {
   AbsolutePath,
   BrowserOpenURL,
   Makedir,
+  FileExists,
 } from '@/bridge'
 
 const StableUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
@@ -44,6 +46,8 @@ export const useCoreBranch = (isAlpha = false) => {
   const downloading = ref(false)
   const downloadCompleted = ref(false)
 
+  const rollbackable = ref(false)
+
   const { t } = useI18n()
   const envStore = useEnvStore()
   const appSettings = useAppSettingsStore()
@@ -60,11 +64,6 @@ export const useCoreBranch = (isAlpha = false) => {
   )
 
   const grantable = computed(() => localVersion.value && envStore.env.os !== 'windows')
-
-  watch(
-    () => appSettings.app.kernel.branch,
-    () => (downloadCompleted.value = false),
-  )
 
   const downloadCore = async () => {
     downloading.value = true
@@ -198,9 +197,6 @@ export const useCoreBranch = (isAlpha = false) => {
     }
   }
 
-  getLocalVersion().then((v) => (localVersion.value = v))
-  getRemoteVersion().then((versions) => (remoteVersion.value = versions))
-
   const refreshLocalVersion = async (showTips = false) => {
     localVersion.value = await getLocalVersion(showTips)
   }
@@ -216,14 +212,50 @@ export const useCoreBranch = (isAlpha = false) => {
     message.success('common.success')
   }
 
+  const rollbackCore = async () => {
+    await confirm('common.warning', 'settings.kernel.rollback')
+
+    const doRollback = async () => {
+      const file = getKernelFileName(isAlpha)
+      await Movefile(`${CoreWorkingDirectory}/${file}.bak`, `${CoreWorkingDirectory}/${file}`)
+      refreshLocalVersion()
+    }
+
+    const { running, branch } = appSettings.app.kernel
+    const isCurrentRunning = running && (branch === 'alpha') === isAlpha
+    if (isCurrentRunning) {
+      await kernelApiStore.restartKernel(doRollback)
+    } else {
+      await doRollback()
+    }
+    message.success('common.success')
+  }
+
   const openReleasePage = () => {
     BrowserOpenURL(isAlpha ? AlphaPage : StablePage)
   }
+
+  watch(
+    () => appSettings.app.kernel.branch,
+    () => (downloadCompleted.value = false),
+  )
+
+  watch(
+    [localVersion, downloadCompleted],
+    debounce(async () => {
+      const bak = CoreWorkingDirectory + '/' + getKernelFileName(isAlpha) + '.bak'
+      rollbackable.value = await FileExists(bak)
+    }, 500),
+  )
+
+  refreshLocalVersion()
+  refreshRemoteVersion()
 
   return {
     restartable,
     updatable,
     grantable,
+    rollbackable,
     versionDetail,
     localVersion,
     localVersionLoading,
@@ -234,6 +266,7 @@ export const useCoreBranch = (isAlpha = false) => {
     refreshRemoteVersion,
     downloadCore,
     restartCore,
+    rollbackCore,
     grantCorePermission,
     openReleasePage,
   }

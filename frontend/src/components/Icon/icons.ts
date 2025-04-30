@@ -53,6 +53,7 @@ const icons = [
   'settings2',
   'grant',
   'preview',
+  'rollback',
 ] as const
 
 export default icons
