@@ -77,7 +77,7 @@ export const useCoreBranch = (isAlpha = false) => {
       if (body.message) throw body.message
 
       const { assets, name } = isAlpha ? body.find((v: any) => v.prerelease === true) : body
-      const assetName = getKernelAssetFileName(name)
+      const assetName = getKernelAssetFileName(name, isAlpha)
       const asset = assets.find((v: any) => v.name === assetName)
       if (!asset) throw 'Asset Not Found:' + assetName
       if (asset.uploader.type !== 'Bot') {
