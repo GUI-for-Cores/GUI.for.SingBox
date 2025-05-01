@@ -507,10 +507,15 @@ export const getKernelFileName = (isAlpha = false) => {
   return `sing-box${latest}${fileSuffix}`
 }
 
-export const getKernelAssetFileName = (version: string) => {
+export const getKernelAssetFileName = (version: string, isAlpha = false) => {
   const envStore = useEnvStore()
   const { os, arch } = envStore.env
-  const legacy = arch === 'amd64' && envStore.env.x64Level < 3 ? '-legacy' : ''
+  const legacy =
+    (os === 'windows' || (os === 'darwin' && !isAlpha)) &&
+    arch === 'amd64' &&
+    envStore.env.x64Level < 3
+      ? '-legacy'
+      : ''
   const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
   return `sing-box-${version}-${os}-${arch}${legacy}${suffix}`
 }
