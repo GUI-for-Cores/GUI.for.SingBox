@@ -444,8 +444,10 @@ export const generateConfigFile = async (profile: IProfile) => {
   const config = await generateConfig(profile)
 
   config.log.disabled = false
-  config.log.level = LogLevel.Info
   config.log.output = ''
+  if (![LogLevel.Trace, LogLevel.Debug, LogLevel.Info].includes(config.log.level)) {
+    config.log.level = LogLevel.Info
+  }
 
   await Writefile(CoreConfigFilePath, JSON.stringify(config, null, 2))
 }
