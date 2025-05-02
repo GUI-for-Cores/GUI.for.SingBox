@@ -77,7 +77,7 @@ const handleAddRuleset = async (ruleset: RulesetHub['list'][number], format: Rul
   try {
     await rulesetsStore.addRuleset({
       id,
-      tag: ruleset.name,
+      tag: `${ruleset.name}-${ruleset.type}${suffix}`,
       updateTime: 0,
       disabled: false,
       type: 'Http',
