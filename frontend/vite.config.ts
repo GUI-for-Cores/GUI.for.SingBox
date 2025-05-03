@@ -22,5 +22,6 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 2048, // 2MB
+    // __ROLLUP_MANUAL_CHUNKS__
   },
 })
