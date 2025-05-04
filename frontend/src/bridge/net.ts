@@ -13,6 +13,7 @@ type RequestType = {
   options?: {
     Proxy?: string
     Insecure?: boolean
+    Redirect?: boolean
     Timeout?: number
     CancelId?: string
     FileField?: string
@@ -42,6 +43,7 @@ const transformRequest = async (
   options = {
     Proxy: await GetSystemOrKernelProxy(),
     Insecure: false,
+    Redirect: true,
     Timeout: 15,
     CancelId: '',
     ...options,
@@ -142,6 +144,7 @@ export const Requests = async (options: RequestType) => {
   const __options: Required<RequestType['options']> = {
     Proxy: await GetSystemOrKernelProxy(),
     Insecure: false,
+    Redirect: true,
     Timeout: 15,
     CancelId: '',
     FileField: 'file',

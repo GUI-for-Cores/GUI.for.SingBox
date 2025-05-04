@@ -22,6 +22,7 @@ type EnvResult struct {
 type RequestOptions struct {
 	Proxy     string
 	Insecure  bool
+	Redirect  bool
 	Timeout   int
 	CancelId  string
 	FileField string

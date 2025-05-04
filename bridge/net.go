@@ -196,6 +196,12 @@ func withRequestOptionsClient(options RequestOptions) (*http.Client, context.Con
 				InsecureSkipVerify: options.Insecure,
 			},
 		},
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			if !options.Redirect {
+				return http.ErrUseLastResponse
+			}
+			return nil
+		},
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())

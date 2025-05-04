@@ -125,6 +125,7 @@ export namespace bridge {
 	export class RequestOptions {
 	    Proxy: string;
 	    Insecure: boolean;
+	    Redirect: boolean;
 	    Timeout: number;
 	    CancelId: string;
 	    FileField: string;
@@ -137,6 +138,7 @@ export namespace bridge {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Proxy = source["Proxy"];
 	        this.Insecure = source["Insecure"];
+	        this.Redirect = source["Redirect"];
 	        this.Timeout = source["Timeout"];
 	        this.CancelId = source["CancelId"];
 	        this.FileField = source["FileField"];
