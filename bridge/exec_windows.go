@@ -10,7 +10,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func HideExecWindow(cmd *exec.Cmd) {
+func SetCmdWindowHidden(cmd *exec.Cmd) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		CreationFlags: windows.CREATE_UNICODE_ENVIRONMENT | windows.CREATE_NEW_PROCESS_GROUP,
 		HideWindow:    true,

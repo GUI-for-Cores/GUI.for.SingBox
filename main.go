@@ -4,11 +4,10 @@ import (
 	"context"
 	"embed"
 	"guiforcores/bridge"
+	"time"
 
-	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
@@ -24,25 +23,16 @@ var assets embed.FS
 var icon []byte
 
 func main() {
-	bridge.InitBridge(assets)
+	app := bridge.CreateApp(assets)
 
-	// Create an instance of the app structure
-	app := bridge.NewApp()
-
-	appMenu := menu.NewMenu()
-
-	if bridge.Env.OS == "darwin" {
-		bridge.AddMenusForDarwin(appMenu, app)
-	}
-
-	trayStart, _ := bridge.InitTray(app, icon)
+	trayStart, _ := bridge.CreateTray(app, icon)
 
 	// Create application with options
 	err := wails.Run(&options.App{
 		MinWidth:         600,
 		MinHeight:        400,
 		DisableResize:    false,
-		Menu:             appMenu,
+		Menu:             app.AppMenu,
 		Title:            bridge.Env.AppName,
 		Frameless:        bridge.Env.OS == "windows",
 		Width:            bridge.Config.Width,
@@ -62,7 +52,7 @@ func main() {
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
 				Title:   bridge.Env.AppName,
-				Message: "© 2024 GUI.for.Cores",
+				Message: "© 2025 GUI.for.Cores",
 				Icon:    icon,
 			},
 		},
@@ -79,13 +69,13 @@ func main() {
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId: func() string {
 				if bridge.Config.MultipleInstance {
-					return uuid.New().String()
+					return time.Now().String()
 				}
 				return bridge.Env.AppName
 			}(),
 			OnSecondInstanceLaunch: func(data options.SecondInstanceData) {
 				runtime.Show(app.Ctx)
-				runtime.EventsEmit(app.Ctx, "launchArgs", data.Args)
+				runtime.EventsEmit(app.Ctx, "onLaunchApp", data.Args)
 			},
 		},
 		OnStartup: func(ctx context.Context) {
@@ -98,7 +88,7 @@ func main() {
 			runtime.EventsEmit(ctx, "onBeforeExitApp")
 			return true
 		},
-		Bind: []interface{}{
+		Bind: []any{
 			app,
 		},
 		Debug: options.Debug{

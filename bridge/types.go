@@ -3,14 +3,18 @@ package bridge
 import (
 	"context"
 	"net/http"
+
+	"github.com/wailsapp/wails/v2/pkg/menu"
 )
 
 // App struct
 type App struct {
-	Ctx context.Context
+	Ctx     context.Context
+	AppMenu *menu.Menu
 }
 
 type EnvResult struct {
+	IsStartup   bool   `json:"-"`
 	FromTaskSch bool   `json:"-"`
 	AppName     string `json:"appName"`
 	BasePath    string `json:"basePath"`

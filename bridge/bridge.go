@@ -8,120 +8,68 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	sysruntime "runtime"
 
 	"github.com/klauspost/cpuid/v2"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
 )
 
-// NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
-}
-
-var isStartup = true
+var Config = &AppConfig{}
 
 var Env = &EnvResult{
-	BasePath:    "",
+	IsStartup:   true,
+	FromTaskSch: false,
 	AppName:     "",
+	BasePath:    "",
 	OS:          sysruntime.GOOS,
 	ARCH:        sysruntime.GOARCH,
 	X64Level:    cpuid.CPU.X64Level(),
-	FromTaskSch: false,
 }
 
-var Config = &AppConfig{}
+// NewApp creates a new App application struct
+func NewApp() *App {
+	return &App{
+		AppMenu: menu.NewMenu(),
+	}
+}
 
-func InitBridge(fs embed.FS) {
-	// step1: Set Env
+func CreateApp(fs embed.FS) *App {
 	exePath, err := os.Executable()
 	if err != nil {
 		panic(err)
 	}
 
-	for _, v := range os.Args {
-		if v == "tasksch" {
-			Env.FromTaskSch = true
-			break
-		}
-	}
-
 	Env.BasePath = filepath.Dir(exePath)
 	Env.AppName = filepath.Base(exePath)
 
-	// step2: Create a persistent data symlink
+	if slices.Contains(os.Args, "tasksch") {
+		Env.FromTaskSch = true
+	}
+
+	app := NewApp()
+
 	if Env.OS == "darwin" {
-		user, _ := user.Current()
-		linkPath := Env.BasePath + "/data"
-		appPath := "/Users/" + user.Username + "/Library/Application Support/" + Env.AppName
-		os.MkdirAll(appPath, os.ModePerm)
-		os.Symlink(appPath, linkPath)
+		createMacOSSymlink()
+		createMacOSMenus(app)
 	}
 
-	// step3: Extract embedded files
-	icon_src := "frontend/dist/icons"
-	icon_dst := "data/.cache/icons"
-	img_src := "frontend/dist/imgs"
-	img_dst := "data/.cache/imgs"
+	extractEmbeddedFiles(fs)
 
-	os.MkdirAll(GetPath(icon_dst), os.ModePerm)
-	os.MkdirAll(GetPath(img_dst), os.ModePerm)
+	loadConfig()
 
-	icon_dirs, _ := fs.ReadDir(icon_src)
-	png_dirs, _ := fs.ReadDir(img_src)
-
-	for _, file := range icon_dirs {
-		fileName := file.Name()
-		path := GetPath(icon_dst + "/" + fileName)
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			log.Printf("InitResources [Icon]: %s", icon_dst+"/"+fileName)
-			b, _ := fs.ReadFile(icon_src + "/" + fileName)
-			os.WriteFile(path, b, os.ModePerm)
-		}
-	}
-
-	for _, file := range png_dirs {
-		fileName := file.Name()
-		path := GetPath(img_dst + "/" + fileName)
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			log.Printf("InitResources [Imgs]: %s", img_dst+"/"+fileName)
-			b, _ := fs.ReadFile(img_src + "/" + fileName)
-			os.WriteFile(path, b, os.ModePerm)
-		}
-	}
-
-	// step4: Read Config
-	b, err := os.ReadFile(Env.BasePath + "/data/user.yaml")
-	if err == nil {
-		yaml.Unmarshal(b, &Config)
-	}
-
-	if Config.Width == 0 {
-		Config.Width = 800
-	}
-
-	if Config.Height == 0 {
-		if Env.OS == "linux" {
-			Config.Height = 510
-		} else {
-			Config.Height = 540
-		}
-	}
-
-	Config.StartHidden = Env.FromTaskSch && Config.WindowStartState == int(options.Minimised)
-
-	if !Env.FromTaskSch {
-		Config.WindowStartState = int(options.Normal)
-	}
+	return app
 }
 
 func (a *App) IsStartup() bool {
-	if isStartup {
-		isStartup = false
+	if Env.IsStartup {
+		Env.IsStartup = false
 		return true
 	}
 	return false
@@ -131,10 +79,9 @@ func (a *App) RestartApp() FlagResult {
 	exePath := Env.BasePath + "/" + Env.AppName
 
 	cmd := exec.Command(exePath)
-	HideExecWindow(cmd)
+	SetCmdWindowHidden(cmd)
 
-	err := cmd.Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
@@ -172,4 +119,82 @@ func (a *App) GetInterfaces() FlagResult {
 
 func (a *App) ShowMainWindow() {
 	runtime.WindowShow(a.Ctx)
+}
+
+func createMacOSSymlink() {
+	user, _ := user.Current()
+	linkPath := Env.BasePath + "/data"
+	appPath := "/Users/" + user.Username + "/Library/Application Support/" + Env.AppName
+	os.MkdirAll(appPath, os.ModePerm)
+	os.Symlink(appPath, linkPath)
+}
+
+func createMacOSMenus(app *App) {
+	appMenu := app.AppMenu.AddSubmenu("App")
+	appMenu.AddText("Show", keys.CmdOrCtrl("s"), func(_ *menu.CallbackData) {
+		runtime.WindowShow(app.Ctx)
+	})
+	appMenu.AddText("Hide", keys.CmdOrCtrl("h"), func(_ *menu.CallbackData) {
+		runtime.WindowHide(app.Ctx)
+	})
+	appMenu.AddSeparator()
+	appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
+		runtime.EventsEmit(app.Ctx, "exitApp")
+	})
+
+	// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+	app.AppMenu.Append(menu.EditMenu())
+}
+
+func extractEmbeddedFiles(fs embed.FS) {
+	iconSrc := "frontend/dist/icons"
+	iconDst := "data/.cache/icons"
+	imgSrc := "frontend/dist/imgs"
+	imgDst := "data/.cache/imgs"
+
+	os.MkdirAll(GetPath(iconDst), os.ModePerm)
+	os.MkdirAll(GetPath(imgDst), os.ModePerm)
+
+	extractFiles(fs, iconSrc, iconDst)
+	extractFiles(fs, imgSrc, imgDst)
+}
+
+func extractFiles(fs embed.FS, srcDir, dstDir string) {
+	files, _ := fs.ReadDir(srcDir)
+	for _, file := range files {
+		fileName := file.Name()
+		dstPath := GetPath(dstDir + "/" + fileName)
+		if _, err := os.Stat(dstPath); os.IsNotExist(err) {
+			log.Printf("InitResources [%s]: %s", dstDir, fileName)
+			data, _ := fs.ReadFile(srcDir + "/" + fileName)
+			if err := os.WriteFile(dstPath, data, os.ModePerm); err != nil {
+				log.Printf("Error writing file %s: %v", dstPath, err)
+			}
+		}
+	}
+}
+
+func loadConfig() {
+	b, err := os.ReadFile(Env.BasePath + "/data/user.yaml")
+	if err == nil {
+		yaml.Unmarshal(b, &Config)
+	}
+
+	if Config.Width == 0 {
+		Config.Width = 800
+	}
+
+	if Config.Height == 0 {
+		if Env.OS == "linux" {
+			Config.Height = 510
+		} else {
+			Config.Height = 540
+		}
+	}
+
+	Config.StartHidden = Env.FromTaskSch && Config.WindowStartState == int(options.Minimised)
+
+	if !Env.FromTaskSch {
+		Config.WindowStartState = int(options.Normal)
+	}
 }

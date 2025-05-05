@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-func HideExecWindow(cmd *exec.Cmd) {
+func SetCmdWindowHidden(cmd *exec.Cmd) {
 }
 
 func SendExitSignal(process *os.Process) error {

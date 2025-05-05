@@ -5,10 +5,12 @@ import (
 )
 
 func (a *App) Notify(title string, message string, icon string) FlagResult {
-	path := GetPath(icon)
-	err := beeep.Notify(title, message, path)
+	fullPath := GetPath(icon)
+
+	err := beeep.Notify(title, message, fullPath)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
+
 	return FlagResult{true, "Success"}
 }

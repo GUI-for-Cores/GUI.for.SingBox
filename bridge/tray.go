@@ -8,27 +8,24 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitTray(a *App, icon []byte) (trayStart, trayEnd func()) {
-	isDarwin := Env.OS == "darwin"
-
+func CreateTray(a *App, icon []byte) (trayStart, trayEnd func()) {
 	return systray.RunWithExternalLoop(func() {
 		systray.SetIcon(icon)
 		systray.SetTooltip("GUI.for.Cores")
+
 		systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
-		if isDarwin {
-			systray.SetOnClick(func(menu systray.IMenu) { menu.ShowMenu() })
-		} else {
-			systray.SetTitle("GUI.for.Cores")
-			systray.SetOnClick(func(menu systray.IMenu) { a.ShowMainWindow() })
-		}
+		systray.SetOnClick(func(menu systray.IMenu) {
+			if Env.OS == "darwin" {
+				menu.ShowMenu()
+			} else {
+				a.ShowMainWindow()
+			}
+		})
 
 		// Ensure the tray is still available if rolling-release fails
-		mShowWindow := systray.AddMenuItem("Show", "Show")
-		mRestart := systray.AddMenuItem("Restart", "Restart")
-		mExit := systray.AddMenuItem("Exit", "Exit")
-		mShowWindow.Click(func() { a.ShowMainWindow() })
-		mRestart.Click(func() { a.RestartApp() })
-		mExit.Click(func() { a.ExitApp() })
+		addClickMenuItem("Show", "Show", func() { a.ShowMainWindow() })
+		addClickMenuItem("Restart", "Restart", func() { a.RestartApp() })
+		addClickMenuItem("Exit", "Exit", func() { a.ExitApp() })
 	}, nil)
 }
 
@@ -40,6 +37,12 @@ func (a *App) UpdateTrayMenus(menus []MenuItem) {
 	for _, menu := range menus {
 		createMenuItem(menu, a, nil)
 	}
+}
+
+func addClickMenuItem(title, tooltip string, action func()) *systray.MenuItem {
+	m := systray.AddMenuItem(title, tooltip)
+	m.Click(action)
+	return m
 }
 
 func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
@@ -88,5 +91,4 @@ func (a *App) UpdateTray(tray TrayContent) {
 func (a *App) ExitApp() {
 	systray.Quit()
 	runtime.Quit(a.Ctx)
-	os.Exit(0)
 }
