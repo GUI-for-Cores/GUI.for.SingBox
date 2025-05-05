@@ -97,3 +97,11 @@ export const UnzipGZFile = async (path: string, output: string) => {
   }
   return data
 }
+
+export const UnzipTarGZFile = async (path: string, output: string) => {
+  const { flag, data } = await App.UnzipTarGZFile(path, output)
+  if (!flag) {
+    throw data
+  }
+  return data
+}

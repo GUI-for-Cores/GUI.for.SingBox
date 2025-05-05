@@ -22,7 +22,7 @@ const kernelApiStore = Stores.useKernelApiStore()
 const subscribesStore = Stores.useSubscribesStore()
 const scheduledTasksStore = Stores.useScheduledTasksStore()
 
-EventsOn('launchArgs', async (args: string[]) => {
+EventsOn('onLaunchApp', async (args: string[]) => {
   const url = new URL(args[0])
   if (url.pathname.startsWith('//import-remote-profile')) {
     const _url = url.searchParams.get('url')

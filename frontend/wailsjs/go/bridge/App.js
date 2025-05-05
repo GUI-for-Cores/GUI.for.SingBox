@@ -122,6 +122,10 @@ export function UnzipGZFile(arg1, arg2) {
   return window['go']['bridge']['App']['UnzipGZFile'](arg1, arg2);
 }
 
+export function UnzipTarGZFile(arg1, arg2) {
+  return window['go']['bridge']['App']['UnzipTarGZFile'](arg1, arg2);
+}
+
 export function UnzipZIPFile(arg1, arg2) {
   return window['go']['bridge']['App']['UnzipZIPFile'](arg1, arg2);
 }

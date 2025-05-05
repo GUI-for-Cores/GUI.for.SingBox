@@ -91,4 +91,5 @@ func (a *App) UpdateTray(tray TrayContent) {
 func (a *App) ExitApp() {
 	systray.Quit()
 	runtime.Quit(a.Ctx)
+	os.Exit(0)
 }

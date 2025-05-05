@@ -18,6 +18,7 @@ import {
   Download,
   HttpCancel,
   UnzipZIPFile,
+  UnzipTarGZFile,
   HttpGet,
   Exec,
   Movefile,
@@ -116,19 +117,11 @@ export const useCoreBranch = (isAlpha = false) => {
         const tmpPath = `data/.cache/${assetName.replace('.zip', '')}`
         await Movefile(`${tmpPath}/${stableFileName}`, CoreFilePath)
         await Removefile(tmpPath)
-      } else {
-        const extractDir = `data/.cache/${isAlpha ? 'latest' : 'stable'}`
-        await Makedir(extractDir)
-        await Exec('tar', [
-          'xzvf',
-          await AbsolutePath(downloadCacheFile),
-          '-C',
-          await AbsolutePath(extractDir),
-          '--strip-components',
-          '1',
-        ])
-        await Movefile(`${extractDir}/${stableFileName}`, CoreFilePath)
-        await Removefile(extractDir)
+      } else if (assetName.endsWith('.tar.gz')) {
+        await UnzipTarGZFile(downloadCacheFile, 'data/.cache')
+        const tmpPath = `data/.cache/${assetName.replace('.tar.gz', '')}`
+        await Movefile(`${tmpPath}/${stableFileName}`, CoreFilePath)
+        await Removefile(tmpPath)
       }
 
       await Removefile(downloadCacheFile)

@@ -62,6 +62,8 @@ export function StopServer(arg1:string):Promise<bridge.FlagResult>;
 
 export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
+export function UnzipTarGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+
 export function UnzipZIPFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function UpdateTray(arg1:bridge.TrayContent):Promise<void>;
