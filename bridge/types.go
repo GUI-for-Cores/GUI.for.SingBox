@@ -48,8 +48,13 @@ type FlagResult struct {
 }
 
 type ServerOptions struct {
-	Cert string `json:"cert"`
-	Key  string `json:"key"`
+	Cert          string `json:"Cert"`
+	Key           string `json:"Key"`
+	StaticPath    string `json:"StaticPath"`
+	StaticRoute   string `json:"StaticRoute"`
+	UploadPath    string `json:"UploadPath"`
+	UploadRoute   string `json:"UploadRoute"`
+	MaxUploadSize int64  `json:"MaxUploadSize"`
 }
 
 type HTTPResult struct {

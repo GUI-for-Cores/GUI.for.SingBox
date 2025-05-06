@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,11 +27,37 @@ type ResponseData struct {
 }
 
 func (a *App) StartServer(address string, serverID string, options ServerOptions) FlagResult {
-	log.Printf("StartServer: %s", address)
+	log.Printf("StartServer: %s %s %v", address, serverID, options)
+
+	mux := http.NewServeMux()
+
+	if options.StaticPath != "" && options.StaticRoute != "" {
+		static := GetPath(options.StaticPath)
+		fs := http.FileServer(http.Dir(static))
+		mux.Handle(options.StaticRoute, http.StripPrefix(options.StaticRoute, fs))
+	}
+
+	if options.UploadPath != "" && options.UploadRoute != "" {
+		uploadPath := GetPath(options.UploadPath)
+		if err := os.MkdirAll(uploadPath, os.ModePerm); err != nil {
+			return FlagResult{false, "Failed to create upload directory: " + err.Error()}
+		}
+
+		maxUploadSize := options.MaxUploadSize
+		if maxUploadSize <= 0 {
+			maxUploadSize = 50 * 1024 * 1024 // 50MB
+		}
+
+		mux.HandleFunc(options.UploadRoute, func(w http.ResponseWriter, r *http.Request) {
+			a.handleFileUpload(w, r, uploadPath, maxUploadSize)
+		})
+	}
+
+	mux.HandleFunc("/", a.handleHttpRequest(serverID))
 
 	server := &http.Server{
 		Addr:    address,
-		Handler: a.httpHandler(serverID),
+		Handler: mux,
 	}
 
 	var result error
@@ -96,12 +124,12 @@ func (a *App) ListServer() FlagResult {
 	return FlagResult{true, strings.Join(servers, "|")}
 }
 
-func (a *App) httpHandler(serverID string) http.HandlerFunc {
+func (a *App) handleHttpRequest(serverID string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(500)
-			log.Printf("reading body error: %v", err)
+			w.Write([]byte("Failed to read request body: " + err.Error()))
 			return
 		}
 
@@ -153,4 +181,52 @@ func (a *App) httpHandler(serverID string) http.HandlerFunc {
 		w.WriteHeader(res.Status)
 		w.Write([]byte(res.Body))
 	}
+}
+
+func (a *App) handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string, maxUploadSize int64) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
+
+	reader, err := r.MultipartReader()
+	if err != nil {
+		http.Error(w, "Invalid multipart form: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for {
+		part, err := reader.NextPart()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			http.Error(w, "Error reading upload stream: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if part.FileName() == "" {
+			part.Close()
+			continue
+		}
+
+		dst, err := os.Create(uploadPath + "/" + filepath.Base(part.FileName()))
+		if err != nil {
+			http.Error(w, "Error creating file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if _, err = io.Copy(dst, part); err != nil {
+			dst.Close()
+			part.Close()
+			http.Error(w, "Error saving file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		dst.Close()
+		part.Close()
+	}
+
+	w.Write([]byte("File uploaded successfully"))
 }

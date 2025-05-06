@@ -145,8 +145,13 @@ export namespace bridge {
 	    }
 	}
 	export class ServerOptions {
-	    cert: string;
-	    key: string;
+	    Cert: string;
+	    Key: string;
+	    StaticPath: string;
+	    StaticRoute: string;
+	    UploadPath: string;
+	    UploadRoute: string;
+	    MaxUploadSize: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ServerOptions(source);
@@ -154,8 +159,13 @@ export namespace bridge {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.cert = source["cert"];
-	        this.key = source["key"];
+	        this.Cert = source["Cert"];
+	        this.Key = source["Key"];
+	        this.StaticPath = source["StaticPath"];
+	        this.StaticRoute = source["StaticRoute"];
+	        this.UploadPath = source["UploadPath"];
+	        this.UploadRoute = source["UploadRoute"];
+	        this.MaxUploadSize = source["MaxUploadSize"];
 	    }
 	}
 	export class TrayContent {

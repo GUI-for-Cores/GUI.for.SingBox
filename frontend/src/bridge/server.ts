@@ -17,8 +17,13 @@ type ResponseType = {
 }
 
 type ServerOptions = {
-  cert: string
-  key: string
+  Cert?: string
+  Key?: string
+  StaticPath?: string
+  StaticRoute?: string
+  UploadPath?: string
+  UploadRoute?: string
+  MaxUploadSize?: number
 }
 
 type HttpServerHandler = (
@@ -37,9 +42,19 @@ export const StartServer = async (
   address: string,
   id: string,
   handler: HttpServerHandler,
-  options: ServerOptions = { cert: '', key: '' },
+  options: ServerOptions = {},
 ) => {
-  const { flag, data } = await App.StartServer(address, id, options)
+  const _options: Required<ServerOptions> = {
+    Cert: '',
+    Key: '',
+    StaticPath: '', // default: /static
+    StaticRoute: '/static/',
+    UploadPath: '', // default: /upload
+    UploadRoute: '/upload',
+    MaxUploadSize: 50 * 1024 * 1024, // 50MB
+    ...options,
+  }
+  const { flag, data } = await App.StartServer(address, id, _options)
   if (!flag) {
     throw data
   }
