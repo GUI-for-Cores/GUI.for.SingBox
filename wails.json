@@ -6,7 +6,6 @@
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
   "frontend:dev:serverUrl": "auto",
-  "nsisType": "single",
   "author": {
     "name": "GUI.for.Cores",
     "email": "GUI.for.Cores@github.com"
