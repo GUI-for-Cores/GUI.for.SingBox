@@ -329,8 +329,10 @@ const generateDns = (
 export const generateDnsServerURL = (dnsServer: IDNSServer) => {
   const { type, server_port, path, server, interface: _interface } = dnsServer
   let address = ''
-  if ([DnsServer.Https, DnsServer.H3].includes(type as any)) {
+  if (type == DnsServer.Https) {
     address = `https://${server}${server_port ? ':' + server_port : ''}${path ? path : ''}`
+  } else if (type == DnsServer.H3) {
+    address = `h3://${server}${server_port ? ':' + server_port : ''}${path ? path : ''}`
   } else if (type == DnsServer.Dhcp) {
     address = `dhcp://${_interface}`
   } else if (type == DnsServer.FakeIP) {
