@@ -2,7 +2,7 @@
 import { ref, watch, useTemplateRef, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { APP_TITLE, message } from '@/utils'
+import { APP_TITLE, debounce, message } from '@/utils'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore, useEnvStore } from '@/stores'
 
 import { useModal } from '@/components/Modal'
@@ -102,11 +102,24 @@ const handleShowKernelLogs = () => {
     .open()
 }
 
+let scrollEventCount = 0
+const resetScrollEventCount = debounce(() => (scrollEventCount = 0), 100)
+
 const onMouseWheel = (e: WheelEvent) => {
   if (!appSettingsStore.app.kernel.running) return
-  const isDown = e.deltaY > 0
 
-  showController.value = isDown || controllerRef.value?.scrollTop !== 0
+  const currentScrollTop = controllerRef.value?.scrollTop ?? 0
+  const isScrollingDown = e.deltaY > 0
+
+  if (isScrollingDown || currentScrollTop === 0) {
+    scrollEventCount += 1
+  }
+
+  if (scrollEventCount >= 5) {
+    showController.value = isScrollingDown || currentScrollTop !== 0
+  }
+
+  resetScrollEventCount()
 }
 
 const onTunSwitchChange = async (enable: boolean) => {
