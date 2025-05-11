@@ -115,7 +115,7 @@ const onMouseWheel = (e: WheelEvent) => {
     scrollEventCount += 1
   }
 
-  if (scrollEventCount >= 5) {
+  if (scrollEventCount >= 3) {
     showController.value = isScrollingDown || currentScrollTop !== 0
   }
 
