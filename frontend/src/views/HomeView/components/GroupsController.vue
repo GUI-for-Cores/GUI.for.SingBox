@@ -192,7 +192,7 @@ onActivated(() => {
 </script>
 
 <template>
-  <div class="groups" style="margin-top: 0">
+  <div class="groups groups-fixed" style="margin-top: 0">
     <div class="header">
       <Switch v-model="appSettings.app.kernel.autoClose">
         {{ t('home.controller.autoClose') }}
@@ -318,13 +318,18 @@ onActivated(() => {
   transform: scaleY(0);
 }
 
+.groups-fixed {
+  z-index: 2;
+  position: sticky;
+  top: 0;
+}
 .groups {
   margin: 8px;
 
   .header {
     position: sticky;
     z-index: 1;
-    top: 0;
+    top: 56px;
     display: flex;
     align-items: center;
     padding: 8px;

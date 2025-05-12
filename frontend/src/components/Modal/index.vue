@@ -64,30 +64,32 @@ provide('submit', handleSubmit)
 </script>
 
 <template>
-  <Transition name="modal" :duration="200">
-    <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
-      <div :style="contentStyle" class="modal" style="--wails-draggable: false">
-        <div
-          v-if="title"
-          @dblclick="WindowToggleMaximise"
-          class="title"
-          style="--wails-draggable: drag"
-        >
-          {{ t(title) }}
-        </div>
-        <div class="content">
-          <slot />
-        </div>
-        <div v-if="footer" class="action">
-          <slot name="action" />
-          <Button v-if="cancel" @click="handleCancel" :type="maskClosable ? 'text' : 'normal'">
-            {{ t(cancelText) }}
-          </Button>
-          <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
+  <Teleport to="body">
+    <Transition name="modal" :duration="200">
+      <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
+        <div :style="contentStyle" class="modal" style="--wails-draggable: false">
+          <div
+            v-if="title"
+            @dblclick="WindowToggleMaximise"
+            class="title"
+            style="--wails-draggable: drag"
+          >
+            {{ t(title) }}
+          </div>
+          <div class="content">
+            <slot />
+          </div>
+          <div v-if="footer" class="action">
+            <slot name="action" />
+            <Button v-if="cancel" @click="handleCancel" :type="maskClosable ? 'text' : 'normal'">
+              {{ t(cancelText) }}
+            </Button>
+            <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
+          </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <style lang="less" scoped>
