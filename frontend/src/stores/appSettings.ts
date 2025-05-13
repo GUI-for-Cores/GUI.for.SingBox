@@ -4,8 +4,16 @@ import { parse, stringify } from 'yaml'
 
 import i18n from '@/lang'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
-import { Colors, DefaultFontFamily } from '@/constant/app'
-import { Theme, WindowStartState, Lang, View, Color, WebviewGpuPolicy } from '@/enums/app'
+import { Colors, DefaultFontFamily, DefaultTestURL } from '@/constant/app'
+import {
+  Theme,
+  WindowStartState,
+  Lang,
+  View,
+  Color,
+  WebviewGpuPolicy,
+  ControllerCloseMode,
+} from '@/enums/app'
 import {
   Readfile,
   Writefile,
@@ -48,6 +56,7 @@ type AppSettings = {
     cardMode: boolean
     sortByDelay: boolean
     testUrl: string
+    controllerCloseMode: ControllerCloseMode
   }
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
@@ -126,7 +135,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       unAvailable: true,
       cardMode: true,
       sortByDelay: false,
-      testUrl: 'https://www.gstatic.com/generate_204',
+      testUrl: DefaultTestURL,
+      controllerCloseMode: ControllerCloseMode.All,
     },
     pluginSettings: {},
     githubApiToken: '',
@@ -146,6 +156,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
     if ((app.value.kernel.branch as any) === 'latest') {
       app.value.kernel.branch = 'alpha'
+    }
+    if (app.value.kernel.controllerCloseMode === undefined) {
+      app.value.kernel.controllerCloseMode = ControllerCloseMode.All
     }
 
     firstOpen = !!data

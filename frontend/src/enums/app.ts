@@ -27,6 +27,11 @@ export enum View {
   List = 'list',
 }
 
+export enum ControllerCloseMode {
+  All = 'all',
+  Button = 'button',
+}
+
 export enum Color {
   Default = 'default',
   Orange = 'orange',

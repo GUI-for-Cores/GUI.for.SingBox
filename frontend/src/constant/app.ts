@@ -1,4 +1,4 @@
-import { Color, PluginTrigger, ScheduledTasksType, View } from '@/enums/app'
+import { Color, ControllerCloseMode, PluginTrigger, ScheduledTasksType, View } from '@/enums/app'
 
 export const ProfilesFilePath = 'data/profiles.yaml'
 
@@ -51,6 +51,11 @@ export const ViewOptions = [
   { label: 'common.list', value: View.List },
 ]
 
+export const ControllerCloseModeOptions = [
+  { label: 'home.controller.closeMode.all', value: ControllerCloseMode.All },
+  { label: 'home.controller.closeMode.button', value: ControllerCloseMode.Button },
+]
+
 // vue-draggable-plus config
 export const DraggableOptions = {
   animation: 150,
@@ -74,3 +79,5 @@ export const ScheduledTaskOptions = [
 ]
 
 export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subscription) => {\n  return { proxies, subscription }\n}`
+
+export const DefaultTestURL = 'https://www.gstatic.com/generate_204'

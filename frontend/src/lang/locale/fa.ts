@@ -353,6 +353,11 @@ export default {
       sortBy: 'مرتب‌سازی بر اساس تأخیر',
       delay: 'آزمایش تأخیر URL',
       delayUrl: 'لطفاً URL آزمایش تأخیر را وارد کنید',
+      closeMode: {
+        name: 'حالت بستن کنترلر',
+        all: 'اسکرول یا دکمه',
+        button: 'فقط دکمه',
+      },
     },
     connections: {
       type: 'نوع',

@@ -353,6 +353,11 @@ export default {
       sortBy: 'Sort By Delay',
       delay: 'Delay test URL',
       delayUrl: 'Please enter the delayed test URL',
+      closeMode: {
+        name: 'Controller Close Mode',
+        all: 'Scroll or Button',
+        button: 'Button Only',
+      },
     },
     connections: {
       type: 'Type',

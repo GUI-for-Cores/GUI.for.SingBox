@@ -1,4 +1,6 @@
+import i18n from '@/lang'
 import { sampleID } from '@/utils'
+import { DefaultTestURL } from './app'
 import {
   LogLevel,
   Inbound,
@@ -12,7 +14,7 @@ import {
   Strategy,
   DnsServer,
 } from '@/enums/kernel'
-import i18n from '@/lang'
+
 const { t } = i18n.global
 
 const DefaultOutboundIds = {
@@ -140,7 +142,7 @@ export const DefaultOutbound = (): IOutbound => ({
   type: Outbound.Selector,
   outbounds: [],
   interrupt_exist_connections: true,
-  url: 'https://www.gstatic.com/generate_204',
+  url: DefaultTestURL,
   interval: '3m',
   tolerance: 150,
   include: '',
@@ -166,7 +168,7 @@ export const DefaultOutbounds = (): IOutbound[] => [
     type: Outbound.Urltest,
     outbounds: [],
     interrupt_exist_connections: true,
-    url: 'https://www.gstatic.com/generate_204',
+    url: DefaultTestURL,
     interval: '3m',
     tolerance: 150,
     include: '',

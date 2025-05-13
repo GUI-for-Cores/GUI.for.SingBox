@@ -352,6 +352,11 @@ export default {
       sortBy: '按延迟排序',
       delay: '延迟测试URL',
       delayUrl: '请输入延迟测试URL',
+      closeMode: {
+        name: '控制器关闭模式',
+        all: '滚动和关闭按钮',
+        button: '仅按钮',
+      },
     },
     connections: {
       type: '类型',

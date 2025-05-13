@@ -2,6 +2,7 @@
 import { ref, watch, useTemplateRef, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { ControllerCloseMode } from '@/enums/app'
 import { APP_TITLE, debounce, message } from '@/utils'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore } from '@/stores'
 
@@ -60,15 +61,19 @@ const resetScrollEventCount = debounce(() => (scrollEventCount = 0), 100)
 const onMouseWheel = (e: WheelEvent) => {
   if (!appSettingsStore.app.kernel.running) return
 
-  const currentScrollTop = controllerRef.value?.scrollTop ?? 0
   const isScrollingDown = e.deltaY > 0
 
-  if (isScrollingDown || currentScrollTop === 0) {
-    scrollEventCount += 1
-  }
-
-  if (scrollEventCount >= 3) {
-    showController.value = isScrollingDown || currentScrollTop !== 0
+  if (
+    isScrollingDown ||
+    appSettingsStore.app.kernel.controllerCloseMode === ControllerCloseMode.All
+  ) {
+    const currentScrollTop = controllerRef.value?.scrollTop ?? 0
+    if (isScrollingDown || currentScrollTop === 0) {
+      scrollEventCount += 1
+    }
+    if (scrollEventCount >= 2) {
+      showController.value = isScrollingDown || currentScrollTop !== 0
+    }
   }
 
   resetScrollEventCount()
