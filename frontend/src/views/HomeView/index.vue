@@ -133,16 +133,16 @@ watch(showController, (v) => {
         class="controller"
       >
         <GroupsController />
-        <Button
-          v-show="showController"
-          class="close-controller"
-          @click="showController = false"
-          type="text"
-          size="small"
-        >
-          <Icon icon="close" />
-        </Button>
       </div>
+
+      <Button
+        v-show="showController"
+        class="close-controller"
+        @click="showController = false"
+        type="text"
+        size="small"
+        icon="close"
+      />
     </template>
   </div>
 
