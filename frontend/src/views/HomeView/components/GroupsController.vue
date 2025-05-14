@@ -107,6 +107,7 @@ const handleGroupDelay = async (group: string) => {
     const delayTest = async (proxy: string) => {
       index += 1
       update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
+      const _proxy = kernelApiStore.proxies[proxy]
       try {
         loadingSet.value.add(proxy)
         const { delay } = await getProxyDelay(
@@ -114,10 +115,10 @@ const handleGroupDelay = async (group: string) => {
           appSettings.app.kernel.testUrl || DefaultTestURL,
         )
         success += 1
-        const _proxy = kernelApiStore.proxies[proxy]
         _proxy.history.push({ delay })
       } catch {
         failure += 1
+        _proxy.history.push({ delay: 0 })
       }
       loadingSet.value.delete(proxy)
     }
