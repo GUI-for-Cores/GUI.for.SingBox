@@ -29,37 +29,34 @@ const toggle = () => {
     :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
     class="switch"
   >
-    <div v-if="$slots.default && !model" class="slot">
-      <slot />
-    </div>
-
     <div class="dot"></div>
 
-    <div v-if="$slots.default && model" class="slot">
-      <slot />
+    <div v-if="$slots.default" class="slot">
+      <slot></slot>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 .switch {
+  position: relative;
   cursor: pointer;
   min-width: 50px;
   height: 24px;
   display: inline-flex;
-  padding: 0 3px;
   align-items: center;
   border-radius: 24px;
   transition: all 0.2s;
   font-size: 12px;
-  color: var(--card-color);
   .dot {
+    position: absolute;
     width: 18px;
     height: 18px;
     border-radius: 18px;
+    transition: all 0.2s;
   }
   .slot {
-    padding: 0 4px;
+    transition: margin 0.2s;
   }
 }
 
@@ -83,14 +80,64 @@ const toggle = () => {
   color: #fff;
   background-color: var(--switch-on-bg);
   .dot {
+    left: calc(100% - 22px);
     background-color: var(--switch-on-dot-bg);
+  }
+
+  .slot {
+    margin-right: 26px;
+    margin-left: 10px;
+  }
+
+  &.small {
+    .dot {
+      left: calc(100% - 16px);
+    }
+    .slot {
+      margin-right: 20px;
+      margin-left: 8px;
+    }
+  }
+
+  &.square {
+    .dot {
+      left: calc(100% - 8px);
+    }
+    .slot {
+      margin-right: 12px;
+      margin-left: 8px;
+    }
   }
 }
 
 .off {
+  color: var(--card-color);
   background-color: var(--switch-off-bg);
   .dot {
+    left: 4px;
     background-color: var(--switch-off-dot-bg);
+  }
+
+  .slot {
+    margin-left: 26px;
+    margin-right: 10px;
+  }
+
+  &.small {
+    .dot {
+      left: 4px;
+    }
+    .slot {
+      margin-left: 20px;
+      margin-right: 8px;
+    }
+  }
+
+  &.square {
+    .slot {
+      margin-left: 12px;
+      margin-right: 8px;
+    }
   }
 }
 
