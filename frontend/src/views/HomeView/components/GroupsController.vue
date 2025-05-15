@@ -153,7 +153,7 @@ const handleRefresh = async () => {
   loading.value = true
   await ignoredError(kernelApiStore.refreshConfig)
   await ignoredError(kernelApiStore.refreshProviderProxies)
-  await sleep(500)
+  await sleep(100)
   loading.value = false
 }
 
@@ -195,12 +195,19 @@ onActivated(() => {
         {{ t('home.controller.sortBy') }}
       </Switch>
       <Button @click="toggleMoreSettings" type="primary" size="small" class="ml-8"> ... </Button>
-      <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" class="ml-auto">
-        <Icon icon="expand" />
-      </Button>
-      <Button @click="collapseAll" v-tips="'home.overview.collapseAll'" type="text">
-        <Icon icon="collapse" />
-      </Button>
+      <Button
+        @click="expandAll"
+        v-tips="'home.overview.expandAll'"
+        type="text"
+        icon="expand"
+        class="ml-auto"
+      />
+      <Button
+        @click="collapseAll"
+        v-tips="'home.overview.collapseAll'"
+        type="text"
+        icon="collapse"
+      />
       <Button
         @click="handleRefresh"
         v-tips="'home.overview.refresh'"
