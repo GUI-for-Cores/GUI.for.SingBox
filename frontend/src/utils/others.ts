@@ -57,6 +57,15 @@ export const ignoredError = async <T>(fn: (...args: any) => Promise<T>, ...args:
 
 export const sampleID = () => 'ID_' + Math.random().toString(36).substring(2, 10)
 
+export const generateSecureKey = (bits = 256) => {
+  const bytes = bits / 8
+  const array = new Uint8Array(bytes)
+  crypto.getRandomValues(array)
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
 export const getValue = (obj: Record<string, any>, expr: string) => {
   return expr.split('.').reduce((value, key) => {
     return value[key]

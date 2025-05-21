@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 import { useBool } from '@/hooks'
+import { generateSecureKey } from '@/utils'
 import { ModeOptions, LogLevelOptions } from '@/constant/kernel'
 
 interface Props {
@@ -48,7 +49,15 @@ const [showMore, toggleMore] = useBool(false)
     </div>
     <div class="form-item">
       {{ t('kernel.clash_api.secret') }}
-      <Input v-model="model.experimental.clash_api.secret" editable />
+      <div class="flex items-center">
+        <Input v-model="model.experimental.clash_api.secret" editable />
+        <Button
+          @click="() => (model.experimental.clash_api.secret = generateSecureKey())"
+          type="text"
+          size="small"
+          icon="refresh"
+        />
+      </div>
     </div>
     <Divider>
       <Button @click="toggleMore" type="text" size="small">{{ t('common.more') }}</Button>

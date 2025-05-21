@@ -1,5 +1,5 @@
 import i18n from '@/lang'
-import { sampleID } from '@/utils'
+import { generateSecureKey, sampleID } from '@/utils'
 import { DefaultTestURL } from './app'
 import {
   LogLevel,
@@ -60,7 +60,7 @@ export const DefaultExperimental = (): IExperimental => ({
     external_ui: '',
     external_ui_download_url: '',
     external_ui_download_detour: DefaultOutboundIds.Direct,
-    secret: sampleID(),
+    secret: generateSecureKey(),
     default_mode: ClashMode.Rule,
     access_control_allow_origin: ['*'],
     access_control_allow_private_network: false,
