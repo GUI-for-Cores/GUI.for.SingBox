@@ -163,8 +163,8 @@ onUnmounted(() => {
         {{ t('home.overview.tunMode') }}
       </Switch>
       <component
-        v-for="(action, index) in appStore.customActions.core_state"
-        :key="index"
+        v-for="action in appStore.customActions.core_state"
+        :key="action.id"
         :is="action.component"
         v-bind="action.componentProps"
         class="ml-8"

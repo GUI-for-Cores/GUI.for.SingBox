@@ -11,6 +11,7 @@ import {
   ignoredError,
   message,
   alert,
+  sampleID,
 } from '@/utils'
 import {
   Download,
@@ -43,6 +44,7 @@ export const useAppStore = defineStore('app', () => {
 
   /* Actions */
   interface CustomAction {
+    id?: string
     component: string
     componentProps?: Recordable
     componentSlots?: Recordable
@@ -57,15 +59,18 @@ export const useAppStore = defineStore('app', () => {
     | string
     | number
     | boolean
-  const customActions: { [key: string]: CustomAction[] } = {
+  const customActions = ref<{ [key: string]: CustomAction[] }>({
     core_state: [],
-  }
+  })
   const addCustomActions = (target: string, actions: CustomAction | CustomAction[]) => {
-    if (!customActions[target]) throw new Error('Target does not exist: ' + target)
+    if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
     const _actions = Array.isArray(actions) ? actions : [actions]
-    customActions[target].push(..._actions)
+    _actions.forEach((action) => (action.id = sampleID()))
+    customActions.value[target].push(..._actions)
     const remove = () => {
-      customActions[target] = customActions[target].filter((a) => !_actions.includes(a))
+      customActions.value[target] = customActions.value[target].filter(
+        (a) => !_actions.some((added) => added.id === a.id),
+      )
     }
     return remove
   }
