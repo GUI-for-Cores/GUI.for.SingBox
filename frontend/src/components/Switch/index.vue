@@ -18,7 +18,7 @@ const emits = defineEmits(['change'])
 const toggle = () => {
   if (props.disabled) return
   model.value = !model.value
-  emits('change', !model.value)
+  emits('change', model.value)
 }
 </script>
 
