@@ -13,7 +13,14 @@ withDefaults(defineProps<Props>(), {
   size: 'default',
 })
 
+const emits = defineEmits(['change'])
+
 const { t } = useI18n()
+
+const handleSelect = (val: string | number | boolean) => {
+  model.value = val
+  emits('change', val)
+}
 </script>
 
 <template>
@@ -21,7 +28,7 @@ const { t } = useI18n()
     <div
       v-for="o in options"
       :key="o.value.toString()"
-      @click="model = o.value"
+      @click="handleSelect(o.value)"
       :class="{ active: o.value === model }"
       class="radio-button"
     >

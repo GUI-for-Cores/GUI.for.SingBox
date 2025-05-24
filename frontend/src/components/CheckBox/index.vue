@@ -13,6 +13,8 @@ withDefaults(defineProps<Props>(), {
   size: 'default',
 })
 
+const emits = defineEmits(['change'])
+
 const { t } = useI18n()
 
 const isActive = (val: string) => model.value.includes(val)
@@ -24,6 +26,7 @@ const handleSelect = (val: string) => {
   } else {
     model.value.push(val)
   }
+  emits('change', model.value)
 }
 </script>
 
