@@ -4,7 +4,7 @@ import { ref, onUnmounted, h } from 'vue'
 
 import { getKernelWS } from '@/api/kernel'
 import { useModal } from '@/components/Modal'
-import { useEnvStore, useKernelApiStore } from '@/stores'
+import { useEnvStore, useAppStore, useKernelApiStore } from '@/stores'
 import { ModeOptions } from '@/constant/kernel'
 import { formatBytes, handleChangeMode, message, setIntervalImmediately } from '@/utils'
 
@@ -24,6 +24,7 @@ const statistics = ref({
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
+const appStore = useAppStore()
 const envStore = useEnvStore()
 const kernelApiStore = useKernelApiStore()
 
@@ -161,6 +162,21 @@ onUnmounted(() => {
       >
         {{ t('home.overview.tunMode') }}
       </Switch>
+      <component
+        v-for="(action, index) in appStore.customActions.core_state"
+        :key="index"
+        :is="action.component"
+        v-bind="action.componentProps"
+        class="ml-8"
+      >
+        <template
+          v-for="([name, slot], index) in Object.entries(action.componentSlots || {})"
+          :key="index"
+          #[name]
+        >
+          <component :is="appStore.renderCustomActionSlot(slot)" />
+        </template>
+      </component>
       <Button
         @click="handleShowApiLogs"
         v-tips="'home.overview.viewlog'"

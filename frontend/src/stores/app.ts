@@ -1,5 +1,5 @@
 import { useI18n } from 'vue-i18n'
-import { computed, ref } from 'vue'
+import { h, computed, ref, type VNode, isVNode, resolveComponent } from 'vue'
 import { defineStore } from 'pinia'
 
 import { useEnvStore } from './env'
@@ -40,6 +40,42 @@ export const useAppStore = defineStore('app', () => {
     x: 0,
     y: 0,
   })
+
+  /* Actions */
+  interface CustomAction {
+    component: string
+    componentProps?: Recordable
+    componentSlots?: Recordable
+  }
+  type CustomActionSlot =
+    | (({ h }: any) => VNode | string | number | boolean)
+    | VNode
+    | string
+    | number
+    | boolean
+  const customActions: { [key: string]: CustomAction[] } = {
+    core_state: [],
+  }
+  const addCustomActions = (target: string, actions: CustomAction | CustomAction[]) => {
+    if (!customActions[target]) throw new Error('Target does not exist: ' + target)
+    const _actions = Array.isArray(actions) ? actions : [actions]
+    customActions[target].push(..._actions)
+    const remove = () => {
+      customActions[target] = customActions[target].filter((a) => !_actions.includes(a))
+    }
+    return remove
+  }
+  const renderCustomActionSlot = (slot: CustomActionSlot) => {
+    let result: CustomActionSlot = slot
+    if (typeof result === 'function') {
+      const customH = (type: any, ...args: any[]) => h(resolveComponent(type), ...args)
+      result = result({ h: customH })
+    }
+    if (isVNode(result)) {
+      return result
+    }
+    return h('div', result)
+  }
 
   const { t } = useI18n()
   const envStore = useEnvStore()
@@ -146,5 +182,8 @@ export const useAppStore = defineStore('app', () => {
     updatable,
     checkForUpdates,
     downloadApp,
+    customActions,
+    addCustomActions,
+    renderCustomActionSlot,
   }
 })
