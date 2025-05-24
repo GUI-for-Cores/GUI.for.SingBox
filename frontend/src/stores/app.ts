@@ -47,8 +47,12 @@ export const useAppStore = defineStore('app', () => {
     componentProps?: Recordable
     componentSlots?: Recordable
   }
+  interface CustomActionSlotOptions {
+    h: typeof h
+    ref: typeof ref
+  }
   type CustomActionSlot =
-    | (({ h }: any) => VNode | string | number | boolean)
+    | ((options: CustomActionSlotOptions) => VNode | string | number | boolean)
     | VNode
     | string
     | number
@@ -69,7 +73,7 @@ export const useAppStore = defineStore('app', () => {
     let result: CustomActionSlot = slot
     if (typeof result === 'function') {
       const customH = (type: any, ...args: any[]) => h(resolveComponent(type), ...args)
-      result = result({ h: customH })
+      result = result({ h: customH, ref })
     }
     if (isVNode(result)) {
       return result
