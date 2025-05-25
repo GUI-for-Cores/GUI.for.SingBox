@@ -1,5 +1,7 @@
 import { Color, ControllerCloseMode, PluginTrigger, ScheduledTasksType, View } from '@/enums/app'
 
+export const UserFilePath = 'data/user.yaml'
+
 export const ProfilesFilePath = 'data/profiles.yaml'
 
 export const SubscribesFilePath = 'data/subscribes.yaml'

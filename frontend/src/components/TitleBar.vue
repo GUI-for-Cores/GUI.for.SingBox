@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 
+import type { Menu } from '@/types/app'
+
 import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
 import {

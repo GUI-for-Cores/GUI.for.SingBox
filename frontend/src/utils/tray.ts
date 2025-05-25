@@ -1,3 +1,5 @@
+import type { MenuItem } from '@/types/app'
+
 import i18n from '@/lang'
 import { ClashMode } from '@/enums/kernel'
 import { Theme, Color, Lang } from '@/enums/app'

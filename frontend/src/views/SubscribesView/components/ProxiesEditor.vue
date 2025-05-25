@@ -2,12 +2,14 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import type { Subscription } from '@/types/app'
+
 import { Readfile, Writefile } from '@/bridge'
 import { deepClone, ignoredError, message, omitArray, sampleID } from '@/utils'
-import { type SubscribeType, useSubscribesStore } from '@/stores'
+import { useSubscribesStore } from '@/stores'
 
 interface Props {
-  sub: SubscribeType
+  sub: Subscription
 }
 
 const props = defineProps<Props>()
@@ -45,7 +47,7 @@ const handleSave = async () => {
 
 const initProxiesText = async () => {
   const content = (await ignoredError(Readfile, sub.value.path)) || '[]'
-  const proxies: SubscribeType['proxies'] = JSON.parse(content)
+  const proxies: Subscription['proxies'] = JSON.parse(content)
   const proxiesWithId = proxies.map((proxy) => {
     return {
       __id_in_gui: sub.value.proxies.find((v) => v.tag === proxy.tag)?.id || sampleID(),

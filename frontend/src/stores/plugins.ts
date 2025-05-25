@@ -2,10 +2,12 @@ import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
+import type { Plugin, Subscription } from '@/types/app'
+
 import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
 import { HttpGet, Readfile, Removefile, Writefile } from '@/bridge'
 import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
-import { useAppSettingsStore, type SubscribeType } from '@/stores'
+import { useAppSettingsStore } from '@/stores'
 import {
   debounce,
   ignoredError,
@@ -17,54 +19,7 @@ import {
   asyncPool,
 } from '@/utils'
 
-export type PluginConfiguration = {
-  id: string
-  title: string
-  description: string
-  key: string
-  component:
-    | 'CheckBox'
-    | 'CodeViewer'
-    | 'Input'
-    | 'InputList'
-    | 'KeyValueEditor'
-    | 'Radio'
-    | 'Select'
-    | 'Switch'
-    | ''
-  value: any
-  options: any[]
-}
-
-export type PluginType = {
-  id: string
-  version: string
-  name: string
-  description: string
-  type: 'Http' | 'File'
-  url: string
-  path: string
-  triggers: PluginTrigger[]
-  menus: Record<string, string>
-  context: {
-    profiles: Recordable
-    subscriptions: Recordable
-    rulesets: Recordable
-    plugins: Recordable
-    scheduledtasks: Recordable
-  }
-  configuration: PluginConfiguration[]
-  disabled: boolean
-  install: boolean
-  installed: boolean
-  status: number // 0: Normal 1: Running 2: Stopped
-  // Not Config
-  updating?: boolean
-  loading?: boolean
-  running?: boolean
-}
-
-const PluginsCache: Recordable<{ plugin: PluginType; code: string }> = {}
+const PluginsCache: Recordable<{ plugin: Plugin; code: string }> = {}
 
 const PluginsTriggerMap: {
   [key in PluginTrigger]: {
@@ -101,8 +56,8 @@ const PluginsTriggerMap: {
 export const usePluginsStore = defineStore('plugins', () => {
   const appSettingsStore = useAppSettingsStore()
 
-  const plugins = ref<PluginType[]>([])
-  const pluginHub = ref<PluginType[]>([])
+  const plugins = ref<Plugin[]>([])
+  const pluginHub = ref<Plugin[]>([])
 
   const setupPlugins = async () => {
     const data = await ignoredError(Readfile, PluginsFilePath)
@@ -133,7 +88,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
   }
 
-  const getPluginMetadata = (plugin: PluginType) => {
+  const getPluginMetadata = (plugin: Plugin) => {
     let configuration = appSettingsStore.app.pluginSettings[plugin.id]
     if (!configuration) {
       configuration = {}
@@ -151,7 +106,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     )
   }
 
-  const reloadPlugin = async (plugin: PluginType, code = '', reloadTrigger = false) => {
+  const reloadPlugin = async (plugin: Plugin, code = '', reloadTrigger = false) => {
     const { path } = plugin
     if (!code) {
       code = await Readfile(path)
@@ -161,7 +116,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   // FIXME: Plug-in execution order is wrong
-  const updatePluginTrigger = (plugin: PluginType, isUpdate = true) => {
+  const updatePluginTrigger = (plugin: Plugin, isUpdate = true) => {
     const triggers = Object.keys(PluginsTriggerMap) as PluginTrigger[]
     triggers.forEach((trigger) => {
       PluginsTriggerMap[trigger].observers = PluginsTriggerMap[trigger].observers.filter(
@@ -180,7 +135,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     await Writefile(PluginsFilePath, stringify(p))
   }, 100)
 
-  const addPlugin = async (plugin: PluginType) => {
+  const addPlugin = async (plugin: Plugin) => {
     plugins.value.push(plugin)
     try {
       await _doUpdatePlugin(plugin)
@@ -213,7 +168,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
   }
 
-  const editPlugin = async (id: string, newPlugin: PluginType) => {
+  const editPlugin = async (id: string, newPlugin: Plugin) => {
     const idx = plugins.value.findIndex((v) => v.id === id)
     if (idx === -1) return
     const plugin = plugins.value.splice(idx, 1, newPlugin)[0]
@@ -226,7 +181,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
   }
 
-  const _doUpdatePlugin = async (plugin: PluginType) => {
+  const _doUpdatePlugin = async (plugin: Plugin) => {
     const isFromPluginHub = plugin.id.startsWith('plugin-')
     if (isFromPluginHub) {
       const newPlugin = pluginHub.value.find((v) => v.id === plugin.id)
@@ -293,7 +248,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   const updatePlugins = async () => {
     let needSave = false
 
-    const update = async (plugin: PluginType) => {
+    const update = async (plugin: Plugin) => {
       try {
         plugin.updating = true
         await _doUpdatePlugin(plugin)
@@ -314,11 +269,11 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const pluginHubLoading = ref(false)
   const findPluginInHubById = (id: string) => pluginHub.value.find((v) => v.id === id)
-  const isDeprecated = (plugin: PluginType) => {
+  const isDeprecated = (plugin: Plugin) => {
     if (!plugin.id.startsWith('plugin-')) return false
     return !findPluginInHubById(plugin.id)
   }
-  const hasNewPluginVersion = (plugin: PluginType) => {
+  const hasNewPluginVersion = (plugin: Plugin) => {
     const p = findPluginInHubById(plugin.id)
     if (!p) return false
     return p.version !== plugin.version
@@ -343,10 +298,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const getPluginCodefromCache = (id: string) => PluginsCache[id]?.code
 
-  const onSubscribeTrigger = async (
-    proxies: Record<string, any>[],
-    subscription: SubscribeType,
-  ) => {
+  const onSubscribeTrigger = async (proxies: Record<string, any>[], subscription: Subscription) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnSubscribe]
 
     let result = proxies

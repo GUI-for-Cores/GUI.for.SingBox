@@ -2,10 +2,12 @@
 import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
+import type { Plugin } from '@/types/app'
+
 import { Readfile, Writefile } from '@/bridge'
 import { PluginTriggerEvent } from '@/enums/app'
 import { deepClone, ignoredError, message } from '@/utils'
-import { usePluginsStore, type PluginType } from '@/stores'
+import { usePluginsStore } from '@/stores'
 
 interface Props {
   id: string
@@ -14,7 +16,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const plugin = ref<PluginType>()
+const plugin = ref<Plugin>()
 const metadata = ref<Record<string, any>>()
 const code = ref('')
 
@@ -69,7 +71,7 @@ const handleTest = async (event: PluginTriggerEvent, arg1?: any, arg2?: any) => 
   testing.value = false
 }
 
-const initPluginCode = async (p: PluginType) => {
+const initPluginCode = async (p: Plugin) => {
   const _code = pluginsStore.getPluginCodefromCache(p.id)
   if (_code) {
     code.value = _code

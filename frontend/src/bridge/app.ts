@@ -1,3 +1,4 @@
+import type { TrayContent } from '@/types/app'
 import * as App from '@wails/go/bridge/App'
 
 export const RestartApp = App.RestartApp

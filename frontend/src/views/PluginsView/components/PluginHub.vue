@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
+import type { Plugin } from '@/types/app'
+
 import { deepClone, message, sleep } from '@/utils'
-import { usePluginsStore, type PluginType } from '@/stores'
+import { usePluginsStore } from '@/stores'
 
 const { t } = useI18n()
 const pluginsStore = usePluginsStore()
 
-const handleAddPlugin = async (plugin: PluginType) => {
+const handleAddPlugin = async (plugin: Plugin) => {
   const { success, error, destroy } = message.info('plugins.updating', 60 * 1000)
   try {
     await pluginsStore.addPlugin(deepClone(plugin))

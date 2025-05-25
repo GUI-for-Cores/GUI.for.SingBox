@@ -2,6 +2,8 @@
 import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
+import type { Menu } from '@/types/app'
+
 import { ClipboardSetText } from '@/bridge'
 import { View } from '@/enums/app'
 import { DraggableOptions, ViewOptions } from '@/constant/app'

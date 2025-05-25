@@ -2,14 +2,16 @@
 import { useI18n } from 'vue-i18n'
 import { ref, computed, inject } from 'vue'
 
+import type { Menu, Subscription } from '@/types/app'
+
 import { useBool } from '@/hooks'
 import { deepClone, ignoredError, message, sampleID } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
 import { ClipboardSetText, Readfile, Writefile } from '@/bridge'
-import { type SubscribeType, useSubscribesStore } from '@/stores'
+import { useSubscribesStore } from '@/stores'
 
 interface Props {
-  sub: SubscribeType
+  sub: Subscription
 }
 
 const props = defineProps<Props>()
@@ -63,7 +65,7 @@ const filteredProxies = computed(() => {
 const menus: Menu[] = [
   {
     label: 'common.details',
-    handler: async (record: SubscribeType['proxies'][0]) => {
+    handler: async (record: Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         details.value = JSON.stringify(proxy, null, 2)
@@ -76,7 +78,7 @@ const menus: Menu[] = [
   },
   {
     label: 'common.copy',
-    handler: async (record: SubscribeType['proxies'][0]) => {
+    handler: async (record: Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         await ClipboardSetText(JSON.stringify(proxy, null, 2))
@@ -88,7 +90,7 @@ const menus: Menu[] = [
   },
   {
     label: 'common.edit',
-    handler: async (record: SubscribeType['proxies'][0]) => {
+    handler: async (record: Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         details.value = JSON.stringify(proxy, null, 2)

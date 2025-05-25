@@ -2,11 +2,13 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
+import type { Menu, Plugin } from '@/types/app'
+
 import { debounce, message } from '@/utils'
 import { BrowserOpenURL } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
-import { usePluginsStore, useAppSettingsStore, useEnvStore, type PluginType } from '@/stores'
+import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
 
 import { useModal } from '@/components/Modal'
 import PluginForm from './components/PluginForm.vue'
@@ -104,7 +106,7 @@ const handleUpdatePlugins = async () => {
   }
 }
 
-const handleUpdatePlugin = async (s: PluginType) => {
+const handleUpdatePlugin = async (s: Plugin) => {
   try {
     await pluginsStore.updatePlugin(s.id)
     message.success('common.success')
@@ -114,7 +116,7 @@ const handleUpdatePlugin = async (s: PluginType) => {
   }
 }
 
-const handleDeletePlugin = async (p: PluginType) => {
+const handleDeletePlugin = async (p: Plugin) => {
   try {
     await pluginsStore.deletePlugin(p.id)
   } catch (error: any) {
@@ -123,7 +125,7 @@ const handleDeletePlugin = async (p: PluginType) => {
   }
 }
 
-const handleDisablePlugin = async (p: PluginType) => {
+const handleDisablePlugin = async (p: Plugin) => {
   try {
     p.disabled = !p.disabled
     pluginsStore.editPlugin(p.id, p)
@@ -141,7 +143,7 @@ const handleEditPluginCode = (id: string, title: string) => {
     .open()
 }
 
-const handleInstallation = async (p: PluginType) => {
+const handleInstallation = async (p: Plugin) => {
   p.loading = true
   try {
     if (p.installed) {
@@ -157,7 +159,7 @@ const handleInstallation = async (p: PluginType) => {
   p.loading = false
 }
 
-const handleOnRun = async (p: PluginType) => {
+const handleOnRun = async (p: Plugin) => {
   p.running = true
   try {
     await pluginsStore.manualTrigger(p.id, PluginTriggerEvent.OnManual)
@@ -167,7 +169,7 @@ const handleOnRun = async (p: PluginType) => {
   p.running = false
 }
 
-const generateMenus = (p: PluginType) => {
+const generateMenus = (p: Plugin) => {
   const builtInMenus: Menu[] = menuList.map((v) => ({ ...v, handler: () => v.handler?.(p.id) }))
 
   if (p.configuration.length) {

@@ -2,6 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { onMounted, onUnmounted, ref, watch, nextTick, useTemplateRef } from 'vue'
 
+import type { Menu } from '@/types/app'
+
 interface Props {
   position: { x: number; y: number }
   menuList: Menu[]

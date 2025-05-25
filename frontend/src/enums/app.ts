@@ -42,6 +42,11 @@ export enum Color {
   Purple = 'purple',
 }
 
+export enum Branch {
+  Main = 'main',
+  Alpha = 'alpha',
+}
+
 export enum ScheduledTasksType {
   UpdateSubscription = 'update::subscription',
   UpdateRuleset = 'update::ruleset',

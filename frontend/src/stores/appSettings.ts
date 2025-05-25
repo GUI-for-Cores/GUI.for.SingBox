@@ -2,9 +2,12 @@ import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { parse, stringify } from 'yaml'
 
+import type { AppSettings } from '@/types/app'
+
 import i18n from '@/lang'
+import { DefaultConnections } from '@/constant/kernel'
 import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
-import { Colors, DefaultFontFamily, DefaultTestURL } from '@/constant/app'
+import { Colors, DefaultFontFamily, DefaultTestURL, UserFilePath } from '@/constant/app'
 import {
   Theme,
   WindowStartState,
@@ -13,6 +16,7 @@ import {
   Color,
   WebviewGpuPolicy,
   ControllerCloseMode,
+  Branch,
 } from '@/enums/app'
 import {
   Readfile,
@@ -21,50 +25,6 @@ import {
   WindowIsMaximised,
   WindowIsMinimised,
 } from '@/bridge'
-
-type AppSettings = {
-  lang: Lang
-  theme: Theme
-  color: Color
-  'font-family': string
-  profilesView: View
-  subscribesView: View
-  rulesetsView: View
-  pluginsView: View
-  scheduledtasksView: View
-  windowStartState: WindowStartState
-  webviewGpuPolicy: WebviewGpuPolicy
-  width: number
-  height: number
-  exitOnClose: boolean
-  closeKernelOnExit: boolean
-  autoSetSystemProxy: boolean
-  autoStartKernel: boolean
-  userAgent: string
-  startupDelay: number
-  connections: {
-    visibility: Record<string, boolean>
-    order: string[]
-  }
-  kernel: {
-    branch: 'main' | 'alpha'
-    profile: string
-    pid: number
-    running: boolean
-    autoClose: boolean
-    unAvailable: boolean
-    cardMode: boolean
-    sortByDelay: boolean
-    testUrl: string
-    controllerCloseMode: ControllerCloseMode
-  }
-  pluginSettings: Record<string, Record<string, any>>
-  githubApiToken: string
-  multipleInstance: boolean
-  addPluginToMenu: boolean
-  rollingRelease: boolean
-  pages: string[]
-}
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
   let firstOpen = true
@@ -76,7 +36,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     lang: Lang.EN,
     theme: Theme.Auto,
     color: Color.Default,
-    'font-family': DefaultFontFamily,
+    fontFamily: DefaultFontFamily,
     profilesView: View.Grid,
     subscribesView: View.Grid,
     rulesetsView: View.Grid,
@@ -92,38 +52,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     autoStartKernel: false,
     userAgent: APP_TITLE + '/' + APP_VERSION,
     startupDelay: 30,
-    connections: {
-      visibility: {
-        'metadata.type': true,
-        'metadata.processPath': false,
-        'metadata.host': true,
-        'metadata.sourceIP': false,
-        'metadata.destinationIP': false,
-        rule: true,
-        chains: true,
-        up: true,
-        down: true,
-        upload: true,
-        download: true,
-        start: true,
-      },
-      order: [
-        'metadata.type',
-        'metadata.processPath',
-        'metadata.host',
-        'metadata.sourceIP',
-        'metadata.destinationIP',
-        'rule',
-        'chains',
-        'up',
-        'down',
-        'upload',
-        'download',
-        'start',
-      ],
-    },
+    connections: DefaultConnections(),
     kernel: {
-      branch: 'main',
+      branch: Branch.Main,
       profile: '',
       pid: 0,
       running: false,
@@ -143,18 +74,25 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   })
 
   const saveAppSettings = debounce((config: string) => {
-    Writefile('data/user.yaml', config)
+    Writefile(UserFilePath, config)
   }, 500)
 
   const setupAppSettings = async () => {
-    const data = await ignoredError(Readfile, 'data/user.yaml')
+    const data = await ignoredError(Readfile, UserFilePath)
     data && (app.value = Object.assign(app.value, parse(data)))
 
     if ((app.value.kernel.branch as any) === 'latest') {
-      app.value.kernel.branch = 'alpha'
+      app.value.kernel.branch = Branch.Alpha
     }
     if (app.value.kernel.controllerCloseMode === undefined) {
       app.value.kernel.controllerCloseMode = ControllerCloseMode.All
+    }
+    // @ts-expect-error(Deprecated)
+    if (app.value['font-family'] !== undefined) {
+      // @ts-expect-error(Deprecated)
+      app.value.fontFamily = app.value['font-family']
+      // @ts-expect-error(Deprecated)
+      delete app.value['font-family']
     }
 
     if (typeof app.value.connections.visibility['metadata.destinationIP'] === 'undefined') {
@@ -173,7 +111,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
   const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
   mediaQueryList.addEventListener('change', ({ matches }) => {
-    console.log('onSystemThemeChange')
     if (app.value.theme === Theme.Auto) {
       themeMode.value = matches ? Theme.Dark : Theme.Light
     }
@@ -201,7 +138,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     const { primary, secondary } = Colors[settings.color]
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
-    document.body.style.fontFamily = settings['font-family']
+    document.body.style.fontFamily = settings.fontFamily
   }
 
   watch(
@@ -228,8 +165,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   window.addEventListener(
     'resize',
     debounce(async () => {
-      const isMinimised = await WindowIsMinimised()
-      const isMaximised = await WindowIsMaximised()
+      const [isMinimised, isMaximised] = await Promise.all([
+        WindowIsMinimised(),
+        WindowIsMaximised(),
+      ])
       if (!isMinimised && !isMaximised) {
         app.value.width = document.documentElement.clientWidth
         app.value.height = document.documentElement.clientHeight

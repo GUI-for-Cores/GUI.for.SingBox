@@ -2,6 +2,8 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
+import type { Menu } from '@/types/app'
+
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
 import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
 import { DraggableOptions } from '@/constant/app'

@@ -2,6 +2,8 @@ import { useI18n } from 'vue-i18n'
 import { h, computed, ref, type VNode, isVNode, resolveComponent } from 'vue'
 import { defineStore } from 'pinia'
 
+import type { Menu } from '@/types/app'
+
 import { useEnvStore } from './env'
 import {
   APP_TITLE,

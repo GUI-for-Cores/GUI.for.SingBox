@@ -2,8 +2,10 @@
 import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 
+import type { Subscription } from '@/types/app'
+
 import { message } from '@/utils'
-import { useSubscribesStore, type SubscribeType } from '@/stores'
+import { useSubscribesStore } from '@/stores'
 
 interface Props {
   id: string
@@ -12,7 +14,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const subscribe = ref<SubscribeType>()
+const subscribe = ref<Subscription>()
 const code = ref('')
 
 const { t } = useI18n()

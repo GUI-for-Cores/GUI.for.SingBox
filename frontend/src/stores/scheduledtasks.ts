@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { stringify, parse } from 'yaml'
 import { computed, ref, watch } from 'vue'
 
+import type { ScheduledTask } from '@/types/app'
+
 import { Notify } from '@/bridge'
 import { debounce, ignoredError } from '@/utils'
 import { ScheduledTasksFilePath } from '@/constant/app'
@@ -16,22 +18,8 @@ import {
   EventsOff,
 } from '@/bridge'
 
-export type ScheduledTaskType = {
-  id: string
-  name: string
-  type: ScheduledTasksType
-  subscriptions: string[]
-  rulesets: string[]
-  plugins: string[]
-  script: string
-  cron: string
-  notification: boolean
-  disabled: boolean
-  lastTime: number
-}
-
 export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
-  const scheduledtasks = ref<ScheduledTaskType[]>([])
+  const scheduledtasks = ref<ScheduledTask[]>([])
   const ScheduledTasksEvents: string[] = []
   const ScheduledTasksIDs: number[] = []
 
@@ -96,7 +84,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     }
   }
 
-  const getTaskFn = (task: ScheduledTaskType) => {
+  const getTaskFn = (task: ScheduledTask) => {
     switch (task.type) {
       case ScheduledTasksType.UpdateSubscription: {
         const subscribesStore = useSubscribesStore()
@@ -126,7 +114,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     await Writefile(ScheduledTasksFilePath, stringify(scheduledtasks.value))
   }, 500)
 
-  const addScheduledTask = async (s: ScheduledTaskType) => {
+  const addScheduledTask = async (s: ScheduledTask) => {
     scheduledtasks.value.push(s)
     try {
       await saveScheduledTasks()
@@ -148,7 +136,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     }
   }
 
-  const editScheduledTask = async (id: string, s: ScheduledTaskType) => {
+  const editScheduledTask = async (id: string, s: ScheduledTask) => {
     const idx = scheduledtasks.value.findIndex((v) => v.id === id)
     if (idx === -1) return
     const backup = scheduledtasks.value.splice(idx, 1, s)[0]

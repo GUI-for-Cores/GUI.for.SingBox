@@ -1,6 +1,7 @@
 import { useI18n } from 'vue-i18n'
 import { computed, ref, watch } from 'vue'
 
+import { Branch } from '@/enums/app'
 import { CoreWorkingDirectory } from '@/constant/kernel'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
@@ -57,7 +58,7 @@ export const useCoreBranch = (isAlpha = false) => {
   const restartable = computed(() => {
     const { running, branch } = appSettings.app.kernel
     if (!running) return false
-    return localVersion.value && downloadCompleted.value && (branch === 'alpha') === isAlpha
+    return localVersion.value && downloadCompleted.value && (branch === Branch.Alpha) === isAlpha
   })
 
   const updatable = computed(
@@ -204,7 +205,7 @@ export const useCoreBranch = (isAlpha = false) => {
     const doRollback = () => Movefile(CoreBakFilePath, CoreFilePath)
 
     const { running, branch } = appSettings.app.kernel
-    const isCurrentRunning = running && (branch === 'alpha') === isAlpha
+    const isCurrentRunning = running && (branch === Branch.Alpha) === isAlpha
     if (isCurrentRunning) {
       await kernelApiStore.restartKernel(doRollback)
     } else {

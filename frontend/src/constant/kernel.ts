@@ -249,3 +249,36 @@ export const EmptyRuleSet = {
 }
 
 export const DefaultExcludeProtocols = 'direct|reject|selector|urltest|block|dns|shadowsocksr'
+
+export const DefaultConnections = () => {
+  return {
+    visibility: {
+      'metadata.type': true,
+      'metadata.processPath': false,
+      'metadata.host': true,
+      'metadata.sourceIP': false,
+      'metadata.destinationIP': false,
+      rule: true,
+      chains: true,
+      up: true,
+      down: true,
+      upload: true,
+      download: true,
+      start: true,
+    },
+    order: [
+      'metadata.type',
+      'metadata.processPath',
+      'metadata.host',
+      'metadata.sourceIP',
+      'metadata.destinationIP',
+      'rule',
+      'chains',
+      'up',
+      'down',
+      'upload',
+      'download',
+      'start',
+    ],
+  }
+}

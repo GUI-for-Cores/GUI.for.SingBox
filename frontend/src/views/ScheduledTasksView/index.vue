@@ -2,10 +2,12 @@
 import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
+import type { Menu, ScheduledTask } from '@/types/app'
+
 import { View } from '@/enums/app'
 import { DraggableOptions } from '@/constant/app'
 import { debounce, formatRelativeTime, formatDate, message } from '@/utils'
-import { type ScheduledTaskType, useAppSettingsStore, useScheduledTasksStore } from '@/stores'
+import { useAppSettingsStore, useScheduledTasksStore } from '@/stores'
 
 import { useModal } from '@/components/Modal'
 import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
@@ -59,7 +61,7 @@ const handleShowTaskForm = (id?: string, isUpdate = false) => {
     .open()
 }
 
-const handleDeleteTask = async (s: ScheduledTaskType) => {
+const handleDeleteTask = async (s: ScheduledTask) => {
   try {
     await scheduledTasksStore.deleteScheduledTask(s.id)
   } catch (error: any) {
@@ -68,7 +70,7 @@ const handleDeleteTask = async (s: ScheduledTaskType) => {
   }
 }
 
-const handleDisableTask = async (s: ScheduledTaskType) => {
+const handleDisableTask = async (s: ScheduledTask) => {
   s.disabled = !s.disabled
   scheduledTasksStore.editScheduledTask(s.id, s)
 }

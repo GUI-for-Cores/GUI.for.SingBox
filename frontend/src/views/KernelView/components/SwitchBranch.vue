@@ -2,12 +2,13 @@
 import { useI18n } from 'vue-i18n'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { message } from '@/utils'
+import { Branch } from '@/enums/app'
 
 const { t } = useI18n()
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
-const handleUseBranch = async (branch: any) => {
+const handleUseBranch = async (branch: Branch) => {
   appSettings.app.kernel.branch = branch
 
   if (!appSettings.app.kernel.running) return
@@ -25,16 +26,16 @@ const handleUseBranch = async (branch: any) => {
   <div class="title">{{ t('settings.kernel.version') }}</div>
   <div class="branch">
     <Card
-      :selected="appSettings.app.kernel.branch === 'main'"
-      @click="handleUseBranch('main')"
+      :selected="appSettings.app.kernel.branch === Branch.Main"
+      @click="handleUseBranch(Branch.Main)"
       title="Stable"
       class="branch-item"
     >
       {{ t('settings.kernel.stable') }}
     </Card>
     <Card
-      :selected="appSettings.app.kernel.branch === 'alpha'"
-      @click="handleUseBranch('alpha')"
+      :selected="appSettings.app.kernel.branch === Branch.Alpha"
+      @click="handleUseBranch(Branch.Alpha)"
       title="Alpha"
       class="branch-item"
     >

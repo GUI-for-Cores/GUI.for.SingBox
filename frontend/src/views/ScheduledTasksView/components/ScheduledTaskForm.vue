@@ -2,12 +2,13 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import type { ScheduledTask } from '@/types/app'
+
 import { deepClone, message, sampleID } from '@/utils'
 import { ValidateCron } from '@/bridge/scheduledTasks'
 import { ScheduledTaskOptions } from '@/constant/app'
 import { ScheduledTasksType } from '@/enums/app'
 import {
-  type ScheduledTaskType,
   useScheduledTasksStore,
   useSubscribesStore,
   useRulesetsStore,
@@ -26,7 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const loading = ref(false)
 
-const task = ref<ScheduledTaskType>({
+const task = ref<ScheduledTask>({
   id: sampleID(),
   name: '',
   type: ScheduledTasksType.RunScript,

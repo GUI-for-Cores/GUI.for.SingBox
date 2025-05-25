@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 
+import type { Menu } from '@/types/app'
+
 import useI18n from '@/lang'
 import { getValue } from '@/utils'
 import vMenu from '@/directives/menu'
