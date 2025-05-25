@@ -286,6 +286,7 @@ const handleClearClosedConns = () => {
 
 const handleResetConnections = () => {
   appSettingsStore.app.connections = DefaultConnections()
+  message.success('common.success')
 }
 
 const { connect, disconnect } = getKernelConnectionsWS(onConnections)
@@ -370,7 +371,7 @@ onUnmounted(() => {
     cancel-text="common.close"
     title="home.connections.sort"
   >
-    <div v-draggable="[appSettingsStore.app.connections.order, DraggableOptions]">
+    <div class="sort-view" v-draggable="[appSettingsStore.app.connections.order, DraggableOptions]">
       <Card
         v-for="column in appSettingsStore.app.connections.order"
         :key="column"
@@ -405,5 +406,11 @@ onUnmounted(() => {
   align-items: center;
   padding: 0 8px;
   margin-bottom: 2px;
+}
+
+.sort-view {
+  padding: 0 8px;
+  overflow-y: auto;
+  max-height: 60vh;
 }
 </style>
