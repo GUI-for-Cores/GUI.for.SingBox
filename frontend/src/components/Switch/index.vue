@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
+
 interface Props {
   size?: 'default' | 'small'
   border?: 'default' | 'square'
@@ -18,7 +20,7 @@ const emits = defineEmits(['change'])
 const toggle = () => {
   if (props.disabled) return
   model.value = !model.value
-  emits('change', model.value)
+  nextTick(() => emits('change', model.value))
 }
 </script>
 
