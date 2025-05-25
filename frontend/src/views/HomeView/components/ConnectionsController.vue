@@ -37,13 +37,6 @@ const columns = computed(() =>
         },
       },
       {
-        title: 'home.connections.process',
-        align: 'center',
-        key: 'metadata.process',
-        hidden: !appSettingsStore.app.connections.visibility['metadata.process'],
-        sort: (a, b) => b.metadata.process.localeCompare(a.metadata.process),
-      },
-      {
         title: 'home.connections.processPath',
         key: 'metadata.processPath',
         hidden: !appSettingsStore.app.connections.visibility['metadata.processPath'],
@@ -55,15 +48,8 @@ const columns = computed(() =>
         hidden: !appSettingsStore.app.connections.visibility['metadata.host'],
         sort: (a, b) => b.metadata.host.localeCompare(a.metadata.host),
         customRender: ({ value, record }) => {
-          return (value || record.metadata.destinationIP) + ':' + record.metadata.destinationPort
+          return value || record.metadata.destinationIP
         },
-      },
-      {
-        title: 'home.connections.sniffHost',
-        align: 'center',
-        key: 'metadata.sniffHost',
-        hidden: !appSettingsStore.app.connections.visibility['metadata.sniffHost'],
-        sort: (a, b) => b.metadata.sniffHost.localeCompare(a.metadata.sniffHost),
       },
       {
         title: 'home.connections.sourceIP',
@@ -76,11 +62,11 @@ const columns = computed(() =>
         },
       },
       {
-        title: 'home.connections.remoteDestination',
+        title: 'home.connections.destinationIP',
         align: 'center',
-        key: 'metadata.remoteDestination',
-        hidden: !appSettingsStore.app.connections.visibility['metadata.remoteDestination'],
-        sort: (a, b) => b.metadata.remoteDestination.localeCompare(a.metadata.remoteDestination),
+        key: 'metadata.destinationIP',
+        hidden: !appSettingsStore.app.connections.visibility['metadata.destinationIP'],
+        sort: (a, b) => b.metadata.destinationIP.localeCompare(a.metadata.destinationIP),
         customRender: ({ value, record }) => {
           return value + ':' + record.metadata.destinationPort
         },

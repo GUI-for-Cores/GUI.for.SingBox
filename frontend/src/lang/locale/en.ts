@@ -361,11 +361,9 @@ export default {
     },
     connections: {
       type: 'Type',
-      process: 'Process',
       processPath: 'Process Path',
-      sniffHost: 'Sniff Host',
       sourceIP: 'Source',
-      remoteDestination: 'Destination',
+      destinationIP: 'Destination IP',
       host: 'Host',
       inbound: 'Inbound',
       rule: 'Rule',

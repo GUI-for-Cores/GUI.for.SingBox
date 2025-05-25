@@ -361,11 +361,9 @@ export default {
     },
     connections: {
       type: 'نوع',
-      process: 'فرآیند',
       processPath: 'مسیر فرآیند',
-      sniffHost: 'هاست Sniff',
       sourceIP: 'مبدأ',
-      remoteDestination: 'مقصد',
+      destinationIP: 'آی‌پی مقصد',
       host: 'هاست',
       inbound: 'ورودی',
       rule: 'قانون',

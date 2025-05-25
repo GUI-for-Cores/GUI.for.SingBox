@@ -360,11 +360,9 @@ export default {
     },
     connections: {
       type: '类型',
-      process: '进程',
       processPath: '进程路径',
-      sniffHost: '嗅探域名',
       sourceIP: '源地址',
-      remoteDestination: '目标地址',
+      destinationIP: '目标IP',
       host: '主机',
       inbound: '入站模式',
       rule: '匹配规则',

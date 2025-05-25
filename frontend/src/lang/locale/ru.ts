@@ -361,11 +361,9 @@ export default {
     },
     connections: {
       type: 'Тип',
-      process: 'Процесс',
       processPath: 'Путь до процесса',
-      sniffHost: 'Подслушивать хост',
       sourceIP: 'Исходный IP',
-      remoteDestination: 'Назначение',
+      destinationIP: 'IP-адрес назначения',
       host: 'Хост',
       inbound: 'Входящее подключение',
       rule: 'Правило',

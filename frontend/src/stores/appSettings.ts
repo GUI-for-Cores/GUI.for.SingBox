@@ -95,12 +95,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     connections: {
       visibility: {
         'metadata.type': true,
-        'metadata.process': false,
         'metadata.processPath': false,
         'metadata.host': true,
-        'metadata.sniffHost': false,
         'metadata.sourceIP': false,
-        'metadata.remoteDestination': false,
+        'metadata.destinationIP': false,
         rule: true,
         chains: true,
         up: true,
@@ -111,12 +109,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       },
       order: [
         'metadata.type',
-        'metadata.process',
         'metadata.processPath',
         'metadata.host',
-        'metadata.sniffHost',
         'metadata.sourceIP',
-        'metadata.remoteDestination',
+        'metadata.destinationIP',
         'rule',
         'chains',
         'up',
@@ -159,6 +155,15 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (app.value.kernel.controllerCloseMode === undefined) {
       app.value.kernel.controllerCloseMode = ControllerCloseMode.All
+    }
+
+    if (typeof app.value.connections.visibility['metadata.destinationIP'] === 'undefined') {
+      app.value.connections.visibility['metadata.destinationIP'] = false
+      app.value.connections.order.push('metadata.destinationIP')
+      app.value.connections.order = app.value.connections.order.filter(
+        (field) =>
+          !['metadata.process', 'metadata.sniffHost', 'metadata.remoteDestination'].includes(field),
+      )
     }
 
     firstOpen = !!data
