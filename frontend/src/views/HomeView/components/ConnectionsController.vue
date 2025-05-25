@@ -384,7 +384,7 @@ onUnmounted(() => {
       <Button @click="handleResetConnections" type="text" class="mr-auto">
         {{ t('common.reset') }}
       </Button>
-      <Button type="text">{{ t('common.close') }}</Button>
+      <Button @click="showSettings = false" type="text">{{ t('common.close') }}</Button>
     </div>
   </Modal>
 </template>
