@@ -462,6 +462,8 @@ export const addToRuleSet = async (
       rules[0].process_path = [
         ...new Set((rules[0].process_path || []).concat(payload.process_path)),
       ]
+    } else if (payload.domain_suffix) {
+      rules[0].domain_suffix = [...new Set((rules[0].domain_suffix || []).concat(payload.domain_suffix))]
     }
   })
   await Writefile(path, JSON.stringify({ version: 1, rules }, null, 2))
