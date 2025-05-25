@@ -184,6 +184,14 @@ const menu: Menu[] = [
             value: { domain: record.metadata.host } as any,
             description: record.metadata.host,
           })
+          const domain_suffix = '.' + record.metadata.host.split('.').slice(1).join('.')
+          options.push({
+            label: t('kernel.rules.type.domain_suffix'),
+            value: {
+              domain_suffix: domain_suffix,
+            } as any,
+            description: domain_suffix,
+          })
         }
         if (record.metadata.destinationIP) {
           options.push({
