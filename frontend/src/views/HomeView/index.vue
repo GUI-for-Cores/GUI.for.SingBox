@@ -3,14 +3,15 @@ import { ref, watch, useTemplateRef, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ControllerCloseMode } from '@/enums/app'
-import { APP_TITLE, debounce, message } from '@/utils'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore } from '@/stores'
+import { APP_TITLE, debounce, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
-import QuickStart from './components/QuickStart.vue'
-import OverView from './components/OverView.vue'
-import KernelLogs from './components/KernelLogs.vue'
+
 import GroupsController from './components/GroupsController.vue'
+import KernelLogs from './components/KernelLogs.vue'
+import OverView from './components/OverView.vue'
+import QuickStart from './components/QuickStart.vue'
 
 const showController = ref(false)
 const controllerRef = useTemplateRef('controllerRef')

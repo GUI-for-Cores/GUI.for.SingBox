@@ -1,7 +1,7 @@
-import type { Directive, DirectiveBinding } from 'vue'
-
-import { sleep } from '@/utils'
 import { useAppStore } from '@/stores'
+import { sleep } from '@/utils'
+
+import type { Directive, DirectiveBinding } from 'vue'
 
 const updateMenus = (el: any, binding: DirectiveBinding) => {
   const appStore = useAppStore()

@@ -2,17 +2,17 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, message } from '@/utils'
-import { useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
-import { DefaultRouteRule } from '@/constant/profile'
-import { RuleAction, RulesetFormat, RulesetType, RuleType, ClashMode } from '@/enums/kernel'
 import {
   DomainStrategyOptions,
   RuleActionOptions,
   RuleSnifferOptions,
   RulesTypeOptions,
 } from '@/constant/kernel'
+import { DefaultRouteRule } from '@/constant/profile'
+import { RuleAction, RulesetFormat, RulesetType, RuleType, ClashMode } from '@/enums/kernel'
+import { useBool } from '@/hooks'
+import { deepClone, message } from '@/utils'
 
 interface Props {
   inboundOptions: { label: string; value: string }[]

@@ -1,10 +1,11 @@
-import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { computed, ref, watch } from 'vue'
 
-import { DefaultInboundMixed } from '@/constant/profile'
+import { getProxies, getProviders, getConfigs, setConfigs } from '@/api/kernel'
 import { ProcessInfo, KillProcess, ExecBackground, Readfile } from '@/bridge'
 import { CoreConfigFilePath, CoreStopOutputKeyword, CoreWorkingDirectory } from '@/constant/kernel'
-import { getProxies, getProviders, getConfigs, setConfigs } from '@/api/kernel'
+import { DefaultInboundMixed } from '@/constant/profile'
+import { Inbound, TunStack } from '@/enums/kernel'
 import { useAppSettingsStore, useProfilesStore, useLogsStore, useEnvStore } from '@/stores'
 import {
   generateConfigFile,
@@ -14,7 +15,6 @@ import {
   restoreProfile,
   deepClone,
 } from '@/utils'
-import { Inbound, TunStack } from '@/enums/kernel'
 
 export type ProxyType = 'mixed' | 'http' | 'socks'
 

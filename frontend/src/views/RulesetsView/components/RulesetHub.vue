@@ -2,10 +2,10 @@
 import { computed, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ignoredError, message, alert } from '@/utils'
-import { useRulesetsStore } from '@/stores'
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { RulesetFormat } from '@/enums/kernel'
+import { useRulesetsStore } from '@/stores'
+import { ignoredError, message, alert } from '@/utils'
 
 type RulesetHub = {
   geosite: string

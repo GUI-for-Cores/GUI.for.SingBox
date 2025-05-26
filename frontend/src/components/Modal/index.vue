@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { computed, provide } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { WindowToggleMaximise } from '@/bridge'
 

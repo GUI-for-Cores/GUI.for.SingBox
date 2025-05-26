@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, message } from '@/utils'
-import { Outbound } from '@/enums/kernel'
-import { useSubscribesStore } from '@/stores'
 import { DraggableOptions } from '@/constant/app'
 import { OutboundOptions } from '@/constant/kernel'
 import { DefaultOutbound } from '@/constant/profile'
+import { Outbound } from '@/enums/kernel'
+import { useSubscribesStore } from '@/stores'
+import { deepClone, message } from '@/utils'
 
 const model = defineModel<IProfile['outbounds']>({ required: true })
 

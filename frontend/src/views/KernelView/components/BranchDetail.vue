@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import { useKernelApiStore } from '@/stores'
 import { useCoreBranch } from '@/hooks/useCoreBranch'
+import { useKernelApiStore } from '@/stores'
 
 interface Props {
   isAlpha: boolean

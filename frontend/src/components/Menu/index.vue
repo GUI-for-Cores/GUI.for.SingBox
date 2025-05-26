@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import { onMounted, onUnmounted, ref, watch, nextTick, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { Menu } from '@/types/app'
 

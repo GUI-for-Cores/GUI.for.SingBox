@@ -2,9 +2,13 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, isValidJson, message } from '@/utils'
-import { useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
+import {
+  DnsRuleTypeOptions,
+  DnsRuleActionOptions,
+  DnsRuleActionRejectOptions,
+  DomainStrategyOptions,
+} from '@/constant/kernel'
 import { DefaultDnsRule } from '@/constant/profile'
 import {
   RuleType,
@@ -14,12 +18,8 @@ import {
   RuleAction,
   RuleActionReject,
 } from '@/enums/kernel'
-import {
-  DnsRuleTypeOptions,
-  DnsRuleActionOptions,
-  DnsRuleActionRejectOptions,
-  DomainStrategyOptions,
-} from '@/constant/kernel'
+import { useBool } from '@/hooks'
+import { deepClone, isValidJson, message } from '@/utils'
 
 interface Props {
   inboundOptions: { label: string; value: string }[]

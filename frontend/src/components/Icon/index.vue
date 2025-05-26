@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-
 import icons from './icons'
+
+import type { Component } from 'vue'
 
 type IconFuncType = Record<string, { default: Component }>
 

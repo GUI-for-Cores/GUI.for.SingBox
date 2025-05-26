@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useLogsStore, useScheduledTasksStore } from '@/stores'
 
+import { useLogsStore, useScheduledTasksStore } from '@/stores'
 import { formatDate } from '@/utils'
+
 import type { Column } from '@/components/Table/index.vue'
 
 interface Props {

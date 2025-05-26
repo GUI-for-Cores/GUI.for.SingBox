@@ -1,17 +1,15 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import { computed, h, ref, type VNode } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import { useBool } from '@/hooks'
-import { sampleID, deepClone, generateDnsServerURL, message, confirm } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
 import { DnsServerTypeOptions } from '@/constant/kernel'
-import { DefaultDnsServer } from '@/constant/profile'
-import { RuleAction, RuleType, Strategy } from '@/enums/kernel'
-import { DefaultFakeIPDnsRule } from '@/constant/profile'
+import { DefaultDnsServer, DefaultFakeIPDnsRule } from '@/constant/profile'
+import { RuleAction, RuleType, Strategy, DnsServer } from '@/enums/kernel'
+import { useBool } from '@/hooks'
+import { sampleID, deepClone, generateDnsServerURL, message, confirm } from '@/utils'
 
 import Tag from '@/components/Tag/index.vue'
-import { DnsServer } from '@/enums/kernel'
 
 interface Props {
   outboundOptions: { label: string; value: string }[]

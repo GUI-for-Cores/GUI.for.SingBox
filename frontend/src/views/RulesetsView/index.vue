@@ -2,20 +2,21 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import type { Menu } from '@/types/app'
-
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
-import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
 import { DraggableOptions } from '@/constant/app'
-import { View } from '@/enums/app'
 import { EmptyRuleSet } from '@/constant/kernel'
+import { View } from '@/enums/app'
 import { RulesetFormat } from '@/enums/kernel'
 import { type RuleSetType, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
+import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
+
 import RulesetForm from './components/RulesetForm.vue'
-import RulesetView from './components/RulesetView.vue'
 import RulesetHub from './components/RulesetHub.vue'
+import RulesetView from './components/RulesetView.vue'
+
+import type { Menu } from '@/types/app'
 
 const sourceMenuList: Menu[] = [
   {

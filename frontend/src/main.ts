@@ -1,14 +1,14 @@
-import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 
 import './assets/main.less'
 import './globalMethods'
 
 import App from './App.vue'
-import router from './router'
-import i18n from './lang'
 import components from './components'
 import directives from './directives'
+import i18n from './lang'
+import router from './router'
 
 const app = createApp(App)
 

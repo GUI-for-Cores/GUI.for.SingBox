@@ -2,9 +2,6 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import type { ScheduledTask } from '@/types/app'
-
-import { deepClone, message, sampleID } from '@/utils'
 import { ValidateCron } from '@/bridge/scheduledTasks'
 import { ScheduledTaskOptions } from '@/constant/app'
 import { ScheduledTasksType } from '@/enums/app'
@@ -14,6 +11,9 @@ import {
   useRulesetsStore,
   usePluginsStore,
 } from '@/stores'
+import { deepClone, message, sampleID } from '@/utils'
+
+import type { ScheduledTask } from '@/types/app'
 
 interface Props {
   id?: string

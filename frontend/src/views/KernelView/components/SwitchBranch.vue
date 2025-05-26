@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+
+import { Branch } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { message } from '@/utils'
-import { Branch } from '@/enums/app'
 
 const { t } = useI18n()
 const appSettings = useAppSettingsStore()

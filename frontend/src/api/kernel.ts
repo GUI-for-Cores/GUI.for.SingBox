@@ -1,6 +1,6 @@
+import { useAppSettingsStore, useProfilesStore } from '@/stores'
 import { Request } from '@/utils/request'
 import { WebSockets } from '@/utils/websockets'
-import { useAppSettingsStore, useProfilesStore } from '@/stores'
 
 enum Api {
   Configs = '/configs',

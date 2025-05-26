@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref, onUnmounted, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { getKernelWS } from '@/api/kernel'
-import { useModal } from '@/components/Modal'
-import { useEnvStore, useAppStore, useKernelApiStore } from '@/stores'
 import { ModeOptions } from '@/constant/kernel'
+import { useEnvStore, useAppStore, useKernelApiStore } from '@/stores'
 import { formatBytes, handleChangeMode, message, setIntervalImmediately } from '@/utils'
 
-import LogsController from './LogsController.vue'
+import { useModal } from '@/components/Modal'
+
 import CommonController from './CommonController.vue'
 import ConnectionsController from './ConnectionsController.vue'
+import LogsController from './LogsController.vue'
 
 const trafficHistory = ref<[number[], number[]]>([[], []])
 const statistics = ref({

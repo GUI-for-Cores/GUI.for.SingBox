@@ -2,13 +2,13 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, message } from '@/utils'
-import { useRulesetsStore } from '@/stores'
-import { useBool } from '@/hooks'
 import { DraggableOptions } from '@/constant/app'
+import { RulesetFormatOptions, RulesetTypeOptions } from '@/constant/kernel'
 import { DefaultRouteRuleset } from '@/constant/profile'
 import { RulesetFormat, RulesetType } from '@/enums/kernel'
-import { RulesetFormatOptions, RulesetTypeOptions } from '@/constant/kernel'
+import { useBool } from '@/hooks'
+import { useRulesetsStore } from '@/stores'
+import { deepClone, message } from '@/utils'
 
 interface Props {
   outboundOptions: { label: string; value: string }[]

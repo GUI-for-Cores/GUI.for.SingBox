@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import { deepClone, ignoredError, isValidJson, message } from '@/utils'
 import { Readfile, Writefile } from '@/bridge'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
+import { deepClone, ignoredError, isValidJson, message } from '@/utils'
 
 interface Props {
   id: string

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
-
-import type { Plugin } from '@/types/app'
+import { useI18n } from 'vue-i18n'
 
 import { Readfile, Writefile } from '@/bridge'
 import { PluginTriggerEvent } from '@/enums/app'
-import { deepClone, ignoredError, message } from '@/utils'
 import { usePluginsStore } from '@/stores'
+import { deepClone, ignoredError, message } from '@/utils'
+
+import type { Plugin } from '@/types/app'
 
 interface Props {
   id: string

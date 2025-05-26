@@ -1,20 +1,7 @@
-import { useI18n } from 'vue-i18n'
-import { h, computed, ref, type VNode, isVNode, resolveComponent } from 'vue'
 import { defineStore } from 'pinia'
+import { h, computed, ref, type VNode, isVNode, resolveComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import type { Menu } from '@/types/app'
-
-import { useEnvStore } from './env'
-import {
-  APP_TITLE,
-  APP_VERSION,
-  APP_VERSION_API,
-  getGitHubApiAuthorization,
-  ignoredError,
-  message,
-  alert,
-  sampleID,
-} from '@/utils'
 import {
   Download,
   HttpGet,
@@ -26,6 +13,20 @@ import {
   AbsolutePath,
   HttpCancel,
 } from '@/bridge'
+import {
+  APP_TITLE,
+  APP_VERSION,
+  APP_VERSION_API,
+  getGitHubApiAuthorization,
+  ignoredError,
+  message,
+  alert,
+  sampleID,
+} from '@/utils'
+
+import { useEnvStore } from './env'
+
+import type { Menu } from '@/types/app'
 
 export const useAppStore = defineStore('app', () => {
   /* Global Menu */

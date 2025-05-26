@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import { ref, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import RouteRulesConfig from './RouteRulesConfig.vue'
 import RouteRulesetConfig from './RouteRulesetConfig.vue'

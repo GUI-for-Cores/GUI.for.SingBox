@@ -2,20 +2,21 @@
 import { computed, h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import type { Menu, Plugin } from '@/types/app'
-
-import { debounce, message } from '@/utils'
 import { BrowserOpenURL } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
+import { debounce, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
-import PluginForm from './components/PluginForm.vue'
-import PluginView from './components/PluginView.vue'
-import PluginHub from './components/PluginHub.vue'
+
 import PluginChangelog from './components/PluginChangelog.vue'
 import PluginConfiguration from './components/PluginConfiguration.vue'
+import PluginForm from './components/PluginForm.vue'
+import PluginHub from './components/PluginHub.vue'
+import PluginView from './components/PluginView.vue'
+
+import type { Menu, Plugin } from '@/types/app'
 
 const menuList: Menu[] = [
   {

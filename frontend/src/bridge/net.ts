@@ -1,7 +1,8 @@
 import * as App from '@wails/go/bridge/App'
-import { GetSystemOrKernelProxy } from '@/utils/helper'
-import { sampleID, getUserAgent } from '@/utils'
 import { EventsOn, EventsOff, EventsEmit } from '@wails/runtime/runtime'
+
+import { sampleID, getUserAgent } from '@/utils'
+import { GetSystemOrKernelProxy } from '@/utils/helper'
 
 type RequestType = {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'HEAD' | 'PATCH'

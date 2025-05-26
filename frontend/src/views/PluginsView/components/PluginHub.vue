@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import type { Plugin } from '@/types/app'
-
-import { deepClone, message, sleep } from '@/utils'
 import { usePluginsStore } from '@/stores'
+import { deepClone, message, sleep } from '@/utils'
+
+import type { Plugin } from '@/types/app'
 
 const { t } = useI18n()
 const pluginsStore = usePluginsStore()

@@ -1,8 +1,7 @@
-import useI18n from '@/lang'
-import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
-import { handleChangeMode, message } from '@/utils'
-import { ClashMode } from '@/enums/kernel'
 import { ExitApp, RestartApp, WindowReloadApp } from '@/bridge'
+import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
+import { ClashMode } from '@/enums/kernel'
+import useI18n from '@/lang'
 import {
   useAppSettingsStore,
   useAppStore,
@@ -12,6 +11,7 @@ import {
   useRulesetsStore,
   useSubscribesStore,
 } from '@/stores'
+import { handleChangeMode, message } from '@/utils'
 
 type Command = {
   label: string

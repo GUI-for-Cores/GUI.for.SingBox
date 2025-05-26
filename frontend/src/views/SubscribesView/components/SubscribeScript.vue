@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { useSubscribesStore } from '@/stores'
+import { message } from '@/utils'
 
 import type { Subscription } from '@/types/app'
-
-import { message } from '@/utils'
-import { useSubscribesStore } from '@/stores'
 
 interface Props {
   id: string

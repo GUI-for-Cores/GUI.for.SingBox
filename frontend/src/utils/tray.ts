@@ -1,9 +1,3 @@
-import type { MenuItem } from '@/types/app'
-
-import i18n from '@/lang'
-import { ClashMode } from '@/enums/kernel'
-import { Theme, Color, Lang } from '@/enums/app'
-import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   Notify,
   RestartApp,
@@ -13,6 +7,10 @@ import {
   UpdateTrayMenus,
   ShowMainWindow,
 } from '@/bridge'
+import { Theme, Color, Lang } from '@/enums/app'
+import { ClashMode } from '@/enums/kernel'
+import i18n from '@/lang'
+import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
   debounce,
   exitApp,
@@ -21,6 +19,8 @@ import {
   APP_VERSION,
   handleUseProxy,
 } from '@/utils'
+
+import type { MenuItem } from '@/types/app'
 
 const getTrayIcons = () => {
   const envStore = useEnvStore()

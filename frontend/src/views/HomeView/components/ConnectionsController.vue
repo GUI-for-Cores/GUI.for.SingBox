@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import { ref, computed, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import type { Menu } from '@/types/app'
-
-import { useBool } from '@/hooks'
-import { type PickerItem } from '@/components/Picker/index.vue'
+import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
+import { useBool } from '@/hooks'
 import { useAppSettingsStore } from '@/stores'
-import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
 import {
   addToRuleSet,
   formatBytes,
@@ -19,7 +16,9 @@ import {
   setIntervalImmediately,
 } from '@/utils'
 
+import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Column } from '@/components/Table/index.vue'
+import type { Menu } from '@/types/app'
 
 type TrafficCacheType = { up: number; down: number }
 const TrafficCache: Record<string, TrafficCacheType> = {}

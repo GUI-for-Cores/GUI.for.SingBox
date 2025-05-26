@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import { useAppStore } from '@/stores'
 import { RestartApp, BrowserOpenURL } from '@/bridge'
+import { useAppStore } from '@/stores'
 import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, message } from '@/utils'
 
 const { t } = useI18n()

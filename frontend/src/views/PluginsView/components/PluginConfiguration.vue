@@ -2,11 +2,11 @@
 import { ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import type { PluginConfiguration } from '@/types/app'
-
-import { deepClone, message, sampleID } from '@/utils'
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore } from '@/stores'
+import { deepClone, message, sampleID } from '@/utils'
+
+import type { PluginConfiguration } from '@/types/app'
 
 interface Props {
   id: string

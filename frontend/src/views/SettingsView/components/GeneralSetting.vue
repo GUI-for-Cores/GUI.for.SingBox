@@ -2,14 +2,17 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import routes from '@/router/routes'
-import { CoreCacheFilePath } from '@/constant/kernel'
-import { APP_TITLE, APP_VERSION, getTaskSchXmlString, message } from '@/utils'
-import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import { BrowserOpenURL, GetEnv, Writefile, Removefile, AbsolutePath } from '@/bridge'
-import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
 import { DefaultFontFamily } from '@/constant/app'
+import { CoreCacheFilePath } from '@/constant/kernel'
+import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
+import routes from '@/router/routes'
+import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
+  APP_TITLE,
+  APP_VERSION,
+  getTaskSchXmlString,
+  message,
   QuerySchTask,
   CreateSchTask,
   DeleteSchTask,

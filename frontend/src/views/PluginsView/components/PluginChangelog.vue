@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 
 import { HttpGet, Readfile } from '@/bridge'
-import { ignoredError } from '@/utils'
 import { usePluginsStore } from '@/stores'
+import { ignoredError } from '@/utils'
 
 interface Props {
   id: string

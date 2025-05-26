@@ -1,7 +1,7 @@
 import { type Directive, type DirectiveBinding } from 'vue'
 
-import { debounce } from '@/utils'
 import { useAppStore } from '@/stores'
+import { debounce } from '@/utils'
 
 export default {
   mounted(el: HTMLElement, binding: DirectiveBinding) {

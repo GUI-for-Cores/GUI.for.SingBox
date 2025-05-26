@@ -2,10 +2,10 @@
 import { ref, inject, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { deepClone, message, sampleID } from '@/utils'
-import { type RuleSetType, useRulesetsStore } from '@/stores'
-import { RulesetFormat } from '@/enums/kernel'
 import { RulesetFormatOptions } from '@/constant/kernel'
+import { RulesetFormat } from '@/enums/kernel'
+import { type RuleSetType, useRulesetsStore } from '@/stores'
+import { deepClone, message, sampleID } from '@/utils'
 
 interface Props {
   id?: string

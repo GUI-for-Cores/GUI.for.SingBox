@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 
-import { picker, sampleID } from '@/utils'
-import { Inbound } from '@/enums/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { TunStackOptions } from '@/constant/kernel'
 import {
@@ -11,6 +9,8 @@ import {
   DefaultInboundSocks,
   DefaultInboundTun,
 } from '@/constant/profile'
+import { Inbound } from '@/enums/kernel'
+import { picker, sampleID } from '@/utils'
 
 const model = defineModel<IProfile['inbounds']>({ required: true })
 

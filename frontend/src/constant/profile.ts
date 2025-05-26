@@ -1,6 +1,3 @@
-import i18n from '@/lang'
-import { generateSecureKey, sampleID } from '@/utils'
-import { DefaultTestURL } from './app'
 import {
   LogLevel,
   Inbound,
@@ -14,6 +11,10 @@ import {
   Strategy,
   DnsServer,
 } from '@/enums/kernel'
+import i18n from '@/lang'
+import { generateSecureKey, sampleID } from '@/utils'
+
+import { DefaultTestURL } from './app'
 
 const { t } = i18n.global
 

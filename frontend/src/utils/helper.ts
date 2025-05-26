@@ -1,5 +1,5 @@
-import { ignoredError, message, confirm } from '@/utils'
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
+import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
 import {
   type ProxyType,
   useAppSettingsStore,
@@ -7,7 +7,7 @@ import {
   useKernelApiStore,
   usePluginsStore,
 } from '@/stores'
-import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
+import { ignoredError, message, confirm } from '@/utils'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {

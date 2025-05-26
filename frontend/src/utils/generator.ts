@@ -1,6 +1,5 @@
 import { Readfile, Writefile } from '@/bridge'
 import { CoreConfigFilePath } from '@/constant/kernel'
-import { deepAssign, deepClone } from './others'
 import {
   DnsServer,
   Inbound,
@@ -17,6 +16,8 @@ import {
   useRulesetsStore,
   useSubscribesStore,
 } from '@/stores'
+
+import { deepAssign, deepClone } from './others'
 
 const _generateRule = (rule: IRule | IDNSRule, rule_set: IRuleSet[], inbounds: IInbound[]) => {
   const getInbound = (id: string) => inbounds.find((v) => v.id === id)?.tag

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+
 import { useLogsStore } from '@/stores'
 
 const { t } = useI18n()

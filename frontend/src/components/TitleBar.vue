@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 
-import type { Menu } from '@/types/app'
-
-import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
-import { useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
 import {
   WindowSetAlwaysOnTop,
   WindowHide,
@@ -15,6 +11,10 @@ import {
   WindowIsMaximised,
   RestartApp,
 } from '@/bridge'
+import { useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
+import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
+
+import type { Menu } from '@/types/app'
 
 const isPinned = ref(false)
 const isMaximised = ref(false)

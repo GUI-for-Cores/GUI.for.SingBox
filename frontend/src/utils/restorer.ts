@@ -1,6 +1,7 @@
-import { Inbound, Outbound, RuleAction, Strategy, TunStack } from '@/enums/kernel'
-import { deepAssign, sampleID } from './others'
 import * as Defaults from '@/constant/profile'
+import { Inbound, Outbound, RuleAction, Strategy, TunStack } from '@/enums/kernel'
+
+import { deepAssign, sampleID } from './others'
 
 export const restoreProfile = (config: Recordable) => {
   const profile: IProfile = {

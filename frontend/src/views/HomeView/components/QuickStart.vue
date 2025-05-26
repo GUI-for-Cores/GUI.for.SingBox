@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { computed, inject, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import type { Subscription } from '@/types/app'
-
-import * as Defaults from '@/constant/profile'
-import { message, sampleID } from '@/utils'
 import { DefaultSubscribeScript } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
+import * as Defaults from '@/constant/profile'
 import { useProfilesStore, useAppSettingsStore, useSubscribesStore } from '@/stores'
+import { message, sampleID } from '@/utils'
+
+import type { Subscription } from '@/types/app'
 
 const { t } = useI18n()
 const subscribeStore = useSubscribesStore()

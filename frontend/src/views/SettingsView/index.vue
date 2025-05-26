@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAppStore } from '@/stores'
-
 import KernelView from '@/views/KernelView/index.vue'
+
 import GeneralSetting from './components/GeneralSetting.vue'
 
 const settings = [

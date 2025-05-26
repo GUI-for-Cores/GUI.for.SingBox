@@ -1,8 +1,9 @@
-import type { CompletionContext, Completion } from '@codemirror/autocomplete'
 import { snippetCompletion, completeFromList } from '@codemirror/autocomplete'
 import { scopeCompletionSource, localCompletionSource, snippets } from '@codemirror/lang-javascript'
 
 import i18n from '@/lang'
+
+import type { CompletionContext, Completion } from '@codemirror/autocomplete'
 
 export const getCompletions = (pluginScope: any = undefined) => {
   const { t } = i18n.global

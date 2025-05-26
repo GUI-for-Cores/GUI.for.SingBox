@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 
+import { ModeOptions, LogLevelOptions } from '@/constant/kernel'
 import { useBool } from '@/hooks'
 import { generateSecureKey } from '@/utils'
-import { ModeOptions, LogLevelOptions } from '@/constant/kernel'
 
 interface Props {
   outboundOptions: { label: string; value: string }[]

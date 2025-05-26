@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+import { useAppSettingsStore, usePluginsStore } from '@/stores'
 import { debounce, message } from '@/utils'
 import { getCommands } from '@/utils/command'
-import { useAppSettingsStore, usePluginsStore } from '@/stores'
+
 import Input from '@/components/Input/index.vue'
 
 const loading = ref(false)

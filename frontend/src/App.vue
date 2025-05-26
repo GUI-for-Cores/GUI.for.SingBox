@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+import { EventsOn, WindowHide, IsStartup } from '@/bridge'
+import { NavigationBar, MainPage, TitleBar } from '@/components'
 import * as Stores from '@/stores'
 import { exitApp, sampleID, sleep, message } from '@/utils'
-import { EventsOn, WindowHide, IsStartup } from '@/bridge'
-
 import AboutView from '@/views/AboutView.vue'
+import CommandView from '@/views/CommandView.vue'
 import SplashView from '@/views/SplashView.vue'
-import CommandView from './views/CommandView.vue'
-import { NavigationBar, MainPage, TitleBar } from '@/components'
 
 const loading = ref(true)
 

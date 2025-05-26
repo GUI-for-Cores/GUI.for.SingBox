@@ -1,13 +1,13 @@
 import { render, createVNode, type VNode } from 'vue'
 
-import PromptComp from '@/components/Prompt/index.vue'
-import { type Props as InputProps } from '@/components/Input/index.vue'
-import PickerComp, { type PickerItem } from '@/components/Picker/index.vue'
-import MessageComp, { type MessageIcon } from '@/components/Message/index.vue'
-import ConfirmComp, { type ConfirmOptions } from '@/components/Confirm/index.vue'
-
 import i18n from '@/lang'
 import { APP_TITLE, sampleID } from '@/utils'
+
+import ConfirmComp, { type ConfirmOptions } from '@/components/Confirm/index.vue'
+import { type Props as InputProps } from '@/components/Input/index.vue'
+import MessageComp, { type MessageIcon } from '@/components/Message/index.vue'
+import PickerComp, { type PickerItem } from '@/components/Picker/index.vue'
+import PromptComp from '@/components/Prompt/index.vue'
 
 const ContainerCssText = `
     position: fixed;

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref, inject, computed, useTemplateRef, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import { deepClone, generateConfig, message, sampleID, alert } from '@/utils'
-import * as Defaults from '@/constant/profile'
 import { WindowToggleMaximise } from '@/bridge'
+import * as Defaults from '@/constant/profile'
 import { useProfilesStore } from '@/stores'
+import { deepClone, generateConfig, message, sampleID, alert } from '@/utils'
 
+import DnsConfig from './DnsConfig.vue'
 import GeneralConfig from './GeneralConfig.vue'
 import InboundsConfig from './InboundsConfig.vue'
+import MixinAndScript from './MixinAndScriptConfig.vue'
 import OutboundsConfig from './OutboundsConfig.vue'
 import RouteConfig from './RouteConfig.vue'
-import DnsConfig from './DnsConfig.vue'
-import MixinAndScript from './MixinAndScriptConfig.vue'
 
 interface Props {
   id?: string

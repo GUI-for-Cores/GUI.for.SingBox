@@ -1,15 +1,9 @@
 import { defineStore } from 'pinia'
-import { stringify, parse } from 'yaml'
 import { computed, ref, watch } from 'vue'
+import { stringify, parse } from 'yaml'
 
-import type { ScheduledTask } from '@/types/app'
-
-import { Notify } from '@/bridge'
-import { debounce, ignoredError } from '@/utils'
-import { ScheduledTasksFilePath } from '@/constant/app'
-import { ScheduledTasksType, PluginTriggerEvent } from '@/enums/app'
-import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
 import {
+  Notify,
   Readfile,
   Writefile,
   AddScheduledTask,
@@ -17,6 +11,12 @@ import {
   EventsOn,
   EventsOff,
 } from '@/bridge'
+import { ScheduledTasksFilePath } from '@/constant/app'
+import { ScheduledTasksType, PluginTriggerEvent } from '@/enums/app'
+import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
+import { debounce, ignoredError } from '@/utils'
+
+import type { ScheduledTask } from '@/types/app'
 
 export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const scheduledtasks = ref<ScheduledTask[]>([])

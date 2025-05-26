@@ -1,9 +1,9 @@
 import { createI18n } from 'vue-i18n'
 
-import zh from './locale/zh'
 import en from './locale/en'
-import ru from './locale/ru'
 import fa from './locale/fa'
+import ru from './locale/ru'
+import zh from './locale/zh'
 
 const messages = {
   zh,

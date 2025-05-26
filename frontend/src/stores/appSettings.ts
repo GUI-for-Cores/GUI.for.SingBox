@@ -1,13 +1,16 @@
-import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
-import type { AppSettings } from '@/types/app'
-
-import i18n from '@/lang'
-import { DefaultConnections } from '@/constant/kernel'
-import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
+import {
+  Readfile,
+  Writefile,
+  WindowSetSystemDefaultTheme,
+  WindowIsMaximised,
+  WindowIsMinimised,
+} from '@/bridge'
 import { Colors, DefaultFontFamily, DefaultTestURL, UserFilePath } from '@/constant/app'
+import { DefaultConnections } from '@/constant/kernel'
 import {
   Theme,
   WindowStartState,
@@ -18,13 +21,10 @@ import {
   ControllerCloseMode,
   Branch,
 } from '@/enums/app'
-import {
-  Readfile,
-  Writefile,
-  WindowSetSystemDefaultTheme,
-  WindowIsMaximised,
-  WindowIsMinimised,
-} from '@/bridge'
+import i18n from '@/lang'
+import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
+
+import type { AppSettings } from '@/types/app'
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
   let firstOpen = true

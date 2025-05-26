@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import useI18n from '@/lang'
 import { ref, unref } from 'vue'
+
+import useI18n from '@/lang'
 
 interface Props {
   title: string
