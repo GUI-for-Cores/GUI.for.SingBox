@@ -44,6 +44,7 @@
     "@vue/runtime-core": "^3.5.14",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.27.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-vue": "^10.1.0",
     "less": "^4.3.0",
     "npm-run-all2": "^8.0.2",
