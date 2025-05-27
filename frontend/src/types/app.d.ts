@@ -1,3 +1,5 @@
+import { h, onActivated, onMounted, onUnmounted, ref, type VNode } from 'vue'
+
 import type {
   Lang,
   Theme,
@@ -10,6 +12,8 @@ import type {
   PluginTrigger,
   ScheduledTasksType,
 } from '@/enums/app'
+
+export {}
 
 export interface TrayContent {
   icon?: string
@@ -163,4 +167,23 @@ export interface Subscription {
   script: string
   // Not Config
   updating?: boolean
+}
+
+// Custom Action
+export interface CustomActionApi {
+  h: typeof h
+  ref: typeof ref
+}
+type CustomActionProps = Recordable
+type CustomActionSlots = Recordable<
+  ((api: CustomActionApi) => VNode | string | number | boolean) | VNode | string | number | boolean
+>
+export interface CustomAction<P = CustomActionProps, S = CustomActionSlots> {
+  id?: string
+  component: string
+  componentProps?: P | ((api: CustomActionApi) => P)
+  componentSlots?: S | ((api: CustomActionApi) => S)
+}
+export type CustomActionFn = ((api: CustomActionApi) => CustomAction) & {
+  id?: string
 }

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { h, computed, ref, type VNode, isVNode, resolveComponent } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -26,7 +26,7 @@ import {
 
 import { useEnvStore } from './env'
 
-import type { Menu } from '@/types/app'
+import type { CustomAction, CustomActionFn, Menu } from '@/types/app'
 
 export const useAppStore = defineStore('app', () => {
   /* Global Menu */
@@ -46,26 +46,13 @@ export const useAppStore = defineStore('app', () => {
   })
 
   /* Actions */
-  interface CustomAction {
-    id?: string
-    component: string
-    componentProps?: Recordable
-    componentSlots?: Recordable
-  }
-  interface CustomActionSlotOptions {
-    h: typeof h
-    ref: typeof ref
-  }
-  type CustomActionSlot =
-    | ((options: CustomActionSlotOptions) => VNode | string | number | boolean)
-    | VNode
-    | string
-    | number
-    | boolean
-  const customActions = ref<{ [key: string]: CustomAction[] }>({
+  const customActions = ref<Recordable<(CustomAction | CustomActionFn)[]>>({
     core_state: [],
   })
-  const addCustomActions = (target: string, actions: CustomAction | CustomAction[]) => {
+  const addCustomActions = (
+    target: string,
+    actions: CustomAction | CustomAction[] | CustomActionFn | CustomActionFn[],
+  ) => {
     if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
     const _actions = Array.isArray(actions) ? actions : [actions]
     _actions.forEach((action) => (action.id = sampleID()))
@@ -77,16 +64,10 @@ export const useAppStore = defineStore('app', () => {
     }
     return remove
   }
-  const renderCustomActionSlot = (slot: CustomActionSlot) => {
-    let result: CustomActionSlot = slot
-    if (typeof result === 'function') {
-      const customH = (type: any, ...args: any[]) => h(resolveComponent(type), ...args)
-      result = result({ h: customH, ref })
-    }
-    if (isVNode(result)) {
-      return result
-    }
-    return h('div', result)
+  const removeCustomActions = (target: string, id: string | string[]) => {
+    if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
+    const ids = Array.isArray(id) ? id : [id]
+    customActions.value[target] = customActions.value[target].filter((a) => !ids.includes(a.id!))
   }
 
   const { t } = useI18n()
@@ -196,6 +177,6 @@ export const useAppStore = defineStore('app', () => {
     downloadApp,
     customActions,
     addCustomActions,
-    renderCustomActionSlot,
+    removeCustomActions,
   }
 })

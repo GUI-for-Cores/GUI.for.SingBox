@@ -163,21 +163,7 @@ onUnmounted(() => {
       >
         {{ t('home.overview.tunMode') }}
       </Switch>
-      <component
-        v-for="action in appStore.customActions.core_state"
-        :key="action.id"
-        :is="action.component"
-        v-bind="action.componentProps"
-        class="ml-8"
-      >
-        <template
-          v-for="([name, slot], index) in Object.entries(action.componentSlots || {})"
-          :key="index"
-          #[name]
-        >
-          <component :is="appStore.renderCustomActionSlot(slot)" />
-        </template>
-      </component>
+      <CustomAction :actions="appStore.customActions.core_state" />
       <Button
         @click="handleShowApiLogs"
         v-tips="'home.overview.viewlog'"
