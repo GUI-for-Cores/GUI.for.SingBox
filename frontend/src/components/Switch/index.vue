@@ -13,9 +13,11 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
 })
 
-const model = defineModel<boolean>()
+const model = defineModel<boolean>({ default: false })
 
-const emits = defineEmits(['change'])
+const emits = defineEmits<{
+  (e: 'change', val: boolean): void
+}>()
 
 const toggle = () => {
   if (props.disabled) return
