@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAppStore } from '@/stores'
-import KernelView from '@/views/KernelView/index.vue'
 
-import GeneralSetting from './components/GeneralSetting.vue'
+import CoreSettings from './components/CoreSettings.vue'
+import GeneralSettings from './components/GeneralSettings.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
@@ -21,11 +21,11 @@ const appStore = useAppStore()
 <template>
   <Tabs v-model:active-key="activeKey" :items="settings" height="100%">
     <template #general>
-      <GeneralSetting />
+      <GeneralSettings />
     </template>
 
     <template #kernel>
-      <KernelView />
+      <CoreSettings />
     </template>
 
     <template #extra>
