@@ -1,4 +1,4 @@
-import { h, onActivated, onMounted, onUnmounted, ref, type VNode } from 'vue'
+import { h, ref, type VNode } from 'vue'
 
 import type {
   Lang,
@@ -163,7 +163,10 @@ export interface Subscription {
   disabled: boolean
   inSecure: boolean
   proxies: { id: string; tag: string; type: string }[]
-  userAgent: string
+  header: {
+    request: Recordable
+    response: Recordable
+  }
   script: string
   // Not Config
   updating?: boolean

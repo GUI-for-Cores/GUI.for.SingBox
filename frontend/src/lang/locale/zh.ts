@@ -397,12 +397,10 @@ export default {
     proxyPrefix: '代理前缀',
     updating: '更新中',
     useragent: '用户代理',
-    resetUserAgent: '重置用户代理',
     inSecure: '跳过证书验证',
-    healthCheck: {
-      name: '健康检查',
-      interval: '时间间隔(秒)',
-      url: '测试链接',
+    header: {
+      request: '请求头',
+      response: '响应头',
     },
   },
   subscribes: {

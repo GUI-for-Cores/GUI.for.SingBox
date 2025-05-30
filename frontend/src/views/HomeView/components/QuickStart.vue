@@ -44,7 +44,10 @@ const handleSubmit = async () => {
     proxyPrefix: '',
     disabled: false,
     inSecure: false,
-    userAgent: '',
+    header: {
+      request: {},
+      response: {},
+    },
     proxies: [],
     script: DefaultSubscribeScript,
   }

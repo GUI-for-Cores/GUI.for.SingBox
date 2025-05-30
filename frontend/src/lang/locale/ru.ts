@@ -398,12 +398,10 @@ export default {
     proxyPrefix: 'Префикс прокси-сервера',
     updating: 'Загрузка',
     useragent: 'Пользовательский User-Agent',
-    resetUserAgent: 'Сбросить User-Agent',
     inSecure: 'Пропустить проверку TLS',
-    healthCheck: {
-      name: 'Проверка работоспособности',
-      interval: 'Интервал (сек.)',
-      url: 'URL-ссылка',
+    header: {
+      request: 'Заголовок запроса',
+      response: 'Заголовок ответа',
     },
   },
   subscribes: {

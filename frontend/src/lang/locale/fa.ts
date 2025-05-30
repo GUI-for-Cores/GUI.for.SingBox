@@ -398,12 +398,10 @@ export default {
     proxyPrefix: 'پیشوند پروکسی',
     updating: 'در حال به‌روزرسانی',
     useragent: 'User-Agent',
-    resetUserAgent: 'بازنشانی User-Agent',
     inSecure: 'رد کردن تأیید هویت TLS',
-    healthCheck: {
-      name: 'بررسی سلامت',
-      interval: 'فاصله (ثانیه)',
-      url: 'URL',
+    header: {
+      request: 'هدر درخواست',
+      response: 'هدر پاسخ',
     },
   },
   subscribes: {

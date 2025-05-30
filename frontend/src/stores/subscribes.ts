@@ -11,7 +11,6 @@ import {
   debounce,
   sampleID,
   isValidSubJson,
-  getUserAgent,
   isValidSubYAML,
   isValidBase64,
   ignoredError,
@@ -32,6 +31,20 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     subscribes.value.forEach((sub) => {
       if (!sub.script) {
         sub.script = DefaultSubscribeScript
+        needSync = true
+      }
+      if (!sub.header) {
+        sub.header = {
+          request: {},
+          response: {},
+        }
+        // @ts-expect-error(Deprecated `userAgent`)
+        if (sub.userAgent) {
+          // @ts-expect-error(Deprecated `userAgent`)
+          sub.header.request['User-Agent'] = sub.userAgent
+          // @ts-expect-error(Deprecated `userAgent`)
+          delete sub.userAgent
+        }
         needSync = true
       }
     })
@@ -77,7 +90,10 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       proxyPrefix: '',
       disabled: false,
       inSecure: false,
-      userAgent: '',
+      header: {
+        request: {},
+        response: {},
+      },
       proxies: [],
       script: DefaultSubscribeScript,
     })
@@ -123,14 +139,10 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (s.type === 'Http') {
-      const { headers: h, body: b } = await HttpGet(
-        s.url,
-        {
-          'User-Agent': s.userAgent || getUserAgent(),
-        },
-        { Insecure: s.inSecure },
-      )
-
+      const { headers: h, body: b } = await HttpGet(s.url, s.header.request, {
+        Insecure: s.inSecure,
+      })
+      Object.assign(h, s.header.response)
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
       if (typeof b !== 'string') {
         body = JSON.stringify(b)

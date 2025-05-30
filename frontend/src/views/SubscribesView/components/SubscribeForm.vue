@@ -6,7 +6,7 @@ import { DefaultSubscribeScript } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
-import { deepClone, sampleID, getUserAgent, message } from '@/utils'
+import { deepClone, sampleID, message } from '@/utils'
 
 import type { Subscription } from '@/types/app'
 
@@ -41,7 +41,10 @@ const sub = ref<Subscription>({
   proxyPrefix: '',
   disabled: false,
   inSecure: false,
-  userAgent: '',
+  header: {
+    request: {},
+    response: {},
+  },
   proxies: [],
   script: DefaultSubscribeScript,
 })
@@ -70,7 +73,6 @@ const handleSubmit = async () => {
   loading.value = false
 }
 
-const resetUserAgent = () => (sub.value.userAgent = '')
 const isManual = () => sub.value.type === 'Manual'
 
 if (props.isUpdate) {
@@ -163,21 +165,22 @@ if (props.isUpdate) {
         <Input v-model="sub.website" placeholder="http(s)://" auto-size class="input" />
       </div>
       <div class="form-item">
-        <div class="name">{{ t('subscribe.useragent') }}</div>
-        <Input v-model="sub.userAgent" :placeholder="getUserAgent()" auto-size>
-          <template #extra>
-            <Button
-              @click="resetUserAgent"
-              type="text"
-              icon="reset"
-              v-tips="t('subscribe.resetUserAgent')"
-            />
-          </template>
-        </Input>
-      </div>
-      <div class="form-item">
         <div class="name">{{ t('subscribe.inSecure') }}</div>
         <Switch v-model="sub.inSecure" />
+      </div>
+      <div
+        :class="{ 'flex-start': Object.keys(sub.header.request).length !== 0 }"
+        class="form-item"
+      >
+        <div class="name">{{ t('subscribe.header.request') }}</div>
+        <KeyValueEditor v-model="sub.header.request" />
+      </div>
+      <div
+        :class="{ 'flex-start': Object.keys(sub.header.response).length !== 0 }"
+        class="form-item"
+      >
+        <div class="name">{{ t('subscribe.header.response') }}</div>
+        <KeyValueEditor v-model="sub.header.response" />
       </div>
     </div>
   </div>
