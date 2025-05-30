@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DefaultSubscribeScript } from '@/constant/app'
@@ -49,6 +49,9 @@ const sub = ref<Subscription>({
   script: DefaultSubscribeScript,
 })
 
+const isManual = computed(() => sub.value.type === 'Manual')
+const isRemote = computed(() => sub.value.type === 'Http')
+
 const { t } = useI18n()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
@@ -72,8 +75,6 @@ const handleSubmit = async () => {
 
   loading.value = false
 }
-
-const isManual = () => sub.value.type === 'Manual'
 
 if (props.isUpdate) {
   const s = subscribeStore.getSubscribeById(props.id)
@@ -102,7 +103,7 @@ if (props.isUpdate) {
       <div class="name">{{ t('subscribe.name') }} *</div>
       <Input v-model="sub.name" auto-size autofocus class="input" />
     </div>
-    <div v-show="!isManual()" class="form-item">
+    <div v-if="!isManual" class="form-item">
       <div class="name">
         {{ t(sub.type === 'Http' ? 'subscribe.url' : 'subscribe.localPath') }} *
       </div>
@@ -122,12 +123,12 @@ if (props.isUpdate) {
         class="input"
       />
     </div>
-    <Divider v-show="!isManual()">
+    <Divider v-if="!isManual">
       <Button @click="toggleShowMore" type="text" size="small">
         {{ t('common.more') }}
       </Button>
     </Divider>
-    <div v-show="showMore && !isManual()">
+    <div v-if="showMore && !isManual">
       <div class="form-item">
         <div class="name">{{ t('subscribe.include') }}</div>
         <Input v-model="sub.include" placeholder="keyword1|keyword2" auto-size class="input" />
@@ -158,30 +159,32 @@ if (props.isUpdate) {
         <div class="name">{{ t('subscribe.proxyPrefix') }}</div>
         <Input v-model="sub.proxyPrefix" auto-size class="input" />
       </div>
-      <div v-if="sub.type === 'Http'" class="form-item">
-        <div class="name">
-          {{ t('subscribe.website') }}
+      <template v-if="isRemote">
+        <div class="form-item">
+          <div class="name">
+            {{ t('subscribe.website') }}
+          </div>
+          <Input v-model="sub.website" placeholder="http(s)://" auto-size class="input" />
         </div>
-        <Input v-model="sub.website" placeholder="http(s)://" auto-size class="input" />
-      </div>
-      <div class="form-item">
-        <div class="name">{{ t('subscribe.inSecure') }}</div>
-        <Switch v-model="sub.inSecure" />
-      </div>
-      <div
-        :class="{ 'flex-start': Object.keys(sub.header.request).length !== 0 }"
-        class="form-item"
-      >
-        <div class="name">{{ t('subscribe.header.request') }}</div>
-        <KeyValueEditor v-model="sub.header.request" />
-      </div>
-      <div
-        :class="{ 'flex-start': Object.keys(sub.header.response).length !== 0 }"
-        class="form-item"
-      >
-        <div class="name">{{ t('subscribe.header.response') }}</div>
-        <KeyValueEditor v-model="sub.header.response" />
-      </div>
+        <div class="form-item">
+          <div class="name">{{ t('subscribe.inSecure') }}</div>
+          <Switch v-model="sub.inSecure" />
+        </div>
+        <div
+          :class="{ 'flex-start': Object.keys(sub.header.request).length !== 0 }"
+          class="form-item"
+        >
+          <div class="name">{{ t('subscribe.header.request') }}</div>
+          <KeyValueEditor v-model="sub.header.request" />
+        </div>
+        <div
+          :class="{ 'flex-start': Object.keys(sub.header.response).length !== 0 }"
+          class="form-item"
+        >
+          <div class="name">{{ t('subscribe.header.response') }}</div>
+          <KeyValueEditor v-model="sub.header.response" />
+        </div>
+      </template>
     </div>
   </div>
   <div class="form-action">
@@ -189,7 +192,7 @@ if (props.isUpdate) {
     <Button
       @click="handleSubmit"
       :loading="loading"
-      :disabled="!sub.name || !sub.path || (!sub.url && sub.type !== 'Manual')"
+      :disabled="!sub.name || !sub.path || (!sub.url && !isManual)"
       type="primary"
     >
       {{ t('common.save') }}
