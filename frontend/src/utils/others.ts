@@ -46,12 +46,14 @@ export const debounce = (fn: (...args: any) => any, wait: number) => {
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export const ignoredError = async <T>(fn: (...args: any) => Promise<T>, ...args: any) => {
+export const ignoredError = async <F extends (...args: any[]) => Promise<any>>(
+  fn: F,
+  ...args: Parameters<F>
+): Promise<ReturnType<F> | undefined> => {
   try {
-    const res = await fn(...args)
-    return res
+    return await fn(...args)
   } catch {
-    // console.log(error)
+    return undefined
   }
 }
 

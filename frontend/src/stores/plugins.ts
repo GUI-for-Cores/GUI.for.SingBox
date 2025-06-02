@@ -51,6 +51,14 @@ const PluginsTriggerMap: {
     fnName: PluginTriggerEvent.OnReady,
     observers: [],
   },
+  [PluginTrigger.OnCoreStarted]: {
+    fnName: PluginTriggerEvent.OnCoreStarted,
+    observers: [],
+  },
+  [PluginTrigger.OnCoreStopped]: {
+    fnName: PluginTriggerEvent.OnCoreStopped,
+    observers: [],
+  },
 }
 
 export const usePluginsStore = defineStore('plugins', () => {
@@ -444,6 +452,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     onStartupTrigger: () => noParamsTrigger(PluginTrigger.OnStartup),
     onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown),
     onReadyTrigger: () => noParamsTrigger(PluginTrigger.OnReady),
+    onCoreStartedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStarted),
+    onCoreStoppedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStopped),
     manualTrigger,
     updatePluginTrigger,
     getPluginCodefromCache,

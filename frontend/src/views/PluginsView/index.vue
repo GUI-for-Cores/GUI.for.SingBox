@@ -63,12 +63,15 @@ const handleImportPlugin = () => {
 }
 
 const handleAddPlugin = () => {
-  modalApi.setProps({ title: 'common.add', footer: false }).setComponent(h(PluginForm)).open()
+  modalApi
+    .setProps({ title: 'common.add', minWidth: '80', footer: false })
+    .setComponent(h(PluginForm))
+    .open()
 }
 
 const handleEditPlugin = (id: string) => {
   modalApi
-    .setProps({ title: 'common.edit', footer: false })
+    .setProps({ title: 'common.edit', minWidth: '80', footer: false })
     .setComponent(h(PluginForm, { id, isUpdate: true }))
     .open()
 }

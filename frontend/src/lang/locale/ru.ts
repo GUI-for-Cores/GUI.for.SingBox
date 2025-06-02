@@ -503,6 +503,8 @@ export default {
     'on::install': 'on::install',
     'on::uninstall': 'on::uninstall',
     'on::configure': 'on::configure',
+    'on::core::started': 'on::core::started',
+    'on::core::stopped': 'on::core::stopped',
     name: 'Имя',
     version: 'Версия',
     description: 'Описание',

@@ -502,6 +502,8 @@ export default {
     'on::install': '点击安装时',
     'on::uninstall': '点击卸载时',
     'on::configure': '配置插件时',
+    'on::core::started': '核心启动后',
+    'on::core::stopped': '核心停止后',
     name: '名称',
     version: '版本号',
     description: '描述',

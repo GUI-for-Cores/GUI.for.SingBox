@@ -80,6 +80,24 @@ export const getCompletions = (pluginScope: any = undefined) => {
       },
     ),
     snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::core::started')} */\n` +
+        'const onCoreStarted = async () => {\n\t${}\n}',
+      {
+        label: 'onCoreStarted',
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::core::started'),
+      },
+    ),
+    snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::core::stopped')} */\n` +
+        'const onCoreStopped = async () => {\n\t${}\n}',
+      {
+        label: 'onCoreStopped',
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::core::stopped'),
+      },
+    ),
+    snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::ready')} */\n` +
         'const onReady = async () => {\n\t${}\n}',
       {

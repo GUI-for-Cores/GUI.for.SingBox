@@ -65,11 +65,13 @@ export const DraggableOptions = {
 
 export const PluginsTriggerOptions = [
   { label: 'plugin.on::manual', value: PluginTrigger.OnManual },
-  { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
-  { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
   { label: 'plugin.on::startup', value: PluginTrigger.OnStartup },
-  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
   { label: 'plugin.on::ready', value: PluginTrigger.OnReady },
+  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
+  { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
+  { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
+  { label: 'plugin.on::core::started', value: PluginTrigger.OnCoreStarted },
+  { label: 'plugin.on::core::stopped', value: PluginTrigger.OnCoreStopped },
 ]
 
 export const ScheduledTaskOptions = [
