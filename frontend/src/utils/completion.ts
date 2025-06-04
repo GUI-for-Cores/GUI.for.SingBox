@@ -1,6 +1,7 @@
 import { snippetCompletion, completeFromList } from '@codemirror/autocomplete'
 import { scopeCompletionSource, localCompletionSource, snippets } from '@codemirror/lang-javascript'
 
+import { PluginTriggerEvent } from '@/enums/app'
 import i18n from '@/lang'
 
 import type { CompletionContext, Completion } from '@codemirror/autocomplete'
@@ -18,108 +19,126 @@ export const getCompletions = (pluginScope: any = undefined) => {
      */
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('common.install')} */\n` +
-        'const onInstall = async () => {\n\t${}\n\treturn 0\n}',
+        `const ${PluginTriggerEvent.OnInstall} = async () => {\n\t\${}\n\treturn 0\n}`,
       {
-        label: 'onInstall',
+        label: PluginTriggerEvent.OnInstall,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('common.install'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('common.uninstall')} */\n` +
-        'const onUninstall = async () => {\n\t${}\n\treturn 0\n}',
+        `const ${PluginTriggerEvent.OnUninstall} = async () => {\n\t\${}\n\treturn 0\n}`,
       {
-        label: 'onUninstall',
+        label: PluginTriggerEvent.OnUninstall,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('common.uninstall'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::manual')} */\n` +
-        'const onRun = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnManual} = async () => {\n\t\${}\n}`,
       {
-        label: 'onRun',
+        label: PluginTriggerEvent.OnManual,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::manual'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::subscribe')} */\n` +
-        'const onSubscribe = async (proxies, subscription) => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnSubscribe} = async (proxies, subscription) => {\n\t\${}\n\treturn proxies\n}`,
       {
-        label: 'onSubscribe',
+        label: PluginTriggerEvent.OnSubscribe,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::subscribe'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::generate')} */\n` +
-        'const onGenerate = async (config, profile) => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnGenerate} = async (config, profile) => {\n\t\${}\n\treturn config\n}`,
       {
-        label: 'onGenerate',
+        label: PluginTriggerEvent.OnGenerate,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::generate'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::startup')} */\n` +
-        'const onStartup = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnStartup} = async () => {\n\t\${}\n}`,
       {
-        label: 'onStartup',
+        label: PluginTriggerEvent.OnStartup,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::startup'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::shutdown')} */\n` +
-        'const onShutdown = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnShutdown} = async () => {\n\t\${}\n}`,
       {
-        label: 'onShutdown',
+        label: PluginTriggerEvent.OnShutdown,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::shutdown'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::core::started')} */\n` +
-        'const onCoreStarted = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnCoreStarted} = async () => {\n\t\${}\n}`,
       {
-        label: 'onCoreStarted',
+        label: PluginTriggerEvent.OnCoreStarted,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::core::started'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::core::stopped')} */\n` +
-        'const onCoreStopped = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnCoreStopped} = async () => {\n\t\${}\n}`,
       {
-        label: 'onCoreStopped',
+        label: PluginTriggerEvent.OnCoreStopped,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::core::stopped'),
       },
     ),
     snippetCompletion(
-      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::ready')} */\n` +
-        'const onReady = async () => {\n\t${}\n}',
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::before::core::start')} */\n` +
+        `const ${PluginTriggerEvent.OnBeforeCoreStart} = async (config, profile) => {\n\t\${}\n\treturn config\n}`,
       {
-        label: 'onReady',
+        label: PluginTriggerEvent.OnBeforeCoreStart,
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::before::core::start'),
+      },
+    ),
+    snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::before::core::stop')} */\n` +
+        `const ${PluginTriggerEvent.OnBeforeCoreStop} = async () => {\n\t\${}\n}`,
+      {
+        label: PluginTriggerEvent.OnBeforeCoreStop,
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::before::core::stop'),
+      },
+    ),
+    snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::ready')} */\n` +
+        `const ${PluginTriggerEvent.OnReady} = async () => {\n\t\${}\n}`,
+      {
+        label: PluginTriggerEvent.OnReady,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::ready'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::task')} */\n` +
-        'const onTask = async () => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnTask} = async () => {\n\t\${}\n}`,
       {
-        label: 'onTask',
+        label: PluginTriggerEvent.OnTask,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::task'),
       },
     ),
     snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::configure')} */\n` +
-        'const onConfigure = async (config, old) => {\n\t${}\n}',
+        `const ${PluginTriggerEvent.OnConfigure} = async (config, old) => {\n\t\${}\n}`,
       {
-        label: 'onConfigure',
+        label: PluginTriggerEvent.OnConfigure,
         type: 'keyword',
         detail: t('plugin.trigger') + ' ' + t('plugin.on::configure'),
       },

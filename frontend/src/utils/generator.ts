@@ -443,8 +443,12 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   return result
 }
 
-export const generateConfigFile = async (profile: IProfile) => {
-  const config = await generateConfig(profile)
+export const generateConfigFile = async (
+  profile: IProfile,
+  beforeWrite: (config: any) => Promise<any>,
+) => {
+  const _config = await generateConfig(profile)
+  const config = await beforeWrite(_config)
 
   config.log.disabled = false
   config.log.output = ''

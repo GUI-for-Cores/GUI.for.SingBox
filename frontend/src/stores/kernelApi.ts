@@ -22,7 +22,7 @@ import {
   deepClone,
   WebSockets,
   setIntervalImmediately,
-  debounce,
+  message,
 } from '@/utils'
 
 import type {
@@ -315,6 +315,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   /* Bridge API */
   const loading = ref(false)
   const statusLoading = ref(true)
+  let isCoreStartedByThisInstance = false
   let doneFirstCoreUpdate: (value: unknown) => void
   const firstCoreUpdatePromise = new Promise((r) => (doneFirstCoreUpdate = r))
 
@@ -335,8 +336,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     statusLoading.value = false
 
     if (appSettingsStore.app.kernel.running) {
-      await refreshConfig()
-      await refreshProviderProxies()
+      await Promise.all([refreshConfig(), refreshProviderProxies()])
       await envStore.updateSystemProxyStatus()
     } else if (appSettingsStore.app.autoStartKernel) {
       await startKernel()
@@ -346,23 +346,29 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const onCoreStarted = async (pid: number) => {
+    loading.value = false
     appSettingsStore.app.kernel.pid = pid
     appSettingsStore.app.kernel.running = true
+
+    isCoreStartedByThisInstance = true
     await Promise.all([refreshConfig(), refreshProviderProxies()])
+
     if (appSettingsStore.app.autoSetSystemProxy) {
-      await envStore.setSystemProxy()
+      await envStore.setSystemProxy().catch((err) => message.error(err))
     }
-    pluginsStore.onCoreStartedTrigger()
+    await pluginsStore.onCoreStartedTrigger()
   }
 
-  const onCoreStopped = debounce(async () => {
+  const onCoreStopped = async () => {
+    loading.value = false
     appSettingsStore.app.kernel.pid = 0
     appSettingsStore.app.kernel.running = false
+
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.clearSystemProxy()
     }
-    pluginsStore.onCoreStoppedTrigger()
-  }, 100)
+    await pluginsStore.onCoreStoppedTrigger()
+  }
 
   const startKernel = async (_profile?: IProfile) => {
     const { profile: profileID, branch } = appSettingsStore.app.kernel
@@ -382,21 +388,19 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     loading.value = true
 
     try {
-      await generateConfigFile(profile)
+      await generateConfigFile(profile, (config) =>
+        pluginsStore.onBeforeCoreStartTrigger(config, profile),
+      )
       const pid = await ExecBackground(
         kernelFilePath,
         ['run', '--disable-color', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
         (out) => {
           logsStore.recordKernelLog(out)
           if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
-            loading.value = false
             onCoreStarted(pid)
           }
         },
-        () => {
-          loading.value = false
-          onCoreStopped()
-        },
+        onCoreStopped,
         {
           stopOutputKeyword: CoreStopOutputKeyword,
         },
@@ -411,8 +415,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     const { pid } = appSettingsStore.app.kernel
     const running = await ignoredError(isKernelRunning, pid)
     if (running) {
+      await pluginsStore.onBeforeCoreStopTrigger()
       await KillProcess(pid)
-      await onCoreStopped()
+      if (!isCoreStartedByThisInstance) {
+        await onCoreStopped()
+      }
     }
 
     logsStore.clearKernelLog()

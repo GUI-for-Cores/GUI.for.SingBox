@@ -59,6 +59,14 @@ const PluginsTriggerMap: {
     fnName: PluginTriggerEvent.OnCoreStopped,
     observers: [],
   },
+  [PluginTrigger.OnBeforeCoreStart]: {
+    fnName: PluginTriggerEvent.OnBeforeCoreStart,
+    observers: [],
+  },
+  [PluginTrigger.OnBeforeCoreStop]: {
+    fnName: PluginTriggerEvent.OnBeforeCoreStop,
+    observers: [],
+  },
 }
 
 export const usePluginsStore = defineStore('plugins', () => {
@@ -389,6 +397,32 @@ export const usePluginsStore = defineStore('plugins', () => {
     return params as Record<string, any>
   }
 
+  const onBeforeCoreStartTrigger = async (params: Record<string, any>, profile: IProfile) => {
+    const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnBeforeCoreStart]
+    if (observers.length === 0) return params
+
+    for (let i = 0; i < observers.length; i++) {
+      const pluginId = observers[i]
+      const cache = PluginsCache[pluginId]
+
+      if (isPluginUnavailable(cache)) continue
+
+      const metadata = getPluginMetadata(cache.plugin)
+      try {
+        const fn = new window.AsyncFunction(
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`,
+        )
+        params = await fn()
+      } catch (error: any) {
+        throw `${cache.plugin.name} : ` + (error.message || error)
+      }
+
+      if (!params) throw `${cache.plugin.name} : Wrong result`
+    }
+
+    return params as Record<string, any>
+  }
+
   const manualTrigger = async (id: string, event: PluginTriggerEvent, ...args: any[]) => {
     const plugin = getPluginById(id)
     if (!plugin) throw id + ' Not Found'
@@ -454,6 +488,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     onReadyTrigger: () => noParamsTrigger(PluginTrigger.OnReady),
     onCoreStartedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStarted),
     onCoreStoppedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStopped),
+    onBeforeCoreStopTrigger: () => noParamsTrigger(PluginTrigger.OnBeforeCoreStop),
+    onBeforeCoreStartTrigger,
     manualTrigger,
     updatePluginTrigger,
     getPluginCodefromCache,

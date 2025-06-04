@@ -504,6 +504,8 @@ export default {
     'on::configure': '配置插件时',
     'on::core::started': '核心启动后',
     'on::core::stopped': '核心停止后',
+    'on::before::core::start': '核心启动前',
+    'on::before::core::stop': '核心停止前',
     name: '名称',
     version: '版本号',
     description: '描述',

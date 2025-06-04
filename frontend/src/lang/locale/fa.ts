@@ -505,6 +505,8 @@ export default {
     'on::configure': 'on::configure',
     'on::core::started': 'on::core::started',
     'on::core::stopped': 'on::core::stopped',
+    'on::before::core::start': 'on::before::core::start',
+    'on::before::core::stop': 'on::before::core::stop',
     name: 'نام',
     version: 'نسخه',
     description: 'توضیحات',

@@ -64,6 +64,8 @@ export enum PluginTrigger {
   OnReady = 'on::ready',
   OnCoreStarted = 'on::core::started',
   OnCoreStopped = 'on::core::stopped',
+  OnBeforeCoreStart = 'on::before::core::start',
+  OnBeforeCoreStop = 'on::before::core::stop',
 }
 
 export enum PluginTriggerEvent {
@@ -79,4 +81,6 @@ export enum PluginTriggerEvent {
   OnConfigure = 'onConfigure',
   OnCoreStarted = 'onCoreStarted',
   OnCoreStopped = 'onCoreStopped',
+  OnBeforeCoreStart = 'onBeforeCoreStart',
+  OnBeforeCoreStop = 'onBeforeCoreStop',
 }

@@ -70,7 +70,9 @@ export const PluginsTriggerOptions = [
   { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
   { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
   { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
+  { label: 'plugin.on::before::core::start', value: PluginTrigger.OnBeforeCoreStart },
   { label: 'plugin.on::core::started', value: PluginTrigger.OnCoreStarted },
+  { label: 'plugin.on::before::core::stop', value: PluginTrigger.OnBeforeCoreStop },
   { label: 'plugin.on::core::stopped', value: PluginTrigger.OnCoreStopped },
 ]
 

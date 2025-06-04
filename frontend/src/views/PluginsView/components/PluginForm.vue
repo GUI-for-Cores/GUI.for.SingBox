@@ -159,12 +159,12 @@ if (props.isUpdate) {
       <Switch v-model="plugin.install" />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('plugin.trigger') }}</div>
-      <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions.slice(0, 4)" />
+      <div class="name mr-8">{{ t('plugin.trigger') }}</div>
+      <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions.slice(0, 6)" />
     </div>
     <div class="form-item">
       <div class="name"></div>
-      <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions.slice(4)" />
+      <CheckBox v-model="plugin.triggers" :options="PluginsTriggerOptions.slice(6)" />
     </div>
     <div class="form-item">
       <div class="name">{{ t('plugin.name') }} *</div>
