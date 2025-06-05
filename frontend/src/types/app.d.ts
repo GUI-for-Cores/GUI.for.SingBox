@@ -78,6 +78,7 @@ export interface AppSettings {
   githubApiToken: string
   multipleInstance: boolean
   addPluginToMenu: boolean
+  addGroupToMenu: boolean
   rollingRelease: boolean
   pages: string[]
 }

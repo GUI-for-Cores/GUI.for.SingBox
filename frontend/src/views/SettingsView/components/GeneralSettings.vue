@@ -307,8 +307,12 @@ if (envStore.env.os === 'windows') {
       </div>
     </div>
     <div class="settings-item">
-      <div class="title">{{ t('settings.addToMenu') }}</div>
+      <div class="title">{{ t('settings.addPluginToMenu') }}</div>
       <Switch v-model="appSettings.app.addPluginToMenu" />
+    </div>
+    <div class="settings-item">
+      <div class="title">{{ t('settings.addGroupToMenu') }}</div>
+      <Switch v-model="appSettings.app.addGroupToMenu" />
     </div>
     <div class="settings-item">
       <div class="title">

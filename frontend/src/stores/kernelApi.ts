@@ -460,14 +460,21 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     return undefined
   }
 
-  const _watchProxies = computed(() =>
-    Object.values(proxies.value)
+  const watchSources = computed(() => {
+    const source = [config.value.mode, config.value.tun.enable]
+    if (!appSettingsStore.app.addGroupToMenu) return source.join('')
+
+    const { unAvailable, sortByDelay } = appSettingsStore.app.kernel
+
+    const proxySignature = Object.values(proxies.value)
       .map((group) => group.name + group.now)
       .sort()
-      .join(),
-  )
+      .join()
 
-  watch([() => config.value.mode, () => config.value.tun.enable, _watchProxies], updateTrayMenus)
+    return source.concat([proxySignature, unAvailable, sortByDelay]).join('')
+  })
+
+  watch(watchSources, updateTrayMenus)
 
   watch(
     () => appSettingsStore.app.kernel.running,

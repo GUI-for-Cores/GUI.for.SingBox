@@ -69,6 +69,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     githubApiToken: '',
     multipleInstance: false,
     addPluginToMenu: false,
+    addGroupToMenu: false,
     rollingRelease: true,
     pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins'],
   })
@@ -86,6 +87,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (app.value.kernel.controllerCloseMode === undefined) {
       app.value.kernel.controllerCloseMode = ControllerCloseMode.All
+    }
+    if (app.value.addGroupToMenu === undefined) {
+      app.value.addGroupToMenu = false
     }
     // @ts-expect-error(Deprecated)
     if (app.value['font-family'] !== undefined) {
@@ -183,8 +187,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       () => app.value.lang,
       () => app.value.addPluginToMenu,
       () => app.value.kernel.running,
-      () => app.value.kernel.unAvailable,
-      () => app.value.kernel.sortByDelay,
     ],
     updateTrayMenus,
   )

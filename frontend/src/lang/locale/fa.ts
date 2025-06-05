@@ -630,7 +630,8 @@ export default {
     autoSetSystemProxy: 'تنظیم خودکار / پاک کردن پروکسی سیستم',
     autoStartKernel: 'شروع خودکار هسته',
     admin: 'اجرا به عنوان ادمین',
-    addToMenu: 'افزودن پلاگین به منو',
+    addPluginToMenu: 'افزودن افزونه به منوی سینی',
+    addGroupToMenu: 'افزودن گروه پراکسی به منوی سینی',
     multipleInstance: 'اجازه به چندین نمونه از برنامه',
     rollingRelease: 'فعال کردن نسخه‌ منتشر شونده مداوم',
     startup: {

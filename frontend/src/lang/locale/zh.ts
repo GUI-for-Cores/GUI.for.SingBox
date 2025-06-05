@@ -629,7 +629,8 @@ export default {
     autoSetSystemProxy: '自动配置/清除系统代理',
     autoStartKernel: '自动启动内核程序',
     admin: '以管理员身份运行',
-    addToMenu: '将插件添加到托盘菜单',
+    addPluginToMenu: '将插件添加到托盘菜单',
+    addGroupToMenu: '将代理组添加到托盘菜单',
     multipleInstance: '允许多APP实例运行',
     rollingRelease: '启用滚动发行',
     startup: {
