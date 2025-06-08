@@ -428,7 +428,7 @@ export const handleUseProxy = async (group: any, proxy: any) => {
         .map((v) => deleteConnection(v.id)),
     )
   }
-  await useProxy(group.name, proxy.name)
+  await useProxy(encodeURIComponent(group.name), proxy.name)
   await Promise.all(promises)
   await kernelApiStore.refreshProviderProxies()
 }
