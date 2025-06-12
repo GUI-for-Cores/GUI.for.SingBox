@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, provide } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import { WindowToggleMaximise } from '@/bridge'
+import useI18n from '@/lang'
 
 export interface Props {
   open: boolean
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   maskClosable: false,
 })
 
-const { t } = useI18n()
+const { t } = useI18n.global
 
 const emits = defineEmits(['update:open', 'ok'])
 

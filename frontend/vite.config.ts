@@ -19,10 +19,11 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@wails': fileURLToPath(new URL('./wailsjs', import.meta.url)),
+      vue: 'vue/dist/vue.esm-bundler.js',
     },
   },
   build: {
-    chunkSizeWarningLimit: 2048, // 2MB
+    chunkSizeWarningLimit: 4096, // 4MB
     // __ROLLUP_MANUAL_CHUNKS__
   },
 })
