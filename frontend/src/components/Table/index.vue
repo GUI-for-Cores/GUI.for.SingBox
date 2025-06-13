@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, isVNode, h } from 'vue'
 
 import vMenu from '@/directives/menu'
 import useI18n from '@/lang'
@@ -14,7 +14,7 @@ export type Column = {
   hidden?: boolean
   minWidth?: string
   sort?: (a: Record<string, any>, b: Record<string, any>) => number
-  customRender?: (v: { value: any; record: Record<string, any> }) => string
+  customRender?: (v: { value: any; record: Record<string, any> }) => any
 }
 
 interface Props {
@@ -60,6 +60,15 @@ const tableData = computed(() => {
 const tableColumns = computed(() => {
   return props.columns.filter((column) => !column.hidden)
 })
+
+const renderCell = (column: Column, record: Recordable) => {
+  const value = getValue(record, column.key)
+  let result = column.customRender?.({ value, record }) ?? value ?? '-'
+  if (!isVNode(result)) {
+    result = h('div', result)
+  }
+  return result
+}
 </script>
 
 <template>
@@ -88,21 +97,20 @@ const tableColumns = computed(() => {
       </thead>
       <tbody>
         <tr
-          v-for="data in tableData"
-          v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(data) }))"
-          :key="data.id"
+          v-for="record in tableData"
+          v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(record) }))"
+          :key="record.id"
         >
           <td
             v-for="column in tableColumns"
             :key="column.key"
             :style="{ textAlign: column.align || 'left' }"
             class="select-text"
-            v-html="
-              (column.customRender
-                ? column.customRender({ value: getValue(data, column.key), record: data })
-                : getValue(data, column.key)) ?? '-'
-            "
-          ></td>
+          >
+            <slot :name="column.key" :="{ column, record }">
+              <component :is="renderCell(column, record)" />
+            </slot>
+          </td>
         </tr>
       </tbody>
     </table>

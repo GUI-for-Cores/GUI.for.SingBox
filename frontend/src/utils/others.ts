@@ -68,10 +68,13 @@ export const generateSecureKey = (bits = 256) => {
     .join('')
 }
 
-export const getValue = (obj: Record<string, any>, expr: string) => {
-  return expr.split('.').reduce((value, key) => {
-    return value[key]
-  }, obj)
+export const getValue = <T = unknown>(obj: unknown, expr: string): T | undefined => {
+  return expr.split('.').reduce<unknown>((value, key) => {
+    if (value && typeof value === 'object') {
+      return (value as Record<string, unknown>)[key]
+    }
+    return undefined
+  }, obj) as T
 }
 
 export const asyncPool = async <T>(
