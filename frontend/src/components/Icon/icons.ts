@@ -54,6 +54,7 @@ const icons = [
   'grant',
   'preview',
   'rollback',
+  'sparkle',
 ] as const
 
 export default icons

@@ -516,6 +516,7 @@ export default {
     path: 'مسیر ذخیره',
     type: 'نوع',
     menus: 'منوها',
+    hasUI: 'دارای رابط کاربری است',
     context: 'متن',
     configuration: 'پیکربندی',
     menuKey: 'عنوان منو',

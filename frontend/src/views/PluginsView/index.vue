@@ -410,6 +410,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
             v-if="!p.disabled && (!p.install || p.installed)"
             @click="handleOnRun(p)"
             :loading="p.running"
+            :icon="p.hasUI ? 'sparkle' : undefined"
             type="primary"
             size="small"
             auto-size

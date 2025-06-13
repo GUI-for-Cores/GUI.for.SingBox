@@ -515,6 +515,7 @@ export default {
     path: '保存路径',
     type: '类型',
     menus: '菜单',
+    hasUI: '是否具有用户界面',
     context: '上下文',
     configuration: '配置',
     menuKey: '菜单名称',

@@ -516,6 +516,7 @@ export default {
     path: 'Путь сохранения',
     type: 'Тип',
     menus: 'Меню',
+    hasUI: 'Есть пользовательский интерфейс',
     context: 'Контекст',
     configuration: 'Конфигурация',
     menuKey: 'Название меню',

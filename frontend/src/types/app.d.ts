@@ -111,6 +111,7 @@ export interface Plugin {
   url: string
   path: string
   triggers: PluginTrigger[]
+  hasUI: boolean
   menus: Record<string, string>
   context: {
     profiles: Recordable

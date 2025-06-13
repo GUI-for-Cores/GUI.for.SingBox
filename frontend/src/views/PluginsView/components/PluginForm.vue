@@ -33,6 +33,7 @@ const plugin = ref<Plugin>({
   status: 0,
   path: `data/plugins/plugin-${pluginID}.js`,
   triggers: [PluginTrigger.OnManual],
+  hasUI: false,
   menus: {},
   context: {
     profiles: {},
@@ -202,6 +203,10 @@ if (props.isUpdate) {
       </Button>
     </Divider>
     <div v-show="showMore">
+      <div class="form-item">
+        <div class="name">{{ t('plugin.hasUI') }}</div>
+        <Switch v-model="plugin.hasUI" />
+      </div>
       <div class="form-item" :class="{ 'flex-start': Object.keys(plugin.menus).length !== 0 }">
         <div class="name">{{ t('plugin.menus') }}</div>
         <KeyValueEditor
