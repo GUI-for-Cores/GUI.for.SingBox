@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, provide } from 'vue'
+import { computed, provide, ref } from 'vue'
 
 import { WindowToggleMaximise } from '@/bridge'
 import useI18n from '@/lang'
 
 export interface Props {
-  open: boolean
   title?: string
   footer?: boolean
   maxHeight?: string
@@ -19,6 +18,10 @@ export interface Props {
   cancelText?: string
   submitText?: string
   maskClosable?: boolean
+  onOk?: () => MaybePromise<boolean | void>
+  onCancel?: () => MaybePromise<boolean | void>
+  beforeClose?: (isOk: boolean) => MaybePromise<boolean | void>
+  afterClose?: (isOk: boolean) => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,16 +40,32 @@ const props = withDefaults(defineProps<Props>(), {
   maskClosable: false,
 })
 
+const open = defineModel('open', { default: false })
+
+const cancelLoading = ref(false)
+const submitLoading = ref(false)
+
 const { t } = useI18n.global
 
-const emits = defineEmits(['update:open', 'ok'])
+const handleAction = async (isOk: boolean) => {
+  const loading = isOk ? submitLoading : cancelLoading
+  const action = isOk ? props.onOk : props.onCancel
 
-const handleSubmit = () => {
-  emits('update:open', false)
-  emits('ok')
+  loading.value = true
+  try {
+    if (!((await action?.()) ?? true) || !((await props.beforeClose?.(isOk)) ?? true)) {
+      return
+    }
+  } finally {
+    loading.value = false
+  }
+
+  open.value = false
+  props.afterClose?.(isOk)
 }
 
-const handleCancel = () => emits('update:open', false)
+const handleSubmit = () => handleAction(true)
+const handleCancel = () => handleAction(false)
 
 const onMaskClick = () => props.maskClosable && handleCancel()
 
@@ -81,10 +100,17 @@ provide('submit', handleSubmit)
           </div>
           <div v-if="footer" class="action">
             <slot name="action" />
-            <Button v-if="cancel" @click="handleCancel" :type="maskClosable ? 'text' : 'normal'">
+            <Button
+              v-if="cancel"
+              @click="handleCancel"
+              :loading="cancelLoading"
+              :type="maskClosable ? 'text' : 'normal'"
+            >
               {{ t(cancelText) }}
             </Button>
-            <Button v-if="submit" @click="handleSubmit" type="primary">{{ t(submitText) }}</Button>
+            <Button v-if="submit" @click="handleSubmit" :loading="submitLoading" type="primary">
+              {{ t(submitText) }}
+            </Button>
           </div>
         </div>
       </div>

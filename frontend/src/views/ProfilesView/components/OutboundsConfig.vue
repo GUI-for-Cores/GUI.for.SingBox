@@ -214,7 +214,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 
   <Modal
     v-model:open="showSortModal"
-    @ok="handleSortGroupEnd"
+    :on-ok="handleSortGroupEnd"
     mask-closable
     title="kernel.outbounds.sort"
     max-width="80"
@@ -233,7 +233,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 
   <Modal
     v-model:open="showEditModal"
-    @ok="handleAddEnd"
+    :on-ok="handleAddEnd"
     title="kernel.outbounds.name"
     width="80"
     height="80"

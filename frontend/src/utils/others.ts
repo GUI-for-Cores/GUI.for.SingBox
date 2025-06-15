@@ -5,12 +5,17 @@ import { APP_TITLE, APP_VERSION } from '@/utils'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
-export const omit = <T, K extends keyof T>(obj: T, fields: K[]): Omit<T, K> => {
-  const _obj = deepClone(obj)
-  fields.forEach((field) => {
-    delete _obj[field]
-  })
-  return _obj
+export const omit = <T extends object, K extends keyof T>(obj: T, props: K[]): Omit<T, K> => {
+  const result = {} as T
+  const omitSet = new Set(props)
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (!omitSet.has(key as unknown as K)) {
+        result[key] = obj[key]
+      }
+    }
+  }
+  return result as Omit<T, K>
 }
 
 export const omitArray = <T, K extends keyof T>(arr: T[], fields: K[]): Omit<T, K>[] => {

@@ -101,7 +101,7 @@ const handleUse = (ruleset: any) => {
 
   <Modal
     v-model:open="showEditModal"
-    @ok="handleAddEnd"
+    :on-ok="handleAddEnd"
     title="kernel.route.tab.rule_set"
     max-width="80"
     max-height="80"
