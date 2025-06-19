@@ -10,6 +10,8 @@ import CommandView from '@/views/CommandView.vue'
 import SplashView from '@/views/SplashView.vue'
 
 const loading = ref(true)
+const percent = ref(0)
+const hasError = ref(false)
 
 const envStore = Stores.useEnvStore()
 const appStore = Stores.useAppStore()
@@ -51,6 +53,11 @@ EventsOn('onBeforeExitApp', async () => {
 
 EventsOn('exitApp', () => exitApp())
 
+const showError = (err: string) => {
+  hasError.value = true
+  message.error(err)
+}
+
 appSettings.setupAppSettings().then(async () => {
   await Promise.all([
     envStore.setupEnv(),
@@ -61,22 +68,36 @@ appSettings.setupAppSettings().then(async () => {
     scheduledTasksStore.setupScheduledTasks(),
   ])
 
+  const startTime = performance.now()
+  percent.value = 20
   if (await IsStartup()) {
-    console.log('OnStartup')
-    pluginsStore.onStartupTrigger().catch(message.error)
+    await pluginsStore.onStartupTrigger().catch(showError)
   }
 
-  console.log('OnReady')
-  pluginsStore.onReadyTrigger().catch(message.error)
+  percent.value = 40
+  await pluginsStore.onReadyTrigger().catch(showError)
 
-  await sleep(1000)
+  const duration = performance.now() - startTime
+  percent.value = duration < 500 ? 80 : 100
+
+  await sleep(Math.max(0, 1000 - duration))
+
   loading.value = false
   kernelApiStore.updateKernelState()
 })
 </script>
 
 <template>
-  <SplashView v-if="loading" />
+  <SplashView v-if="loading">
+    <div class="progress">
+      <Progress
+        :percent="percent"
+        :status="hasError ? 'danger' : 'primary'"
+        :radius="10"
+        type="circle"
+      />
+    </div>
+  </SplashView>
   <template v-else>
     <TitleBar />
     <div class="main">
@@ -117,5 +138,9 @@ appSettings.setupAppSettings().then(async () => {
   display: flex;
   flex-direction: column;
   padding: 8px;
+}
+
+.progress {
+  animation: rotate 2s infinite linear;
 }
 </style>

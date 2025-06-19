@@ -19,7 +19,9 @@ const innerStyle = computed(() => ({
 }))
 
 const circleStyle = computed(() => {
-  const color = props.status === 'warning' ? '#f00' : `var(--progress-inner-bg)`
+  const color = { warning: '#FFC107', danger: '#F44336', primary: 'var(--progress-inner-bg)' }[
+    props.status
+  ]
   const radius = props.radius * 2 + 'px'
   const percent = props.percent >= 100 ? 101 : props.percent || 0
   const mask = `radial-gradient(transparent ${props.radius * 0.6}px, #fff 0px)`
@@ -51,9 +53,13 @@ const circleStyle = computed(() => {
     height: 100%;
     border-radius: 8px;
     background-color: var(--progress-inner-bg);
+    transition: all 0.2s;
   }
   .warning {
-    background-color: red;
+    background-color: #ffc107;
+  }
+  .danger {
+    background-color: #f44336;
   }
 }
 
