@@ -77,11 +77,16 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	if outEvent != "" {
 		scanAndEmit := func(reader io.Reader) {
 			scanner := bufio.NewScanner(reader)
+			stopOutput := false
 			for scanner.Scan() {
 				text := scanner.Text()
-				runtime.EventsEmit(a.Ctx, outEvent, text)
-				if options.StopOutputKeyword != "" && strings.Contains(text, options.StopOutputKeyword) {
-					break
+
+				if !stopOutput {
+					runtime.EventsEmit(a.Ctx, outEvent, text)
+
+					if options.StopOutputKeyword != "" && strings.Contains(text, options.StopOutputKeyword) {
+						stopOutput = true
+					}
 				}
 			}
 		}
