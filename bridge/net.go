@@ -27,11 +27,13 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 
 	req.Header = GetHeader(headers)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
-		log.Printf("Requests Canceled: %v %v", method, url)
-		cancel()
-	})
-	defer runtime.EventsOff(a.Ctx, options.CancelId)
+	if options.CancelId != "" {
+		runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
+			log.Printf("Requests Canceled: %v %v", method, url)
+			cancel()
+		})
+		defer runtime.EventsOff(a.Ctx, options.CancelId)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -47,23 +49,25 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 	return HTTPResult{true, resp.StatusCode, resp.Header, string(b)}
 }
 
-func (a *App) Download(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
-	log.Printf("Download: %v %v %v, %v", url, path, headers, options)
+func (a *App) Download(method string, url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
+	log.Printf("Download: %s %s %s %v %s %v", method, url, path, headers, event, options)
 
 	client, ctx, cancel := withRequestOptionsClient(options)
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, method, url, nil)
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
 	req.Header = GetHeader(headers)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
-		log.Printf("Download Canceled: %v %v", url, path)
-		cancel()
-	})
-	defer runtime.EventsOff(a.Ctx, options.CancelId)
+	if options.CancelId != "" {
+		runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
+			log.Printf("Download Canceled: %v %v", url, path)
+			cancel()
+		})
+		defer runtime.EventsOff(a.Ctx, options.CancelId)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -84,12 +88,7 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 	}
 	defer file.Close()
 
-	reader := io.TeeReader(resp.Body, &WriteTracker{
-		Total:          resp.ContentLength,
-		EmitThreshold:  128 * 1024, // 128KB
-		ProgressChange: event,
-		App:            a,
-	})
+	reader := wrapWithProgress(resp.Body, resp.ContentLength, event, a)
 
 	_, err = io.Copy(file, reader)
 	if err != nil {
@@ -99,8 +98,8 @@ func (a *App) Download(url string, path string, headers map[string]string, event
 	return HTTPResult{true, resp.StatusCode, resp.Header, "Success"}
 }
 
-func (a *App) Upload(url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
-	log.Printf("Upload: %v %v %v %v", url, path, headers, options)
+func (a *App) Upload(method string, url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {
+	log.Printf("Upload: %s %s %s %v %s %v", method, url, path, headers, event, options)
 
 	path = GetPath(path)
 
@@ -123,12 +122,7 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
-	reader := io.TeeReader(file, &WriteTracker{
-		Total:          fileStat.Size(),
-		EmitThreshold:  128 * 1024, // 128KB
-		ProgressChange: event,
-		App:            a,
-	})
+	reader := wrapWithProgress(file, fileStat.Size(), event, a)
 
 	_, err = io.Copy(part, reader)
 	if err != nil {
@@ -142,13 +136,15 @@ func (a *App) Upload(url string, path string, headers map[string]string, event s
 
 	client, ctx, cancel := withRequestOptionsClient(options)
 
-	runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
-		log.Printf("Upload Canceled: %v %v", url, path)
-		cancel()
-	})
-	defer runtime.EventsOff(a.Ctx, options.CancelId)
+	if options.CancelId != "" {
+		runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
+			log.Printf("Upload Canceled: %v %v", url, path)
+			cancel()
+		})
+		defer runtime.EventsOff(a.Ctx, options.CancelId)
+	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", url, body)
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
@@ -174,10 +170,6 @@ func (wt *WriteTracker) Write(p []byte) (n int, err error) {
 	n = len(p)
 	wt.Progress += int64(n)
 
-	if wt.ProgressChange == "" {
-		return n, nil
-	}
-
 	shouldEmit := wt.Total <= 0 || wt.Progress-wt.LastEmitted >= wt.EmitThreshold || wt.Progress == wt.Total
 	if shouldEmit {
 		runtime.EventsEmit(wt.App.Ctx, wt.ProgressChange, wt.Progress, wt.Total)
@@ -185,6 +177,18 @@ func (wt *WriteTracker) Write(p []byte) (n int, err error) {
 	}
 
 	return n, nil
+}
+
+func wrapWithProgress(r io.Reader, size int64, event string, a *App) io.Reader {
+	if event == "" {
+		return r
+	}
+	return io.TeeReader(r, &WriteTracker{
+		Total:          size,
+		EmitThreshold:  128 * 1024,
+		ProgressChange: event,
+		App:            a,
+	})
 }
 
 func withRequestOptionsClient(options RequestOptions) (*http.Client, context.Context, context.CancelFunc) {

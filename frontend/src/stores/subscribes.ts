@@ -143,7 +143,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         Insecure: s.inSecure,
       })
       Object.assign(h, s.header.response)
-      h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'])
+      h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'] as string)
       if (typeof b !== 'string') {
         body = JSON.stringify(b)
       } else {

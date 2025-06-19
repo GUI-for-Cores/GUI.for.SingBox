@@ -57,6 +57,11 @@ type ServerOptions struct {
 	MaxUploadSize int64  `json:"MaxUploadSize"`
 }
 
+type NotifyOptions struct {
+	AppName string `json:"AppName"`
+	Beep    bool   `json:"Beep"`
+}
+
 type HTTPResult struct {
 	Flag    bool        `json:"flag"`
 	Status  int         `json:"status"`

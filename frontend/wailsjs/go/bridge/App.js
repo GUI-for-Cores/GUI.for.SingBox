@@ -18,8 +18,8 @@ export function Copyfile(arg1, arg2) {
   return window['go']['bridge']['App']['Copyfile'](arg1, arg2);
 }
 
-export function Download(arg1, arg2, arg3, arg4, arg5) {
-  return window['go']['bridge']['App']['Download'](arg1, arg2, arg3, arg4, arg5);
+export function Download(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['bridge']['App']['Download'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function Exec(arg1, arg2, arg3) {
@@ -50,8 +50,8 @@ export function IsStartup() {
   return window['go']['bridge']['App']['IsStartup']();
 }
 
-export function KillProcess(arg1) {
-  return window['go']['bridge']['App']['KillProcess'](arg1);
+export function KillProcess(arg1, arg2) {
+  return window['go']['bridge']['App']['KillProcess'](arg1, arg2);
 }
 
 export function ListServer() {
@@ -66,8 +66,8 @@ export function Movefile(arg1, arg2) {
   return window['go']['bridge']['App']['Movefile'](arg1, arg2);
 }
 
-export function Notify(arg1, arg2, arg3) {
-  return window['go']['bridge']['App']['Notify'](arg1, arg2, arg3);
+export function Notify(arg1, arg2, arg3, arg4) {
+  return window['go']['bridge']['App']['Notify'](arg1, arg2, arg3, arg4);
 }
 
 export function OpenMMDB(arg1, arg2) {
@@ -138,8 +138,8 @@ export function UpdateTrayMenus(arg1) {
   return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
 }
 
-export function Upload(arg1, arg2, arg3, arg4, arg5) {
-  return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5);
+export function Upload(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function ValidateCron(arg1) {

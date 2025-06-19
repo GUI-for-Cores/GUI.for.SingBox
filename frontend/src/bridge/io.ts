@@ -1,6 +1,6 @@
 import * as App from '@wails/go/bridge/App'
 
-type IOOptions = {
+interface IOOptions {
   Mode?: 'Binary' | 'Text'
 }
 
