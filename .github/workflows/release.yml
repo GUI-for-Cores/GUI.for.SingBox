@@ -42,23 +42,21 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
-      - run: go version
+          go-version-file: go.mod
+          check-latest: true
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
-      - run: pnpm -v
+          version: latest
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "latest"
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
-      - run: node -v
       - name: Install dependencies
         run: |
-          cd frontend && pnpm install
+          cd frontend && pnpm install --frozen-lockfile
           go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       # Dependencies: GNU/Linux
@@ -66,7 +64,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+          sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev
 
       # Hide dock bar icon: macOS
       - name: Update system and dependencies
