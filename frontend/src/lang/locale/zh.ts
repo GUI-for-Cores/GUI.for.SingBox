@@ -678,7 +678,9 @@ export default {
     restart: '重启程序',
     exitApp: '退出程序',
     waiting: '正在等待程序退出...',
-    timeout: '程序退出超时，是否强制退出？\n\n原因：插件退出超时。',
+    timeout: '程序退出超时，是否强制退出？\n\n原因：{reason}',
+    pluginError: '插件退出时发生错误，是否强制退出？\n\n原因：{reason}',
+    pluginTimeout: '插件退出超时。',
   },
   outbound: {
     select: '🚀 节点选择',

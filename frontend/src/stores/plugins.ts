@@ -348,7 +348,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return result
   }
 
-  const noParamsTrigger = async (trigger: PluginTrigger) => {
+  const noParamsTrigger = async (trigger: PluginTrigger, interruptOnError = false) => {
     const { fnName, observers } = PluginsTriggerMap[trigger]
     if (observers.length === 0) return
 
@@ -369,10 +369,13 @@ export const usePluginsStore = defineStore('plugins', () => {
           editPlugin(cache.plugin.id, cache.plugin)
         }
       } catch (error: any) {
-        throw `${cache.plugin.name} : ` + (error.message || error)
+        const msg = `${cache.plugin.name} : ` + (error.message || error)
+        if (interruptOnError) {
+          throw msg
+        }
+        console.error(msg)
       }
     }
-    return
   }
 
   const onGenerateTrigger = async (params: Record<string, any>, profile: IProfile) => {
@@ -488,11 +491,11 @@ export const usePluginsStore = defineStore('plugins', () => {
     onSubscribeTrigger,
     onGenerateTrigger,
     onStartupTrigger: () => noParamsTrigger(PluginTrigger.OnStartup),
-    onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown),
+    onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown, true),
     onReadyTrigger: () => noParamsTrigger(PluginTrigger.OnReady),
     onCoreStartedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStarted),
     onCoreStoppedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStopped),
-    onBeforeCoreStopTrigger: () => noParamsTrigger(PluginTrigger.OnBeforeCoreStop),
+    onBeforeCoreStopTrigger: () => noParamsTrigger(PluginTrigger.OnBeforeCoreStop, true),
     onBeforeCoreStartTrigger,
     manualTrigger,
     updatePluginTrigger,

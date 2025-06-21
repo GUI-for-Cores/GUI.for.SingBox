@@ -679,7 +679,11 @@ export default {
     restart: 'Restart App',
     exitApp: 'Exit App',
     waiting: 'Waiting for the program to exit...',
-    timeout: 'Exit timed out. Force exit?\n\nReason: Plugin exit timed out.',
+    timeout:
+      'The program is taking too long to exit. Do you want to force quit?\n\nReason: {reason}',
+    pluginError:
+      'An error occurred while a plugin was exiting. Do you want to force quit?\n\nReason: {reason}',
+    pluginTimeout: 'The plugin is taking too long to exit.',
   },
   outbound: {
     select: '🚀 Select',
