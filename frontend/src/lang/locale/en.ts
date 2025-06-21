@@ -598,10 +598,6 @@ export default {
       name: 'App Folder',
       open: 'Open application folder',
     },
-    kernelCache: {
-      name: 'Kernel Cache',
-      clear: 'Clear kernel cache',
-    },
     lang: {
       name: 'Language',
       zh: '简体中文',
@@ -653,6 +649,7 @@ export default {
       stillDownload: 'Still download',
       rollbackTip: 'Rollback to the previous version',
       rollback: 'Are you sure you want to roll back to the previous version?',
+      clearCache: 'Clear Cache',
     },
     userAgent: {
       name: 'User-Agent',

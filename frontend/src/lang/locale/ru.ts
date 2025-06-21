@@ -598,10 +598,6 @@ export default {
       name: 'Папка приложения',
       open: 'Открыть папку приложения',
     },
-    kernelCache: {
-      name: 'Кэш ядра',
-      clear: 'Очистить кэш ядра',
-    },
     lang: {
       name: 'Language',
       zh: '简体中文',
@@ -653,6 +649,7 @@ export default {
       stillDownload: 'Продолжить загрузку',
       rollbackTip: 'Откат к предыдущей версии',
       rollback: 'Вы уверены, что хотите откатиться к предыдущей версии?',
+      clearCache: 'Очистить кэш',
     },
     userAgent: {
       name: 'Пользовательский User-Agent',

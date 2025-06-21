@@ -456,5 +456,7 @@ export const generateConfigFile = async (
     config.log.level = LogLevel.Info
   }
 
+  config.experimental.cache_file.path = 'cache.db'
+
   await Writefile(CoreConfigFilePath, JSON.stringify(config, null, 2))
 }

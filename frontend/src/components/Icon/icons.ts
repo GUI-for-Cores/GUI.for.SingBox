@@ -36,6 +36,7 @@ const icons = [
   'play',
   'clear',
   'clear2',
+  'clear3',
   'drag',
   'more',
   'add',

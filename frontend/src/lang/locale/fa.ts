@@ -598,10 +598,6 @@ export default {
       name: 'پوشه برنامه',
       open: 'باز کردن پوشه برنامه',
     },
-    kernelCache: {
-      name: 'کش هسته',
-      clear: 'پاک کردن کش هسته',
-    },
     lang: {
       name: 'Language',
       zh: '简体中文',
@@ -653,6 +649,7 @@ export default {
       stillDownload: 'هنوز دانلود شود',
       rollbackTip: 'بازگشت به نسخه قبلی',
       rollback: 'آیا مطمئن هستید که می‌خواهید به نسخه قبلی بازگردید؟',
+      clearCache: 'پاک‌سازی کش',
     },
     userAgent: {
       name: 'User-Agent',

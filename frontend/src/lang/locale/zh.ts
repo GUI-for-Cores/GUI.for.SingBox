@@ -597,10 +597,6 @@ export default {
       name: '应用程序文件夹',
       open: '打开应用程序文件夹',
     },
-    kernelCache: {
-      name: '内核缓存',
-      clear: '清除持久化缓存',
-    },
     lang: {
       name: '语言',
       zh: '简体中文',
@@ -652,6 +648,7 @@ export default {
       stillDownload: '仍要下载',
       rollbackTip: '回滚到上一版本',
       rollback: '确定回滚到上一版本吗？',
+      clearCache: '清除缓存',
     },
     userAgent: {
       name: '用户代理(User-Agent)',

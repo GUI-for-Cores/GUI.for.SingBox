@@ -4,10 +4,9 @@ import { useI18n } from 'vue-i18n'
 
 import { BrowserOpenURL, GetEnv, Writefile, Removefile, AbsolutePath } from '@/bridge'
 import { DefaultFontFamily } from '@/constant/app'
-import { CoreCacheFilePath } from '@/constant/kernel'
 import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
 import routes from '@/router/routes'
-import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
+import { useAppSettingsStore, useEnvStore } from '@/stores'
 import {
   APP_TITLE,
   APP_VERSION,
@@ -25,7 +24,6 @@ const isTaskScheduled = ref(false)
 
 const { t } = useI18n()
 const appSettings = useAppSettingsStore()
-const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 
 const themes = [
@@ -135,20 +133,6 @@ const handleOpenFolder = async () => {
   BrowserOpenURL(basePath)
 }
 
-const handleClearKernelCache = async () => {
-  try {
-    if (appSettings.app.kernel.running) {
-      await kernelApiStore.restartKernel(() => Removefile(CoreCacheFilePath))
-    } else {
-      await Removefile(CoreCacheFilePath)
-    }
-    message.success('common.success')
-  } catch (error: any) {
-    message.error(error)
-    console.log(error)
-  }
-}
-
 const checkSchtask = async () => {
   try {
     await QuerySchTask(APP_TITLE)
@@ -237,12 +221,6 @@ if (envStore.env.os === 'windows') {
       <div class="title">{{ t('settings.appFolder.name') }}</div>
       <Button @click="handleOpenFolder" type="primary" icon="folder">
         <span style="margin-left: 8px">{{ t('settings.appFolder.open') }}</span>
-      </Button>
-    </div>
-    <div class="settings-item">
-      <div class="title">{{ t('settings.kernelCache.name') }}</div>
-      <Button @click="handleClearKernelCache" type="primary" icon="reset">
-        <span style="margin-left: 8px">{{ t('settings.kernelCache.clear') }}</span>
       </Button>
     </div>
     <div class="settings-item">
