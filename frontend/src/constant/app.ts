@@ -87,3 +87,5 @@ export const ScheduledTaskOptions = [
 export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subscription) => {\n  return { proxies, subscription }\n}`
 
 export const DefaultTestURL = 'https://www.gstatic.com/generate_204'
+
+export const DefaultConcurrencyLimit = 20

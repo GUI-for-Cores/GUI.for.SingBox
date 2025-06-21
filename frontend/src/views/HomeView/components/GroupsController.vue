@@ -3,7 +3,7 @@ import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getProxyDelay } from '@/api/kernel'
-import { ControllerCloseModeOptions, DefaultTestURL } from '@/constant/app'
+import { ControllerCloseModeOptions, DefaultConcurrencyLimit, DefaultTestURL } from '@/constant/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { ignoredError, sleep, handleUseProxy, message, prompt, asyncPool } from '@/utils'
@@ -124,7 +124,11 @@ const handleGroupDelay = async (group: string) => {
     }
     const { update, destroy, success: msgSuccess } = message.info('Testing...', 99999)
     loadingSet.value.add(group)
-    await asyncPool(5, _group.all, delayTest)
+    await asyncPool(
+      appSettings.app.kernel.concurrencyLimit || DefaultConcurrencyLimit,
+      _group.all,
+      delayTest,
+    )
     loadingSet.value.delete(group)
     msgSuccess(
       `Completed. ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`,
@@ -308,6 +312,18 @@ onActivated(() => {
       <Input
         v-model="appSettings.app.kernel.testUrl"
         :placeholder="DefaultTestURL"
+        editable
+        clearable
+      />
+    </div>
+
+    <div class="form-item">
+      {{ t('home.controller.concurrencyLimit') }}
+      <Input
+        v-model="appSettings.app.kernel.concurrencyLimit"
+        :min="1"
+        :max="50"
+        type="number"
         editable
         clearable
       />

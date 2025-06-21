@@ -9,7 +9,13 @@ import {
   WindowIsMaximised,
   WindowIsMinimised,
 } from '@/bridge'
-import { Colors, DefaultFontFamily, DefaultTestURL, UserFilePath } from '@/constant/app'
+import {
+  Colors,
+  DefaultConcurrencyLimit,
+  DefaultFontFamily,
+  DefaultTestURL,
+  UserFilePath,
+} from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
 import {
   Theme,
@@ -63,6 +69,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       cardMode: true,
       sortByDelay: false,
       testUrl: DefaultTestURL,
+      concurrencyLimit: 5,
       controllerCloseMode: ControllerCloseMode.All,
     },
     pluginSettings: {},
@@ -90,6 +97,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (app.value.addGroupToMenu === undefined) {
       app.value.addGroupToMenu = false
+    }
+    if (app.value.kernel.concurrencyLimit === undefined) {
+      app.value.kernel.concurrencyLimit = DefaultConcurrencyLimit
     }
     // @ts-expect-error(Deprecated)
     if (app.value['font-family'] !== undefined) {

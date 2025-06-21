@@ -72,6 +72,7 @@ export interface AppSettings {
     cardMode: boolean
     sortByDelay: boolean
     testUrl: string
+    concurrencyLimit: number
     controllerCloseMode: ControllerCloseMode
   }
   pluginSettings: Record<string, Record<string, any>>

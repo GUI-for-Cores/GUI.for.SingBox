@@ -352,7 +352,7 @@ export default {
       cardMode: 'حالت کارتی',
       sortBy: 'مرتب‌سازی بر اساس تأخیر',
       delay: 'آزمایش تأخیر URL',
-      delayUrl: 'لطفاً URL آزمایش تأخیر را وارد کنید',
+      concurrencyLimit: 'همزمانی در تست تأخیر',
       closeMode: {
         name: 'حالت بستن کنترلر',
         all: 'اسکرول یا دکمه',

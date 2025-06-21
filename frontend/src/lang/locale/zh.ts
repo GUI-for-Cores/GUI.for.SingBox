@@ -351,7 +351,7 @@ export default {
       cardMode: '卡片模式',
       sortBy: '按延迟排序',
       delay: '延迟测试URL',
-      delayUrl: '请输入延迟测试URL',
+      concurrencyLimit: '延迟测试并发数量',
       closeMode: {
         name: '控制器关闭模式',
         all: '滚动和关闭按钮',

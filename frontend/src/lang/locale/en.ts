@@ -352,7 +352,7 @@ export default {
       cardMode: 'Card Mode',
       sortBy: 'Sort By Delay',
       delay: 'Delay test URL',
-      delayUrl: 'Please enter the delayed test URL',
+      concurrencyLimit: 'Latency test concurrency',
       closeMode: {
         name: 'Controller Close Mode',
         all: 'Scroll or Button',
