@@ -166,7 +166,7 @@ provide('submit', handleSubmit)
       display: flex;
       justify-content: flex-end;
       margin-bottom: 8px;
-      padding: 0 16px 0 0;
+      padding: 0 16px;
     }
   }
 }

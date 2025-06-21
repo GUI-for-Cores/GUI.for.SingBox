@@ -69,7 +69,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       cardMode: true,
       sortByDelay: false,
       testUrl: DefaultTestURL,
-      concurrencyLimit: 5,
+      concurrencyLimit: DefaultConcurrencyLimit,
       controllerCloseMode: ControllerCloseMode.All,
     },
     pluginSettings: {},

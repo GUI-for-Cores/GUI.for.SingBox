@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { getProxyDelay } from '@/api/kernel'
 import { ControllerCloseModeOptions, DefaultConcurrencyLimit, DefaultTestURL } from '@/constant/app'
+import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { ignoredError, sleep, handleUseProxy, message, prompt, asyncPool } from '@/utils'
@@ -178,6 +179,13 @@ const delayColor = (delay = 0) => {
   return 'var(--level-4-color)'
 }
 
+const handleResetMoreSettings = () => {
+  appSettings.app.kernel.testUrl = DefaultTestURL
+  appSettings.app.kernel.concurrencyLimit = DefaultConcurrencyLimit
+  appSettings.app.kernel.controllerCloseMode = ControllerCloseMode.All
+  message.success('common.success')
+}
+
 onActivated(() => {
   kernelApiStore.refreshProviderProxies()
 })
@@ -307,6 +315,12 @@ onActivated(() => {
     cancel-text="common.close"
     title="common.more"
   >
+    <template #action>
+      <Button @click="handleResetMoreSettings" class="mr-auto" type="text">
+        {{ t('common.reset') }}
+      </Button>
+    </template>
+
     <div class="form-item">
       {{ t('home.controller.delay') }}
       <Input
