@@ -123,7 +123,7 @@ export const useAppStore = defineStore('app', () => {
       }
 
       await Removefile(downloadCacheFile)
-      await ignoredError(Removefile, 'data/rolling-release')
+      await ignoredError(Removefile, 'data/rolling-release-alpha')
     } catch (error: any) {
       console.log(error)
       message.error(error.message || error, 5_000)

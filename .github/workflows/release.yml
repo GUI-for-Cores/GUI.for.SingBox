@@ -123,6 +123,6 @@ jobs:
           release_name: ${{ github.ref_name }}
           overwrite: true
           draft: false
-          prerelease: false
+          prerelease: true
           body: |
             Auto-generated release from GitHub Actions.
