@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { DefaultSubscribeScript } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 import * as Defaults from '@/constant/profile'
+import { RequestMethod } from '@/enums/app'
 import { useProfilesStore, useAppSettingsStore, useSubscribesStore } from '@/stores'
 import { message, sampleID } from '@/utils'
 
@@ -44,6 +45,7 @@ const handleSubmit = async () => {
     proxyPrefix: '',
     disabled: false,
     inSecure: false,
+    requestMethod: RequestMethod.Get,
     header: {
       request: {},
       response: {},

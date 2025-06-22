@@ -399,6 +399,7 @@ export default {
     updating: 'در حال به‌روزرسانی',
     useragent: 'User-Agent',
     inSecure: 'رد کردن تأیید هویت TLS',
+    requestMethod: 'روش درخواست',
     header: {
       request: 'هدر درخواست',
       response: 'هدر پاسخ',

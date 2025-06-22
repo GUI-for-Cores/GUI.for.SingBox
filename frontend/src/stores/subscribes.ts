@@ -2,10 +2,10 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { stringify, parse } from 'yaml'
 
-import { Readfile, Writefile, HttpGet } from '@/bridge'
+import { Readfile, Writefile, Requests } from '@/bridge'
 import { DefaultSubscribeScript, SubscribesFilePath } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
-import { PluginTriggerEvent } from '@/enums/app'
+import { PluginTriggerEvent, RequestMethod } from '@/enums/app'
 import { usePluginsStore } from '@/stores'
 import {
   debounce,
@@ -32,6 +32,9 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       if (!sub.script) {
         sub.script = DefaultSubscribeScript
         needSync = true
+      }
+      if (!sub.requestMethod) {
+        sub.requestMethod = RequestMethod.Get
       }
       if (!sub.header) {
         sub.header = {
@@ -90,6 +93,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       proxyPrefix: '',
       disabled: false,
       inSecure: false,
+      requestMethod: RequestMethod.Get,
       header: {
         request: {},
         response: {},
@@ -139,16 +143,18 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (s.type === 'Http') {
-      const { headers: h, body: b } = await HttpGet(s.url, s.header.request, {
-        Insecure: s.inSecure,
+      const { headers: h, body: b } = await Requests({
+        method: s.requestMethod,
+        url: s.url,
+        headers: s.header.request,
+        autoTransformBody: false,
+        options: {
+          Insecure: s.inSecure,
+        },
       })
       Object.assign(h, s.header.response)
       h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'] as string)
-      if (typeof b !== 'string') {
-        body = JSON.stringify(b)
-      } else {
-        body = b
-      }
+      body = b
     }
 
     if (isValidSubJson(body)) {

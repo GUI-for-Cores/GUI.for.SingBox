@@ -398,6 +398,7 @@ export default {
     updating: '更新中',
     useragent: '用户代理',
     inSecure: '跳过证书验证',
+    requestMethod: '请求方式',
     header: {
       request: '请求头',
       response: '响应头',

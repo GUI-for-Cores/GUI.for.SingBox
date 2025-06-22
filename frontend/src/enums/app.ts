@@ -84,3 +84,12 @@ export enum PluginTriggerEvent {
   OnBeforeCoreStart = 'onBeforeCoreStart',
   OnBeforeCoreStop = 'onBeforeCoreStop',
 }
+
+export enum RequestMethod {
+  Get = 'GET',
+  Post = 'POST',
+  Delete = 'DELETE',
+  Put = 'PUT',
+  Head = 'HEAD',
+  Patch = 'PATCH',
+}

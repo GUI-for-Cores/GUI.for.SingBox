@@ -11,6 +11,7 @@ import type {
   ControllerCloseMode,
   PluginTrigger,
   ScheduledTasksType,
+  RequestMethod,
 } from '@/enums/app'
 
 export {}
@@ -166,6 +167,7 @@ export interface Subscription {
   disabled: boolean
   inSecure: boolean
   proxies: { id: string; tag: string; type: string }[]
+  requestMethod: RequestMethod
   header: {
     request: Recordable
     response: Recordable

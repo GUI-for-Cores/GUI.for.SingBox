@@ -2,8 +2,9 @@
 import { ref, inject, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { DefaultSubscribeScript } from '@/constant/app'
+import { DefaultSubscribeScript, RequestMethodOptions } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
+import { RequestMethod } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
 import { deepClone, sampleID, message } from '@/utils'
@@ -41,6 +42,7 @@ const sub = ref<Subscription>({
   proxyPrefix: '',
   disabled: false,
   inSecure: false,
+  requestMethod: RequestMethod.Get,
   header: {
     request: {},
     response: {},
@@ -169,6 +171,10 @@ if (props.isUpdate) {
         <div class="form-item">
           <div class="name">{{ t('subscribe.inSecure') }}</div>
           <Switch v-model="sub.inSecure" />
+        </div>
+        <div class="form-item">
+          <div class="name">{{ t('subscribe.requestMethod') }}</div>
+          <Radio v-model="sub.requestMethod" :options="RequestMethodOptions" />
         </div>
         <div
           :class="{ 'flex-start': Object.keys(sub.header.request).length !== 0 }"

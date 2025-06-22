@@ -399,6 +399,7 @@ export default {
     updating: 'Updating',
     useragent: 'User-Agent',
     inSecure: 'Skip TLS Verification',
+    requestMethod: 'Request Method',
     header: {
       request: 'Request Header',
       response: 'Response Header',

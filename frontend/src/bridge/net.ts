@@ -1,11 +1,12 @@
 import * as App from '@wails/go/bridge/App'
 import { EventsOn, EventsOff, EventsEmit } from '@wails/runtime/runtime'
 
+import { RequestMethod } from '@/enums/app'
 import { sampleID, getUserAgent } from '@/utils'
 import { GetSystemOrKernelProxy } from '@/utils/helper'
 
 interface Request {
-  method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'HEAD' | 'PATCH'
+  method: RequestMethod
   url: string
   headers?: {
     'Content-Type'?: 'application/json' | 'application/x-www-form-urlencoded' | 'text/plain'
@@ -102,7 +103,8 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
       ...options,
     })
 
-    const method = options.Method ?? { Download: 'GET', Upload: 'POST' }[fnName]
+    const method =
+      options.Method ?? { Download: RequestMethod.Get, Upload: RequestMethod.Post }[fnName]
 
     const progressEvent = (progress && sampleID()) || ''
 
@@ -127,7 +129,7 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
   }
 }
 
-const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
+const requestWithBody = (method: RequestMethod.Put | RequestMethod.Post | RequestMethod.Patch) => {
   return async <T = any>(
     url: string,
     headers: Request['headers'] = {},
@@ -149,7 +151,9 @@ const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
   }
 }
 
-const requestWithoutBody = (methd: 'GET' | 'HEAD' | 'DELETE') => {
+const requestWithoutBody = (
+  methd: RequestMethod.Get | RequestMethod.Head | RequestMethod.Delete,
+) => {
   return async <T = any>(
     url: string,
     headers: Request['headers'] = {},
@@ -201,12 +205,12 @@ export const Requests = async <T = any>(options: RequestWithAutoTransform) => {
 export const Upload = requestWithProgress('Upload')
 export const Download = requestWithProgress('Download')
 
-export const HttpGet = requestWithoutBody('GET')
-export const HttpHead = requestWithoutBody('HEAD')
-export const HttpDelete = requestWithoutBody('DELETE')
+export const HttpGet = requestWithoutBody(RequestMethod.Get)
+export const HttpHead = requestWithoutBody(RequestMethod.Head)
+export const HttpDelete = requestWithoutBody(RequestMethod.Delete)
 
-export const HttpPut = requestWithBody('PUT')
-export const HttpPost = requestWithBody('POST')
-export const HttpPatch = requestWithBody('PATCH')
+export const HttpPut = requestWithBody(RequestMethod.Put)
+export const HttpPost = requestWithBody(RequestMethod.Post)
+export const HttpPatch = requestWithBody(RequestMethod.Patch)
 
 export const HttpCancel = (cancelId: string) => EventsEmit(cancelId)

@@ -1,4 +1,11 @@
-import { Color, ControllerCloseMode, PluginTrigger, ScheduledTasksType, View } from '@/enums/app'
+import {
+  Color,
+  ControllerCloseMode,
+  PluginTrigger,
+  RequestMethod,
+  ScheduledTasksType,
+  View,
+} from '@/enums/app'
 
 export const UserFilePath = 'data/user.yaml'
 
@@ -56,6 +63,15 @@ export const ViewOptions = [
 export const ControllerCloseModeOptions = [
   { label: 'home.controller.closeMode.all', value: ControllerCloseMode.All },
   { label: 'home.controller.closeMode.button', value: ControllerCloseMode.Button },
+]
+
+export const RequestMethodOptions = [
+  { label: RequestMethod.Get, value: RequestMethod.Get },
+  { label: RequestMethod.Post, value: RequestMethod.Post },
+  { label: RequestMethod.Delete, value: RequestMethod.Delete },
+  { label: RequestMethod.Put, value: RequestMethod.Put },
+  { label: RequestMethod.Head, value: RequestMethod.Head },
+  { label: RequestMethod.Patch, value: RequestMethod.Patch },
 ]
 
 // vue-draggable-plus config

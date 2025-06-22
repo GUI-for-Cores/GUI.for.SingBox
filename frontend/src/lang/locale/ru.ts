@@ -399,6 +399,7 @@ export default {
     updating: 'Загрузка',
     useragent: 'Пользовательский User-Agent',
     inSecure: 'Пропустить проверку TLS',
+    requestMethod: 'Метод запроса',
     header: {
       request: 'Заголовок запроса',
       response: 'Заголовок ответа',
