@@ -325,6 +325,13 @@ if (envStore.env.os === 'windows') {
       </div>
       <Input v-model.lazy="appSettings.app.githubApiToken" editable />
     </div>
+    <div class="settings-item">
+      <div class="title">
+        {{ t('settings.debugOutline') }}
+        <span class="tips">(debug)</span>
+      </div>
+      <Switch v-model="appSettings.app.debugOutline" />
+    </div>
   </div>
 </template>
 

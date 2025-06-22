@@ -82,6 +82,7 @@ export interface AppSettings {
   addPluginToMenu: boolean
   addGroupToMenu: boolean
   rollingRelease: boolean
+  debugOutline: boolean
   pages: string[]
 }
 

@@ -632,6 +632,7 @@ export default {
     addGroupToMenu: 'افزودن گروه پراکسی به منوی سینی',
     multipleInstance: 'اجازه به چندین نمونه از برنامه',
     rollingRelease: 'فعال کردن نسخه‌ منتشر شونده مداوم',
+    debugOutline: 'نمایش حاشیه رابط کاربری',
     startup: {
       name: 'شروع در بوت',
       delay: 'تاخیر (ثانیه)',

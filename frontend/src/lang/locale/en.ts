@@ -632,6 +632,7 @@ export default {
     addGroupToMenu: 'Add Proxy Group To Tray Menu',
     multipleInstance: 'Allow Multiple APP Instances',
     rollingRelease: 'Enable Rolling Release',
+    debugOutline: 'Show interface outline',
     startup: {
       name: 'Startup on boot',
       delay: 'Delay(s)',
