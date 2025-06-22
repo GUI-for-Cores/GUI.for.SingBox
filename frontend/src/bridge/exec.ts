@@ -49,9 +49,9 @@ export const ExecBackground = async (
 
   if (endEvent) {
     EventsOn(endEvent, () => {
-      onEnd?.()
       outEvent && EventsOff(outEvent)
       EventsOff(endEvent)
+      onEnd?.()
     })
   }
 

@@ -104,10 +104,10 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
 
     const method = options.Method ?? { Download: 'GET', Upload: 'POST' }[fnName]
 
-    const event = (progress && sampleID()) || ''
+    const progressEvent = (progress && sampleID()) || ''
 
-    if (event) {
-      EventsOn(event, progress!)
+    if (progressEvent) {
+      EventsOn(progressEvent, progress!)
     }
 
     const {
@@ -115,10 +115,10 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
       status,
       headers: respHeaders,
       body: respBody,
-    } = await App[fnName](method, url, path, _headers, event, _options)
+    } = await App[fnName](method, url, path, _headers, progressEvent, _options)
 
-    if (event) {
-      EventsOff(event)
+    if (progressEvent) {
+      EventsOff(progressEvent)
     }
 
     if (!flag) throw respBody
