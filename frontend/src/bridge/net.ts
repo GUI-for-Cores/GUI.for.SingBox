@@ -181,14 +181,14 @@ interface RequestWithAutoTransform extends Request {
 export const Requests = async <T = any>(options: RequestWithAutoTransform) => {
   const { method = 'GET', url, headers = {}, body = '', options: reqOpts = {} } = options
 
-  const finalReqOpts = await mergeRequestOptions(reqOpts)
+  const [reqHeaders, reqBody, finalReqOpts] = await transformRequest(headers, body, reqOpts)
 
   const {
     flag,
     status,
     headers: respHeaders,
     body: respBody,
-  } = await App.Requests(method.toUpperCase(), url, headers, body, finalReqOpts)
+  } = await App.Requests(method.toUpperCase(), url, reqHeaders, reqBody, finalReqOpts)
 
   if (!flag) throw respBody
 
