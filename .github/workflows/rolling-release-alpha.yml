@@ -1,4 +1,4 @@
-name: Rolling Release
+name: Rolling Release - Alpha
 
 on:
   push:
@@ -34,12 +34,12 @@ jobs:
         run: |
           git rev-parse --short HEAD | tr -d '\n' > frontend/dist/version.txt
           cd frontend
-          mv dist rolling-release
-          zip -r rolling-release.zip rolling-release
+          mv dist rolling-release-alpha
+          zip -r rolling-release-alpha.zip rolling-release-alpha
       - name: Generate Changelog
         run: |
           set +e
-          LAST_COMMIT=$(curl -L https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/rolling-release/version.txt)
+          LAST_COMMIT=$(curl -L https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/rolling-release-alpha/version.txt)
           echo -e "## Change log\n\n> Update time: $(TZ='Asia/Shanghai' date "+%Y-%m-%d %H:%M:%S")\n" > changelog.md
           git log $LAST_COMMIT..HEAD --pretty=format:"* %s" >> changelog.md
           if [ $? -ne 0 ]; then
@@ -50,10 +50,10 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./{frontend/{rolling-release.zip,rolling-release/version.txt},changelog.md}
+          file: ./{frontend/{rolling-release-alpha.zip,rolling-release-alpha/version.txt},changelog.md}
           file_glob: true
-          tag: rolling-release
-          release_name: rolling-release
+          tag: rolling-release-alpha
+          release_name: rolling-release-alpha
           overwrite: true
           draft: false
           prerelease: true

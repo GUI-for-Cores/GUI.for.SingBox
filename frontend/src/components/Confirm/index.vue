@@ -10,6 +10,8 @@ import Divider from '@/components/Divider/index.vue'
 import Table from '@/components/Table/index.vue'
 import Tag from '@/components/Tag/index.vue'
 
+import type { Column } from '@/components/Table/index.vue'
+
 export type ConfirmOptions = {
   type: 'text' | 'markdown'
   cancelText?: string
@@ -85,10 +87,11 @@ marked.use({
     table({ header, rows }) {
       const containerId = 'Table_' + sampleID()
       const comp = h(Table, {
-        columns: header.map(({ text, align }) => ({
+        columns: header.map<Column>(({ text, align }) => ({
           title: text,
           key: text,
           align: align || 'center',
+          customRender: ({ value }) => h('div', { innerHTML: value }),
         })),
         dataSource: rows.map((row) => {
           const record: Record<string, any> = {}

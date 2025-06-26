@@ -443,14 +443,20 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   return result
 }
 
-export const generateConfigFile = async (profile: IProfile) => {
-  const config = await generateConfig(profile)
+export const generateConfigFile = async (
+  profile: IProfile,
+  beforeWrite: (config: any) => Promise<any>,
+) => {
+  const _config = await generateConfig(profile)
+  const config = await beforeWrite(_config)
 
   config.log.disabled = false
   config.log.output = ''
   if (![LogLevel.Trace, LogLevel.Debug, LogLevel.Info].includes(config.log.level)) {
     config.log.level = LogLevel.Info
   }
+
+  config.experimental.cache_file.path = 'cache.db'
 
   await Writefile(CoreConfigFilePath, JSON.stringify(config, null, 2))
 }

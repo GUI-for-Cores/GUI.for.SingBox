@@ -3,7 +3,8 @@ import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getProxyDelay } from '@/api/kernel'
-import { ControllerCloseModeOptions, DefaultTestURL } from '@/constant/app'
+import { ControllerCloseModeOptions, DefaultConcurrencyLimit, DefaultTestURL } from '@/constant/app'
+import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { ignoredError, sleep, handleUseProxy, message, prompt, asyncPool } from '@/utils'
@@ -124,7 +125,11 @@ const handleGroupDelay = async (group: string) => {
     }
     const { update, destroy, success: msgSuccess } = message.info('Testing...', 99999)
     loadingSet.value.add(group)
-    await asyncPool(5, _group.all, delayTest)
+    await asyncPool(
+      appSettings.app.kernel.concurrencyLimit || DefaultConcurrencyLimit,
+      _group.all,
+      delayTest,
+    )
     loadingSet.value.delete(group)
     msgSuccess(
       `Completed. ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`,
@@ -172,6 +177,13 @@ const delayColor = (delay = 0) => {
   if (delay < 1000) return 'var(--level-2-color)'
   if (delay < 1500) return 'var(--level-3-color)'
   return 'var(--level-4-color)'
+}
+
+const handleResetMoreSettings = () => {
+  appSettings.app.kernel.testUrl = DefaultTestURL
+  appSettings.app.kernel.concurrencyLimit = DefaultConcurrencyLimit
+  appSettings.app.kernel.controllerCloseMode = ControllerCloseMode.All
+  message.success('common.success')
 }
 
 onActivated(() => {
@@ -303,11 +315,29 @@ onActivated(() => {
     cancel-text="common.close"
     title="common.more"
   >
+    <template #action>
+      <Button @click="handleResetMoreSettings" class="mr-auto" type="text">
+        {{ t('common.reset') }}
+      </Button>
+    </template>
+
     <div class="form-item">
       {{ t('home.controller.delay') }}
       <Input
         v-model="appSettings.app.kernel.testUrl"
         :placeholder="DefaultTestURL"
+        editable
+        clearable
+      />
+    </div>
+
+    <div class="form-item">
+      {{ t('home.controller.concurrencyLimit') }}
+      <Input
+        v-model="appSettings.app.kernel.concurrencyLimit"
+        :min="1"
+        :max="50"
+        type="number"
         editable
         clearable
       />

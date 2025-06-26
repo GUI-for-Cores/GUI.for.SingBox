@@ -11,7 +11,7 @@ import {
   WindowIsMaximised,
   RestartApp,
 } from '@/bridge'
-import { useAppSettingsStore, useKernelApiStore, useEnvStore } from '@/stores'
+import { useAppSettingsStore, useKernelApiStore, useEnvStore, useAppStore } from '@/stores'
 import { APP_TITLE, APP_VERSION, debounce, exitApp } from '@/utils'
 
 import type { Menu } from '@/types/app'
@@ -23,6 +23,7 @@ const rollingReleaseVersion = ref('')
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
+const appStore = useAppStore()
 
 const pinWindow = () => {
   isPinned.value = !isPinned.value
@@ -110,6 +111,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       <Button
         @click.stop="closeWindow"
         :class="{ 'hover-red': appSettingsStore.app.exitOnClose }"
+        :loading="appStore.isAppExiting"
         type="text"
       >
         <Icon icon="close" />

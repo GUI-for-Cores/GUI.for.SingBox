@@ -2,23 +2,17 @@
 import { ref, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { getKernelConnectionsWS, deleteConnection } from '@/api/kernel'
+import { deleteConnection } from '@/api/kernel'
 import { DraggableOptions } from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
 import { useBool } from '@/hooks'
-import { useAppSettingsStore } from '@/stores'
-import {
-  addToRuleSet,
-  formatBytes,
-  formatRelativeTime,
-  message,
-  picker,
-  setIntervalImmediately,
-} from '@/utils'
+import { useAppSettingsStore, useKernelApiStore } from '@/stores'
+import { addToRuleSet, formatBytes, formatRelativeTime, message, picker } from '@/utils'
 
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Column } from '@/components/Table/index.vue'
 import type { Menu } from '@/types/app'
+import type { CoreApiConnectionsData } from '@/types/kernel'
 
 type TrafficCacheType = { up: number; down: number }
 const TrafficCache: Record<string, TrafficCacheType> = {}
@@ -225,36 +219,13 @@ const menu: Menu[] = [
 const details = ref()
 const isActive = ref(true)
 const keywords = ref('')
-const dataSource = ref<(IKernelConnectionsWS['connections'][0] & TrafficCacheType)[]>([])
-const disconnectedData = ref<IKernelConnectionsWS['connections']>([])
+const dataSource = ref<(CoreApiConnectionsData['connections'][0] & TrafficCacheType)[]>([])
+const disconnectedData = ref<CoreApiConnectionsData['connections']>([])
 const [showDetails, toggleDetails] = useBool(false)
 const [showSettings, toggleSettings] = useBool(false)
 const [isPause, togglePause] = useBool(false)
 const { t } = useI18n()
-
-const onConnections = (data: IKernelConnectionsWS) => {
-  if (isPause.value) return
-  const connections = data.connections || []
-
-  dataSource.value.forEach((connection) => {
-    // Record Disconnected Connections
-    const exist = connections.some((v) => v.id === connection.id)
-    !exist && disconnectedData.value.push(connection)
-  })
-
-  dataSource.value = connections.map((connection) => {
-    // Record Previous Traffic Information
-    const result = { ...connection, up: 0, down: 0 }
-    const cache = TrafficCache[connection.id]
-    result.up = cache?.up || connection.upload
-    result.down = cache?.down || connection.download
-    TrafficCache[connection.id] = {
-      down: connection.download,
-      up: connection.upload,
-    }
-    return result
-  })
-}
+const kernelApiStore = useKernelApiStore()
 
 const filteredConnections = computed(() => {
   if (!keywords.value) return isActive.value ? dataSource.value : disconnectedData.value
@@ -288,12 +259,32 @@ const handleResetConnections = () => {
   message.success('common.success')
 }
 
-const { connect, disconnect } = getKernelConnectionsWS(onConnections)
-const timer = setIntervalImmediately(connect, 1000)
+const unregisterConnectionsHandler = kernelApiStore.onConnections((data) => {
+  if (isPause.value) return
+  const connections = data.connections || []
+
+  dataSource.value.forEach((connection) => {
+    // Record Disconnected Connections
+    const exist = connections.some((v) => v.id === connection.id)
+    !exist && disconnectedData.value.push(connection)
+  })
+
+  dataSource.value = connections.map((connection) => {
+    // Record Previous Traffic Information
+    const result = { ...connection, up: 0, down: 0 }
+    const cache = TrafficCache[connection.id]
+    result.up = cache?.up || connection.upload
+    result.down = cache?.down || connection.download
+    TrafficCache[connection.id] = {
+      down: connection.download,
+      up: connection.upload,
+    }
+    return result
+  })
+})
 
 onUnmounted(() => {
-  clearInterval(timer)
-  disconnect()
+  unregisterConnectionsHandler()
 })
 </script>
 

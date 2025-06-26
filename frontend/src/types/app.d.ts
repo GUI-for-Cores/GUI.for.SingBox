@@ -1,4 +1,4 @@
-import { h, onActivated, onMounted, onUnmounted, ref, type VNode } from 'vue'
+import { h, ref, type VNode } from 'vue'
 
 import type {
   Lang,
@@ -11,6 +11,7 @@ import type {
   ControllerCloseMode,
   PluginTrigger,
   ScheduledTasksType,
+  RequestMethod,
 } from '@/enums/app'
 
 export {}
@@ -72,13 +73,16 @@ export interface AppSettings {
     cardMode: boolean
     sortByDelay: boolean
     testUrl: string
+    concurrencyLimit: number
     controllerCloseMode: ControllerCloseMode
   }
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
   multipleInstance: boolean
   addPluginToMenu: boolean
+  addGroupToMenu: boolean
   rollingRelease: boolean
+  debugOutline: boolean
   pages: string[]
 }
 
@@ -110,6 +114,7 @@ export interface Plugin {
   url: string
   path: string
   triggers: PluginTrigger[]
+  hasUI: boolean
   menus: Record<string, string>
   context: {
     profiles: Recordable
@@ -163,7 +168,11 @@ export interface Subscription {
   disabled: boolean
   inSecure: boolean
   proxies: { id: string; tag: string; type: string }[]
-  userAgent: string
+  requestMethod: RequestMethod
+  header: {
+    request: Recordable
+    response: Recordable
+  }
   script: string
   // Not Config
   updating?: boolean

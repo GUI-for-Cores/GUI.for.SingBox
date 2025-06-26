@@ -15,14 +15,6 @@ export const UpdateTray = async (tray: TrayContent) => {
 
 export const UpdateTrayMenus = App.UpdateTrayMenus
 
-export const Notify = async (title: string, message: string, icon = '') => {
-  const icons: Record<string, string> = {
-    success: 'data/.cache/imgs/notify_success.png',
-    error: 'data/.cache/imgs/notify_error.png',
-  }
-  await App.Notify(title, message, icons[icon] || 'data/.cache/imgs/tray_normal_dark.png')
-}
-
 export const GetEnv = App.GetEnv
 
 export const IsStartup = App.IsStartup

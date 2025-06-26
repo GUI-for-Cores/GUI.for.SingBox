@@ -170,7 +170,7 @@ const renderRule = (rule: IDNSRule) => {
 
   <Modal
     v-model:open="showEditModal"
-    @ok="handleAddEnd"
+    :on-ok="handleAddEnd"
     title="kernel.dns.tab.rules"
     max-width="80"
     max-height="80"

@@ -36,6 +36,7 @@ const icons = [
   'play',
   'clear',
   'clear2',
+  'clear3',
   'drag',
   'more',
   'add',
@@ -54,6 +55,7 @@ const icons = [
   'grant',
   'preview',
   'rollback',
+  'sparkle',
 ] as const
 
 export default icons

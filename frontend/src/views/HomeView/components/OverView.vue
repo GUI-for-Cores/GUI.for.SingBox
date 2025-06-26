@@ -2,10 +2,9 @@
 import { ref, onUnmounted, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { getKernelWS } from '@/api/kernel'
 import { ModeOptions } from '@/constant/kernel'
 import { useEnvStore, useAppStore, useKernelApiStore } from '@/stores'
-import { formatBytes, handleChangeMode, message, setIntervalImmediately } from '@/utils'
+import { formatBytes, handleChangeMode, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
@@ -19,7 +18,7 @@ const statistics = ref({
   download: 0,
   downloadTotal: 0,
   uploadTotal: 0,
-  connections: [],
+  connections: [] as any[],
   inuse: 0,
 })
 
@@ -108,13 +107,11 @@ const onSystemProxySwitchChange = async (enable: boolean) => {
   }
 }
 
-const onConnections = (data: any) => {
-  statistics.value.downloadTotal = data.downloadTotal
-  statistics.value.uploadTotal = data.uploadTotal
-  statistics.value.connections = data.connections || []
-}
+const unregisterMemoryHandler = kernelApiStore.onMemory((data) => {
+  statistics.value.inuse = data.inuse
+})
 
-const onTraffic = (data: any) => {
+const unregisterTrafficHandler = kernelApiStore.onTraffic((data) => {
   const { up, down } = data
   statistics.value.upload = up
   statistics.value.download = down
@@ -126,18 +123,18 @@ const onTraffic = (data: any) => {
     trafficHistory.value[0].shift()
     trafficHistory.value[1].shift()
   }
-}
+})
 
-const onMemory = (data: any) => {
-  statistics.value.inuse = data.inuse
-}
-
-const { connect, disconnect } = getKernelWS({ onConnections, onTraffic, onMemory })
-const timer = setIntervalImmediately(connect, 3000)
+const unregisterConnectionsHandler = kernelApiStore.onConnections((data) => {
+  statistics.value.downloadTotal = data.downloadTotal
+  statistics.value.uploadTotal = data.uploadTotal
+  statistics.value.connections = data.connections || []
+})
 
 onUnmounted(() => {
-  clearInterval(timer)
-  disconnect()
+  unregisterMemoryHandler()
+  unregisterTrafficHandler()
+  unregisterConnectionsHandler()
 })
 </script>
 

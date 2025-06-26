@@ -1,4 +1,6 @@
-interface IKernelApiConfig {
+export {}
+
+export interface CoreApiConfig {
   port: number
   'socks-port': number
   'mixed-port': number
@@ -12,7 +14,7 @@ interface IKernelApiConfig {
   }
 }
 
-interface IKernelProxy {
+export interface CoreApiProxy {
   alive: boolean
   all: string[]
   name: string
@@ -24,69 +26,54 @@ interface IKernelProxy {
   }[]
 }
 
-interface IKernelApiProxies {
+export interface CoreApiProxies {
   proxies: Record<string, Proxy>
 }
 
-interface IKernelApiProviders {
-  providers: Record<
-    string,
-    {
-      name: string
-      proxies: Proxy[]
-    }
-  >
-}
-
-interface IKernelApiConnections {
+export interface CoreApiConnections {
   connections: {
     id: string
     chains: string[]
   }[]
 }
 
-interface IKernelConnectionsWS {
+export interface CoreApiTrafficData {
+  down: number
+  up: number
+}
+
+export interface CoreApiMemoryData {
+  inuse: number
+  oslimit: number
+}
+
+export interface CoreApiLogsData {
+  type: string
+  payload: string
+}
+
+export interface CoreApiConnectionsData {
+  memory: number
+  uploadTotal: number
+  downloadTotal: number
   connections: {
+    chains: string[]
+    download: number
     id: string
     metadata: {
-      network: string
-      type: string
-      sourceIP: string
       destinationIP: string
-      sourcePort: string
       destinationPort: string
-      inboundIP: string
-      inboundPort: string
-      inboundName: string
-      inboundUser: string
-      host: string
       dnsMode: string
-      process: string
+      host: string
+      network: string
       processPath: string
-      specialProxy: string
-      specialRules: string
-      remoteDestination: string
-      sniffHost: string
+      sourceIP: string
+      sourcePort: string
+      type: string
     }
-    upload: number
-    download: number
-    start: string
-    chains: string[]
     rule: string
     rulePayload: string
+    start: string
+    upload: number
   }[]
-}
-
-interface IKernelApiProvidersRules {
-  providers: Record<
-    string,
-    {
-      format: string
-      name: string
-      ruleCount: number
-      type: string
-      updatedAt: string
-      vehicleType: string
-    }
-  >
 }

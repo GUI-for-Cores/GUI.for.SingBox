@@ -34,9 +34,7 @@ git clone https://github.com/GUI-for-Cores/GUI.for.SingBox.git
 
 cd GUI.for.SingBox/frontend
 
-pnpm install
-
-pnpm build
+pnpm install --frozen-lockfile && pnpm build
 
 cd ..
 

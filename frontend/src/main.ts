@@ -12,6 +12,8 @@ import router from './router'
 
 const app = createApp(App)
 
+window.appInstance = app
+
 app.use(createPinia())
 app.use(router)
 app.use(i18n)

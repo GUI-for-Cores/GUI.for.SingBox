@@ -1,3 +1,4 @@
+import * as Vue from 'vue'
 import { stringify, parse } from 'yaml'
 
 import * as Bridge from '@/bridge'
@@ -16,5 +17,7 @@ window.Plugins = {
     stringify,
   },
 }
+
+window.Vue = Vue
 
 window.AsyncFunction = Object.getPrototypeOf(async function () {}).constructor

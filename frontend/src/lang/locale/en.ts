@@ -352,7 +352,7 @@ export default {
       cardMode: 'Card Mode',
       sortBy: 'Sort By Delay',
       delay: 'Delay test URL',
-      delayUrl: 'Please enter the delayed test URL',
+      concurrencyLimit: 'Latency test concurrency',
       closeMode: {
         name: 'Controller Close Mode',
         all: 'Scroll or Button',
@@ -398,12 +398,11 @@ export default {
     proxyPrefix: 'Proxy Prefix',
     updating: 'Updating',
     useragent: 'User-Agent',
-    resetUserAgent: 'Reset User-Agent',
     inSecure: 'Skip TLS Verification',
-    healthCheck: {
-      name: 'Health Check',
-      interval: 'interval(s)',
-      url: 'url',
+    requestMethod: 'Request Method',
+    header: {
+      request: 'Request Header',
+      response: 'Response Header',
     },
   },
   subscribes: {
@@ -505,6 +504,10 @@ export default {
     'on::install': 'on::install',
     'on::uninstall': 'on::uninstall',
     'on::configure': 'on::configure',
+    'on::core::started': 'on::core::started',
+    'on::core::stopped': 'on::core::stopped',
+    'on::before::core::start': 'on::before::core::start',
+    'on::before::core::stop': 'on::before::core::stop',
     name: 'Name',
     version: 'Version',
     description: 'Description',
@@ -514,6 +517,7 @@ export default {
     path: 'Save Path',
     type: 'Type',
     menus: 'Menus',
+    hasUI: 'Has user interface',
     context: 'Context',
     configuration: ' Configuration',
     menuKey: 'Menu Title',
@@ -595,10 +599,6 @@ export default {
       name: 'App Folder',
       open: 'Open application folder',
     },
-    kernelCache: {
-      name: 'Kernel Cache',
-      clear: 'Clear kernel cache',
-    },
     lang: {
       name: 'Language',
       zh: '简体中文',
@@ -628,9 +628,11 @@ export default {
     autoSetSystemProxy: 'Auto Set / Clear System Proxy',
     autoStartKernel: 'Auto Start Kernel',
     admin: 'Run As Admin',
-    addToMenu: 'Add Plugin To Menu',
+    addPluginToMenu: 'Add Plugin To Tray Menu',
+    addGroupToMenu: 'Add Proxy Group To Tray Menu',
     multipleInstance: 'Allow Multiple APP Instances',
     rollingRelease: 'Enable Rolling Release',
+    debugOutline: 'Show interface outline',
     startup: {
       name: 'Startup on boot',
       delay: 'Delay(s)',
@@ -649,6 +651,7 @@ export default {
       stillDownload: 'Still download',
       rollbackTip: 'Rollback to the previous version',
       rollback: 'Are you sure you want to roll back to the previous version?',
+      clearCache: 'Clear Cache',
     },
     userAgent: {
       name: 'User-Agent',
@@ -675,7 +678,11 @@ export default {
     restart: 'Restart App',
     exitApp: 'Exit App',
     waiting: 'Waiting for the program to exit...',
-    timeout: 'Exit timed out. Force exit?\n\nReason: Plugin exit timed out.',
+    timeout:
+      'The program is taking too long to exit. Do you want to force quit?\n\nReason: {reason}',
+    pluginError:
+      'An error occurred while a plugin was exiting. Do you want to force quit?\n\nReason: {reason}',
+    pluginTimeout: 'The plugin is taking too long to exit.',
   },
   outbound: {
     select: '🚀 Select',

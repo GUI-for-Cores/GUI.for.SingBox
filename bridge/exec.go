@@ -10,8 +10,6 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/shirou/gopsutil/process"
@@ -50,7 +48,7 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 }
 
 func (a *App) ExecBackground(path string, args []string, outEvent string, endEvent string, options ExecOptions) FlagResult {
-	log.Printf("ExecBackground: %s %s %v", path, args, options)
+	log.Printf("ExecBackground: %s %s %s %s %v", path, args, outEvent, endEvent, options)
 
 	exePath := GetPath(path)
 
@@ -70,45 +68,36 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 		return FlagResult{false, err.Error()}
 	}
 
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
+	cmd.Stderr = cmd.Stdout
 
 	if err := cmd.Start(); err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
 	if outEvent != "" {
-		var keywordFound int32 = 0
-		wg := &sync.WaitGroup{}
-		wg.Add(2)
-
 		scanAndEmit := func(reader io.Reader) {
-			defer wg.Done()
 			scanner := bufio.NewScanner(reader)
+			stopOutput := false
 			for scanner.Scan() {
-				if atomic.LoadInt32(&keywordFound) == 1 {
-					continue
-				}
 				text := scanner.Text()
-				if options.StopOutputKeyword != "" && strings.Contains(text, options.StopOutputKeyword) {
-					atomic.StoreInt32(&keywordFound, 1)
+
+				if !stopOutput {
 					runtime.EventsEmit(a.Ctx, outEvent, text)
-					continue
+
+					if options.StopOutputKeyword != "" && strings.Contains(text, options.StopOutputKeyword) {
+						stopOutput = true
+					}
 				}
-				runtime.EventsEmit(a.Ctx, outEvent, text)
 			}
 		}
 
 		go scanAndEmit(stdout)
-		go scanAndEmit(stderr)
+	}
 
+	if endEvent != "" {
 		go func() {
-			wg.Wait()
-			if endEvent != "" {
-				runtime.EventsEmit(a.Ctx, endEvent)
-			}
+			cmd.Wait()
+			runtime.EventsEmit(a.Ctx, endEvent)
 		}()
 	}
 
@@ -133,8 +122,8 @@ func (a *App) ProcessInfo(pid int32) FlagResult {
 	return FlagResult{true, name}
 }
 
-func (a *App) KillProcess(pid int) FlagResult {
-	log.Printf("KillProcess: %d", pid)
+func (a *App) KillProcess(pid int, timeout int) FlagResult {
+	log.Printf("KillProcess: %d %d", pid, timeout)
 
 	process, err := os.FindProcess(pid)
 	if err != nil {
@@ -145,26 +134,27 @@ func (a *App) KillProcess(pid int) FlagResult {
 		log.Printf("SendExitSignal Err: %s", err.Error())
 	}
 
-	if err := waitForProcessExitWithTimeout(process, 10); err != nil {
+	if err := waitForProcessExitWithTimeout(process, timeout); err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
 	return FlagResult{true, "Success"}
 }
 
-func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int64) error {
+func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int) error {
 	done := make(chan error, 1)
 	go func() {
 		_, err := process.Wait()
 		done <- err
 	}()
 
-	timeout := time.After(time.Duration(timeoutSeconds) * time.Second)
+	timer := time.NewTimer(time.Duration(timeoutSeconds) * time.Second)
+	defer timer.Stop()
 
 	select {
 	case err := <-done:
 		return err
-	case <-timeout:
+	case <-timer.C:
 		if killErr := process.Kill(); killErr != nil {
 			return fmt.Errorf("timeout reached and failed to kill process: %w", killErr)
 		}

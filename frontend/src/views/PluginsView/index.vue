@@ -63,12 +63,15 @@ const handleImportPlugin = () => {
 }
 
 const handleAddPlugin = () => {
-  modalApi.setProps({ title: 'common.add', footer: false }).setComponent(h(PluginForm)).open()
+  modalApi
+    .setProps({ title: 'common.add', minWidth: '80', footer: false })
+    .setComponent(h(PluginForm))
+    .open()
 }
 
 const handleEditPlugin = (id: string) => {
   modalApi
-    .setProps({ title: 'common.edit', footer: false })
+    .setProps({ title: 'common.edit', minWidth: '80', footer: false })
     .setComponent(h(PluginForm, { id, isUpdate: true }))
     .open()
 }
@@ -407,6 +410,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
             v-if="!p.disabled && (!p.install || p.installed)"
             @click="handleOnRun(p)"
             :loading="p.running"
+            :icon="p.hasUI ? 'sparkle' : undefined"
             type="primary"
             size="small"
             auto-size

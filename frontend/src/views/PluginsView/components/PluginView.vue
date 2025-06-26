@@ -127,6 +127,18 @@ if (p) {
         <Button @click="handleTest(PluginTriggerEvent.OnGenerate)" type="link" size="small">
           {{ t('plugin.on::generate') }}
         </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnCoreStarted)" type="link" size="small">
+          {{ t('plugin.on::core::started') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnCoreStopped)" type="link" size="small">
+          {{ t('plugin.on::core::stopped') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnBeforeCoreStart)" type="link" size="small">
+          {{ t('plugin.on::before::core::start') }}
+        </Button>
+        <Button @click="handleTest(PluginTriggerEvent.OnBeforeCoreStop)" type="link" size="small">
+          {{ t('plugin.on::before::core::stop') }}
+        </Button>
       </template>
     </Dropdown>
     <Button @click="handleCancel" :disabled="loading">

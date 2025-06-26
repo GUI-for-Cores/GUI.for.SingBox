@@ -62,6 +62,10 @@ export enum PluginTrigger {
   OnStartup = 'on::startup',
   OnShutdown = 'on::shutdown',
   OnReady = 'on::ready',
+  OnCoreStarted = 'on::core::started',
+  OnCoreStopped = 'on::core::stopped',
+  OnBeforeCoreStart = 'on::before::core::start',
+  OnBeforeCoreStop = 'on::before::core::stop',
 }
 
 export enum PluginTriggerEvent {
@@ -75,4 +79,17 @@ export enum PluginTriggerEvent {
   OnReady = 'onReady',
   OnTask = 'onTask',
   OnConfigure = 'onConfigure',
+  OnCoreStarted = 'onCoreStarted',
+  OnCoreStopped = 'onCoreStopped',
+  OnBeforeCoreStart = 'onBeforeCoreStart',
+  OnBeforeCoreStop = 'onBeforeCoreStop',
+}
+
+export enum RequestMethod {
+  Get = 'GET',
+  Post = 'POST',
+  Delete = 'DELETE',
+  Put = 'PUT',
+  Head = 'HEAD',
+  Patch = 'PATCH',
 }

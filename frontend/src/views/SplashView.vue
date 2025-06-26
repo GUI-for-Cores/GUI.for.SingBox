@@ -7,6 +7,7 @@ import { APP_TITLE, APP_VERSION } from '@/utils/env'
     <img src="@/assets/logo.png" style="width: 128px" draggable="false" />
     <h2>{{ APP_TITLE }}</h2>
     <p>{{ APP_VERSION }}</p>
+    <slot></slot>
   </div>
 </template>
 

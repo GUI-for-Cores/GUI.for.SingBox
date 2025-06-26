@@ -9,6 +9,12 @@ body {
   line-height: 1.32;
 }
 
+body[debug-outline='true'] {
+  * {
+    outline: 1px solid var(--color);
+  }
+}
+
 @keyframes clip {
   from {
     clip-path: circle(0% at var(--x) var(--y));

@@ -9,7 +9,13 @@ import {
   WindowIsMaximised,
   WindowIsMinimised,
 } from '@/bridge'
-import { Colors, DefaultFontFamily, DefaultTestURL, UserFilePath } from '@/constant/app'
+import {
+  Colors,
+  DefaultConcurrencyLimit,
+  DefaultFontFamily,
+  DefaultTestURL,
+  UserFilePath,
+} from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
 import {
   Theme,
@@ -63,13 +69,16 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       cardMode: true,
       sortByDelay: false,
       testUrl: DefaultTestURL,
+      concurrencyLimit: DefaultConcurrencyLimit,
       controllerCloseMode: ControllerCloseMode.All,
     },
     pluginSettings: {},
     githubApiToken: '',
     multipleInstance: false,
     addPluginToMenu: false,
+    addGroupToMenu: false,
     rollingRelease: true,
+    debugOutline: false,
     pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins'],
   })
 
@@ -86,6 +95,12 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (app.value.kernel.controllerCloseMode === undefined) {
       app.value.kernel.controllerCloseMode = ControllerCloseMode.All
+    }
+    if (app.value.addGroupToMenu === undefined) {
+      app.value.addGroupToMenu = false
+    }
+    if (app.value.kernel.concurrencyLimit === undefined) {
+      app.value.kernel.concurrencyLimit = DefaultConcurrencyLimit
     }
     // @ts-expect-error(Deprecated)
     if (app.value['font-family'] !== undefined) {
@@ -139,6 +154,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
     document.body.style.fontFamily = settings.fontFamily
+    document.body.setAttribute('debug-outline', String(settings.debugOutline))
   }
 
   watch(
@@ -183,8 +199,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       () => app.value.lang,
       () => app.value.addPluginToMenu,
       () => app.value.kernel.running,
-      () => app.value.kernel.unAvailable,
-      () => app.value.kernel.sortByDelay,
     ],
     updateTrayMenus,
   )

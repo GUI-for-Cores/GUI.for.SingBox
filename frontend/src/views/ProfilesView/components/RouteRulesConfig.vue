@@ -162,7 +162,7 @@ const renderRule = (rule: IRule) => {
 
   <Modal
     v-model:open="showEditModal"
-    @ok="handleAddEnd"
+    :on-ok="handleAddEnd"
     title="kernel.route.tab.rules"
     max-width="80"
     max-height="80"

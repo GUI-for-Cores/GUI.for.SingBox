@@ -1,13 +1,19 @@
-import { render, createVNode, type VNode } from 'vue'
+import { render, createVNode, type VNode, h } from 'vue'
 
 import i18n from '@/lang'
 import { APP_TITLE, sampleID } from '@/utils'
 
-import ConfirmComp, { type ConfirmOptions } from '@/components/Confirm/index.vue'
-import { type Props as InputProps } from '@/components/Input/index.vue'
-import MessageComp, { type MessageIcon } from '@/components/Message/index.vue'
-import PickerComp, { type PickerItem } from '@/components/Picker/index.vue'
+import ConfirmComp from '@/components/Confirm/index.vue'
+import MessageComp from '@/components/Message/index.vue'
+import { useModal } from '@/components/Modal'
+import PickerComp from '@/components/Picker/index.vue'
 import PromptComp from '@/components/Prompt/index.vue'
+
+import type { ConfirmOptions } from '@/components/Confirm/index.vue'
+import type { Props as InputProps } from '@/components/Input/index.vue'
+import type { MessageIcon } from '@/components/Message/index.vue'
+import type { UseModalOptions } from '@/components/Modal'
+import type { PickerItem } from '@/components/Picker/index.vue'
 
 const ContainerCssText = `
     position: fixed;
@@ -228,6 +234,25 @@ export const confirm = (
   options: ConfirmOptions = { type: 'text' },
 ) => {
   return buildConfirm(title, message, options)
+}
+
+export const modal = (options: UseModalOptions = {}) => {
+  const [Modal, api] = useModal(options)
+  const vnode = h(Modal)
+  // binding context
+  vnode.appContext = window.appInstance._context
+
+  const container = document.createElement('div')
+  document.body.appendChild(container)
+  render(vnode, container)
+
+  const destroy = () => {
+    render(null, container)
+    container.remove()
+  }
+
+  const powerApi = { ...api, destroy }
+  return powerApi
 }
 
 export const picker = new Picker()

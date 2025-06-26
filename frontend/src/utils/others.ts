@@ -5,12 +5,17 @@ import { APP_TITLE, APP_VERSION } from '@/utils'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
-export const omit = <T, K extends keyof T>(obj: T, fields: K[]): Omit<T, K> => {
-  const _obj = deepClone(obj)
-  fields.forEach((field) => {
-    delete _obj[field]
-  })
-  return _obj
+export const omit = <T extends object, K extends keyof T>(obj: T, props: K[]): Omit<T, K> => {
+  const result = {} as T
+  const omitSet = new Set(props)
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (!omitSet.has(key as unknown as K)) {
+        result[key] = obj[key]
+      }
+    }
+  }
+  return result as Omit<T, K>
 }
 
 export const omitArray = <T, K extends keyof T>(arr: T[], fields: K[]): Omit<T, K>[] => {
@@ -46,12 +51,14 @@ export const debounce = (fn: (...args: any) => any, wait: number) => {
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export const ignoredError = async <T>(fn: (...args: any) => Promise<T>, ...args: any) => {
+export const ignoredError = async <F extends (...args: any[]) => Promise<any>>(
+  fn: F,
+  ...args: Parameters<F>
+): Promise<ReturnType<F> | undefined> => {
   try {
-    const res = await fn(...args)
-    return res
+    return await fn(...args)
   } catch {
-    // console.log(error)
+    return undefined
   }
 }
 
@@ -66,10 +73,13 @@ export const generateSecureKey = (bits = 256) => {
     .join('')
 }
 
-export const getValue = (obj: Record<string, any>, expr: string) => {
-  return expr.split('.').reduce((value, key) => {
-    return value[key]
-  }, obj)
+export const getValue = <T = unknown>(obj: unknown, expr: string): T | undefined => {
+  return expr.split('.').reduce<unknown>((value, key) => {
+    if (value && typeof value === 'object') {
+      return (value as Record<string, unknown>)[key]
+    }
+    return undefined
+  }, obj) as T
 }
 
 export const asyncPool = async <T>(

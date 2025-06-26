@@ -2,17 +2,10 @@
 import { ref, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { getKernelLogsWS } from '@/api/kernel'
 import { LogLevelOptions } from '@/constant/kernel'
 import { useBool } from '@/hooks'
-import {
-  addToRuleSet,
-  isValidIPv4,
-  isValidIPv6,
-  message,
-  picker,
-  setIntervalImmediately,
-} from '@/utils'
+import { useKernelApiStore } from '@/stores'
+import { addToRuleSet, isValidIPv4, isValidIPv6, message, picker } from '@/utils'
 
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Menu } from '@/types/app'
@@ -94,19 +87,16 @@ const menus: Menu[] = [
 
 const { t } = useI18n()
 const [pause, togglePause] = useBool(false)
+const kernelApiStore = useKernelApiStore()
 
 const handleClear = () => logs.value.splice(0)
 
-const onLogs = (data: any) => {
+const unregisterLogsHandler = kernelApiStore.onLogs((data) => {
   pause.value || logs.value.unshift(data)
-}
-
-const { connect, disconnect } = getKernelLogsWS(onLogs)
-const timer = setIntervalImmediately(connect, 1000)
+})
 
 onUnmounted(() => {
-  clearInterval(timer)
-  disconnect()
+  unregisterLogsHandler()
 })
 </script>
 

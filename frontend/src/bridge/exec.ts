@@ -3,18 +3,19 @@ import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 
 import { sampleID } from '@/utils'
 
-type ExecOptions = {
-  convert: boolean
-  env: Record<string, any>
-  stopOutputKeyword: string
+interface ExecOptions {
+  convert?: boolean
+  env?: Record<string, any>
+  stopOutputKeyword?: string
 }
 
-export const Exec = async (path: string, args: string[], options: Partial<ExecOptions> = {}) => {
-  const { flag, data } = await App.Exec(
-    path,
-    args,
-    Object.assign({}, { convert: false, env: {}, stopOutputKeyword: '' }, options),
-  )
+const mergeExecOptions = (options: ExecOptions) => {
+  const mergedExecOpts = { convert: false, env: {}, stopOutputKeyword: '', ...options }
+  return mergedExecOpts
+}
+
+export const Exec = async (path: string, args: string[], options: ExecOptions = {}) => {
+  const { flag, data } = await App.Exec(path, args, mergeExecOptions(options))
   if (!flag) {
     throw data
   }
@@ -23,33 +24,36 @@ export const Exec = async (path: string, args: string[], options: Partial<ExecOp
 
 export const ExecBackground = async (
   path: string,
-  args: string[],
-  onOut: (out: string) => void,
-  onEnd: () => void,
-  options: Partial<ExecOptions> = {},
+  args: string[] = [],
+  onOut?: (out: string) => void,
+  onEnd?: () => void,
+  options: ExecOptions = {},
 ) => {
-  const outEvent = sampleID()
-  const endEvent = sampleID()
+  const outEvent = (onOut && sampleID()) || ''
+  const endEvent = (onEnd && sampleID()) || (outEvent && sampleID()) || ''
+
   const { flag, data } = await App.ExecBackground(
     path,
     args,
     outEvent,
     endEvent,
-    Object.assign({}, { convert: false, env: {}, stopOutputKeyword: '' }, options),
+    mergeExecOptions(options),
   )
   if (!flag) {
     throw data
   }
 
-  EventsOn(outEvent, (out: string) => {
-    onOut && onOut(out)
-  })
+  if (outEvent) {
+    EventsOn(outEvent, onOut!)
+  }
 
-  EventsOn(endEvent, () => {
-    onEnd && onEnd()
-    EventsOff(outEvent)
-    EventsOff(endEvent)
-  })
+  if (endEvent) {
+    EventsOn(endEvent, () => {
+      outEvent && EventsOff(outEvent)
+      EventsOff(endEvent)
+      onEnd?.()
+    })
+  }
 
   return Number(data)
 }
@@ -62,8 +66,8 @@ export const ProcessInfo = async (pid: number) => {
   return data
 }
 
-export const KillProcess = async (pid: number) => {
-  const { flag, data } = await App.KillProcess(pid)
+export const KillProcess = async (pid: number, timeout = 10) => {
+  const { flag, data } = await App.KillProcess(pid, timeout)
   if (!flag) {
     throw data
   }

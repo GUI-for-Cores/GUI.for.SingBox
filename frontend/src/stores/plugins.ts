@@ -51,6 +51,22 @@ const PluginsTriggerMap: {
     fnName: PluginTriggerEvent.OnReady,
     observers: [],
   },
+  [PluginTrigger.OnCoreStarted]: {
+    fnName: PluginTriggerEvent.OnCoreStarted,
+    observers: [],
+  },
+  [PluginTrigger.OnCoreStopped]: {
+    fnName: PluginTriggerEvent.OnCoreStopped,
+    observers: [],
+  },
+  [PluginTrigger.OnBeforeCoreStart]: {
+    fnName: PluginTriggerEvent.OnBeforeCoreStart,
+    observers: [],
+  },
+  [PluginTrigger.OnBeforeCoreStop]: {
+    fnName: PluginTriggerEvent.OnBeforeCoreStop,
+    observers: [],
+  },
 }
 
 export const usePluginsStore = defineStore('plugins', () => {
@@ -67,7 +83,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     list && (pluginHub.value = JSON.parse(list))
 
     for (let i = 0; i < plugins.value.length; i++) {
-      const { id, triggers, path, context } = plugins.value[i]
+      const { id, triggers, path, context, hasUI } = plugins.value[i]
       const code = await ignoredError(Readfile, path)
       if (code) {
         PluginsCache[id] = { plugin: plugins.value[i], code }
@@ -84,6 +100,10 @@ export const usePluginsStore = defineStore('plugins', () => {
           plugins: {},
           scheduledtasks: {},
         }
+      }
+
+      if (hasUI === undefined) {
+        plugins.value[i].hasUI = false
       }
     }
   }
@@ -328,7 +348,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     return result
   }
 
-  const noParamsTrigger = async (trigger: PluginTrigger) => {
+  const noParamsTrigger = async (trigger: PluginTrigger, interruptOnError = false) => {
     const { fnName, observers } = PluginsTriggerMap[trigger]
     if (observers.length === 0) return
 
@@ -349,14 +369,43 @@ export const usePluginsStore = defineStore('plugins', () => {
           editPlugin(cache.plugin.id, cache.plugin)
         }
       } catch (error: any) {
-        throw `${cache.plugin.name} : ` + (error.message || error)
+        const msg = `${cache.plugin.name} : ` + (error.message || error)
+        if (interruptOnError) {
+          throw msg
+        }
+        console.error(msg)
       }
     }
-    return
   }
 
   const onGenerateTrigger = async (params: Record<string, any>, profile: IProfile) => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnGenerate]
+    if (observers.length === 0) return params
+
+    for (let i = 0; i < observers.length; i++) {
+      const pluginId = observers[i]
+      const cache = PluginsCache[pluginId]
+
+      if (isPluginUnavailable(cache)) continue
+
+      const metadata = getPluginMetadata(cache.plugin)
+      try {
+        const fn = new window.AsyncFunction(
+          `const Plugin = ${JSON.stringify(metadata)}; ${cache.code}; return await ${fnName}(${JSON.stringify(params)}, ${JSON.stringify(profile)})`,
+        )
+        params = await fn()
+      } catch (error: any) {
+        throw `${cache.plugin.name} : ` + (error.message || error)
+      }
+
+      if (!params) throw `${cache.plugin.name} : Wrong result`
+    }
+
+    return params as Record<string, any>
+  }
+
+  const onBeforeCoreStartTrigger = async (params: Record<string, any>, profile: IProfile) => {
+    const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnBeforeCoreStart]
     if (observers.length === 0) return params
 
     for (let i = 0; i < observers.length; i++) {
@@ -442,8 +491,12 @@ export const usePluginsStore = defineStore('plugins', () => {
     onSubscribeTrigger,
     onGenerateTrigger,
     onStartupTrigger: () => noParamsTrigger(PluginTrigger.OnStartup),
-    onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown),
+    onShutdownTrigger: () => noParamsTrigger(PluginTrigger.OnShutdown, true),
     onReadyTrigger: () => noParamsTrigger(PluginTrigger.OnReady),
+    onCoreStartedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStarted),
+    onCoreStoppedTrigger: () => noParamsTrigger(PluginTrigger.OnCoreStopped),
+    onBeforeCoreStopTrigger: () => noParamsTrigger(PluginTrigger.OnBeforeCoreStop, true),
+    onBeforeCoreStartTrigger,
     manualTrigger,
     updatePluginTrigger,
     getPluginCodefromCache,

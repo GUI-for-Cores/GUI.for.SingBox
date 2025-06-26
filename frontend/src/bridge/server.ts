@@ -1,7 +1,7 @@
 import * as App from '@wails/go/bridge/App'
 import { EventsOn, EventsEmit, EventsOff } from '@wails/runtime/runtime'
 
-type RequestType = {
+interface Request {
   id: string
   method: string
   url: string
@@ -9,14 +9,14 @@ type RequestType = {
   body: string
 }
 
-type ResponseType = {
+interface Response {
   status: number
   headers: Record<string, string>
   body: string
   options: { mode: 'Binary' | 'Text' }
 }
 
-type ServerOptions = {
+interface ServerOptions {
   Cert?: string
   Key?: string
   StaticPath?: string
@@ -27,13 +27,13 @@ type ServerOptions = {
 }
 
 type HttpServerHandler = (
-  req: RequestType,
+  req: Request,
   res: {
     end: (
-      status: ResponseType['status'],
-      headers: ResponseType['headers'],
-      body: ResponseType['body'],
-      options: ResponseType['options'],
+      status: Response['status'],
+      headers: Response['headers'],
+      body: Response['body'],
+      options: Response['options'],
     ) => void
   },
 ) => Promise<void>

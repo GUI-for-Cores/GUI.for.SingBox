@@ -29,6 +29,8 @@ import { useEnvStore } from './env'
 import type { CustomAction, CustomActionFn, Menu } from '@/types/app'
 
 export const useAppStore = defineStore('app', () => {
+  const isAppExiting = ref(false)
+
   /* Global Menu */
   const menuShow = ref(false)
   const menuList = ref<Menu[]>([])
@@ -121,7 +123,7 @@ export const useAppStore = defineStore('app', () => {
       }
 
       await Removefile(downloadCacheFile)
-      await ignoredError(Removefile, 'data/rolling-release')
+      await ignoredError(Removefile, 'data/rolling-release-alpha')
     } catch (error: any) {
       console.log(error)
       message.error(error.message || error, 5_000)
@@ -161,6 +163,7 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return {
+    isAppExiting,
     menuShow,
     menuPosition,
     menuList,

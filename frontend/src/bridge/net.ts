@@ -1,11 +1,12 @@
 import * as App from '@wails/go/bridge/App'
 import { EventsOn, EventsOff, EventsEmit } from '@wails/runtime/runtime'
 
+import { RequestMethod } from '@/enums/app'
 import { sampleID, getUserAgent } from '@/utils'
 import { GetSystemOrKernelProxy } from '@/utils/helper'
 
-type RequestType = {
-  method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'HEAD' | 'PATCH'
+interface Request {
+  method: RequestMethod
   url: string
   headers?: {
     'Content-Type'?: 'application/json' | 'application/x-www-form-urlencoded' | 'text/plain'
@@ -21,89 +22,117 @@ type RequestType = {
   }
 }
 
-type ResponseType = { status: number; headers: Record<string, string>; body: any }
+interface Response<T = any> {
+  status: number
+  headers: Record<string, string | string[]>
+  body: T
+}
 
-const transformRequest = async (
-  headers: RequestType['headers'],
-  body: RequestType['body'],
-  options: RequestType['options'],
-) => {
-  headers = { 'User-Agent': getUserAgent(), ...headers }
-
-  switch (headers['Content-Type']) {
-    case 'application/json': {
-      body && (body = JSON.stringify(body))
-      break
-    }
-    case 'application/x-www-form-urlencoded': {
-      body && (body = new URLSearchParams(body).toString())
-      break
-    }
-  }
-
-  options = {
+const mergeRequestOptions = async (options: Request['options']) => {
+  const mergedReqOpts: Required<Request['options']> = {
     Proxy: await GetSystemOrKernelProxy(),
     Insecure: false,
     Redirect: true,
-    Timeout: 15,
+    Timeout: 15, // 15 seconds
     CancelId: '',
+    FileField: 'file',
     ...options,
   }
-  return [headers, body, options]
+  return mergedReqOpts
+}
+
+const transformResponseHeaders = (headers: Record<string, string[]>): Response['headers'] => {
+  return Object.fromEntries(
+    Object.entries(headers).map(([key, value]) => [key, value.length > 1 ? value : value[0]]),
+  )
+}
+
+const transformResponseBody = <T>(body: Response['body'], headers: Response['headers']) => {
+  if (headers['Content-Type']?.includes('application/json')) {
+    try {
+      body = JSON.parse(body)
+    } catch {
+      console.warn('Failed to parse response body as JSON:', body)
+    }
+  }
+  return body as T
+}
+
+const transformRequest = async (
+  headers: Request['headers'],
+  body: Request['body'],
+  options: Request['options'],
+) => {
+  const transformedHeaders = { 'User-Agent': getUserAgent(), ...headers }
+
+  if (transformedHeaders['Content-Type']?.includes('application/json')) {
+    body && (body = JSON.stringify(body))
+  } else if (transformedHeaders['Content-Type']?.includes('application/x-www-form-urlencoded')) {
+    body && (body = new URLSearchParams(body).toString())
+  }
+
+  const transformedReqOpts = await mergeRequestOptions(options)
+  return [transformedHeaders, body, transformedReqOpts] as const
 }
 
 const transformResponse = <T = any>(
-  status: ResponseType['status'],
+  status: Response['status'],
   headers: Record<string, string[]>,
-  body: ResponseType['body'],
+  body: Response['body'],
 ) => {
-  Object.entries(headers).forEach(
-    ([key, value]) => (headers[key] = (value.length > 1 ? value : value[0]) as any),
-  )
+  const transformedHeaders = transformResponseHeaders(headers)
+  const transformedBody = transformResponseBody<T>(body, transformedHeaders)
 
-  if (headers['Content-Type']?.includes('application/json')) {
-    body = JSON.parse(body)
-  }
-
-  return { status, headers: headers as unknown as ResponseType['headers'], body: body as T }
+  return { status, headers: transformedHeaders, body: transformedBody }
 }
 
-const requestWithProgress = (method: 'Download' | 'Upload') => {
+interface RequestWithProgressOptions {
+  Method?: Request['method']
+}
+
+const requestWithProgress = (fnName: 'Download' | 'Upload') => {
   return async (
-    url: RequestType['url'],
+    url: Request['url'],
     path: string,
-    headers: RequestType['headers'] = {},
-    progress: (progress: number, total: number) => void = () => 0,
-    options: RequestType['options'] = {},
+    headers: Request['headers'] = {},
+    progress?: (progress: number, total: number) => void,
+    options: Request['options'] & RequestWithProgressOptions = {},
   ) => {
     const [_headers, , _options] = await transformRequest(headers, null, {
-      Timeout: 20 * 60,
+      Timeout: 20 * 60, // 20 minutes
       ...options,
     })
 
-    const event = sampleID()
+    const method =
+      options.Method ?? { Download: RequestMethod.Get, Upload: RequestMethod.Post }[fnName]
 
-    EventsOn(event, progress)
+    const progressEvent = (progress && sampleID()) || ''
+
+    if (progressEvent) {
+      EventsOn(progressEvent, progress!)
+    }
 
     const {
       flag,
       status,
-      headers: __headers,
-      body,
-    } = await App[method](url, path, _headers, event, _options)
+      headers: respHeaders,
+      body: respBody,
+    } = await App[fnName](method, url, path, _headers, progressEvent, _options)
 
-    EventsOff(event)
+    if (progressEvent) {
+      EventsOff(progressEvent)
+    }
 
-    if (!flag) throw body
+    if (!flag) throw respBody
 
-    return transformResponse(status, __headers, body)
+    return transformResponse(status, respHeaders, respBody)
   }
 }
 
-const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
+const requestWithBody = (method: RequestMethod.Put | RequestMethod.Post | RequestMethod.Patch) => {
   return async <T = any>(
     url: string,
-    headers: RequestType['headers'] = {},
+    headers: Request['headers'] = {},
     body = {},
     options = {},
   ) => {
@@ -112,74 +141,76 @@ const requestWithBody = (method: 'PUT' | 'POST' | 'PATCH') => {
     const {
       flag,
       status,
-      headers: __headers,
-      body: __body,
+      headers: respHeaders,
+      body: respBody,
     } = await App.Requests(method, url, _headers, _body, _options)
 
-    if (!flag) throw __body
+    if (!flag) throw respBody
 
-    return transformResponse<T>(status, __headers, __body)
+    return transformResponse<T>(status, respHeaders, respBody)
   }
 }
 
-const requestWithoutBody = (methd: 'GET' | 'HEAD' | 'DELETE') => {
-  return async <T = any>(url: string, headers: RequestType['headers'] = {}, options = {}) => {
+const requestWithoutBody = (
+  methd: RequestMethod.Get | RequestMethod.Head | RequestMethod.Delete,
+) => {
+  return async <T = any>(
+    url: string,
+    headers: Request['headers'] = {},
+    options: Request['options'] = {},
+  ) => {
     const [_headers, , _options] = await transformRequest(headers, null, options)
 
     const {
       flag,
       status,
-      headers: __headers,
+      headers: respHeaders,
       body,
     } = await App.Requests(methd, url, _headers, '', _options)
 
     if (!flag) throw body
 
-    return transformResponse<T>(status, __headers, body)
+    return transformResponse<T>(status, respHeaders, body)
   }
 }
 
-export const Requests = async (options: RequestType) => {
-  const { method = 'GET', url, headers = {}, body = '', options: _options = {} } = options
+interface RequestWithAutoTransform extends Request {
+  autoTransformBody?: boolean
+}
 
-  const __options: Required<RequestType['options']> = {
-    Proxy: await GetSystemOrKernelProxy(),
-    Insecure: false,
-    Redirect: true,
-    Timeout: 15,
-    CancelId: '',
-    FileField: 'file',
-    ..._options,
-  }
+export const Requests = async <T = any>(options: RequestWithAutoTransform) => {
+  const { method = 'GET', url, headers = {}, body = '', options: reqOpts = {} } = options
+
+  const [reqHeaders, reqBody, finalReqOpts] = await transformRequest(headers, body, reqOpts)
 
   const {
     flag,
     status,
-    headers: _headers,
-    body: _body,
-  } = await App.Requests(method.toUpperCase(), url, headers, body, __options)
+    headers: respHeaders,
+    body: respBody,
+  } = await App.Requests(method.toUpperCase(), url, reqHeaders, reqBody, finalReqOpts)
 
-  if (!flag) throw _body
+  if (!flag) throw respBody
+
+  const transformedHeaders = transformResponseHeaders(respHeaders)
+  const transformBody = options.autoTransformBody ?? true
 
   return {
     status,
-    headers: Object.entries(_headers).reduce(
-      (p, c) => ({ ...p, [c[0]]: c[1].length > 1 ? c[1] : c[1][0] }),
-      {},
-    ),
-    body: _body,
+    headers: transformedHeaders,
+    body: transformBody ? transformResponseBody<T>(respBody, transformedHeaders) : (respBody as T),
   }
 }
 
 export const Upload = requestWithProgress('Upload')
 export const Download = requestWithProgress('Download')
 
-export const HttpGet = requestWithoutBody('GET')
-export const HttpHead = requestWithoutBody('HEAD')
-export const HttpDelete = requestWithoutBody('DELETE')
+export const HttpGet = requestWithoutBody(RequestMethod.Get)
+export const HttpHead = requestWithoutBody(RequestMethod.Head)
+export const HttpDelete = requestWithoutBody(RequestMethod.Delete)
 
-export const HttpPut = requestWithBody('PUT')
-export const HttpPost = requestWithBody('POST')
-export const HttpPatch = requestWithBody('PATCH')
+export const HttpPut = requestWithBody(RequestMethod.Put)
+export const HttpPost = requestWithBody(RequestMethod.Post)
+export const HttpPatch = requestWithBody(RequestMethod.Patch)
 
 export const HttpCancel = (cancelId: string) => EventsEmit(cancelId)

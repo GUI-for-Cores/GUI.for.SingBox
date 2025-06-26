@@ -147,7 +147,7 @@ const renderServer = (server: IDNSServer) => {
 
   <Modal
     v-model:open="showEditModal"
-    @ok="handleAddEnd"
+    :on-ok="handleAddEnd"
     title="kernel.dns.tab.servers"
     max-width="80"
     max-height="80"

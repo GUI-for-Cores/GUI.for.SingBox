@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
+import { Removefile } from '@/bridge'
+import { CoreCacheFilePath } from '@/constant/kernel'
 import { useCoreBranch } from '@/hooks/useCoreBranch'
-import { useKernelApiStore } from '@/stores'
+import { useAppSettingsStore, useKernelApiStore } from '@/stores'
+import { message } from '@/utils'
 
 interface Props {
   isAlpha: boolean
@@ -11,6 +14,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), { isAlpha: false })
 
 const { t } = useI18n()
+const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
 const {
@@ -32,6 +36,20 @@ const {
   grantCorePermission,
   openReleasePage,
 } = useCoreBranch(props.isAlpha)
+
+const handleClearCoreCache = async () => {
+  try {
+    if (appSettings.app.kernel.running) {
+      await kernelApiStore.restartKernel(() => Removefile(CoreCacheFilePath))
+    } else {
+      await Removefile(CoreCacheFilePath)
+    }
+    message.success('common.success')
+  } catch (error: any) {
+    message.error(error)
+    console.log(error)
+  }
+}
 </script>
 
 <template>
@@ -54,6 +72,14 @@ const {
       type="text"
       size="small"
     />
+    <Button
+      @click="handleClearCoreCache"
+      v-tips="'settings.kernel.clearCache'"
+      type="text"
+      size="small"
+      icon="clear3"
+    >
+    </Button>
   </div>
   <div class="tags">
     <Tag @click="refreshLocalVersion(true)" class="cursor-pointer">

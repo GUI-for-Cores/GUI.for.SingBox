@@ -1,4 +1,11 @@
-import { Color, ControllerCloseMode, PluginTrigger, ScheduledTasksType, View } from '@/enums/app'
+import {
+  Color,
+  ControllerCloseMode,
+  PluginTrigger,
+  RequestMethod,
+  ScheduledTasksType,
+  View,
+} from '@/enums/app'
 
 export const UserFilePath = 'data/user.yaml'
 
@@ -58,6 +65,15 @@ export const ControllerCloseModeOptions = [
   { label: 'home.controller.closeMode.button', value: ControllerCloseMode.Button },
 ]
 
+export const RequestMethodOptions = [
+  { label: RequestMethod.Get, value: RequestMethod.Get },
+  { label: RequestMethod.Post, value: RequestMethod.Post },
+  { label: RequestMethod.Delete, value: RequestMethod.Delete },
+  { label: RequestMethod.Put, value: RequestMethod.Put },
+  { label: RequestMethod.Head, value: RequestMethod.Head },
+  { label: RequestMethod.Patch, value: RequestMethod.Patch },
+]
+
 // vue-draggable-plus config
 export const DraggableOptions = {
   animation: 150,
@@ -65,11 +81,15 @@ export const DraggableOptions = {
 
 export const PluginsTriggerOptions = [
   { label: 'plugin.on::manual', value: PluginTrigger.OnManual },
-  { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
-  { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
   { label: 'plugin.on::startup', value: PluginTrigger.OnStartup },
-  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
   { label: 'plugin.on::ready', value: PluginTrigger.OnReady },
+  { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
+  { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
+  { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
+  { label: 'plugin.on::before::core::start', value: PluginTrigger.OnBeforeCoreStart },
+  { label: 'plugin.on::core::started', value: PluginTrigger.OnCoreStarted },
+  { label: 'plugin.on::before::core::stop', value: PluginTrigger.OnBeforeCoreStop },
+  { label: 'plugin.on::core::stopped', value: PluginTrigger.OnCoreStopped },
 ]
 
 export const ScheduledTaskOptions = [
@@ -83,3 +103,5 @@ export const ScheduledTaskOptions = [
 export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subscription) => {\n  return { proxies, subscription }\n}`
 
 export const DefaultTestURL = 'https://www.gstatic.com/generate_204'
+
+export const DefaultConcurrencyLimit = 20
