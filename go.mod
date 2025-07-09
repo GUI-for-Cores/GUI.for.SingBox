@@ -9,7 +9,7 @@ require (
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/wailsapp/wails/v2 v2.10.1
+	github.com/wailsapp/wails/v2 v2.10.2
 	golang.org/x/sys v0.33.0
 	golang.org/x/text v0.26.0
 	gopkg.in/yaml.v3 v3.0.1
