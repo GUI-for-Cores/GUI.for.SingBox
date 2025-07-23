@@ -46,6 +46,7 @@ export default {
     develop: 'توسعه',
     canceled: 'لغو شد',
     downloading: 'در حال دانلود...',
+    empty: 'داده‌ای وجود ندارد',
   },
   kernel: {
     rule: 'قانون',

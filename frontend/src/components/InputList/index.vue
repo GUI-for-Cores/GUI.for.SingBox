@@ -28,12 +28,14 @@ const handleDel = (i: number) => list.value.splice(i, 1)
 </script>
 
 <template>
-  <div class="input-list">
-    <div v-draggable="[list, DraggableOptions]">
+  <div class="inline-block rounded-4">
+    <div v-draggable="[list, DraggableOptions]" class="flex flex-col gap-2">
       <TransitionGroup name="list">
-        <Card v-for="(l, i) in list" :key="l" class="list-item">
-          <div>{{ l }}</div>
-          <Button @click="handleDel(i)" icon="close" :icon-size="10" type="text" />
+        <Card v-for="(l, i) in list" :key="l">
+          <div class="flex items-center justify-between py-4">
+            {{ l }}
+            <Button @click="handleDel(i)" icon="close" :icon-size="10" type="text" />
+          </div>
         </Card>
       </TransitionGroup>
     </div>
@@ -49,7 +51,7 @@ const handleDel = (i: number) => list.value.splice(i, 1)
       class="mt-4"
     >
       <template #extra>
-        <Button @click="handleAdd" icon="add" size="small" type="primary" />
+        <Button @click="handleAdd" icon="add" size="small" type="primary" class="mr-4" />
       </template>
     </Input>
   </div>
@@ -64,19 +66,5 @@ const handleDel = (i: number) => list.value.splice(i, 1)
 .list-leave-to {
   opacity: 0;
   transform: scale(0);
-}
-
-.input-list {
-  display: inline-block;
-  border-radius: 4px;
-
-  .list-item {
-    display: flex;
-    padding: 0 0 0 8px;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    margin: 0 0 2px 0;
-  }
 }
 </style>

@@ -46,6 +46,7 @@ export default {
     develop: 'Усовершенствовать',
     canceled: 'Отменено',
     downloading: 'Скачивание...',
+    empty: 'Данные отсутствуют',
   },
   kernel: {
     rule: 'По правилам',

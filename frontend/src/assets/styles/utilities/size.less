@@ -1,0 +1,40 @@
+@size-values: 0, 8, 12, 16, 24, 32, 64, 128, 256;
+@percent-values: 25, 50, 60, 75, 90, 100;
+
+.generate-size(@i: 1) when (@i <= length(@size-values)) {
+  @v: extract(@size-values, @i);
+  .w-@{v} {
+    width: unit(@v, px);
+  }
+  .h-@{v} {
+    height: unit(@v, px);
+  }
+  .min-w-@{v} {
+    min-width: unit(@v, px);
+  }
+  .min-h-@{v} {
+    min-height: unit(@v, px);
+  }
+  .generate-size(@i + 1);
+}
+.generate-size();
+
+.generate-percent(@i: 1) when (@i <= length(@percent-values)) {
+  @p: extract(@percent-values, @i);
+  .w-\[@{p}\%\] {
+    width: ~'@{p}%';
+  }
+  .h-\[@{p}\%\] {
+    height: ~'@{p}%';
+  }
+  .generate-percent(@i + 1);
+}
+.generate-percent();
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}

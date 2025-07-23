@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useSubscribesStore } from '@/stores'
 import { message } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 import type { Subscription } from '@/types/app'
 
@@ -42,28 +44,34 @@ if (s) {
   subscribe.value = s
   code.value = s.script
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="script-view">
+  <div>
     <CodeViewer v-model="code" lang="javascript" editable />
   </div>
-  <div class="form-action">
-    <Button @click="handleCancel" :disabled="loading">
-      {{ t('common.cancel') }}
-    </Button>
-    <Button @click="handleSave" :loading="loading" type="primary">
-      {{ t('common.save') }}
-    </Button>
-  </div>
 </template>
-
-<style lang="less" scoped>
-.script-view {
-  display: flex;
-  flex-direction: column;
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-}
-</style>

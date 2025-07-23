@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue'
 
-import { WindowToggleMaximise } from '@/bridge'
+import { useBool } from '@/hooks'
 import useI18n from '@/lang'
 
 export interface Props {
@@ -18,11 +18,28 @@ export interface Props {
   cancelText?: string
   submitText?: string
   maskClosable?: boolean
+  class?: string
+  toolbar?: {
+    maximize?: boolean
+    minimize?: boolean
+    close?: boolean
+  }
   onOk?: () => MaybePromise<boolean | void>
   onCancel?: () => MaybePromise<boolean | void>
   beforeClose?: (isOk: boolean) => MaybePromise<boolean | void>
   afterClose?: (isOk: boolean) => void
 }
+
+export interface Slots {
+  default?: () => any
+  title?: () => any
+  toolbar?: () => any
+  action?: () => any
+  cancel?: () => any
+  submit?: () => any
+}
+
+const slots = defineSlots<Slots>()
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
@@ -38,12 +55,19 @@ const props = withDefaults(defineProps<Props>(), {
   cancelText: 'common.cancel',
   submitText: 'common.save',
   maskClosable: false,
+  toolbar: () => ({
+    maximize: true,
+    minimize: true,
+  }),
 })
 
 const open = defineModel('open', { default: false })
 
 const cancelLoading = ref(false)
 const submitLoading = ref(false)
+
+const [isMaximize, toggleMaximize] = useBool(false)
+// const [isMinimize, toggleMinimize] = useBool(false)
 
 const { t } = useI18n.global
 
@@ -72,8 +96,8 @@ const onMaskClick = () => props.maskClosable && handleCancel()
 const contentStyle = computed(() => ({
   maxHeight: props.maxHeight + '%',
   maxWidth: props.maxWidth + '%',
-  minWidth: props.minWidth + '%',
-  minHeight: props.minHeight + '%',
+  minWidth: isMaximize.value ? '100%' : props.minWidth ? props.minWidth + '%' : '0',
+  minHeight: isMaximize.value ? '100%' : props.minHeight ? props.minHeight + '%' : '0',
   width: props.width + '%',
   height: props.height + '%',
 }))
@@ -85,32 +109,59 @@ provide('submit', handleSubmit)
 <template>
   <Teleport to="body">
     <Transition name="modal" :duration="200">
-      <div v-if="open" @click.self="onMaskClick" class="mask" style="--wails-draggable: drag">
-        <div :style="contentStyle" class="modal" style="--wails-draggable: false">
+      <div
+        v-if="open"
+        @click.self="onMaskClick"
+        class="mask fixed inset-0 z-999 flex items-center justify-center backdrop-blur-sm"
+        style="--wails-draggable: drag"
+      >
+        <div
+          :style="contentStyle"
+          :class="props.class"
+          class="modal transition duration-200 flex flex-col rounded-8"
+          style="--wails-draggable: false"
+        >
           <div
-            v-if="title"
-            @dblclick="WindowToggleMaximise"
-            class="title"
+            v-if="title || slots.title || slots.toolbar"
+            @dblclick="toggleMaximize"
+            class="flex items-center p-16"
             style="--wails-draggable: drag"
           >
-            {{ t(title) }}
+            <slot name="title">
+              <div v-if="title" class="font-bold">{{ t(title) }}</div>
+            </slot>
+            <div class="ml-auto">
+              <slot name="toolbar"></slot>
+              <!-- <Button v-if="toolbar.minimize" @click="toggleMinimize" icon="minimize" type="text" /> -->
+              <Button
+                v-if="toolbar.maximize"
+                @click="toggleMaximize"
+                :class="isMaximize ? '' : 'rotate-180'"
+                icon="arrowDown"
+                type="text"
+              />
+            </div>
           </div>
-          <div class="content">
-            <slot />
+          <div class="flex-1 overflow-auto mx-16">
+            <slot></slot>
           </div>
-          <div v-if="footer" class="action">
-            <slot name="action" />
-            <Button
-              v-if="cancel"
-              @click="handleCancel"
-              :loading="cancelLoading"
-              :type="maskClosable ? 'text' : 'normal'"
-            >
-              {{ t(cancelText) }}
-            </Button>
-            <Button v-if="submit" @click="handleSubmit" :loading="submitLoading" type="primary">
-              {{ t(submitText) }}
-            </Button>
+          <div v-if="footer" class="flex items-center justify-end py-8 px-16 gap-8">
+            <slot name="action"></slot>
+            <slot name="cancel">
+              <Button
+                v-if="cancel"
+                @click="handleCancel"
+                :loading="cancelLoading"
+                :type="maskClosable ? 'text' : 'normal'"
+              >
+                {{ t(cancelText) }}
+              </Button>
+            </slot>
+            <slot name="submit">
+              <Button v-if="submit" @click="handleSubmit" :loading="submitLoading" type="primary">
+                {{ t(submitText) }}
+              </Button>
+            </slot>
           </div>
         </div>
       </div>
@@ -133,41 +184,11 @@ provide('submit', handleSubmit)
 }
 
 .mask {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   background-color: var(--modal-mask-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-  z-index: 999;
 
   .modal {
-    display: flex;
-    flex-direction: column;
     background-color: var(--modal-bg);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    .title {
-      padding: 16px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    .content {
-      overflow-y: auto;
-      margin: 0 8px 8px 8px;
-      padding: 0 8px;
-      flex: 1;
-    }
-    .action {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 8px;
-      padding: 0 16px;
-    }
   }
 }
 </style>

@@ -18,7 +18,7 @@ const routes = computed(() =>
 </script>
 
 <template>
-  <div class="nav">
+  <div class="flex items-center justify-center">
     <div v-for="r in routes" :key="r.path">
       <RouterLink :to="r.path" custom #default="{ navigate, isActive }">
         <Button @click="navigate" :type="isActive ? 'link' : 'text'" :icon="r.meta && r.meta.icon">
@@ -28,10 +28,3 @@ const routes = computed(() =>
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.nav {
-  display: flex;
-  justify-content: center;
-}
-</style>

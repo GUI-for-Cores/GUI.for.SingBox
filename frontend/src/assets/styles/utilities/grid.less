@@ -1,0 +1,20 @@
+.grid {
+  display: grid;
+}
+
+@cols: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 32, 64;
+
+.generate-cols(@i: 1) when (@i <= length(@cols)) {
+  @n: extract(@cols, @i);
+
+  .grid-cols-@{n} {
+    grid-template-columns: repeat(@n, minmax(0, 1fr));
+  }
+
+  .col-span-@{n} {
+    grid-column: span @n / span @n;
+  }
+
+  .generate-cols(@i + 1);
+}
+.generate-cols();

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { Readfile, Writefile } from '@/bridge'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
 import { deepClone, ignoredError, isValidJson, message } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 interface Props {
   id: string
@@ -51,30 +53,32 @@ const initContent = async () => {
 }
 
 initContent()
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="ruleset-view">
-    <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable class="rules" />
-    <div class="form-action">
-      <Button @click="handleCancel" :disabled="loading">
-        {{ t('common.cancel') }}
-      </Button>
-      <Button @click="handleSave" :loading="loading" type="primary">
-        {{ t('common.save') }}
-      </Button>
-    </div>
-  </div>
+  <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable class="h-full" />
 </template>
-
-<style lang="less" scoped>
-.ruleset-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.rules {
-  flex: 1;
-  overflow-y: auto;
-}
-</style>

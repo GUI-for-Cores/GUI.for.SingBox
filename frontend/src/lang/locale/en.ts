@@ -46,6 +46,7 @@ export default {
     develop: 'Develop',
     canceled: 'Canceled',
     downloading: 'Downloading...',
+    empty: 'Data is empty',
   },
   kernel: {
     rule: 'Rule',

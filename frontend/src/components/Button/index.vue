@@ -32,7 +32,7 @@ withDefaults(defineProps<Props>(), {
         :class="$slots.default ? 'mr-4' : ''"
       />
     </template>
-    <slot />
+    <slot></slot>
   </div>
 </template>
 
@@ -47,7 +47,6 @@ withDefaults(defineProps<Props>(), {
   font-size: 14px;
   cursor: pointer;
   padding: 6px 12px;
-  margin: 2px;
   transition: all 0.2s;
 }
 

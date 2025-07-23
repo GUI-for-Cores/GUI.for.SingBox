@@ -192,48 +192,51 @@ onActivated(() => {
 </script>
 
 <template>
-  <div class="groups groups-fixed" style="margin-top: 0">
-    <div class="header">
+  <div class="m-8 mt-0 sticky top-0 z-3">
+    <div
+      class="sticky flex gap-8 items-center p-8 rounded-8 backdrop-blur-sm"
+      style="background-color: var(--card-bg)"
+    >
       <Switch v-model="appSettings.app.kernel.autoClose">
         {{ t('home.controller.autoClose') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.unAvailable" class="ml-8">
+      <Switch v-model="appSettings.app.kernel.unAvailable">
         {{ t('home.controller.unAvailable') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.cardMode" class="ml-8">
+      <Switch v-model="appSettings.app.kernel.cardMode">
         {{ t('home.controller.cardMode') }}
       </Switch>
-      <Switch v-model="appSettings.app.kernel.sortByDelay" class="ml-8">
+      <Switch v-model="appSettings.app.kernel.sortByDelay">
         {{ t('home.controller.sortBy') }}
       </Switch>
-      <Button @click="toggleMoreSettings" type="primary" size="small" class="ml-8"> ... </Button>
-      <Button
-        @click="expandAll"
-        v-tips="'home.overview.expandAll'"
-        type="text"
-        icon="expand"
-        class="ml-auto"
-      />
-      <Button
-        @click="collapseAll"
-        v-tips="'home.overview.collapseAll'"
-        type="text"
-        icon="collapse"
-      />
-      <Button
-        @click="handleRefresh"
-        v-tips="'home.overview.refresh'"
-        :loading="loading"
-        icon="refresh"
-        type="text"
-      />
+      <Button @click="toggleMoreSettings" type="primary" size="small"> ... </Button>
+      <div class="ml-auto">
+        <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" icon="expand" />
+        <Button
+          @click="collapseAll"
+          v-tips="'home.overview.collapseAll'"
+          type="text"
+          icon="collapse"
+        />
+        <Button
+          @click="handleRefresh"
+          v-tips="'home.overview.refresh'"
+          :loading="loading"
+          icon="refresh"
+          type="text"
+        />
+      </div>
     </div>
   </div>
-  <div v-for="group in groups" :key="group.name" class="groups">
-    <div class="header" @click="toggleExpanded(group.name)">
-      <div class="group-info">
-        <span class="group-name">{{ group.name }}</span>
-        <span class="group-type">
+  <div v-for="group in groups" :key="group.name" class="m-8">
+    <div
+      @click="toggleExpanded(group.name)"
+      class="sticky z-2 flex gap-8 items-center p-8 rounded-8 backdrop-blur-sm"
+      style="top: 52px; background-color: var(--card-bg)"
+    >
+      <div class="text-14 flex items-center gap-2">
+        <span class="font-bold text-18">{{ group.name }}</span>
+        <span class="mx-8">
           {{ group.type }}
         </span>
         <span> :: </span>
@@ -244,7 +247,7 @@ onActivated(() => {
           </Button>
         </template>
       </div>
-      <div class="action">
+      <div class="ml-auto">
         <Button
           @click.stop="handleFilter(group.name)"
           type="text"
@@ -260,50 +263,52 @@ onActivated(() => {
         />
         <Button @click.stop="toggleExpanded(group.name)" type="text">
           <Icon
-            :class="{ 'rotate-z': isExpanded(group.name) }"
+            :class="{ 'action-expand-expanded': isExpanded(group.name) }"
+            class="action-expand origin-center duration-200"
             icon="arrowDown"
-            class="action-expand"
           />
         </Button>
       </div>
     </div>
     <Transition name="expand">
-      <div v-if="isExpanded(group.name)" class="body">
+      <div v-if="isExpanded(group.name)" class="py-8 px-4">
         <Empty v-if="group.all.length === 0" />
-        <template v-else-if="appSettings.app.kernel.cardMode">
+        <div v-else-if="appSettings.app.kernel.cardMode" class="grid grid-cols-5 gap-8">
           <Card
             v-for="proxy in group.all"
             :title="proxy.name"
             :selected="proxy.name === group.now"
             :key="proxy.name"
             @click="useProxyWithCatchError(group, proxy)"
-            class="proxy"
           >
             <Button
               @click.stop="handleProxyDelay(proxy.name)"
               :style="{ color: delayColor(proxy.delay) }"
               :loading="isLoading(proxy.name)"
               type="text"
-              class="delay"
+              size="small"
+              style="margin-left: -2px; padding-left: 2px"
             >
-              {{ proxy.delay && proxy.delay + 'ms' }}
+              <div class="text-12">
+                {{ proxy.delay && proxy.delay + 'ms' }}
+              </div>
             </Button>
-            <div class="type">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
+            <div class="text-12 my-2">{{ proxy.type }} {{ proxy.udp ? ':: udp' : '' }}</div>
           </Card>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else class="grid grid-cols-32 gap-8">
           <div
             v-for="proxy in group.all"
             v-tips.fast="proxy.name"
             @click="useProxyWithCatchError(group, proxy)"
             :key="proxy.name"
             :style="{ background: delayColor(proxy.delay) }"
-            :class="{ selected: proxy.name === group.now }"
-            class="proxy-square"
+            :class="proxy.name === group.now ? 'rounded-full' : ''"
+            class="w-12 h-12 rounded-4"
           >
-            <Icon v-if="isLoading(proxy.name)" class="rotation" icon="loading" />
+            <Icon v-if="isLoading(proxy.name)" icon="loading" />
           </div>
-        </template>
+        </div>
       </div>
     </Transition>
   </div>
@@ -316,7 +321,7 @@ onActivated(() => {
     title="common.more"
   >
     <template #action>
-      <Button @click="handleResetMoreSettings" class="mr-auto" type="text">
+      <Button @click="handleResetMoreSettings" type="text" class="mr-auto">
         {{ t('common.reset') }}
       </Button>
     </template>
@@ -367,89 +372,10 @@ onActivated(() => {
   transform: scaleY(0);
 }
 
-.groups-fixed {
-  z-index: 2;
-  position: sticky;
-  top: 0;
-}
-.groups {
-  margin: 8px;
-
-  .header {
-    position: sticky;
-    z-index: 1;
-    top: 56px;
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    backdrop-filter: blur(2px);
-    .group-info {
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      .group-name {
-        font-weight: bold;
-        font-size: 18px;
-      }
-
-      .group-type {
-        margin: 0 8px;
-      }
-    }
-
-    .action {
-      margin-left: auto;
-
-      .rotate-z {
-        transform: rotateZ(0deg);
-      }
-      &-expand {
-        transform: rotateZ(-90deg);
-        transition: all 0.2s;
-      }
-    }
-  }
-
-  .body {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 4px;
-    .proxy {
-      cursor: pointer;
-      width: calc(20% - 8px);
-      margin: 4px 4px;
-      .delay {
-        height: 20px;
-        margin-left: -4px;
-        padding-left: 4px;
-      }
-      .type,
-      .delay {
-        font-size: 12px;
-      }
-    }
-
-    .proxy-square {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 12px;
-      height: 12px;
-      margin: 4px;
-      border-radius: 4px;
-
-      .rotation {
-        animation: rotate 2s infinite linear;
-      }
-    }
-
-    .selected {
-      border-radius: 12px;
-      border: 2px solid var(--primary-color);
-      box-shadow: 0 0 4px var(--secondary-color);
-    }
+.action-expand {
+  transform: rotate(-90deg);
+  &-expanded {
+    transform: rotate(0deg);
   }
 }
 </style>

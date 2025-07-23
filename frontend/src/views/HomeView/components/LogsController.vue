@@ -101,9 +101,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="logs-view">
-    <div class="form">
-      <span class="label">
+  <div class="flex flex-col h-full">
+    <div class="flex items-center">
+      <span class="text-12 pr-8">
         {{ t('kernel.log.level') }}
         :
       </span>
@@ -111,7 +111,6 @@ onUnmounted(() => {
       <Input
         v-model="keywords"
         clearable
-        auto-size
         size="small"
         :placeholder="t('common.keywords')"
         class="ml-8 flex-1"
@@ -126,61 +125,35 @@ onUnmounted(() => {
       <Button @click="handleClear" v-tips="'common.clear'" icon="clear" size="small" type="text" />
     </div>
 
-    <Empty v-if="filteredLogs.length === 0" class="flex-1" />
+    <Empty v-if="filteredLogs.length === 0" />
 
-    <div v-else class="logs">
+    <div v-else class="mt-8 overflow-y-auto">
       <div
         v-for="log in filteredLogs"
         v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(log) }))"
         :key="log.payload"
-        class="log select-text"
+        class="log select-text text-12 py-2 px-4 my-4"
       >
-        <span class="type">{{ log.type }}</span> {{ log.payload }}
+        <span class="type inline-block text-center">{{ log.type }}</span> {{ log.payload }}
       </div>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.logs-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.logs {
-  margin-top: 8px;
-  flex: 1;
-  overflow-y: auto;
-
-  .log {
-    font-size: 12px;
-    padding: 2px 4px;
-    margin: 4px 0;
-    background: var(--card-bg);
-    &:hover {
+.log {
+  background: var(--card-bg);
+  &:hover {
+    color: #fff;
+    background: var(--primary-color);
+    .type {
       color: #fff;
-      background: var(--primary-color);
-      .type {
-        color: #fff;
-      }
     }
   }
 }
 
-.form {
-  display: flex;
-  align-items: center;
-  .label {
-    padding-right: 8px;
-    font-size: 12px;
-  }
-}
-
 .type {
-  display: inline-block;
   width: 50px;
-  text-align: center;
   color: var(--primary-color);
 }
 </style>

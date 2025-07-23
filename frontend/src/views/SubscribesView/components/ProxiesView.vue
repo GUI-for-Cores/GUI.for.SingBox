@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ClipboardSetText, Readfile, Writefile } from '@/bridge'
@@ -7,6 +7,8 @@ import { DraggableOptions } from '@/constant/app'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
 import { deepClone, ignoredError, message, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 import type { Menu, Subscription } from '@/types/app'
 
@@ -182,7 +184,7 @@ const onEditEnd = async () => {
 
 const initAllFieldsProxies = async () => {
   if (allFieldsProxies.value.length) return
-  const content = (await ignoredError(Readfile, sub.value!.path)) || '{}'
+  const content = (await ignoredError(Readfile, sub.value!.path)) || '[]'
   allFieldsProxies.value = JSON.parse(content)
 }
 
@@ -192,12 +194,36 @@ const getProxyByTag = async (tag: string) => {
   if (!proxy) throw 'Proxy Not Found'
   return proxy
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="proxies-view">
-    <div class="form">
-      <span class="label">
+  <div class="h-full flex flex-col">
+    <div class="flex items-center">
+      <span class="mr-8">
         {{ t('subscribes.proxies.type') }}
         :
       </span>
@@ -207,40 +233,36 @@ const getProxyByTag = async (tag: string) => {
         :placeholder="t('subscribes.proxies.name')"
         clearable
         size="small"
-        class="ml-8 flex-1"
+        class="mx-8 flex-1"
       />
       <Button @click="handleAdd" type="primary" size="small">
         {{ t('subscribes.proxies.add') }}
       </Button>
     </div>
 
-    <Empty v-if="filteredProxies.length === 0" class="flex-1" />
+    <Empty v-if="filteredProxies.length === 0" />
 
-    <div v-else v-draggable="[sub.proxies, DraggableOptions]" class="proxies">
+    <div
+      v-else
+      v-draggable="[sub.proxies, DraggableOptions]"
+      class="grid grid-cols-4 gap-8 mt-8 overflow-y-auto"
+    >
       <Card
         v-for="proxy in filteredProxies"
         :key="proxy.tag"
         :title="proxy.tag"
         v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(proxy) }))"
-        class="proxy"
       >
-        {{ proxy.type }}
+        <div class="text-12">
+          {{ proxy.type }}
+        </div>
       </Card>
-    </div>
-    <div class="form-action">
-      <Button @click="handleCancel" :disabled="loading">
-        {{ t('common.cancel') }}
-      </Button>
-      <Button @click="handleSave" :loading="loading" type="primary">
-        {{ t('common.save') }}
-      </Button>
     </div>
   </div>
 
   <Modal
     v-model:open="showDetails"
     :submit="isEdit"
-    :cancel="isEdit"
     :mask-closable="!isEdit"
     :title="isEdit ? (details ? 'common.edit' : 'common.add') : 'common.details'"
     :on-ok="onEditEnd"
@@ -251,30 +273,3 @@ const getProxyByTag = async (tag: string) => {
     <CodeViewer v-model="details" lang="json" :editable="isEdit" />
   </Modal>
 </template>
-
-<style lang="less" scoped>
-.proxies-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.form {
-  display: flex;
-  align-items: center;
-  .label {
-    padding-right: 8px;
-    font-size: 12px;
-  }
-}
-.proxies {
-  margin-top: 8px;
-  flex: 1;
-  overflow-y: auto;
-
-  .proxy {
-    display: inline-block;
-    width: calc(25% - 4px);
-    margin: 2px;
-  }
-}
-</style>

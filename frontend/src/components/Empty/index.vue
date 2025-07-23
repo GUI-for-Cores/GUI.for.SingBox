@@ -4,30 +4,15 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  width: '90px',
-  description: 'empty',
+  description: 'common.empty',
 })
 </script>
 
 <template>
-  <div class="empty">
+  <div class="flex flex-col w-full h-full items-center justify-center">
     <Icon icon="empty" :size="64" />
     <slot name="description">
-      <div class="desc">{{ description }}</div>
+      <div class="text-12 py-8">{{ $t(description) }}</div>
     </slot>
   </div>
 </template>
-
-<style lang="less" scoped>
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-.desc {
-  font-size: 12px;
-  padding: 8px 0;
-}
-</style>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, useSlots } from 'vue'
+
 import vTips from '@/directives/tips'
 
 interface Props {
@@ -8,68 +10,66 @@ interface Props {
   disabled?: boolean
 }
 
-withDefaults(defineProps<Props>(), {})
+const props = defineProps<Props>()
+
+const slots = useSlots()
+
+const hasTitle = computed(() => {
+  return slots.extra || slots['title-prefix'] || slots['title-suffix'] || props.title
+})
 </script>
 
 <template>
-  <div class="card">
-    <div
-      v-if="$slots['extra'] || $slots['title-prefix'] || $slots['title-suffix'] || title"
-      class="header"
-    >
-      <slot name="title-prefix" />
-      <div v-if="title" v-tips="title" class="title">{{ title }}</div>
-      <slot name="title-suffix" />
-      <div class="extra">
-        <slot name="extra" />
+  <div class="card rounded-8 relative flex flex-col">
+    <div v-if="hasTitle" class="card-header flex items-center p-8">
+      <slot name="title-prefix"></slot>
+      <div v-if="title" v-tips="title" class="card-header_title line-clamp-1 text-16 font-bold">
+        {{ title }}
+      </div>
+      <slot name="title-suffix"></slot>
+      <div class="card-header_extra flex items-center ml-auto">
+        <slot name="extra"></slot>
       </div>
     </div>
-    <div v-if="subtitle" class="subtitle">{{ subtitle }}</div>
-    <slot />
-    <Icon v-if="selected" :size="32" icon="selected" fill="var(--primary-color)" class="status" />
-    <Icon v-if="disabled" :size="32" icon="disabled" fill="var(--primary-color)" class="status" />
+    <div v-if="subtitle" class="card-header_subtitle mx-8">{{ subtitle }}</div>
+    <div class="flex-1 px-8" :class="hasTitle ? 'pb-8' : ''">
+      <slot></slot>
+    </div>
+    <Icon
+      v-if="selected"
+      :size="32"
+      icon="selected"
+      fill="var(--primary-color)"
+      class="absolute right-8 bottom-4"
+    />
+    <Icon
+      v-if="disabled"
+      :size="32"
+      icon="disabled"
+      fill="var(--primary-color)"
+      class="absolute right-8 bottom-4"
+    />
   </div>
 </template>
 
 <style lang="less" scoped>
 .card {
-  position: relative;
   color: var(--card-color);
   background-color: var(--card-bg);
-  padding: 0 8px 8px 8px;
-  border-radius: 8px;
   transition:
-    box-shadow 0.4s,
-    background-color 0.4s;
+    box-shadow 0.2s,
+    background 0.2s;
   &:hover {
-    background-color: var(--card-hover-bg);
     box-shadow: 0 8px 8px rgba(0, 0, 0, 0.06);
+    background-color: var(--card-hover-bg);
   }
   &:active {
     background-color: var(--card-active-bg);
   }
-  .header {
-    display: flex;
-    align-items: center;
-    padding: 8px 0;
-    .title {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+  &-header {
+    &_title {
       color: var(--card-color);
-      font-size: 16px;
-      font-weight: bold;
     }
-    .extra {
-      display: flex;
-      align-items: center;
-      margin-left: auto;
-    }
-  }
-  .status {
-    position: absolute;
-    right: 8px;
-    bottom: 4px;
   }
 }
 </style>

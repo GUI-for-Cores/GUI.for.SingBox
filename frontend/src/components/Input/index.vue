@@ -65,6 +65,9 @@ const onInput = debounce((e: any) => {
 
 const handleClear = () => {
   emits('update:modelValue', props.type === 'number' ? 0 : '')
+  nextTick(() => {
+    inputRef.value?.focus()
+  })
 }
 
 const showInput = () => {

@@ -289,8 +289,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="connections">
-    <div class="form">
+  <div class="flex flex-col h-full">
+    <div class="flex items-center">
       <Radio
         v-model="isActive"
         :options="[
@@ -333,11 +333,11 @@ onUnmounted(() => {
       <Button @click="toggleSettings" icon="settings" size="small" type="text" />
     </div>
     <Table
+      class="flex-1 mt-8"
       :columns="columns"
       :menu="menu"
       :data-source="filteredConnections"
       sort="start"
-      class="mt-8"
     />
   </div>
 
@@ -355,52 +355,24 @@ onUnmounted(() => {
 
   <Modal
     v-model:open="showSettings"
-    :footer="false"
+    :submit="false"
     mask-closable
     max-height="80"
     cancel-text="common.close"
     title="home.connections.sort"
   >
-    <div class="sort-view" v-draggable="[appSettingsStore.app.connections.order, DraggableOptions]">
-      <Card
-        v-for="column in appSettingsStore.app.connections.order"
-        :key="column"
-        class="field-item"
-      >
-        <span class="font-bold">{{ t(columnTitleMap[column] || column) }}</span>
-        <Switch v-model="appSettingsStore.app.connections.visibility[column]" class="ml-auto" />
-      </Card>
-    </div>
-    <div class="form-action">
+    <template #action>
       <Button @click="handleResetConnections" type="text" class="mr-auto">
         {{ t('common.reset') }}
       </Button>
-      <Button @click="showSettings = false" type="text">{{ t('common.close') }}</Button>
+    </template>
+    <div v-draggable="[appSettingsStore.app.connections.order, DraggableOptions]">
+      <Card v-for="column in appSettingsStore.app.connections.order" :key="column" class="mb-2">
+        <div class="flex items-center justify-between py-2">
+          <span class="font-bold">{{ t(columnTitleMap[column] || column) }}</span>
+          <Switch v-model="appSettingsStore.app.connections.visibility[column]" />
+        </div>
+      </Card>
     </div>
   </Modal>
 </template>
-
-<style lang="less" scoped>
-.connections {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.form {
-  display: flex;
-  align-items: center;
-}
-
-.field-item {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  margin-bottom: 2px;
-}
-
-.sort-view {
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 60vh;
-}
-</style>

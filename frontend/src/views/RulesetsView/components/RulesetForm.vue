@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, inject, watch, computed } from 'vue'
+import { ref, inject, watch, computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { RulesetFormatOptions } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
 import { type RuleSetType, useRulesetsStore } from '@/stores'
 import { deepClone, message, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 interface Props {
   id?: string
@@ -102,6 +104,31 @@ if (props.isUpdate) {
     ruleset.value = deepClone(r)
   }
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        disabled: disabled.value,
+        loading: loading.value,
+        onClick: handleSubmit,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
@@ -151,13 +178,6 @@ if (props.isUpdate) {
         class="input"
       />
     </div>
-  </div>
-
-  <div class="form-action">
-    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" :loading="loading" :disabled="disabled" type="primary">
-      {{ t('common.save') }}
-    </Button>
   </div>
 </template>
 

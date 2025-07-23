@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
+import { h, inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DefaultSubscribeScript } from '@/constant/app'
@@ -8,6 +8,8 @@ import * as Defaults from '@/constant/profile'
 import { RequestMethod } from '@/enums/app'
 import { useProfilesStore, useAppSettingsStore, useSubscribesStore } from '@/stores'
 import { message, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 import type { Subscription } from '@/types/app'
 
@@ -20,10 +22,9 @@ const url = ref('')
 const loading = ref(false)
 
 const handleCancel = inject('cancel') as any
+const handleSubmit = inject('submit') as any
 
-const canSubmit = computed(() => url.value && url.value.toLocaleLowerCase().startsWith('http'))
-
-const handleSubmit = async () => {
+const handleSave = async () => {
   const subscribeID = sampleID()
 
   const subscribe: Subscription = {
@@ -91,20 +92,37 @@ const handleSubmit = async () => {
 
   loading.value = false
 
-  handleCancel()
+  handleSubmit()
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        disabled: !/^https?:\/\//.test(url.value),
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="form-item">
-    <div>{{ t('subscribe.url') }} *</div>
-    <Input v-model="url" auto-size placeholder="http(s)://" autofocus style="width: 76%" />
-  </div>
-
-  <div class="form-action">
-    <Button @click="handleCancel" :disabled="loading" type="text">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" :disabled="!canSubmit" :loading="loading" type="primary">
-      {{ t('common.save') }}
-    </Button>
+  <div>
+    <Input v-model="url" auto-size placeholder="http(s)://" autofocus clearable />
   </div>
 </template>

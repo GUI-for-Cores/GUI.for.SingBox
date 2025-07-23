@@ -1,27 +1,9 @@
-<script setup lang="ts"></script>
-
 <template>
-  <div class="divider">
-    <div class="left line"></div>
-    <div class="text">
+  <div class="flex items-center w-full">
+    <div class="flex-1" style="border-top: 1px solid var(--divider-color)"></div>
+    <div class="text-12 p-8">
       <slot />
     </div>
-    <div class="right line"></div>
+    <div class="flex-1" style="border-top: 1px solid var(--divider-color)"></div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.divider {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  .line {
-    flex: 1;
-    border-top: 1px solid var(--divider-color);
-  }
-  .text {
-    font-size: 12px;
-    padding: 8px;
-  }
-}
-</style>

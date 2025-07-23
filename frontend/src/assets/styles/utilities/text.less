@@ -1,0 +1,53 @@
+@text-sizes: 10, 12, 14, 16, 18, 20, 24, 32;
+
+.generate-text(@i: 1) when (@i <= length(@text-sizes)) {
+  @s: extract(@text-sizes, @i);
+  .text-@{s} {
+    font-size: unit(@s, px);
+  }
+  .generate-text(@i + 1);
+}
+.generate-text();
+
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.text-nowrap {
+  text-wrap: nowrap;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.select-text {
+  user-select: text;
+  -webkit-user-select: text;
+}

@@ -46,6 +46,7 @@ export default {
     develop: '开发',
     canceled: '已取消',
     downloading: '下载中...',
+    empty: '数据为空',
   },
   kernel: {
     rule: '规则',

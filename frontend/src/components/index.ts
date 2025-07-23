@@ -1,6 +1,5 @@
 import type { Plugin, App, Component } from 'vue'
 
-export { default as MainPage } from './MainPage.vue'
 export { default as TitleBar } from './TitleBar.vue'
 export { default as NavigationBar } from './NavigationBar.vue'
 

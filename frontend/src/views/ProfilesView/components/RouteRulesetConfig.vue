@@ -75,26 +75,35 @@ const handleUse = (ruleset: any) => {
   </Empty>
 
   <div v-draggable="[model, DraggableOptions]">
-    <Card v-for="(ruleset, index) in model" :key="ruleset.id" class="ruleset-item">
-      <div class="font-bold">
-        <span v-if="hasLost(ruleset)" @click="showLost" class="warn"> [ ! ] </span>
-        <Tag color="cyan">{{ ruleset.tag }}</Tag>
-        <Tag>
-          {{ t('kernel.route.rule_set.type.' + ruleset.type) }}
-          {{
-            t(
-              'kernel.route.rule_set.format.' +
-                (ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format),
-            )
-          }}
-        </Tag>
-        <template v-if="ruleset.type === RulesetType.Inline">
-          {{ ruleset.rules }}
-        </template>
-      </div>
-      <div class="ml-auto">
-        <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-        <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+    <Card v-for="(ruleset, index) in model" :key="ruleset.id" class="mb-2">
+      <div class="flex items-center">
+        <div class="font-bold">
+          <span
+            v-if="hasLost(ruleset)"
+            @click="showLost"
+            class="cursor-pointer"
+            :style="{ color: 'rgb(200, 193, 11)' }"
+          >
+            [ ! ]
+          </span>
+          <Tag color="cyan">{{ ruleset.tag }}</Tag>
+          <Tag>
+            {{ t('kernel.route.rule_set.type.' + ruleset.type) }}
+            {{
+              t(
+                'kernel.route.rule_set.format.' +
+                  (ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format),
+              )
+            }}
+          </Tag>
+          <template v-if="ruleset.type === RulesetType.Inline">
+            {{ ruleset.rules }}
+          </template>
+        </div>
+        <div class="ml-auto">
+          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
+          <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+        </div>
       </div>
     </Card>
   </div>
@@ -116,7 +125,7 @@ const handleUse = (ruleset: any) => {
     </div>
     <template v-if="fields.type === RulesetType.Local">
       <Divider>{{ t('kernel.route.tab.rule_set') }}</Divider>
-      <div class="rulesets">
+      <div class="grid grid-cols-3 gap-8">
         <Empty
           v-if="rulesetsStore.rulesets.length === 0"
           :description="t('kernel.route.rule_set.empty')"
@@ -129,9 +138,10 @@ const handleUse = (ruleset: any) => {
             @click="handleUse(ruleset)"
             :selected="fields.path === ruleset.id"
             v-tips="ruleset.path"
-            class="ruleset"
           >
-            {{ ruleset.path }}
+            <div class="text-12">
+              {{ ruleset.path }}
+            </div>
           </Card>
         </template>
       </div>
@@ -159,30 +169,3 @@ const handleUse = (ruleset: any) => {
     </template>
   </Modal>
 </template>
-
-<style lang="less" scoped>
-.ruleset-item {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  margin-bottom: 2px;
-
-  .warn {
-    color: rgb(200, 193, 11);
-    cursor: pointer;
-  }
-}
-
-.rulesets {
-  display: flex;
-  flex-wrap: wrap;
-  .ruleset {
-    width: calc(33.3333% - 16px);
-    margin: 8px;
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-</style>

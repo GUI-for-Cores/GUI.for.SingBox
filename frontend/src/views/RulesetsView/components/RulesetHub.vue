@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
+import { computed, h, inject, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { HttpGet, Readfile, Writefile } from '@/bridge'
 import { RulesetFormat } from '@/enums/kernel'
 import { useRulesetsStore } from '@/stores'
 import { ignoredError, message, alert } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
+import Pagination from '@/components/Pagination/index.vue'
 
 type RulesetHub = {
   geosite: string
@@ -110,6 +113,32 @@ const handlePreview = async (ruleset: RulesetHub['list'][number], format: Rulese
 const isAlreadyAdded = (id: string) => rulesetsStore.getRulesetById(id)
 
 getList()
+
+const modalSlots = {
+  action: () =>
+    h(Pagination, {
+      current: currentPage.value,
+      'onUpdate:current': (current: number) => (currentPage.value = current),
+      total: filteredList.value.length,
+      pageSize: pageSize,
+      size: 'small',
+      class: 'mr-auto',
+      style: {
+        display: loading.value ? 'block' : '',
+      },
+    }),
+  close: () =>
+    h(
+      Button,
+      {
+        type: 'text',
+        onClick: handleCancel,
+      },
+      () => t('common.close'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
@@ -190,16 +219,6 @@ getList()
         </Card>
       </div>
     </template>
-    <div class="flex justify-between items-center pt-4">
-      <Pagination
-        v-if="!loading"
-        v-model:current="currentPage"
-        :total="filteredList.length"
-        :page-size="pageSize"
-        size="small"
-      />
-      <Button @click="handleCancel" type="text" class="ml-auto">{{ t('common.close') }}</Button>
-    </div>
   </div>
 </template>
 

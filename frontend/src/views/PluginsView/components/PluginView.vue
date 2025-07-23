@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { Readfile, Writefile } from '@/bridge'
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore } from '@/stores'
 import { deepClone, ignoredError, message } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
+import Dropdown from '@/components/Dropdown/index.vue'
 
 import type { Plugin } from '@/types/app'
 
@@ -87,75 +90,86 @@ if (p) {
   metadata.value = pluginsStore.getPluginMetadata(plugin.value)
   initPluginCode(p)
 }
+
+const modalSlots = {
+  action: () => {
+    const events = [
+      [PluginTriggerEvent.OnManual, 'plugin.on::manual'],
+      [PluginTriggerEvent.OnInstall, 'plugin.on::install'],
+      [PluginTriggerEvent.OnUninstall, 'plugin.on::uninstall'],
+      [PluginTriggerEvent.OnStartup, 'plugin.on::startup'],
+      [PluginTriggerEvent.OnShutdown, 'plugin.on::shutdown'],
+      [PluginTriggerEvent.OnReady, 'plugin.on::ready'],
+      [PluginTriggerEvent.OnTask, 'plugin.on::task'],
+      [PluginTriggerEvent.OnConfigure, 'plugin.on::configure'],
+      [PluginTriggerEvent.OnSubscribe, 'plugin.on::subscribe'],
+      [PluginTriggerEvent.OnGenerate, 'plugin.on::generate'],
+      [PluginTriggerEvent.OnCoreStarted, 'plugin.on::core::started'],
+      [PluginTriggerEvent.OnCoreStopped, 'plugin.on::core::stopped'],
+      [PluginTriggerEvent.OnBeforeCoreStart, 'plugin.on::before::core::start'],
+      [PluginTriggerEvent.OnBeforeCoreStop, 'plugin.on::before::core::stop'],
+    ] as const
+
+    return h(
+      Dropdown,
+      {
+        trigger: ['hover'],
+        placement: 'top',
+        class: 'mr-auto',
+      },
+      {
+        default: () =>
+          h(
+            Button,
+            {
+              loading: testing.value,
+              type: 'link',
+            },
+            () => t('plugins.testRun'),
+          ),
+        overlay: () =>
+          h(
+            'div',
+            {},
+            events.map(([type, label]) =>
+              h(
+                Button,
+                {
+                  onClick: () => handleTest(type),
+                  type: 'link',
+                  size: 'small',
+                },
+                () => t(label),
+              ),
+            ),
+          ),
+      },
+    )
+  },
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="plugin-view">
-    <CodeViewer v-model="code" :plugin="metadata" lang="javascript" editable />
-  </div>
-  <div class="form-action">
-    <Dropdown :trigger="['hover']" placement="top" class="mr-auto">
-      <Button :loading="testing" type="link">{{ t('plugins.testRun') }}</Button>
-      <template #overlay>
-        <Button @click="handleTest(PluginTriggerEvent.OnManual)" type="link" size="small">
-          {{ t('plugin.on::manual') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnInstall)" type="link" size="small">
-          {{ t('plugin.on::install') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnUninstall)" type="link" size="small">
-          {{ t('plugin.on::uninstall') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnStartup)" type="link" size="small">
-          {{ t('plugin.on::startup') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnShutdown)" type="link" size="small">
-          {{ t('plugin.on::shutdown') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnReady)" type="link" size="small">
-          {{ t('plugin.on::ready') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnTask)" type="link" size="small">
-          {{ t('plugin.on::task') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnConfigure)" type="link" size="small">
-          {{ t('plugin.on::configure') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnSubscribe)" type="link" size="small">
-          {{ t('plugin.on::subscribe') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnGenerate)" type="link" size="small">
-          {{ t('plugin.on::generate') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnCoreStarted)" type="link" size="small">
-          {{ t('plugin.on::core::started') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnCoreStopped)" type="link" size="small">
-          {{ t('plugin.on::core::stopped') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnBeforeCoreStart)" type="link" size="small">
-          {{ t('plugin.on::before::core::start') }}
-        </Button>
-        <Button @click="handleTest(PluginTriggerEvent.OnBeforeCoreStop)" type="link" size="small">
-          {{ t('plugin.on::before::core::stop') }}
-        </Button>
-      </template>
-    </Dropdown>
-    <Button @click="handleCancel" :disabled="loading">
-      {{ t('common.cancel') }}
-    </Button>
-    <Button @click="handleSave" :loading="loading" type="primary">
-      {{ t('common.save') }}
-    </Button>
-  </div>
+  <CodeViewer v-model="code" :plugin="metadata" lang="javascript" editable />
 </template>
-
-<style lang="less" scoped>
-.plugin-view {
-  display: flex;
-  flex-direction: column;
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-}
-</style>

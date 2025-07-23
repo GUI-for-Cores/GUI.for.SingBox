@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { ClipboardSetText } from '@/bridge'
@@ -29,24 +28,22 @@ const kernelApiStore = useKernelApiStore()
 const pluginsStore = usePluginsStore()
 
 const menuList: Menu[] = [
-  ...[
-    'profile.step.name',
-    'profile.step.general',
-    'profile.step.inbounds',
-    'profile.step.outbounds',
-    'profile.step.route',
-    'profile.step.dns',
-    'profile.step.mixin-script',
-  ].map((v, i) => {
-    return {
-      label: v,
-      handler: (id: string) => {
-        const p = profilesStore.getProfileById(id)
-        p && handleShowProfileForm(p.id, true, i)
-      },
-    }
-  }),
-]
+  'profile.step.name',
+  'profile.step.general',
+  'profile.step.inbounds',
+  'profile.step.outbounds',
+  'profile.step.route',
+  'profile.step.dns',
+  'profile.step.mixin-script',
+].map((v, i) => {
+  return {
+    label: v,
+    handler: (id: string) => {
+      const p = profilesStore.getProfileById(id)
+      p && handleShowProfileForm(p.id, i)
+    },
+  }
+})
 
 const secondaryMenusList: Menu[] = [
   {
@@ -153,20 +150,17 @@ const generateMenus = (profile: IProfile) => {
   return builtInMenus
 }
 
-const handleShowProfileForm = (id?: string, isUpdate = false, step = 0) => {
-  modalApi
-    .setProps({
-      footer: false,
-      minWidth: '70',
-      onOk: async () => {
-        const { running, profile } = appSettingsStore.app.kernel
-        if (running && profile === id) {
-          await kernelApiStore.restartKernel(undefined, false)
-        }
-      },
-    })
-    .setComponent(h(ProfileForm, { id, isUpdate, step }))
-    .open()
+const handleShowProfileForm = (id?: string, step = 0) => {
+  modalApi.setProps({
+    minWidth: '70',
+    onOk: async () => {
+      const { running, profile } = appSettingsStore.app.kernel
+      if (running && profile === id) {
+        await kernelApiStore.restartKernel(undefined, false)
+      }
+    },
+  })
+  modalApi.setContent(ProfileForm, { id, step }).open()
 }
 
 const handleDeleteProfile = async (p: IProfile) => {
@@ -207,7 +201,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
   <div v-if="profilesStore.profiles.length === 0" class="grid-list-empty">
     <Empty>
       <template #description>
-        <I18nT keypath="profiles.empty" tag="p" scope="global">
+        <I18nT keypath="profiles.empty" tag="div" scope="global" class="flex items-center mt-12">
           <template #action>
             <Button @click="handleShowProfileForm()" type="link">{{ t('common.add') }}</Button>
           </template>
@@ -218,7 +212,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
 
   <div v-else class="grid-list-header">
     <Radio v-model="appSettingsStore.app.profilesView" :options="ViewOptions" class="mr-auto" />
-    <Button @click="handleShowProfileForm()" type="primary">
+    <Button @click="handleShowProfileForm()" type="primary" icon="add">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -234,7 +228,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
       :selected="appSettingsStore.app.kernel.profile === p.id"
       @dblclick="handleUseProfile(p)"
       v-menu="generateMenus(p)"
-      class="item"
+      class="grid-list-item"
     >
       <template #title-prefix>
         <Tag
@@ -251,27 +245,29 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
         <Dropdown :trigger="['hover', 'click']">
           <Button type="link" size="small" icon="more" />
           <template #overlay>
-            <Button @click="handleUseProfile(p)" type="link" size="small">
-              {{ t('common.use') }}
-            </Button>
-            <Button @click="handleShowProfileForm(p.id, true)" type="link" size="small">
-              {{ t('common.edit') }}
-            </Button>
-            <Button @click="handleDeleteProfile(p)" type="link" size="small">
-              {{ t('common.delete') }}
-            </Button>
+            <div class="flex flex-col gap-4 min-w-64 p-4">
+              <Button @click="handleUseProfile(p)" type="text" size="small">
+                {{ t('common.use') }}
+              </Button>
+              <Button @click="handleShowProfileForm(p.id)" type="text" size="small">
+                {{ t('common.edit') }}
+              </Button>
+              <Button @click="handleDeleteProfile(p)" type="text" size="small">
+                {{ t('common.delete') }}
+              </Button>
+            </div>
           </template>
         </Dropdown>
       </template>
 
       <template v-else #extra>
-        <Button @click="handleUseProfile(p)" type="link" size="small">
+        <Button @click="handleUseProfile(p)" type="text" size="small">
           {{ t('common.use') }}
         </Button>
-        <Button @click="handleShowProfileForm(p.id, true)" type="link" size="small">
+        <Button @click="handleShowProfileForm(p.id)" type="text" size="small">
           {{ t('common.edit') }}
         </Button>
-        <Button @click="handleDeleteProfile(p)" type="link" size="small">
+        <Button @click="handleDeleteProfile(p)" type="text" size="small">
           {{ t('common.delete') }}
         </Button>
       </template>

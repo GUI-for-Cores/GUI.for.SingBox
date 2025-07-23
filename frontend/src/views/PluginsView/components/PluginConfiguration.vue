@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore } from '@/stores'
 import { deepClone, message, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 import type { PluginConfiguration } from '@/types/app'
 
@@ -81,17 +83,51 @@ if (p) {
   }
   oldSettings.value = deepClone(settings.value)
 }
+
+const modalSlots = {
+  action: () =>
+    h(
+      Button,
+      {
+        type: 'link',
+        class: 'mr-auto',
+        onClick: () => handleRestoreConfiguration(true),
+      },
+      () => t('plugin.restore'),
+    ),
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSubmit,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="form">
+  <div>
     <Card
       v-for="(conf, index) in configuration"
       :key="conf.id"
-      :title="index + 1 + '、' + conf.title"
+      :title="`${index + 1}、${conf.title}`"
       class="mb-8"
     >
-      <div class="mb-8" style="font-size: 12px">{{ conf.description }}</div>
+      <div class="mb-8 text-12">{{ conf.description }}</div>
       <Component
         v-model="settings[conf.key]"
         :key="key"
@@ -102,26 +138,4 @@ if (p) {
       />
     </Card>
   </div>
-  <div class="form-action">
-    <Button @click="handleRestoreConfiguration(true)" type="link" class="mr-auto">
-      {{ t('plugin.restore') }}
-    </Button>
-    <Button @click="handleCancel" :disabled="loading">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" :loading="loading" type="primary">
-      {{ t('common.save') }}
-    </Button>
-  </div>
 </template>
-
-<style lang="less" scoped>
-.form {
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-  .name {
-    font-size: 14px;
-    padding: 8px 0;
-    white-space: nowrap;
-  }
-}
-</style>

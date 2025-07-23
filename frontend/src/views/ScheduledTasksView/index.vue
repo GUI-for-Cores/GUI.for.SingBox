@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { h } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { DraggableOptions } from '@/constant/app'
@@ -35,31 +34,25 @@ const scheduledTasksStore = useScheduledTasksStore()
 const appSettingsStore = useAppSettingsStore()
 
 const handleShowTaskLogs = (id?: string) => {
-  modalApi
-    .setProps({
-      title: 'scheduledtasks.logs',
-      cancelText: 'common.close',
-      maskClosable: true,
-      submit: false,
-      width: '90',
-      height: '90',
-    })
-    .setComponent(h(ScheduledTasksLogs, { id }))
-    .open()
+  modalApi.setProps({
+    title: 'scheduledtasks.logs',
+    cancelText: 'common.close',
+    maskClosable: true,
+    submit: false,
+    width: '90',
+    height: '90',
+  })
+  modalApi.setContent(ScheduledTasksLogs, { id }).open()
 }
 
-const handleShowTaskForm = (id?: string, isUpdate = false) => {
-  modalApi
-    .setProps({
-      title: isUpdate ? 'common.edit' : 'common.add',
-      maxHeight: '90',
-      minWidth: '70',
-      maxWidth: '90',
-      submit: false,
-      footer: false,
-    })
-    .setComponent(h(ScheduledTaskForm, { id, isUpdate }))
-    .open()
+const handleShowTaskForm = (id?: string) => {
+  modalApi.setProps({
+    title: id ? 'common.edit' : 'common.add',
+    maxHeight: '90',
+    minWidth: '70',
+    maxWidth: '90',
+  })
+  modalApi.setContent(ScheduledTaskForm, { id }).open()
 }
 
 const handleDeleteTask = async (s: ScheduledTask) => {
@@ -83,7 +76,12 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
   <div v-if="scheduledTasksStore.scheduledtasks.length === 0" class="grid-list-empty">
     <Empty>
       <template #description>
-        <I18nT keypath="scheduledtasks.empty" tag="p" scope="global">
+        <I18nT
+          keypath="scheduledtasks.empty"
+          tag="div"
+          scope="global"
+          class="flex items-center mt-12"
+        >
           <template #action>
             <Button @click="handleShowTaskForm()" type="link">{{ t('common.add') }}</Button>
           </template>
@@ -103,7 +101,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
     <Button @click="handleShowTaskLogs()" type="text" class="ml-auto">
       {{ t('scheduledtasks.logs') }}
     </Button>
-    <Button @click="handleShowTaskForm()" type="primary">
+    <Button @click="handleShowTaskForm()" type="primary" icon="add" class="ml-16">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -121,33 +119,35 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       :title="s.name"
       :disabled="s.disabled"
       v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
-      class="item"
+      class="grid-list-item"
     >
       <template v-if="appSettingsStore.app.scheduledtasksView === View.Grid" #extra>
         <Dropdown :trigger="['hover', 'click']">
           <Button type="link" size="small" icon="more" />
           <template #overlay>
-            <Button type="link" size="small" @click="handleDisableTask(s)">
-              {{ s.disabled ? t('common.enable') : t('common.disable') }}
-            </Button>
-            <Button type="link" size="small" @click="handleShowTaskForm(s.id, true)">
-              {{ t('common.edit') }}
-            </Button>
-            <Button type="link" size="small" @click="handleDeleteTask(s)">
-              {{ t('common.delete') }}
-            </Button>
+            <div class="flex flex-col gap-4 min-w-64 p-4">
+              <Button type="text" size="small" @click="handleDisableTask(s)">
+                {{ s.disabled ? t('common.enable') : t('common.disable') }}
+              </Button>
+              <Button type="text" size="small" @click="handleShowTaskForm(s.id)">
+                {{ t('common.edit') }}
+              </Button>
+              <Button type="text" size="small" @click="handleDeleteTask(s)">
+                {{ t('common.delete') }}
+              </Button>
+            </div>
           </template>
         </Dropdown>
       </template>
 
       <template v-else #extra>
-        <Button type="link" size="small" @click="handleDisableTask(s)">
+        <Button type="text" size="small" @click="handleDisableTask(s)">
           {{ s.disabled ? t('common.enable') : t('common.disable') }}
         </Button>
-        <Button type="link" size="small" @click="handleShowTaskForm(s.id, true)">
+        <Button type="text" size="small" @click="handleShowTaskForm(s.id)">
           {{ t('common.edit') }}
         </Button>
-        <Button type="link" size="small" @click="handleDeleteTask(s)">
+        <Button type="text" size="small" @click="handleDeleteTask(s)">
           {{ t('common.delete') }}
         </Button>
       </template>

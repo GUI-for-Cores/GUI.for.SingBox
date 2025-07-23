@@ -12,7 +12,7 @@ import PromptComp from '@/components/Prompt/index.vue'
 import type { ConfirmOptions } from '@/components/Confirm/index.vue'
 import type { Props as InputProps } from '@/components/Input/index.vue'
 import type { MessageIcon } from '@/components/Message/index.vue'
-import type { UseModalOptions } from '@/components/Modal'
+import type { Props as ModalProps } from '@/components/Modal/index.vue'
 import type { PickerItem } from '@/components/Picker/index.vue'
 
 const ContainerCssText = `
@@ -30,6 +30,10 @@ interface MessageInstance {
   dom: HTMLDivElement
   vnode: VNode
   timer: number
+}
+
+const bindAppContext = (vnode: VNode) => {
+  vnode.appContext = window.appInstance._context
 }
 
 class Message {
@@ -76,6 +80,7 @@ class Message {
             onDestroy()
           },
         })
+        bindAppContext(vnode)
 
         this.instances[id] = {
           dom,
@@ -161,6 +166,7 @@ class Picker {
           dom.remove()
         },
       })
+      bindAppContext(vnode)
       document.body.appendChild(dom)
       render(vnode, dom)
     })
@@ -189,6 +195,7 @@ const buildConfirm = (
         dom.remove()
       },
     })
+    bindAppContext(vnode)
     document.body.appendChild(dom)
     render(vnode, dom)
   })
@@ -215,6 +222,7 @@ export const prompt = <T>(
         dom.remove()
       },
     })
+    bindAppContext(vnode)
     document.body.appendChild(dom)
     render(vnode, dom)
   })
@@ -236,11 +244,10 @@ export const confirm = (
   return buildConfirm(title, message, options)
 }
 
-export const modal = (options: UseModalOptions = {}) => {
+export const modal = (options: ModalProps = {}) => {
   const [Modal, api] = useModal(options)
   const vnode = h(Modal)
-  // binding context
-  vnode.appContext = window.appInstance._context
+  bindAppContext(vnode)
 
   const container = document.createElement('div')
   document.body.appendChild(container)
