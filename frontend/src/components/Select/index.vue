@@ -30,8 +30,15 @@ const handleClear = () => {
 </script>
 
 <template>
-  <div :class="{ border, [size]: true, 'auto-size': autoSize }" class="select">
-    <select v-model="model" @change="emits('change', model)">
+  <div
+    :class="{ border, [size]: true, 'auto-size': autoSize }"
+    class="gui-select inline-flex min-w-128 rounded-4"
+  >
+    <select
+      v-model="model"
+      @change="emits('change', model)"
+      class="cursor-pointer w-full px-8 py-6 outline-none border-0 bg-transparent"
+    >
       <option v-if="placeholder" value="">{{ t(placeholder) }}</option>
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ t(o.label) }}
@@ -48,19 +55,9 @@ const handleClear = () => {
 </template>
 
 <style lang="less" scoped>
-.select {
-  display: inline-flex;
-  min-width: 120px;
-  border-radius: 4px;
-  font-size: 12px;
+.gui-select {
   background: var(--select-bg);
   select {
-    cursor: pointer;
-    width: 100%;
-    padding: 6px 8px;
-    outline: none;
-    border: none;
-    background: transparent;
     color: var(--select-color);
     option {
       background: var(--select-option-bg);

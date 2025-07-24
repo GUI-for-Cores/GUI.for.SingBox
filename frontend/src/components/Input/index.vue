@@ -108,10 +108,14 @@ defineExpose({
     :style="{
       height: type === 'code' ? '' : size === 'small' ? '26px' : '30px',
     }"
-    class="input"
+    class="gui-input flex items-center rounded-4 overflow-hidden cursor-pointer"
   >
-    <div v-if="editable && !showEdit" @click="showInput" class="editable">
-      <Icon v-if="disabled" icon="forbidden" class="disabled" />
+    <div
+      v-if="editable && !showEdit"
+      @click="showInput"
+      class="editable flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+    >
+      <Icon v-if="disabled" icon="forbidden" class="disabled shrink-0" />
       {{ modelValue || t('common.none') }}
     </div>
     <template v-else>
@@ -122,7 +126,7 @@ defineExpose({
         :lang="lang"
         :editable="!disabled"
         :placeholder="placeholder"
-        class="code"
+        class="code w-full overflow-y-auto"
       />
       <input
         v-else
@@ -140,6 +144,7 @@ defineExpose({
         @keydown.enter="inputRef?.blur"
         autocomplete="off"
         ref="inputRef"
+        class="flex-1 inline-block py-6 outline-none border-0 bg-transparent"
       />
       <Button
         v-if="innerClearable"
@@ -155,37 +160,19 @@ defineExpose({
 </template>
 
 <style lang="less" scoped>
-.input {
-  display: flex;
-  align-items: center;
-  border-radius: 4px;
-  overflow: hidden;
-  cursor: pointer;
+.gui-input {
   border: 1px solid transparent;
   .editable {
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     max-width: 210px;
     .disabled {
       margin-bottom: -2px;
-      flex-shrink: 0;
     }
   }
   input {
-    flex: 1;
     color: var(--input-color);
-    display: inline-block;
-    padding: 6px 0;
-    border: none;
-    outline: none;
-    background: transparent;
   }
   .code {
-    width: 100%;
     max-height: 300px;
-    overflow-y: auto;
   }
 }
 

@@ -132,11 +132,9 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="form">
+  <div>
     <div class="form-item">
-      <div class="name">
-        {{ t('ruleset.rulesetType') }}
-      </div>
+      {{ t('ruleset.rulesetType') }}
       <Radio
         v-model="ruleset.type"
         :options="[
@@ -147,17 +145,15 @@ defineExpose({ modalSlots })
       />
     </div>
     <div v-show="ruleset.type !== 'Manual'" class="form-item">
-      <div class="name">
-        {{ t('ruleset.format.name') }}
-      </div>
+      {{ t('ruleset.format.name') }}
       <Radio v-model="ruleset.format" :options="RulesetFormatOptions" />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('ruleset.name') }} *</div>
+      {{ t('ruleset.name') }} *
       <Input v-model="ruleset.tag" auto-size autofocus class="input" />
     </div>
     <div v-show="ruleset.type !== 'Manual'" class="form-item">
-      <div class="name">{{ t('ruleset.url') }} *</div>
+      {{ t('ruleset.url') }} *
       <Input
         v-model="ruleset.url"
         :placeholder="
@@ -166,33 +162,15 @@ defineExpose({ modalSlots })
             : 'data/local/{filename}.' + (ruleset.format === RulesetFormat.Binary ? 'srs' : 'json')
         "
         auto-size
-        class="input"
       />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('ruleset.path') }} *</div>
+      {{ t('ruleset.path') }} *
       <Input
         v-model="ruleset.path"
         :placeholder="`data/rulesets/{filename}.${ruleset.format === RulesetFormat.Binary ? 'srs' : 'json'}`"
         auto-size
-        class="input"
       />
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.form {
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-  .name {
-    font-size: 14px;
-    padding: 8px 0;
-    white-space: nowrap;
-  }
-  .input {
-    width: 78%;
-  }
-}
-</style>

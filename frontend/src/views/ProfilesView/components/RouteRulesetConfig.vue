@@ -76,7 +76,7 @@ const handleUse = (ruleset: any) => {
 
   <div v-draggable="[model, DraggableOptions]">
     <Card v-for="(ruleset, index) in model" :key="ruleset.id" class="mb-2">
-      <div class="flex items-center">
+      <div class="flex items-center py-2">
         <div class="font-bold">
           <span
             v-if="hasLost(ruleset)"

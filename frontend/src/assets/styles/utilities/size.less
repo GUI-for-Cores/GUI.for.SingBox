@@ -1,4 +1,4 @@
-@size-values: 0, 8, 12, 16, 24, 32, 64, 128, 256;
+@size-values: 0, 8, 10, 12, 16, 18, 24, 32, 64, 128, 256;
 @percent-values: 25, 50, 60, 75, 90, 100;
 
 .generate-size(@i: 1) when (@i <= length(@size-values)) {
@@ -26,6 +26,18 @@
   }
   .h-\[@{p}\%\] {
     height: ~'@{p}%';
+  }
+  .min-w-\[@{p}\%\] {
+    min-width: ~'@{p}%';
+  }
+  .min-h-\[@{p}\%\] {
+    min-height: ~'@{p}%';
+  }
+  .max-w-\[@{p}\%\] {
+    max-width: ~'@{p}%';
+  }
+  .max-h-\[@{p}\%\] {
+    max-height: ~'@{p}%';
   }
   .generate-percent(@i + 1);
 }

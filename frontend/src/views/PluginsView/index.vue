@@ -63,8 +63,7 @@ const handleImportPlugin = () => {
 
 const openPluginFormModal = (id?: string) => {
   modalApi.setProps({ title: id ? 'common.edit' : 'common.add', minWidth: '80' })
-  modalApi.setContent(PluginForm, { id })
-  modalApi.open()
+  modalApi.setContent(PluginForm, { id }).open()
 }
 
 const handleAddPlugin = () => {

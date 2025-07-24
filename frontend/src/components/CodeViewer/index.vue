@@ -174,7 +174,9 @@ const initEditor = () => {
 
 <template>
   <div ref="domRef">
-    <Button loading type="link" style="display: flex; justify-content: center" />
+    <div class="flex justify-center">
+      <Button loading type="link" />
+    </div>
   </div>
 </template>
 

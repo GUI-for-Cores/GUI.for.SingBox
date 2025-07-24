@@ -41,8 +41,8 @@ watch(
 </script>
 
 <template>
-  <div class="kv-editor">
-    <div v-for="(key, i) in keys" :key="i" class="item">
+  <div class="gui-kv-editor inline-flex flex-col">
+    <div v-for="(key, i) in keys" :key="i" class="flex items-center mr-2 mb-4 ml-2">
       <Input v-model="keys[i]" :placeholder="placeholder[0]" />
       <Button @click="handleDel(i)" type="text" size="small" :icon-size="12" icon="close" />
       <Input v-model="values[i]" :placeholder="placeholder[1]" />
@@ -52,14 +52,7 @@ watch(
 </template>
 
 <style lang="less" scoped>
-.kv-editor {
-  display: inline-flex;
-  flex-direction: column;
+.gui-kv-editor {
   min-width: 219px;
-  .item {
-    display: flex;
-    align-items: center;
-    margin: 0 2px 4px 2px;
-  }
 }
 </style>

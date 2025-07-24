@@ -112,13 +112,13 @@ provide('submit', handleSubmit)
       <div
         v-if="open"
         @click.self="onMaskClick"
-        class="mask fixed inset-0 z-999 flex items-center justify-center backdrop-blur-sm"
+        class="gui-modal-mask fixed inset-0 z-999 flex items-center justify-center backdrop-blur-sm"
         style="--wails-draggable: drag"
       >
         <div
           :style="contentStyle"
           :class="props.class"
-          class="modal transition duration-200 flex flex-col rounded-8"
+          class="gui-modal-modal transition duration-200 flex flex-col rounded-8 shadow"
           style="--wails-draggable: false"
         >
           <div
@@ -170,25 +170,24 @@ provide('submit', handleSubmit)
 </template>
 
 <style lang="less" scoped>
-.modal-enter-active .modal,
-.modal-leave-active .modal {
+.modal-enter-active .gui-modal-modal,
+.modal-leave-active .gui-modal-modal {
   transition:
     transform 0.2s ease-in-out,
     opacity 0.2s ease-in-out;
 }
 
-.modal-enter-from .modal,
-.modal-leave-to .modal {
+.modal-enter-from .gui-modal-modal,
+.modal-leave-to .gui-modal-modal {
   opacity: 0;
   transform: scale(0);
 }
 
-.mask {
+.gui-modal-mask {
   background-color: var(--modal-mask-bg);
 
-  .modal {
+  .gui-modal-modal {
     background-color: var(--modal-bg);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 }
 </style>

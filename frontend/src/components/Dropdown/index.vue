@@ -62,9 +62,9 @@ onUnmounted(() => {
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
     @click="onClick"
-    class="dropdown"
+    class="gui-dropdown relative flex flex-col items-center"
   >
-    <slot />
+    <slot></slot>
     <Transition name="overlay">
       <div
         v-show="show"
@@ -72,7 +72,7 @@ onUnmounted(() => {
           bottom: placement === 'top' ? '100%' : '',
           top: placement === 'top' ? '' : '100%',
         }"
-        class="overlay"
+        class="gui-dropdown-overlay absolute z-99 rounded-8 backdrop-blur-sm shadow"
       >
         <slot name="overlay"> </slot>
       </div>
@@ -95,20 +95,7 @@ onUnmounted(() => {
   transform: scaleY(0);
 }
 
-.dropdown {
-  text-align: center;
-  position: relative;
-  word-break: keep-all;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.overlay {
-  position: absolute;
-  z-index: 99;
+.gui-dropdown-overlay {
   background: var(--dropdown-bg);
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>

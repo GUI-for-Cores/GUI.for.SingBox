@@ -82,7 +82,7 @@ defineExpose({ handleAdd })
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
-      <div class="flex">
+      <div class="flex gap-8">
         <Button v-for="inbound in inbounds" :key="inbound.label" @click="inbound.value">
           {{ t('common.add') }} {{ inbound.label }}
         </Button>

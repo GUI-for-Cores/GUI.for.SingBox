@@ -20,7 +20,7 @@ const hasTitle = computed(() => {
 </script>
 
 <template>
-  <div class="card rounded-8 relative flex flex-col">
+  <div class="gui-card rounded-8 relative flex flex-col">
     <div v-if="hasTitle" class="card-header flex items-center p-8">
       <slot name="title-prefix"></slot>
       <div v-if="title" v-tips="title" class="card-header_title line-clamp-1 text-16 font-bold">
@@ -53,7 +53,7 @@ const hasTitle = computed(() => {
 </template>
 
 <style lang="less" scoped>
-.card {
+.gui-card {
   color: var(--card-color);
   background-color: var(--card-bg);
   transition:

@@ -31,13 +31,13 @@ const handleSelect = (val: string) => {
 </script>
 
 <template>
-  <div :class="[size]" class="checkbox">
+  <div :class="[size]" class="gui-checkbox inline-flex rounded-8 overflow-hidden text-12">
     <div
       v-for="o in options"
       :key="o.value"
       @click="handleSelect(o.value)"
       :class="{ active: isActive(o.value) }"
-      class="checkbox-button"
+      class="gui-checkbox-button cursor-pointer px-12 py-6 transition duration-200 whitespace-nowrap"
     >
       {{ t(o.label) }}
     </div>
@@ -45,20 +45,12 @@ const handleSelect = (val: string) => {
 </template>
 
 <style lang="less" scoped>
-.checkbox {
-  display: inline-flex;
+.gui-checkbox {
   border: 1px solid var(--primary-color);
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 12px;
   &-button {
-    cursor: pointer;
     color: var(--radio-normal-color);
     background-color: var(--radio-normal-bg);
-    padding: 6px 12px;
     border-left: 1px solid var(--primary-color);
-    transition: all 0.2s;
-    white-space: nowrap;
     &:nth-child(1) {
       border-left: none;
     }

@@ -3,10 +3,12 @@ import { ref, unref } from 'vue'
 
 import useI18n from '@/lang'
 
+import { type Props as InputProps } from '@/components/Input/index.vue'
+
 interface Props {
   title: string
   initialValue?: string | number
-  props: Record<string, any>
+  props: Omit<InputProps, 'modelValue'>
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,8 +37,8 @@ const handleCancel = () => {
 
 <template>
   <Transition name="slide-down" appear>
-    <div class="confirm">
-      <div class="title">{{ t(title) }}</div>
+    <div class="gui-confirm p-8 rounded-8 shadow max-w-[60%]">
+      <div class="font-bold break-all px-4 py-8">{{ t(title) }}</div>
       <Input
         v-model="value"
         v-bind="props.props"
@@ -47,7 +49,7 @@ const handleCancel = () => {
         auto-size
         size="small"
       />
-      <div class="form-action">
+      <div class="form-action gap-4">
         <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
         <Button @click="handleSubmit" size="small" type="primary">
           {{ t('common.confirm') }}
@@ -58,18 +60,8 @@ const handleCancel = () => {
 </template>
 
 <style lang="less" scoped>
-.confirm {
+.gui-confirm {
   min-width: 340px;
-  max-width: 60%;
-  padding: 8px;
   background: var(--toast-bg);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-
-  .title {
-    font-weight: bold;
-    padding: 8px 4px;
-    word-break: break-all;
-  }
 }
 </style>

@@ -149,10 +149,13 @@ const handleCancel = () => {
 
 <template>
   <Transition name="slide-down" appear>
-    <div class="confirm">
-      <div class="title">{{ t(title) }}</div>
-      <div class="message select-text" v-html="content"></div>
-      <div class="form-action">
+    <div class="gui-confirm flex flex-col p-8 rounded-8 shadow">
+      <div class="font-bold break-all px-4 py-8">{{ t(title) }}</div>
+      <div
+        class="flex-1 overflow-y-auto text-12 leading-relaxed p-6 break-all whitespace-pre-wrap select-text"
+        v-html="content"
+      ></div>
+      <div class="form-action gap-4">
         <Button v-if="cancel" @click="handleCancel" size="small">
           {{ t(options.cancelText || 'common.cancel') }}
         </Button>
@@ -165,29 +168,9 @@ const handleCancel = () => {
 </template>
 
 <style lang="less" scoped>
-.confirm {
+.gui-confirm {
   min-width: 340px;
   max-width: 60%;
-  padding: 8px;
   background: var(--toast-bg);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    font-weight: bold;
-    padding: 8px 4px;
-    word-break: break-all;
-  }
-  .message {
-    font-size: 12px;
-    line-height: 1.6;
-    padding: 6px;
-    word-break: break-all;
-    white-space: pre-wrap;
-    overflow-y: auto;
-    flex: 1;
-  }
 }
 </style>

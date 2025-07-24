@@ -1,4 +1,4 @@
-@radius-values: 0, 2, 4, 8, 16, 32, 9999;
+@radius-values: 0, 2, 4, 6, 8, 16, 32, 9999;
 
 .generate-rounded(@i: 1) when (@i <= length(@radius-values)) {
   @r: extract(@radius-values, @i);

@@ -10,20 +10,15 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div :class="[color, size]" class="tag">
-    <slot />
+  <div
+    :class="[color, size]"
+    class="gui-tag px-8 mx-4 rounded-6 inline-block text-12 white-space-nowrap"
+  >
+    <slot></slot>
   </div>
 </template>
 
 <style lang="less" scoped>
-.tag {
-  padding: 0 7px;
-  margin: 0 4px;
-  border-radius: 6px;
-  display: inline-block;
-  font-size: 12px;
-  white-space: nowrap;
-}
 .cyan {
   color: #22a3a7;
   background-color: #e6fffb;

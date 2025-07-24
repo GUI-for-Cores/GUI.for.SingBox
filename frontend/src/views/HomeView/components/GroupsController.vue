@@ -303,10 +303,10 @@ onActivated(() => {
             @click="useProxyWithCatchError(group, proxy)"
             :key="proxy.name"
             :style="{ background: delayColor(proxy.delay) }"
-            :class="proxy.name === group.now ? 'rounded-full' : ''"
-            class="w-12 h-12 rounded-4"
+            :class="proxy.name === group.now ? 'rounded-full shadow' : ''"
+            class="w-12 h-12 rounded-4 flex items-center justify-center"
           >
-            <Icon v-if="isLoading(proxy.name)" icon="loading" />
+            <Icon v-if="isLoading(proxy.name)" icon="loading" :size="12" class="rotation" />
           </div>
         </div>
       </div>
@@ -377,5 +377,9 @@ onActivated(() => {
   &-expanded {
     transform: rotate(0deg);
   }
+}
+
+.rotation {
+  animation: rotate 2s infinite linear;
 }
 </style>

@@ -198,19 +198,18 @@ defineExpose({ modalSlots })
     </div>
     <div class="form-item">
       {{ t('plugin.name') }} *
-      <Input v-model="plugin.name" auto-size autofocus class="input" />
+      <Input v-model="plugin.name" autofocus class="min-w-[75%]" />
     </div>
     <div class="form-item">
       {{ t('plugin.version') }} *
-      <Input v-model="plugin.version" auto-size class="input" />
+      <Input v-model="plugin.version" class="min-w-[75%]" />
     </div>
     <div v-show="plugin.type === 'Http'" class="form-item">
       {{ t('plugin.url') }} *
       <Input
         v-model="plugin.url"
         :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
-        auto-size
-        class="input"
+        class="min-w-[75%]"
       />
     </div>
     <div class="form-item">
@@ -218,13 +217,12 @@ defineExpose({ modalSlots })
       <Input
         v-model="plugin.path"
         placeholder="data/plugins/plugin-{filename}.js"
-        auto-size
-        class="input"
+        class="min-w-[75%]"
       />
     </div>
     <div class="form-item">
       {{ t('plugin.description') }}
-      <Input v-model="plugin.description" auto-size class="input" />
+      <Input v-model="plugin.description" class="min-w-[75%]" />
     </div>
     <Divider>
       <Button @click="toggleShowMore" type="text" size="small">

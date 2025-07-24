@@ -130,13 +130,15 @@ const modalSlots = {
         overlay: () =>
           h(
             'div',
-            {},
+            {
+              class: 'p-4 flex flex-col gap-2',
+            },
             events.map(([type, label]) =>
               h(
                 Button,
                 {
                   onClick: () => handleTest(type),
-                  type: 'link',
+                  type: 'text',
                   size: 'small',
                 },
                 () => t(label),
