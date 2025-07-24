@@ -2,7 +2,9 @@ import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
 import { globalIgnores } from 'eslint/config'
 import importPlugin from 'eslint-plugin-import'
+import pluginOxlint from 'eslint-plugin-oxlint'
 import pluginVue from 'eslint-plugin-vue'
+
 export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
@@ -13,6 +15,7 @@ export default defineConfigWithVueTs(
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
+  ...pluginOxlint.configs['flat/recommended'],
   {
     plugins: { import: importPlugin },
     rules: {

@@ -14,8 +14,6 @@ import type {
   RequestMethod,
 } from '@/enums/app'
 
-export {}
-
 export interface TrayContent {
   icon?: string
   title?: string
