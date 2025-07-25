@@ -81,7 +81,13 @@ const handleClearCoreCache = async () => {
       size="small"
       icon="clear3"
     />
-    <Button @click="emit('config')" type="text" size="small" icon="settings3" />
+    <Button
+      @click="emit('config')"
+      v-tips="'settings.kernel.config.name'"
+      type="text"
+      size="small"
+      icon="settings3"
+    />
   </div>
   <div class="flex items-center py-8">
     <Tag @click="refreshLocalVersion(true)" class="cursor-pointer">

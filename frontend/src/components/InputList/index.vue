@@ -31,8 +31,8 @@ const handleDel = (i: number) => list.value.splice(i, 1)
   <div class="inline-block rounded-4">
     <div v-draggable="[list, DraggableOptions]" class="flex flex-col gap-2">
       <TransitionGroup name="list">
-        <Card v-for="(l, i) in list" :key="l">
-          <div class="flex items-center justify-between py-4">
+        <Card v-for="(l, i) in list" :key="i">
+          <div class="flex items-center justify-between py-4 break-all">
             {{ l }}
             <Button @click="handleDel(i)" icon="close" :icon-size="10" type="text" />
           </div>

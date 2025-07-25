@@ -43,9 +43,9 @@ watch(
 <template>
   <div class="gui-kv-editor inline-flex flex-col">
     <div v-for="(key, i) in keys" :key="i" class="flex items-center mr-2 mb-4 ml-2">
-      <Input v-model="keys[i]" :placeholder="placeholder[0]" />
+      <Input v-model="keys[i]" :placeholder="placeholder[0]" class="flex-1" />
       <Button @click="handleDel(i)" type="text" size="small" :icon-size="12" icon="close" />
-      <Input v-model="values[i]" :placeholder="placeholder[1]" />
+      <Input v-model="values[i]" :placeholder="placeholder[1]" class="flex-1" />
     </div>
     <Button @click="handleAdd" type="primary" icon="add" />
   </div>
