@@ -131,7 +131,7 @@ const modalSlots = {
           h(
             'div',
             {
-              class: 'p-4 flex flex-col gap-2',
+              class: 'p-4 flex flex-col gap-2 min-w-128',
             },
             events.map(([type, label]) =>
               h(

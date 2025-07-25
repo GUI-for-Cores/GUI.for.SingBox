@@ -46,11 +46,25 @@ const plugin = ref<Plugin>({
   installed: false,
 })
 
+const componentList = [
+  'CheckBox',
+  'CodeViewer',
+  'Input',
+  'InputList',
+  'KeyValueEditor',
+  'Radio',
+  'Select',
+  'Switch',
+] as const
+
+type ComponentType = (typeof componentList)[number]
+
 const { t } = useI18n()
 const [showMore, toggleShowMore] = useBool(false)
 const pluginsStore = usePluginsStore()
 
 const handleCancel = inject('cancel') as any
+const handleSubmit = inject('submit') as any
 
 const handleRestore = () => {
   if (official.value) {
@@ -59,7 +73,7 @@ const handleRestore = () => {
   }
 }
 
-const handleSubmit = async () => {
+const handleSave = async () => {
   loading.value = true
   try {
     if (props.id) {
@@ -67,7 +81,7 @@ const handleSubmit = async () => {
     } else {
       await pluginsStore.addPlugin(plugin.value)
     }
-    handleCancel()
+    await handleSubmit()
   } catch (error: any) {
     console.error(error)
     message.error(error)
@@ -91,13 +105,13 @@ const handleDelParam = (index: number) => {
   plugin.value.configuration.splice(index, 1)
 }
 
-const hasOption = (component: string) => {
+const hasOption = (component: ComponentType) => {
   return (
     component !== 'InputList' && ['CheckBox', 'InputList', 'Radio', 'Select'].includes(component)
   )
 }
 
-const onComponentChange = (component: string, index: number) => {
+const onComponentChange = (component: ComponentType, index: number) => {
   switch (component) {
     case 'CheckBox':
     case 'InputList': {
@@ -121,7 +135,7 @@ const onComponentChange = (component: string, index: number) => {
       break
     }
   }
-  plugin.value.configuration[index].component = component as any
+  plugin.value.configuration[index].component = component
 }
 
 const getOptions = (val: string[]) => {
@@ -163,7 +177,7 @@ const modalSlots = {
           !plugin.value.version ||
           !plugin.value.path ||
           (plugin.value.type === 'Http' && !plugin.value.url),
-        onClick: handleSubmit,
+        onClick: handleSave,
       },
       () => t('common.save'),
     ),
@@ -262,9 +276,12 @@ defineExpose({ modalSlots })
         />
       </div>
       <Divider>{{ t('plugin.configuration') }}</Divider>
-      <div v-draggable="[plugin.configuration, { ...DraggableOptions, handle: '.drag' }]">
+      <div
+        v-draggable="[plugin.configuration, { ...DraggableOptions, handle: '.drag' }]"
+        class="px-8 flex flex-col gap-8"
+      >
         <template v-for="(conf, index) in plugin.configuration" :key="conf.id">
-          <Card v-if="conf.component" :title="conf.component" class="mb-8">
+          <Card v-if="conf.component" :title="conf.component">
             <template #title-prefix>
               <Icon icon="drag" class="drag" style="cursor: move" />
               <div class="ml-8">{{ index + 1 }}、</div>
@@ -276,15 +293,15 @@ defineExpose({ modalSlots })
             </template>
             <div class="form-item">
               {{ t('plugin.confName') }}
-              <Input v-model="conf.title" placeholder="title" />
+              <Input v-model="conf.title" placeholder="title" class="min-w-[75%]" />
             </div>
             <div class="form-item">
               {{ t('plugin.confDescription') }}
-              <Input v-model="conf.description" placeholder="description" />
+              <Input v-model="conf.description" placeholder="description" class="min-w-[75%]" />
             </div>
             <div class="form-item">
               {{ t('plugin.confKey') }}
-              <Input v-model="conf.key" placeholder="key" />
+              <Input v-model="conf.key" placeholder="key" class="min-w-[75%]" />
             </div>
             <div class="form-item" :class="{ 'items-start': conf.value.length !== 0 }">
               {{ t('plugin.confDefault') }}
@@ -293,6 +310,7 @@ defineExpose({ modalSlots })
                 v-model="conf.value"
                 :options="getOptions(conf.options)"
                 editable
+                :class="conf.component === 'CodeViewer' ? 'min-w-[75%]' : ''"
               />
             </div>
             <div
@@ -304,28 +322,28 @@ defineExpose({ modalSlots })
               <InputList v-model="conf.options" />
             </div>
           </Card>
-          <div v-else class="form-item">
-            <Select
-              @change="(val: string) => onComponentChange(val, index)"
-              :options="[
-                { label: 'CheckBox', value: 'CheckBox' },
-                { label: 'CodeViewer', value: 'CodeViewer' },
-                { label: 'Input', value: 'Input' },
-                { label: 'InputList', value: 'InputList' },
-                { label: 'KeyValueEditor', value: 'KeyValueEditor' },
-                { label: 'Radio', value: 'Radio' },
-                { label: 'Select', value: 'Select' },
-                { label: 'Switch', value: 'Switch' },
-              ]"
-              placeholder="plugin.selectComponent"
-            />
-            <Button @click="handleDelParam(index)" size="small" type="text">
-              {{ t('common.delete') }}
-            </Button>
-          </div>
+          <Card v-else :title="t('plugin.selectComponent')">
+            <template #extra>
+              <Button @click="handleDelParam(index)" size="small" type="text">
+                {{ t('common.delete') }}
+              </Button>
+            </template>
+            <div class="flex grid grid-cols-4 gap-8">
+              <Button
+                v-for="item in componentList"
+                :key="item"
+                @click="onComponentChange(item, index)"
+              >
+                {{ item }}
+              </Button>
+            </div>
+          </Card>
         </template>
       </div>
-      <Button @click="handleAddParam" type="primary" icon="add" class="w-full" />
+
+      <div :class="plugin.configuration.length !== 0 ? 'mt-8' : ''" class="mx-8">
+        <Button @click="handleAddParam" type="primary" icon="add" class="w-full" />
+      </div>
     </div>
   </div>
 </template>
