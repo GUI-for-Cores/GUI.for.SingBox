@@ -58,9 +58,9 @@ const showError = (err: string) => {
   message.error(err)
 }
 
-appSettings.setupAppSettings().then(async () => {
+envStore.setupEnv().then(async () => {
   await Promise.all([
-    envStore.setupEnv(),
+    appSettings.setupAppSettings(),
     profilesStore.setupProfiles(),
     subscribesStore.setupSubscribes(),
     rulesetsStore.setupRulesets(),

@@ -282,3 +282,17 @@ export const DefaultConnections = () => {
     ],
   }
 }
+
+export const DefaultCoreConfig = () => {
+  return {
+    env: {},
+    args: [
+      'run',
+      '--disable-color',
+      '-c',
+      '$APP_BASE_PATH/$CORE_BASE_PATH/config.json',
+      '-D',
+      '$APP_BASE_PATH/$CORE_BASE_PATH',
+    ],
+  }
+}

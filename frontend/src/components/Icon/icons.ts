@@ -52,6 +52,7 @@ const icons = [
   'plugins',
   'scheduledTasks',
   'settings2',
+  'settings3',
   'grant',
   'preview',
   'rollback',

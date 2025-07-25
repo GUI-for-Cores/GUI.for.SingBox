@@ -653,6 +653,11 @@ export default {
       rollbackTip: 'بازگشت به نسخه قبلی',
       rollback: 'آیا مطمئن هستید که می‌خواهید به نسخه قبلی بازگردید؟',
       clearCache: 'پاک‌سازی کش',
+      config: {
+        name: 'پیکربندی زمان اجرا',
+        env: 'متغیرهای محیطی',
+        args: 'آرگومان‌های زمان اجرا',
+      },
     },
     userAgent: {
       name: 'User-Agent',
