@@ -50,7 +50,6 @@
     "npm-run-all2": "^8.0.4",
     "oxlint": "^1.8.0",
     "typescript": "~5.8.3",
-    "unplugin-vue-components": "^28.8.0",
     "vite": "npm:rolldown-vite@latest",
     "vue-tsc": "^3.0.3"
   }
