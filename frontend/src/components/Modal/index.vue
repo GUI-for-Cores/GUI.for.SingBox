@@ -133,13 +133,13 @@ provide('submit', handleSubmit)
             <div class="ml-auto">
               <slot name="toolbar"></slot>
               <!-- <Button v-if="toolbar.minimize" @click="toggleMinimize" icon="minimize" type="text" /> -->
-              <Button
-                v-if="toolbar.maximize"
-                @click="toggleMaximize"
-                :class="isMaximize ? '' : 'rotate-180'"
-                icon="arrowDown"
-                type="text"
-              />
+              <Button v-if="toolbar.maximize" @click="toggleMaximize" type="text">
+                <Icon
+                  :class="{ maximize: isMaximize }"
+                  icon="arrowDown"
+                  class="origin-center duration-200"
+                />
+              </Button>
             </div>
           </div>
           <div class="flex-1 overflow-auto mx-16">
@@ -189,5 +189,9 @@ provide('submit', handleSubmit)
   .gui-modal-modal {
     background-color: var(--modal-bg);
   }
+}
+
+.maximize {
+  transform: rotate(-180deg);
 }
 </style>
