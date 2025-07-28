@@ -26,6 +26,7 @@ const plugin = ref<Plugin>({
   version: 'v1.0.0',
   name: '',
   description: '',
+  tags: [],
   type: 'File',
   url: '',
   status: 0,

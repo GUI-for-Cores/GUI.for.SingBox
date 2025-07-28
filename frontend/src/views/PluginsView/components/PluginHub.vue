@@ -11,9 +11,38 @@ const keywords = ref('')
 const { t } = useI18n()
 const pluginsStore = usePluginsStore()
 
+const tags = ref<Set<string>>(new Set())
+
+const allTags = computed(() => {
+  const tagCountMap = new Map()
+
+  for (const plugin of pluginsStore.pluginHub) {
+    for (const tag of plugin.tags) {
+      tagCountMap.set(tag, (tagCountMap.get(tag) || 0) + 1)
+    }
+  }
+
+  return Array.from(tagCountMap, ([name, count]) => ({ name, count }))
+})
+
+const onTagClose = (tag: string) => tags.value.delete(tag)
+
 const filteredPlugins = computed(() => {
-  if (!keywords.value) return pluginsStore.pluginHub
-  return pluginsStore.pluginHub.filter((v) => (v.name + v.description).includes(keywords.value))
+  const allPlugins = pluginsStore.pluginHub
+  const keyword = keywords.value.trim()
+  const selectedTags = tags.value
+
+  if (!keyword && selectedTags.size === 0) return allPlugins
+
+  return allPlugins.filter((plugin) => {
+    const matchesKeyword =
+      !keyword || (plugin.name + plugin.id + plugin.description).includes(keyword)
+
+    const matchesTags =
+      selectedTags.size === 0 || Array.from(selectedTags).every((tag) => plugin.tags.includes(tag))
+
+    return matchesKeyword && matchesTags
+  })
 })
 
 const handleAddPlugin = async (plugin: Plugin) => {
@@ -50,7 +79,7 @@ if (pluginsStore.pluginHub.length === 0) {
       <Button type="text" loading />
     </div>
     <div v-else class="flex flex-col h-full">
-      <div class="flex items-center">
+      <div class="flex items-center gap-8">
         <Input
           v-model="keywords"
           :border="false"
@@ -58,11 +87,39 @@ if (pluginsStore.pluginHub.length === 0) {
           clearable
           size="small"
           class="flex-1"
-        />
-        <Button @click="handleUpdatePluginHub" icon="refresh" size="small" class="ml-8">
+        >
+          <template #extra>
+            <Tag
+              v-for="tag in tags"
+              :key="tag"
+              @close="onTagClose(tag)"
+              @click="onTagClose(tag)"
+              color="cyan"
+              size="small"
+              closeable
+            >
+              {{ tag }}
+            </Tag>
+          </template>
+        </Input>
+        <Button @click="handleUpdatePluginHub" icon="refresh" size="small">
           {{ t('plugins.update') }}
         </Button>
       </div>
+      <div class="flex flex-wrap gap-2 mt-8">
+        <Tag
+          v-for="tag in allTags"
+          @click="tags.add(tag.name)"
+          :color="tags.has(tag.name) ? 'primary' : 'default'"
+          :key="tag.name"
+          class="cursor-pointer"
+        >
+          {{ `${tag.name}(${tag.count})` }}
+        </Tag>
+      </div>
+
+      <Empty v-if="filteredPlugins.length === 0" />
+
       <div class="overflow-y-auto grid grid-cols-3 text-12 gap-8 mt-8">
         <Card v-for="plugin in filteredPlugins" :key="plugin.id" :title="plugin.name">
           <div class="flex flex-col h-full">

@@ -83,7 +83,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     list && (pluginHub.value = JSON.parse(list))
 
     for (let i = 0; i < plugins.value.length; i++) {
-      const { id, triggers, path, context, hasUI } = plugins.value[i]
+      const { id, triggers, path, context, hasUI, tags } = plugins.value[i]
       const code = await ignoredError(Readfile, path)
       if (code) {
         PluginsCache[id] = { plugin: plugins.value[i], code }
@@ -105,7 +105,17 @@ export const usePluginsStore = defineStore('plugins', () => {
       if (hasUI === undefined) {
         plugins.value[i].hasUI = false
       }
+
+      if (tags === undefined) {
+        plugins.value[i].tags = []
+      }
     }
+
+    pluginHub.value.forEach((plugin) => {
+      if (plugin.tags === undefined) {
+        plugin.tags = []
+      }
+    })
   }
 
   const getPluginMetadata = (plugin: Plugin) => {

@@ -120,6 +120,7 @@ export interface Plugin {
   url: string
   path: string
   triggers: PluginTrigger[]
+  tags: string[]
   hasUI: boolean
   menus: Record<string, string>
   context: {
