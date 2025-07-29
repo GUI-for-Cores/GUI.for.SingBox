@@ -6,9 +6,11 @@
 
 ## Preview
 
+Take a look at the live version here:  
+👉 [Live Demo](https://gui-for-cores.github.io/guide/gfs/)
+
 <div align="center">
   <img src="docs/imgs/light.png">
-  <img src="docs/imgs/dark.png">
 </div>
 
 ## Document
