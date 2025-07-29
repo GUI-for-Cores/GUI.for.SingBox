@@ -6,8 +6,7 @@
 
 ## Preview
 
-Take a look at the live version here:  
-👉 [Live Demo](https://gui-for-cores.github.io/guide/gfs/)
+Take a look at the live version here: 👉 <a href="https://gui-for-cores.github.io/guide/gfs/" target="_blank">Live Demo</a>
 
 <div align="center">
   <img src="docs/imgs/light.png">
