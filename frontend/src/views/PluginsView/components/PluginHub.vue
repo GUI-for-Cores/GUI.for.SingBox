@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useBool } from '@/hooks'
 import { usePluginsStore } from '@/stores'
 import { deepClone, message, sleep } from '@/utils'
 
@@ -11,6 +12,7 @@ const keywords = ref('')
 const { t } = useI18n()
 const pluginsStore = usePluginsStore()
 
+const [tagsVisible, toggleTagsVisible] = useBool(false)
 const tags = ref<Set<string>>(new Set())
 
 const allTags = computed(() => {
@@ -26,6 +28,10 @@ const allTags = computed(() => {
 })
 
 const onTagClose = (tag: string) => tags.value.delete(tag)
+
+const toggleChecked = (tag: string) => {
+  tags.value.has(tag) ? tags.value.delete(tag) : tags.value.add(tag)
+}
 
 const filteredPlugins = computed(() => {
   const allPlugins = pluginsStore.pluginHub
@@ -80,6 +86,12 @@ if (pluginsStore.pluginHub.length === 0) {
     </div>
     <div v-else class="flex flex-col h-full">
       <div class="flex items-center gap-8">
+        <Button
+          @click="toggleTagsVisible"
+          icon="settings3"
+          size="small"
+          :icon-color="tagsVisible ? 'var(--primary-color)' : ''"
+        />
         <Input
           v-model="keywords"
           :border="false"
@@ -106,10 +118,10 @@ if (pluginsStore.pluginHub.length === 0) {
           {{ t('plugins.update') }}
         </Button>
       </div>
-      <div class="flex flex-wrap gap-2 mt-8">
+      <div v-if="tagsVisible" class="flex flex-wrap gap-2 mt-8">
         <Tag
           v-for="tag in allTags"
-          @click="tags.add(tag.name)"
+          @click="toggleChecked(tag.name)"
           :color="tags.has(tag.name) ? 'primary' : 'default'"
           :key="tag.name"
           class="cursor-pointer"
@@ -120,7 +132,7 @@ if (pluginsStore.pluginHub.length === 0) {
 
       <Empty v-if="filteredPlugins.length === 0" />
 
-      <div class="overflow-y-auto grid grid-cols-3 text-12 gap-8 mt-8">
+      <div class="overflow-y-auto grid grid-cols-3 text-12 gap-8 mt-8 pb-16 pr-8">
         <Card v-for="plugin in filteredPlugins" :key="plugin.id" :title="plugin.name">
           <div class="flex flex-col h-full">
             <div v-tips="plugin.description" class="flex-1 line-clamp-2">

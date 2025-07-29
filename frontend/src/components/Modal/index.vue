@@ -137,7 +137,7 @@ provide('submit', handleSubmit)
                 <Icon
                   :class="{ maximize: isMaximize }"
                   icon="arrowDown"
-                  class="origin-center duration-200"
+                  class="maximize-normal origin-center duration-200"
                 />
               </Button>
             </div>
@@ -190,8 +190,10 @@ provide('submit', handleSubmit)
     background-color: var(--modal-bg);
   }
 }
-
-.maximize {
+.maximize-normal {
   transform: rotate(-180deg);
+}
+.maximize {
+  transform: rotate(0deg);
 }
 </style>
