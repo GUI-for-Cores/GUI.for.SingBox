@@ -18,7 +18,6 @@ import type { Menu } from '@/types/app'
 
 const isPinned = ref(false)
 const isMaximised = ref(false)
-const rollingReleaseVersion = ref('')
 
 const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
@@ -77,20 +76,6 @@ const onResize = debounce(async () => {
   isMaximised.value = await WindowIsMaximised()
 }, 100)
 
-const updateRollingReleaseState = async () => {
-  try {
-    const res = await fetch('/version.txt')
-    const txt = await res.text()
-    if (txt && txt.length === 7) {
-      rollingReleaseVersion.value = `(${txt})`
-    }
-  } catch (error) {
-    console.log('Not a rolling release', error)
-  }
-}
-
-updateRollingReleaseState()
-
 onMounted(() => window.addEventListener('resize', onResize))
 onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
@@ -110,8 +95,8 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
         }"
         class="font-bold w-full h-full flex items-center"
       >
-        {{ APP_TITLE }} {{ APP_VERSION }} {{ rollingReleaseVersion || '' }}
-        {{ rollingReleaseVersion ? '- Rolling Release' : '' }}
+        {{ APP_TITLE }} {{ APP_VERSION }}
+        <CustomAction :actions="appStore.customActions.title_bar" />
         <Button v-if="kernelApiStore.loading" type="text" size="small" loading />
       </div>
     </template>
