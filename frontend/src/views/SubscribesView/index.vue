@@ -235,7 +235,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       </template>
 
       <template v-if="appSettingsStore.app.subscribesView === View.Grid" #extra>
-        <Dropdown :trigger="['hover', 'click']">
+        <Dropdown>
           <Button type="link" size="small" icon="more" />
           <template #overlay>
             <div class="flex flex-col gap-4 min-w-64 p-4">

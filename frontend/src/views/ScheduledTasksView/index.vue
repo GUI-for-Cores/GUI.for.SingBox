@@ -122,7 +122,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       class="grid-list-item"
     >
       <template v-if="appSettingsStore.app.scheduledtasksView === View.Grid" #extra>
-        <Dropdown :trigger="['hover', 'click']">
+        <Dropdown>
           <Button type="link" size="small" icon="more" />
           <template #overlay>
             <div class="flex flex-col gap-4 min-w-64 p-4">

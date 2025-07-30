@@ -109,7 +109,7 @@ watch(showController, (v) => {
               {{ p.name }}
             </div>
           </Card>
-          <Dropdown v-if="profilesStore.profiles.length > 4" :trigger="['hover']" placement="top">
+          <Dropdown v-if="profilesStore.profiles.length > 4" placement="top">
             <Card class="h-full">
               <div
                 class="w-128 h-full flex items-center justify-center py-24 text-center cursor-pointer font-bold text-12"

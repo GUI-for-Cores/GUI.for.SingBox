@@ -25,7 +25,7 @@ const handleClose = () => {
   <div
     v-if="show"
     :class="[color, size]"
-    class="gui-tag px-8 mx-4 rounded-6 inline-block text-12 white-space-nowrap inline-flex items-center"
+    class="gui-tag px-8 mx-4 rounded-6 inline-block text-12 whitespace-nowrap inline-flex items-center"
   >
     <slot></slot>
     <Icon

@@ -113,7 +113,6 @@ const modalSlots = {
     return h(
       Dropdown,
       {
-        trigger: ['hover'],
         placement: 'top',
         class: 'mr-auto',
       },

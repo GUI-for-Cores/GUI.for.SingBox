@@ -85,13 +85,13 @@ const handleSelectAll = () => {
           :key="i"
           @click="handleSelect(o)"
           :style="{ background: o.background }"
-          class="item my-4 px-8 break-all"
+          class="item my-4 py-8 px-8 break-all"
         >
           <div class="flex items-center justify-between leading-relaxed">
-            <div>{{ t(o.label) }}</div>
+            <div class="font-bold">{{ t(o.label) }}</div>
             <Icon
               v-show="isSelected(o.value)"
-              :size="32"
+              :size="26"
               icon="selected"
               fill="var(--primary-color)"
               class="shrink-0"

@@ -30,7 +30,7 @@ withDefaults(defineProps<Props>(), {
         v-if="disabled"
         :fill="`var(--btn-${type}-color)`"
         icon="forbidden"
-        class="pointer-events-none"
+        class="pointer-events-none shrink-0"
       />
       <Icon
         v-if="icon"

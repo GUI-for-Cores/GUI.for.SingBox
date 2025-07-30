@@ -9,7 +9,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  trigger: () => ['click'],
+  trigger: () => ['hover'],
   placement: 'bottom',
 })
 
