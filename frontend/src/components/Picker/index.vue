@@ -1,60 +1,65 @@
-<script setup lang="ts">
-import { ref, toRaw } from 'vue'
+<script setup lang="ts" generic="ValueType = any, PickerType extends 'single' | 'multi' = 'single'">
+import { ref, toRaw, type Ref } from 'vue'
 
 import useI18n from '@/lang'
 
-export type PickerItem = {
+export type PickerItem<T> = {
   label: string
-  value: string
+  value: T
   description?: string
   background?: string
   onSelect?: (args: {
-    value: PickerItem['value']
-    option: PickerItem
-    options: PickerItem[]
-    selected: PickerItem['value'][]
+    value: PickerItem<T>['value']
+    option: PickerItem<T>
+    options: PickerItem<T>[]
+    selected: PickerItem<T>['value'][]
   }) => void
 }
 
-interface Props {
-  type: 'single' | 'multi'
+interface Props<T, K> {
+  type: K
   title: string
-  options: PickerItem[]
-  initialValue?: string[]
+  options: PickerItem<T>[]
+  initialValue?: T[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<ValueType, PickerType>>(), {
   options: () => [],
   initialValue: () => [],
 })
 
-const emits = defineEmits(['confirm', 'cancel', 'finish'])
+const emit = defineEmits<{
+  confirm: [val: PickerType extends 'single' ? ValueType : ValueType[]]
+  cancel: []
+  finish: []
+}>()
 
 const selected = ref(
-  new Set<string>(
-    props.initialValue.filter((v) => props.options.find((option) => option.value === v)),
+  new Set(
+    props.initialValue.filter((v) => props.options.find((o) => o.value === v)).map((v) => toRaw(v)),
   ),
-)
+) as Ref<Set<ValueType>>
 
 const { t } = useI18n.global
 
 const handleConfirm = () => {
-  let res: any = Array.from(selected.value).map((v) => toRaw(v))
+  const res: any = Array.from(selected.value).map((v) => toRaw(v))
   if (props.type === 'single') {
-    res = res[0]
+    emit('confirm', res[0])
+  } else {
+    emit('confirm', res)
   }
-  emits('confirm', res)
-  emits('finish')
+  emit('finish')
 }
 
 const handleCancel = () => {
-  emits('cancel')
-  emits('finish')
+  emit('cancel')
+  emit('finish')
 }
 
-const isSelected = (option: string) => selected.value.has(option)
+const isSelected = (option: ValueType) => selected.value.has(option)
 
-const handleSelect = (option: PickerItem) => {
+const handleSelect = (option: PickerItem<ValueType>) => {
   if (isSelected(option.value)) {
     selected.value.delete(option.value)
   } else {
@@ -64,7 +69,7 @@ const handleSelect = (option: PickerItem) => {
       value: option.value,
       option,
       options: props.options,
-      selected: [...selected.value],
+      selected: Array.from(selected.value).map((v) => toRaw(v)),
     })
   }
 }

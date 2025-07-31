@@ -52,7 +52,7 @@ const menus: Menu[] = [
         return
       }
 
-      const options: PickerItem[] = []
+      const options: PickerItem<Record<string, any>[]>[] = []
 
       matches.forEach((match: string) => {
         // FIXME: IPv6
@@ -72,7 +72,7 @@ const menus: Menu[] = [
         }
       })
 
-      const payloads = await picker.multi<Record<string, any>[]>('rulesets.selectRuleType', options)
+      const payloads = await picker.multi('rulesets.selectRuleType', options)
 
       try {
         await addToRuleSet(ruleset as any, payloads)

@@ -1,4 +1,4 @@
-import { render, createVNode, type VNode, h } from 'vue'
+import { render, h, type VNode } from 'vue'
 
 import i18n from '@/lang'
 import { APP_TITLE, sampleID } from '@/utils'
@@ -72,7 +72,7 @@ class Message {
       const initInstance = () => {
         dom.style.cssText = 'display: flex; align-items: center; justify-content: center;'
 
-        const vnode = createVNode(MessageComp, {
+        const vnode = h(MessageComp, {
           icon,
           content,
           onClose: () => {
@@ -136,25 +136,25 @@ class Message {
 class Picker {
   constructor() {}
 
-  public single = <T>(title: string, options: PickerItem[], initialValue: string[] = []) => {
-    return this.buildPicker<T>('single', title, options, initialValue)
+  public single = <T>(title: string, options: PickerItem<T>[], initialValue: T[] = []) => {
+    return this.buildPicker('single', title, options, initialValue)
   }
 
-  public multi = <T>(title: string, options: PickerItem[], initialValue: string[] = []) => {
-    return this.buildPicker<T>('multi', title, options, initialValue)
+  public multi = <T>(title: string, options: PickerItem<T>[], initialValue: T[] = []) => {
+    return this.buildPicker('multi', title, options, initialValue)
   }
 
-  private buildPicker = <T>(
-    type: 'single' | 'multi',
+  private buildPicker = <ValueType, PickerType extends 'single' | 'multi'>(
+    type: PickerType,
     title: string,
-    options: PickerItem[],
-    initialValue: string[],
-  ): Promise<T> => {
+    options: PickerItem<ValueType>[],
+    initialValue: ValueType[],
+  ): Promise<PickerType extends 'single' ? ValueType : ValueType[]> => {
     return new Promise((resolve, reject) => {
       const { t } = i18n.global
       const dom = document.createElement('div')
       dom.style.cssText = ContainerCssText
-      const vnode = createVNode(PickerComp, {
+      const vnode = h(PickerComp<ValueType, PickerType>, {
         type,
         title,
         options,
@@ -183,7 +183,7 @@ const buildConfirm = (
     const { t } = i18n.global
     const dom = document.createElement('div')
     dom.style.cssText = ContainerCssText
-    const vnode = createVNode(ConfirmComp, {
+    const vnode = h(ConfirmComp, {
       title,
       message,
       options,
@@ -211,7 +211,7 @@ export const prompt = <T>(
   return new Promise<T>((resolve, reject) => {
     const dom = document.createElement('div')
     dom.style.cssText = ContainerCssText
-    const vnode = createVNode(PromptComp, {
+    const vnode = h(PromptComp, {
       title,
       initialValue,
       props,
