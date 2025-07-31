@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 
 import useI18n from '@/lang'
 
@@ -30,12 +30,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emits = defineEmits(['confirm', 'cancel', 'finish'])
 
-const selected = ref(new Set<string>(props.initialValue))
+const selected = ref(
+  new Set<string>(
+    props.initialValue.filter((v) => props.options.find((option) => option.value === v)),
+  ),
+)
 
 const { t } = useI18n.global
 
 const handleConfirm = () => {
-  let res: any = Array.from(selected.value)
+  let res: any = Array.from(selected.value).map((v) => toRaw(v))
   if (props.type === 'single') {
     res = res[0]
   }
