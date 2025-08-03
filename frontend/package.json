@@ -38,19 +38,19 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^24.1.0",
-    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.7.0",
-    "eslint": "^9.31.0",
+    "eslint": "^9.32.0",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-oxlint": "^1.8.0",
-    "eslint-plugin-vue": "^10.3.0",
+    "eslint-plugin-oxlint": "^1.9.0",
+    "eslint-plugin-vue": "^10.4.0",
     "less": "^4.4.0",
     "npm-run-all2": "^8.0.4",
-    "oxlint": "^1.8.0",
-    "typescript": "~5.8.3",
+    "oxlint": "^1.9.0",
+    "typescript": "~5.9.2",
     "vite": "npm:rolldown-vite@latest",
-    "vue-tsc": "^3.0.3"
+    "vue-tsc": "^3.0.5"
   }
 }
