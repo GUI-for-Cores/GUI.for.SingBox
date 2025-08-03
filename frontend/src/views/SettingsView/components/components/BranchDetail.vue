@@ -89,7 +89,7 @@ const handleClearCoreCache = async () => {
       icon="settings3"
     />
   </div>
-  <div class="flex items-center py-8">
+  <div class="flex items-center py-8 min-h-42">
     <Tag @click="refreshLocalVersion(true)" class="cursor-pointer">
       {{ t('settings.kernel.local') }}
       :

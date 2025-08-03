@@ -3,7 +3,7 @@ import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { Readfile, Writefile } from '@/bridge'
-import { type RuleSetType, useRulesetsStore } from '@/stores'
+import { type RuleSet, useRulesetsStore } from '@/stores'
 import { deepClone, ignoredError, isValidJson, message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
@@ -15,7 +15,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const ruleset = ref<RuleSetType>()
+const ruleset = ref<RuleSet>()
 const rulesetContent = ref<string>('')
 const initialized = ref(false)
 

@@ -3,12 +3,12 @@ import { ref } from 'vue'
 import { stringify, parse } from 'yaml'
 
 import { Readfile, Writefile, Copyfile, Download, FileExists, HttpGet } from '@/bridge'
-import { RulesetsFilePath } from '@/constant/app'
+import { RulesetHubFilePath, RulesetsFilePath } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
 import { asyncPool, debounce, ignoredError, isValidRulesJson, omitArray } from '@/utils'
 
-export type RuleSetType = {
+export interface RuleSet {
   id: string
   tag: string
   updateTime: number
@@ -22,12 +22,22 @@ export type RuleSetType = {
   updating?: boolean
 }
 
+export interface RuleSetHub {
+  geosite: string
+  geoip: string
+  list: { name: string; type: 'geosite' | 'geoip'; description: string; count: number }[]
+}
+
 export const useRulesetsStore = defineStore('rulesets', () => {
-  const rulesets = ref<RuleSetType[]>([])
+  const rulesets = ref<RuleSet[]>([])
+  const rulesetHub = ref<RuleSetHub>({ geosite: '', geoip: '', list: [] })
 
   const setupRulesets = async () => {
     const data = await ignoredError(Readfile, RulesetsFilePath)
     data && (rulesets.value = parse(data))
+
+    const list = await ignoredError(Readfile, RulesetHubFilePath)
+    list && (rulesetHub.value = JSON.parse(list))
   }
 
   const saveRulesets = debounce(async () => {
@@ -35,7 +45,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     await Writefile(RulesetsFilePath, stringify(r))
   }, 500)
 
-  const addRuleset = async (r: RuleSetType) => {
+  const addRuleset = async (r: RuleSet) => {
     rulesets.value.push(r)
     try {
       await saveRulesets()
@@ -57,7 +67,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     }
   }
 
-  const editRuleset = async (id: string, r: RuleSetType) => {
+  const editRuleset = async (id: string, r: RuleSet) => {
     const idx = rulesets.value.findIndex((v) => v.id === id)
     if (idx === -1) return
     const backup = rulesets.value.splice(idx, 1, r)[0]
@@ -69,7 +79,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     }
   }
 
-  const _doUpdateRuleset = async (r: RuleSetType) => {
+  const _doUpdateRuleset = async (r: RuleSet) => {
     if (r.format === RulesetFormat.Source) {
       let body = ''
       let isExist = true
@@ -142,7 +152,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const updateRulesets = async () => {
     let needSave = false
 
-    const update = async (r: RuleSetType) => {
+    const update = async (r: RuleSet) => {
       try {
         r.updating = true
         await _doUpdateRuleset(r)
@@ -161,6 +171,20 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     if (needSave) saveRulesets()
   }
 
+  const rulesetHubLoading = ref(false)
+  const updateRulesetHub = async () => {
+    rulesetHubLoading.value = true
+    try {
+      const { body } = await HttpGet<string>(
+        'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing-full.json',
+      )
+      rulesetHub.value = JSON.parse(body)
+      await Writefile(RulesetHubFilePath, body)
+    } finally {
+      rulesetHubLoading.value = false
+    }
+  }
+
   const getRulesetById = (id: string) => rulesets.value.find((v) => v.id === id)
 
   return {
@@ -173,5 +197,9 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     updateRuleset,
     updateRulesets,
     getRulesetById,
+
+    rulesetHub,
+    rulesetHubLoading,
+    updateRulesetHub,
   }
 })
