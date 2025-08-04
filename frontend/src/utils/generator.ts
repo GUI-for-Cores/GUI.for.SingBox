@@ -352,46 +352,7 @@ export const generateDnsServerURL = (dnsServer: IDNSServer) => {
 }
 
 const _adaptToStableBranch = (config: Recordable) => {
-  config.dns.rules.unshift({
-    action: 'route',
-    server: config.route.default_domain_resolver.server,
-    outbound: 'any',
-  })
-  delete config.route.default_domain_resolver
-  config.dns.servers = config.dns.servers.map((server: IDNSServer) => {
-    const isFakeIP = server.type === DnsServer.FakeIP
-    if (isFakeIP) {
-      config.dns.fakeip = {
-        enabled: true,
-        inet4_range: server.inet4_range,
-        inet6_range: server.inet6_range,
-      }
-    }
-    let detour = server.detour
-    if (!detour) {
-      const isSupportDetour = [
-        DnsServer.Local,
-        DnsServer.Tcp,
-        DnsServer.Udp,
-        DnsServer.Tls,
-        DnsServer.Quic,
-        DnsServer.Https,
-        DnsServer.H3,
-        DnsServer.Dhcp,
-      ].includes(server.type as any)
-      isSupportDetour && (detour = config.outbounds.find((v: any) => v.type === 'direct')?.tag)
-    }
-    return {
-      tag: server.tag,
-      address: isFakeIP ? 'fakeip' : generateDnsServerURL(server),
-      address_resolver: server.domain_resolver,
-      detour: detour,
-    }
-  })
-  config.dns.rules = config.dns.rules.filter((rule: Recordable) => rule.ip_accept_any === undefined)
-  config.dns.rules.forEach((rule: Recordable) => {
-    delete rule.strategy
-  })
+  config
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {
