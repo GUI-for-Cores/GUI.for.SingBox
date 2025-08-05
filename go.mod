@@ -5,13 +5,13 @@ go 1.24
 require (
 	github.com/energye/systray v1.0.2
 	github.com/gen2brain/beeep v0.11.1
-	github.com/klauspost/cpuid/v2 v2.2.10
-	github.com/oschwald/geoip2-golang v1.11.0
+	github.com/klauspost/cpuid/v2 v2.3.0
+	github.com/oschwald/geoip2-golang v1.13.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/wailsapp/wails/v2 v2.10.1
-	golang.org/x/sys v0.33.0
-	golang.org/x/text v0.26.0
+	github.com/wailsapp/wails/v2 v2.10.2
+	golang.org/x/sys v0.34.0
+	golang.org/x/text v0.27.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -22,6 +22,7 @@ require (
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jackmordaunt/icns/v3 v3.0.1 // indirect
 	github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
@@ -52,8 +53,8 @@ require (
 	github.com/wailsapp/go-webview2 v1.0.21 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/crypto v0.39.0 // indirect
-	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/crypto v0.40.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, inject, computed, useTemplateRef, type Ref } from 'vue'
+import { ref, inject, computed, useTemplateRef, type Ref, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { WindowToggleMaximise } from '@/bridge'
 import * as Defaults from '@/constant/profile'
 import { useProfilesStore } from '@/stores'
 import { deepClone, generateConfig, message, sampleID, alert } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
+import Dropdown from '@/components/Dropdown/index.vue'
 
 import DnsConfig from './DnsConfig.vue'
 import GeneralConfig from './GeneralConfig.vue'
@@ -17,7 +19,6 @@ import RouteConfig from './RouteConfig.vue'
 interface Props {
   id?: string
   step?: number
-  isUpdate?: boolean
 }
 
 enum Step {
@@ -109,13 +110,12 @@ const handleNextStep = () => currentStep.value++
 const handleSave = async () => {
   loading.value = true
   try {
-    if (props.isUpdate) {
+    if (props.id) {
       await profilesStore.editProfile(props.id, profile.value)
-      handleSubmit()
     } else {
       await profilesStore.addProfile(profile.value)
-      handleCancel()
     }
+    await handleSubmit()
   } catch (error: any) {
     console.error('handleSave: ', error)
     message.error(error)
@@ -142,35 +142,119 @@ const handlePreview = async () => {
   }
 }
 
-if (props.isUpdate) {
+if (props.id) {
   const p = profilesStore.getProfileById(props.id)
   if (p) {
     profile.value = deepClone(p)
   }
 }
+
+const modalSlots = {
+  title: () =>
+    h(
+      Dropdown,
+      {},
+      {
+        default: () =>
+          h(
+            'div',
+            {
+              class: 'font-bold',
+            },
+            `${t(stepItems[currentStep.value].title)} （${currentStep.value + 1} / ${stepItems.length}）`,
+          ),
+        overlay: () =>
+          h(
+            'div',
+            {
+              class: 'p-4 flex flex-col',
+            },
+            stepItems.map((step, index) =>
+              h(
+                Button,
+                {
+                  type: currentStep.value === index ? 'link' : 'text',
+                  disabled: !profile.value.name && currentStep.value !== index,
+                  onClick: () => (currentStep.value = index),
+                },
+                () => t(step.title),
+              ),
+            ),
+          ),
+      },
+    ),
+
+  toolbar: () => [
+    h(Button, {
+      type: 'text',
+      icon: 'file',
+      onClick: handlePreview,
+    }),
+    h(Button, {
+      type: 'text',
+      icon: 'add',
+      style: {
+        display: [Step.Inbounds, Step.Outbounds, Step.Route, Step.Dns].includes(currentStep.value)
+          ? ''
+          : 'none',
+      },
+      onClick: handleAdd,
+    }),
+  ],
+  action: () => [
+    h(
+      Button,
+      {
+        disabled: currentStep.value === Step.Name,
+        onClick: handlePrevStep,
+      },
+      () => t('common.prevStep'),
+    ),
+    h(
+      Button,
+      {
+        class: 'mr-auto',
+        disabled: !profile.value.name || currentStep.value === stepItems.length - 1,
+        onClick: handleNextStep,
+      },
+      () => t('common.nextStep'),
+    ),
+  ],
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        disabled: !profile.value.name,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div @dblclick="WindowToggleMaximise" class="header" style="--wails-draggable: drag">
-    <div class="header-title">
-      {{ t(stepItems[currentStep].title) }} ({{ currentStep + 1 }} / {{ stepItems.length }})
-    </div>
-    <Button @click="handlePreview" icon="file" type="text" class="ml-auto" />
-    <Button
-      v-show="[Step.Inbounds, Step.Outbounds, Step.Route, Step.Dns].includes(currentStep)"
-      @click="handleAdd"
-      icon="add"
-      type="text"
-      class="mr-8"
-    />
-  </div>
-
-  <div class="form">
+  <div>
     <div v-show="currentStep === Step.Name">
-      <div class="form-item">
-        <div class="name">{{ t('profile.name') }} *</div>
-        <Input v-model="profile.name" auto-size autofocus class="flex-1 ml-8" />
-      </div>
+      <Input
+        v-model="profile.name"
+        auto-size
+        autofocus
+        :border="false"
+        :placeholder="t('profile.name')"
+      />
     </div>
     <div v-show="currentStep === Step.General">
       <GeneralConfig v-model="generalConfig" :outbound-options="outboundOptions" />
@@ -203,40 +287,4 @@ if (props.isUpdate) {
       <MixinAndScript v-model="mixinAndScriptConfig" />
     </div>
   </div>
-
-  <div class="form-action">
-    <Button @click="handlePrevStep" :disabled="currentStep == Step.Name" type="text">
-      {{ t('common.prevStep') }}
-    </Button>
-    <Button
-      @click="handleNextStep"
-      :disabled="!profile.name || currentStep == stepItems.length - 1"
-      type="text"
-      class="mr-auto"
-    >
-      {{ t('common.nextStep') }}
-    </Button>
-    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSave" :loading="loading" :disabled="!profile.name" type="primary">
-      {{ t('common.save') }}
-    </Button>
-  </div>
 </template>
-
-<style lang="less" scoped>
-.header {
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
-  &-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 8px 0 16px 0;
-  }
-}
-.form {
-  padding-right: 8px;
-  overflow-y: auto;
-  max-height: calc(70vh - 8px);
-}
-</style>

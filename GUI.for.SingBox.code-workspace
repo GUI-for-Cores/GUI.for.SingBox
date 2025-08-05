@@ -6,5 +6,8 @@
     {
       "path": "frontend"
     }
-  ]
+  ],
+  "settings": {
+    "oxc.enable": true
+  }
 }

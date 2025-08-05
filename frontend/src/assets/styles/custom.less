@@ -1,0 +1,101 @@
+body[debug-outline='true'] {
+  * {
+    outline: 1px solid var(--color);
+  }
+}
+
+body {
+  margin: 0;
+  color: var(--color);
+  background-color: var(--bg-color);
+  user-select: none;
+  -webkit-user-select: none;
+  line-height: 1.32;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-list-grid {
+  flex: 1;
+  margin-top: 8px;
+  overflow-y: auto;
+  font-size: 12px;
+  .grid-list-item {
+    display: inline-block;
+    margin: 8px;
+    width: calc(100% / 3 - 16px);
+  }
+}
+
+.grid-list-list {
+  flex: 1;
+  margin-top: 8px;
+  overflow-y: auto;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px;
+}
+
+.grid-list-header {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.grid-list-empty {
+  height: 90%;
+}
+
+.form-item {
+  font-size: 14px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.hover\:\!bg-red {
+  &:hover {
+    background-color: rgba(255, 0, 0, 0.6) !important;
+  }
+}
+
+@keyframes clip {
+  from {
+    clip-path: circle(0% at var(--x) var(--y));
+  }
+  to {
+    clip-path: circle(100% at var(--x) var(--y));
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.2s ease-out;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-100%);
+}

@@ -1,0 +1,91 @@
+@spacing-values: 0, 2, 4, 6, 8, 12, 16, 20, 24, 32;
+@spacing-types: m, p;
+@directions: '', t, r, b, l, x, y;
+
+.generate-spacing(@typeIndex: 1) when (@typeIndex <= length(@spacing-types)) {
+  @type: extract(@spacing-types, @typeIndex);
+
+  .generate-direction(@dirIndex: 1) when (@dirIndex <= length(@directions)) {
+    @dir: extract(@directions, @dirIndex);
+
+    .generate-value(@valIndex: 1) when (@valIndex <= length(@spacing-values)) {
+      @val: extract(@spacing-values, @valIndex);
+      @class: ~'@{type}@{dir}-@{val}';
+
+      .@{class} {
+        .apply-spacing(@type, @dir, unit(@val, px));
+      }
+
+      .generate-value(@valIndex + 1);
+    }
+
+    .generate-auto() when (@type = m) {
+      @class: ~'@{type}@{dir}-auto';
+      .@{class} {
+        .apply-spacing(@type, @dir, auto);
+      }
+    }
+
+    .generate-value();
+    .generate-auto();
+    .generate-direction(@dirIndex + 1);
+  }
+
+  .generate-direction();
+  .generate-spacing(@typeIndex + 1);
+}
+
+.generate-spacing();
+
+.apply-spacing(@type, '', @value) when (@type = m) {
+  margin: @value;
+}
+.apply-spacing(@type, '', @value) when (@type = p) {
+  padding: @value;
+}
+
+.apply-spacing(@type, t, @value) when (@type = m) {
+  margin-top: @value;
+}
+.apply-spacing(@type, t, @value) when (@type = p) {
+  padding-top: @value;
+}
+
+.apply-spacing(@type, r, @value) when (@type = m) {
+  margin-right: @value;
+}
+.apply-spacing(@type, r, @value) when (@type = p) {
+  padding-right: @value;
+}
+
+.apply-spacing(@type, b, @value) when (@type = m) {
+  margin-bottom: @value;
+}
+.apply-spacing(@type, b, @value) when (@type = p) {
+  padding-bottom: @value;
+}
+
+.apply-spacing(@type, l, @value) when (@type = m) {
+  margin-left: @value;
+}
+.apply-spacing(@type, l, @value) when (@type = p) {
+  padding-left: @value;
+}
+
+.apply-spacing(@type, x, @value) when (@type = m) {
+  margin-left: @value;
+  margin-right: @value;
+}
+.apply-spacing(@type, x, @value) when (@type = p) {
+  padding-left: @value;
+  padding-right: @value;
+}
+
+.apply-spacing(@type, y, @value) when (@type = m) {
+  margin-top: @value;
+  margin-bottom: @value;
+}
+.apply-spacing(@type, y, @value) when (@type = p) {
+  padding-top: @value;
+  padding-bottom: @value;
+}

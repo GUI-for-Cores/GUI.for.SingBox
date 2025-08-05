@@ -1,0 +1,19 @@
+@gap-values: 0, 2, 4, 8, 10, 12, 16, 24, 32;
+
+.generate-gaps(@i: 1) when (@i <= length(@gap-values)) {
+  @v: extract(@gap-values, @i);
+
+  .gap-@{v} {
+    gap: unit(@v, px);
+  }
+  .gap-x-@{v} {
+    column-gap: unit(@v, px);
+  }
+  .gap-y-@{v} {
+    row-gap: unit(@v, px);
+  }
+
+  .generate-gaps(@i + 1);
+}
+
+.generate-gaps();

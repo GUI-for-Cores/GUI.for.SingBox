@@ -1,5 +1,6 @@
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
+import { CoreWorkingDirectory } from '@/constant/kernel'
 import i18n from '@/lang'
 import {
   type ProxyType,
@@ -535,4 +536,31 @@ export const getKernelAssetFileName = (version: string, isAlpha = false) => {
       : ''
   const suffix = { windows: '.zip', linux: '.tar.gz', darwin: '.tar.gz' }[os]
   return `sing-box-${version}-${os}-${arch}${legacy}${suffix}`
+}
+
+export const processMagicVariables = (str: string) => {
+  const { env } = useEnvStore()
+  let result = str
+  Object.entries({
+    $APP_BASE_PATH: env.basePath,
+    $CORE_BASE_PATH: CoreWorkingDirectory,
+  }).forEach(([source, target]) => {
+    result = result.replaceAll(source, target)
+  })
+  return result
+}
+
+export const getKernelRuntimeEnv = (isAlpha = false) => {
+  const appSettings = useAppSettingsStore()
+  const { env } = isAlpha ? appSettings.app.kernel.alpha : appSettings.app.kernel.main
+  return Object.entries(env).reduce((p, [key, value]) => {
+    p[key] = processMagicVariables(value)
+    return p
+  }, {} as Recordable)
+}
+
+export const getKernelRuntimeArgs = (isAlpha = false) => {
+  const appSettings = useAppSettingsStore()
+  const { args } = isAlpha ? appSettings.app.kernel.alpha : appSettings.app.kernel.main
+  return args.map((arg) => processMagicVariables(arg))
 }

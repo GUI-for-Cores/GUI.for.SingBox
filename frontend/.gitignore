@@ -30,4 +30,3 @@ coverage
 *.tsbuildinfo
 
 package.json.md5
-components.d.ts

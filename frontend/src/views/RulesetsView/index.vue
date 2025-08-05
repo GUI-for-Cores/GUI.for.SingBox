@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h } from 'vue'
+import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { Removefile, Writefile, BrowserOpenURL } from '@/bridge'
@@ -7,7 +7,7 @@ import { DraggableOptions } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { View } from '@/enums/app'
 import { RulesetFormat } from '@/enums/kernel'
-import { type RuleSetType, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
+import { type RuleSet, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
 import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
@@ -53,29 +53,26 @@ const rulesetsStore = useRulesetsStore()
 const appSettingsStore = useAppSettingsStore()
 
 const handleImportRuleset = async () => {
-  modalApi
-    .setProps({
-      title: 'rulesets.hub',
-      cancelText: 'common.close',
-      height: '90',
-      width: '90',
-      footer: false,
-      maskClosable: true,
-    })
-    .setComponent(h(RulesetHub))
-    .open()
+  modalApi.setProps({
+    title: 'rulesets.hub',
+    cancelText: 'common.close',
+    height: '90',
+    width: '90',
+    submit: false,
+    maskClosable: true,
+  })
+  modalApi.setContent(RulesetHub)
+  modalApi.open()
 }
 
 const handleShowRulesetForm = async (id?: string, isUpdate = false) => {
-  modalApi
-    .setProps({
-      title: isUpdate ? 'common.edit' : 'common.add',
-      maxHeight: '90',
-      minWidth: '70',
-      footer: false,
-    })
-    .setComponent(h(RulesetForm, { id, isUpdate }))
-    .open()
+  modalApi.setProps({
+    title: isUpdate ? 'common.edit' : 'common.add',
+    maxHeight: '90',
+    minWidth: '70',
+  })
+  modalApi.setContent(RulesetForm, { id, isUpdate })
+  modalApi.open()
 }
 
 const handleUpdateRulesets = async () => {
@@ -89,18 +86,16 @@ const handleUpdateRulesets = async () => {
 }
 
 const handleEditRulesetList = (id: string) => {
-  modalApi
-    .setProps({
-      title: rulesetsStore.getRulesetById(id)?.tag,
-      footer: false,
-      height: '90',
-      width: '90',
-    })
-    .setComponent(h(RulesetView, { id }))
-    .open()
+  modalApi.setProps({
+    title: rulesetsStore.getRulesetById(id)?.tag,
+    height: '90',
+    width: '90',
+  })
+  modalApi.setContent(RulesetView, { id })
+  modalApi.open()
 }
 
-const handleUpdateRuleset = async (r: RuleSetType) => {
+const handleUpdateRuleset = async (r: RuleSet) => {
   try {
     await rulesetsStore.updateRuleset(r.id)
   } catch (error: any) {
@@ -109,7 +104,7 @@ const handleUpdateRuleset = async (r: RuleSetType) => {
   }
 }
 
-const handleDeleteRuleset = async (r: RuleSetType) => {
+const handleDeleteRuleset = async (r: RuleSet) => {
   try {
     await ignoredError(Removefile, r.path)
     await rulesetsStore.deleteRuleset(r.id)
@@ -119,7 +114,7 @@ const handleDeleteRuleset = async (r: RuleSetType) => {
   }
 }
 
-const handleDisableRuleset = async (r: RuleSetType) => {
+const handleDisableRuleset = async (r: RuleSet) => {
   r.disabled = !r.disabled
   rulesetsStore.editRuleset(r.id, r)
 }
@@ -138,7 +133,7 @@ const handleClearRuleset = async (id: string) => {
   }
 }
 
-const generateMenus = (r: RuleSetType) => {
+const generateMenus = (r: RuleSet) => {
   return {
     [RulesetFormat.Source]: sourceMenuList,
     [RulesetFormat.Binary]: binaryMenuList,
@@ -154,7 +149,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
   <div v-if="rulesetsStore.rulesets.length === 0" class="grid-list-empty">
     <Empty>
       <template #description>
-        <I18nT keypath="rulesets.empty" tag="p" scope="global">
+        <I18nT keypath="rulesets.empty" tag="div" scope="global" class="flex items-center mt-12">
           <template #action>
             <Button @click="handleShowRulesetForm()" type="link">{{ t('common.add') }}</Button>
           </template>
@@ -184,7 +179,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
     >
       {{ t('common.updateAll') }}
     </Button>
-    <Button @click="handleShowRulesetForm()" type="primary">
+    <Button @click="handleShowRulesetForm()" type="primary" icon="add" class="ml-16">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -199,7 +194,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       :title="r.tag"
       :disabled="r.disabled"
       v-menu="generateMenus(r)"
-      class="item"
+      class="grid-list-item"
     >
       <template #title-prefix>
         <Tag v-if="r.updating" color="cyan">
@@ -208,27 +203,29 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       </template>
 
       <template v-if="appSettingsStore.app.rulesetsView === View.Grid" #extra>
-        <Dropdown :trigger="['hover', 'click']">
+        <Dropdown>
           <Button type="link" size="small" icon="more" />
           <template #overlay>
-            <Button
-              :disabled="r.disabled"
-              :loading="r.updating"
-              :type="r.disabled ? 'text' : 'link'"
-              size="small"
-              @click="handleUpdateRuleset(r)"
-            >
-              {{ t('common.update') }}
-            </Button>
-            <Button type="link" size="small" @click="handleDisableRuleset(r)">
-              {{ r.disabled ? t('common.enable') : t('common.disable') }}
-            </Button>
-            <Button type="link" size="small" @click="handleShowRulesetForm(r.id, true)">
-              {{ t('common.edit') }}
-            </Button>
-            <Button type="link" size="small" @click="handleDeleteRuleset(r)">
-              {{ t('common.delete') }}
-            </Button>
+            <div class="flex flex-col gap-4 min-w-64 p-4">
+              <Button
+                :disabled="r.disabled"
+                :loading="r.updating"
+                :type="r.disabled ? 'text' : 'text'"
+                size="small"
+                @click="handleUpdateRuleset(r)"
+              >
+                {{ t('common.update') }}
+              </Button>
+              <Button type="text" size="small" @click="handleDisableRuleset(r)">
+                {{ r.disabled ? t('common.enable') : t('common.disable') }}
+              </Button>
+              <Button type="text" size="small" @click="handleShowRulesetForm(r.id, true)">
+                {{ t('common.edit') }}
+              </Button>
+              <Button type="text" size="small" @click="handleDeleteRuleset(r)">
+                {{ t('common.delete') }}
+              </Button>
+            </div>
           </template>
         </Dropdown>
       </template>
@@ -237,19 +234,19 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
         <Button
           :disabled="r.disabled"
           :loading="r.updating"
-          :type="r.disabled ? 'text' : 'link'"
+          :type="r.disabled ? 'text' : 'text'"
           size="small"
           @click="handleUpdateRuleset(r)"
         >
           {{ t('common.update') }}
         </Button>
-        <Button type="link" size="small" @click="handleDisableRuleset(r)">
+        <Button type="text" size="small" @click="handleDisableRuleset(r)">
           {{ r.disabled ? t('common.enable') : t('common.disable') }}
         </Button>
-        <Button type="link" size="small" @click="handleShowRulesetForm(r.id, true)">
+        <Button type="text" size="small" @click="handleShowRulesetForm(r.id, true)">
           {{ t('common.edit') }}
         </Button>
-        <Button type="link" size="small" @click="handleDeleteRuleset(r)">
+        <Button type="text" size="small" @click="handleDeleteRuleset(r)">
           {{ t('common.delete') }}
         </Button>
       </template>

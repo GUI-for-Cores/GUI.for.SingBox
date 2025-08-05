@@ -72,11 +72,15 @@ const renderCell = (column: Column, record: Recordable) => {
 </script>
 
 <template>
-  <div class="table">
-    <table>
+  <div class="gui-table overflow-auto">
+    <table class="w-full text-12 border-collapse">
       <thead>
-        <tr>
-          <th v-for="column in tableColumns" :key="column.key">
+        <tr class="sticky top-0 shadow">
+          <th
+            v-for="column in tableColumns"
+            :key="column.key"
+            class="px-4 py-8 whitespace-nowrap cursor-pointer"
+          >
             <div
               @click="handleChangeSortField(column.key)"
               :style="{
@@ -85,11 +89,11 @@ const renderCell = (column: Column, record: Recordable) => {
                 ],
                 minWidth: column.minWidth || 'auto',
               }"
-              class="title"
+              class="flex items-center"
             >
               {{ t(column.title) }}
               <div v-if="sortField === column.key && sortFunc">
-                <span class="title-sort"> {{ sortReverse ? '↑' : '↓' }} </span>
+                <span class="px-4"> {{ sortReverse ? '↑' : '↓' }} </span>
               </div>
             </div>
           </th>
@@ -100,12 +104,13 @@ const renderCell = (column: Column, record: Recordable) => {
           v-for="record in tableData"
           v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(record) }))"
           :key="record.id"
+          class="transition duration-200"
         >
           <td
             v-for="column in tableColumns"
             :key="column.key"
             :style="{ textAlign: column.align || 'left' }"
-            class="select-text"
+            class="select-text whitespace-nowrap p-8"
           >
             <slot :name="column.key" :="{ column, record }">
               <component :is="renderCell(column, record)" />
@@ -118,37 +123,14 @@ const renderCell = (column: Column, record: Recordable) => {
 </template>
 
 <style lang="less" scoped>
-.table {
-  overflow: auto;
-}
 table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  text-align: left;
   thead {
     tr {
-      position: sticky;
-      top: 0;
       background: var(--table-tr-odd-bg);
-      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
-      th {
-        padding: 8px 4px;
-        white-space: nowrap;
-        cursor: pointer;
-        .title {
-          display: flex;
-          align-items: center;
-          &-sort {
-            padding: 0 4px;
-          }
-        }
-      }
     }
   }
   tbody {
     tr {
-      transition: all 0.2s;
       &:nth-child(odd) {
         background: var(--table-tr-odd-bg);
         &:hover {
@@ -160,10 +142,6 @@ table {
         &:hover {
           background: var(--table-tr-even-hover-bg);
         }
-      }
-      td {
-        padding: 8px;
-        white-space: nowrap;
       }
     }
   }

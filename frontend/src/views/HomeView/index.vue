@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, useTemplateRef, h } from 'vue'
+import { ref, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ControllerCloseMode } from '@/enums/app'
@@ -33,27 +33,20 @@ const handleStartKernel = async () => {
 }
 
 const handleShowQuickStart = () => {
-  modalApi
-    .setProps({
-      title: 'subscribes.enterLink',
-      footer: false,
-      maskClosable: true,
-    })
-    .setComponent(h(QuickStart))
-    .open()
+  modalApi.setProps({ title: 'subscribes.enterLink' })
+  modalApi.setContent(QuickStart).open()
 }
 
 const handleShowKernelLogs = () => {
-  modalApi
-    .setProps({
-      title: 'home.overview.viewlog',
-      width: '90',
-      height: '90',
-      submit: false,
-      maskClosable: true,
-    })
-    .setComponent(h(KernelLogs))
-    .open()
+  modalApi.setProps({
+    title: 'home.overview.viewlog',
+    width: '90',
+    height: '90',
+    submit: false,
+    cancelText: 'common.close',
+    maskClosable: true,
+  })
+  modalApi.setContent(KernelLogs).open()
 }
 
 let scrollEventCount = 0
@@ -90,9 +83,12 @@ watch(showController, (v) => {
 </script>
 
 <template>
-  <div @wheel="onMouseWheel" class="homeview">
-    <div v-if="!appSettingsStore.app.kernel.running || kernelApiStore.loading" class="center">
-      <img src="@/assets/logo.png" draggable="false" style="margin-bottom: 16px; height: 128px" />
+  <div @wheel="onMouseWheel" class="relative overflow-hidden h-full">
+    <div
+      v-if="!appSettingsStore.app.kernel.running || kernelApiStore.loading"
+      class="w-full h-[90%] flex flex-col items-center justify-center"
+    >
+      <img src="@/assets/logo.png" draggable="false" class="w-128 mb-16" />
 
       <template v-if="profilesStore.profiles.length === 0">
         <p>{{ t('home.noProfile', [APP_TITLE]) }}</p>
@@ -100,31 +96,61 @@ watch(showController, (v) => {
       </template>
 
       <template v-else>
-        <div class="profiles">
+        <div class="flex gap-8 mb-32">
           <Card
-            v-for="p in profilesStore.profiles.slice(0, 4)"
+            v-for="p in profilesStore.profiles.slice(0, profilesStore.profiles.length > 4 ? 3 : 4)"
             :key="p.id"
             :selected="appSettingsStore.app.kernel.profile === p.id"
             @click="appSettingsStore.app.kernel.profile = p.id"
-            class="profiles-card"
           >
-            {{ p.name }}
+            <div
+              class="w-128 h-full flex items-center justify-center py-24 text-center cursor-pointer font-bold text-12"
+            >
+              {{ p.name }}
+            </div>
           </Card>
-          <Card @click="handleShowQuickStart" class="profiles-card">
-            {{ t('home.quickStart') }}
+          <Dropdown v-if="profilesStore.profiles.length > 4" placement="top">
+            <Card class="h-full">
+              <div
+                class="w-128 h-full flex items-center justify-center py-24 text-center cursor-pointer font-bold text-12"
+              >
+                ...
+              </div>
+            </Card>
+            <template #overlay>
+              <div class="flex flex-col py-8">
+                <Button
+                  v-for="p in profilesStore.profiles.slice(3)"
+                  :key="p.id"
+                  @click="appSettingsStore.app.kernel.profile = p.id"
+                >
+                  <div class="min-w-32 w-full flex items-center justify-between">
+                    {{ p.name }}
+                    <Icon v-if="appSettingsStore.app.kernel.profile === p.id" icon="selected" />
+                  </div>
+                </Button>
+              </div>
+            </template>
+          </Dropdown>
+          <Card @click="handleShowQuickStart">
+            <div
+              class="w-128 h-full flex items-center justify-center py-24 text-center cursor-pointer font-bold text-12"
+            >
+              {{ t('home.quickStart') }}
+            </div>
           </Card>
         </div>
         <Button @click="handleStartKernel" :loading="kernelApiStore.loading" type="primary">
           {{ t('home.overview.start') }}
         </Button>
-        <Button @click="handleShowKernelLogs" type="link" size="small">
+        <Button @click="handleShowKernelLogs" type="link" size="small" class="mt-4">
           {{ t('home.overview.viewlog') }}
         </Button>
       </template>
     </div>
 
     <template v-else-if="!kernelApiStore.statusLoading">
-      <div :class="{ blur: showController }">
+      <div :class="{ 'blur-3xl': showController }">
         <OverView />
         <Divider>
           <Button @click="showController = true" type="link" size="small">
@@ -135,15 +161,16 @@ watch(showController, (v) => {
 
       <div
         ref="controllerRef"
-        :style="{ transform: `translateY(${showController ? 0 : 100}%)` }"
-        class="controller"
+        :class="showController ? 'translate-y-0' : 'translate-y-full'"
+        class="absolute inset-0 pb-32 overflow-y-auto duration-400"
       >
         <GroupsController />
       </div>
 
       <Button
         v-show="showController"
-        class="close-controller"
+        class="fixed left-1/2 -translate-x-1/2 bottom-12 z-2"
+        style="background-color: var(--card-bg)"
         @click="showController = false"
         type="text"
         size="small"
@@ -154,63 +181,3 @@ watch(showController, (v) => {
 
   <Modal />
 </template>
-
-<style lang="less" scoped>
-.blur {
-  filter: blur(50px);
-}
-.homeview {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-
-  .center {
-    position: absolute;
-    width: 100%;
-    height: 90%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.controller {
-  position: absolute;
-  inset: 0;
-  transform: translateY(100%);
-  padding-bottom: 32px;
-  overflow-y: auto;
-  transition: all 0.4s;
-}
-
-.close-controller {
-  position: fixed;
-  z-index: 2;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  border-radius: 8px;
-  background-color: var(--card-bg);
-}
-
-.profiles {
-  padding-bottom: 16px;
-  display: flex;
-  max-width: 90%;
-  overflow-x: hidden;
-  &-card {
-    cursor: pointer;
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 12px;
-    width: 120px;
-    height: 60px;
-    padding-top: 6px;
-    margin: 8px;
-  }
-}
-</style>

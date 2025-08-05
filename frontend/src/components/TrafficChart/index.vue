@@ -54,7 +54,7 @@ const updateChart = () => {
     if (!showLines.value[index]) return ''
     const newS = [...s]
     if (newS.length < MAX_HISTORY) {
-      newS.unshift(...new Array(MAX_HISTORY - s.length).fill(0))
+      newS.unshift(...Array.from({ length: MAX_HISTORY - s.length }, () => 0))
     }
     const spacing = (width.value - padding) / newS.length
     const point = newS.reduce((p, c, i) => {
@@ -93,7 +93,7 @@ watch(() => props.series, updateChart, { deep: true })
 </script>
 
 <template>
-  <div class="chart">
+  <div class="gui-traffic-chart rounded-8">
     <svg ref="svgRef" :height="height + 'px'" width="100%" xmlns="http://www.w3.org/2000/svg">
       <text
         v-for="i in 8"
@@ -134,7 +134,7 @@ watch(() => props.series, updateChart, { deep: true })
         @click="toggleUpload"
         r="3"
         cy="10"
-        class="pointer"
+        class="text-10 cursor-pointer"
       />
       <circle
         :cx="width / 2 + 20"
@@ -142,14 +142,14 @@ watch(() => props.series, updateChart, { deep: true })
         @click="toggleDownload"
         r="3"
         cy="10"
-        class="pointer"
+        class="text-10 cursor-pointer"
       />
       <text
         :x="width / 2 - 34"
         :fill="strokeColors[0]"
         @click="toggleUpload"
         y="14"
-        class="pointer"
+        class="text-10 cursor-pointer"
       >
         {{ legend[0] }}
       </text>
@@ -158,7 +158,7 @@ watch(() => props.series, updateChart, { deep: true })
         :fill="strokeColors[1]"
         @click="toggleDownload"
         y="14"
-        class="pointer"
+        class="text-10 cursor-pointer"
       >
         {{ legend[1] }}
       </text>
@@ -167,13 +167,7 @@ watch(() => props.series, updateChart, { deep: true })
 </template>
 
 <style lang="less" scoped>
-.chart {
+.gui-traffic-chart {
   background: var(--card-bg);
-  border-radius: 8px;
-}
-
-.pointer {
-  font-size: 10px;
-  cursor: pointer;
 }
 </style>

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 import { EventsOn, WindowHide, IsStartup } from '@/bridge'
-import { NavigationBar, MainPage, TitleBar } from '@/components'
+import { NavigationBar, TitleBar } from '@/components'
 import * as Stores from '@/stores'
 import { exitApp, sampleID, sleep, message } from '@/utils'
 import AboutView from '@/views/AboutView.vue'
@@ -58,9 +58,9 @@ const showError = (err: string) => {
   message.error(err)
 }
 
-appSettings.setupAppSettings().then(async () => {
+envStore.setupEnv().then(async () => {
   await Promise.all([
-    envStore.setupEnv(),
+    appSettings.setupAppSettings(),
     profilesStore.setupProfiles(),
     subscribesStore.setupSubscribes(),
     rulesetsStore.setupRulesets(),
@@ -89,20 +89,24 @@ appSettings.setupAppSettings().then(async () => {
 
 <template>
   <SplashView v-if="loading">
-    <div class="progress">
-      <Progress
-        :percent="percent"
-        :status="hasError ? 'danger' : 'primary'"
-        :radius="10"
-        type="circle"
-      />
-    </div>
+    <Progress
+      :percent="percent"
+      :status="hasError ? 'danger' : 'primary'"
+      :radius="10"
+      type="circle"
+    />
   </SplashView>
   <template v-else>
     <TitleBar />
-    <div class="main">
+    <div class="flex-1 overflow-y-auto flex flex-col p-8">
       <NavigationBar />
-      <MainPage />
+      <div class="flex flex-col overflow-y-auto mt-8 px-8 h-full">
+        <RouterView #="{ Component }">
+          <KeepAlive>
+            <component :is="Component" />
+          </KeepAlive>
+        </RouterView>
+      </div>
     </div>
   </template>
 
@@ -130,17 +134,3 @@ appSettings.setupAppSettings().then(async () => {
 
   <CommandView v-if="!loading" />
 </template>
-
-<style scoped>
-.main {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-}
-
-.progress {
-  animation: rotate 2s infinite linear;
-}
-</style>

@@ -31,9 +31,9 @@ const toggle = () => {
     @click="toggle"
     :style="{ 'justify-content': !model ? 'flex-start' : 'flex-end' }"
     :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
-    class="switch"
+    class="gui-switch relative cursor-pointer h-24 inline-flex items-center rounded-full duration-200 text-12"
   >
-    <div class="dot"></div>
+    <div class="dot absolute h-18 w-18 rounded-full duration-200"></div>
 
     <div v-if="$slots.default" class="slot">
       <slot></slot>
@@ -42,23 +42,8 @@ const toggle = () => {
 </template>
 
 <style lang="less" scoped>
-.switch {
-  position: relative;
-  cursor: pointer;
+.gui-switch {
   min-width: 50px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 24px;
-  transition: all 0.2s;
-  font-size: 12px;
-  .dot {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    border-radius: 18px;
-    transition: all 0.2s;
-  }
   .slot {
     transition: margin 0.2s;
   }

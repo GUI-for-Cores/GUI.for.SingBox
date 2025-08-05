@@ -52,7 +52,7 @@ const handleJump = (page: number | 'prev' | 'next') => {
       @click="handleJump(item)"
       :type="item === model ? 'primary' : 'text'"
       :size="size"
-      style="min-width: 30px"
+      class="min-w-32"
     >
       {{ item === 'prev' || item === 'next' ? '...' : item }}
     </Button>

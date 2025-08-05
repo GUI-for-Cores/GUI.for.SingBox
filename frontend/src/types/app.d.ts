@@ -14,8 +14,6 @@ import type {
   RequestMethod,
 } from '@/enums/app'
 
-export {}
-
 export interface TrayContent {
   icon?: string
   title?: string
@@ -75,6 +73,14 @@ export interface AppSettings {
     testUrl: string
     concurrencyLimit: number
     controllerCloseMode: ControllerCloseMode
+    main: {
+      env: Recordable
+      args: string[]
+    }
+    alpha: {
+      env: Recordable
+      args: string[]
+    }
   }
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
@@ -114,6 +120,7 @@ export interface Plugin {
   url: string
   path: string
   triggers: PluginTrigger[]
+  tags: string[]
   hasUI: boolean
   menus: Record<string, string>
   context: {

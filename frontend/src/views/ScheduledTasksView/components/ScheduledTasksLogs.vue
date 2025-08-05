@@ -74,9 +74,9 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
 </script>
 
 <template>
-  <div class="logs">
-    <div class="form">
-      <span class="label">
+  <div class="h-full flex flex-col">
+    <div class="flex items-center">
+      <span class="mr-4">
         {{ t('scheduledtasks.name') }}
         :
       </span>
@@ -99,25 +99,8 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
       />
     </div>
 
-    <Empty v-if="logsStore.scheduledtasksLogs.length === 0" class="flex-1" />
+    <Empty v-if="filteredLogs.length === 0" />
 
     <Table v-else :columns="columns" :data-source="filteredLogs" sort="start" class="mt-8" />
   </div>
 </template>
-
-<style lang="less" scoped>
-.logs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.form {
-  display: flex;
-  align-items: center;
-  .label {
-    padding: 0 8px;
-    font-size: 12px;
-  }
-}
-</style>

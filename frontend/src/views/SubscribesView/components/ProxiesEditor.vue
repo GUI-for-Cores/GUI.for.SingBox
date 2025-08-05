@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { Readfile, Writefile } from '@/bridge'
 import { useSubscribesStore } from '@/stores'
 import { deepClone, ignoredError, message, omitArray, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 import type { Subscription } from '@/types/app'
 
@@ -58,30 +60,32 @@ const initProxiesText = async () => {
 }
 
 initProxiesText()
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        onClick: handleSave,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="proxies-view">
-    <CodeViewer v-model="proxiesText" lang="json" editable class="code" />
-    <div class="form-action">
-      <Button @click="handleCancel" :disabled="loading">
-        {{ t('common.cancel') }}
-      </Button>
-      <Button @click="handleSave" :loading="loading" type="primary">
-        {{ t('common.save') }}
-      </Button>
-    </div>
-  </div>
+  <CodeViewer v-model="proxiesText" lang="json" editable class="h-full" />
 </template>
-
-<style lang="less" scoped>
-.proxies-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.code {
-  flex: 1;
-  overflow-y: auto;
-}
-</style>

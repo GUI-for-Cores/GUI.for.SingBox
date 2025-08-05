@@ -24,13 +24,13 @@ const handleSelect = (val: string | number | boolean) => {
 </script>
 
 <template>
-  <div :class="[size]" class="radio">
+  <div :class="[size]" class="gui-radio inline-flex rounded-8 text-12 overflow-hidden">
     <div
       v-for="o in options"
       :key="o.value.toString()"
       @click="handleSelect(o.value)"
       :class="{ active: o.value === model }"
-      class="radio-button"
+      class="gui-radio-button cursor-pointer px-12 py-6 duration-200"
     >
       {{ t(o.label) }}
     </div>
@@ -38,19 +38,12 @@ const handleSelect = (val: string | number | boolean) => {
 </template>
 
 <style lang="less" scoped>
-.radio {
-  display: inline-flex;
+.gui-radio {
   border: 1px solid var(--primary-color);
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 12px;
   &-button {
-    cursor: pointer;
     color: var(--radio-normal-color);
     background-color: var(--radio-normal-bg);
-    padding: 6px 12px;
     border-left: 1px solid var(--primary-color);
-    transition: all 0.2s;
     &:nth-child(1) {
       border-left: none;
     }
@@ -71,7 +64,7 @@ const handleSelect = (val: string | number | boolean) => {
 }
 
 .small {
-  .radio-button {
+  .gui-radio-button {
     font-size: 10px;
     padding: 4px 8px;
   }

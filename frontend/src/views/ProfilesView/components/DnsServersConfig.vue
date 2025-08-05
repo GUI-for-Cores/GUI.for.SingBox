@@ -121,7 +121,7 @@ const renderServer = (server: IDNSServer) => {
     const tag = props.outboundOptions.find((v) => v.value === detour)?.label || detour
     children.push(h(Tag, { color: 'default' }, () => tag))
   }
-  return h('div', children)
+  return h('div', { class: 'font-bold' }, children)
 }
 </script>
 <template>
@@ -134,13 +134,13 @@ const renderServer = (server: IDNSServer) => {
   </Empty>
 
   <div v-draggable="[model, DraggableOptions]">
-    <Card v-for="(server, index) in model" :key="server.id" class="server-item">
-      <div class="font-bold flex items-center">
+    <Card v-for="(server, index) in model" :key="server.id" class="mb-2">
+      <div class="flex items-center py-2">
         <component :is="renderServer(server)" />
-      </div>
-      <div class="ml-auto">
-        <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-        <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
+        <div class="ml-auto">
+          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
+          <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
+        </div>
       </div>
     </Card>
   </div>
@@ -236,16 +236,3 @@ const renderServer = (server: IDNSServer) => {
     </div>
   </Modal>
 </template>
-
-<style lang="less" scoped>
-.server-item {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  margin-bottom: 2px;
-  .warn {
-    color: rgb(200, 193, 11);
-    cursor: pointer;
-  }
-}
-</style>

@@ -66,7 +66,7 @@ func RollingRelease(next http.Handler) http.Handler {
 
 		log.Printf("[Rolling Release] %v %v\n", r.Method, url)
 
-		file := GetPath("data/rolling-release-alpha" + url)
+		file := GetPath("data/rolling-release" + url)
 
 		bytes, err := os.ReadFile(file)
 		if err != nil {

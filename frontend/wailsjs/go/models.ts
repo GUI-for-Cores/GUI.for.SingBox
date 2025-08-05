@@ -53,7 +53,7 @@ export namespace bridge {
 	export class HTTPResult {
 	    flag: boolean;
 	    status: number;
-	    headers: Record<string, string[]>;
+	    headers: Record<string, Array<string>>;
 	    body: string;
 	
 	    static createFrom(source: any = {}) {

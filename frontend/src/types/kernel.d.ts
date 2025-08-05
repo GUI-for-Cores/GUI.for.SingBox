@@ -1,5 +1,3 @@
-export {}
-
 export interface CoreApiConfig {
   port: number
   'socks-port': number

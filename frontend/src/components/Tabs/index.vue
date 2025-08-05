@@ -28,8 +28,8 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
 </script>
 
 <template>
-  <div :style="{ height }" :class="'position-' + tabPosition" class="tabs">
-    <div class="tab">
+  <div :style="{ height }" :class="'position-' + tabPosition" class="gui-tabs flex">
+    <div class="gui-tabs-tab flex">
       <Button
         v-for="tab in items"
         :key="tab.key"
@@ -38,30 +38,18 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
       >
         {{ t(tab.tab) }}
       </Button>
-      <slot name="extra" />
+      <slot name="extra"></slot>
     </div>
 
-    <div class="slot">
+    <div class="slot flex flex-col overflow-y-auto">
       <slot :name="activeKey"></slot>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.tabs {
-  display: flex;
-}
-.tab {
-  display: flex;
-  align-items: center;
-}
-.slot {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
 .position-left {
-  .tab {
+  .gui-tabs-tab {
     width: 20%;
     flex-direction: column;
   }
@@ -71,7 +59,7 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
 }
 .position-top {
   flex-direction: column;
-  .tab {
+  .gui-tabs-tab {
     justify-content: center;
     margin-bottom: 8px;
   }

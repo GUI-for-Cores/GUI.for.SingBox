@@ -5,6 +5,7 @@ import { getProxies, getConfigs, setConfigs, Api } from '@/api/kernel'
 import { ProcessInfo, KillProcess, ExecBackground, Readfile } from '@/bridge'
 import { CoreConfigFilePath, CoreStopOutputKeyword, CoreWorkingDirectory } from '@/constant/kernel'
 import { DefaultInboundMixed } from '@/constant/profile'
+import { Branch } from '@/enums/app'
 import { Inbound, TunStack } from '@/enums/kernel'
 import {
   useAppSettingsStore,
@@ -23,6 +24,8 @@ import {
   WebSockets,
   setIntervalImmediately,
   message,
+  getKernelRuntimeArgs,
+  getKernelRuntimeEnv,
 } from '@/utils'
 
 import type {
@@ -386,9 +389,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     await stopKernel()
 
-    const fileName = getKernelFileName(branch === 'alpha')
+    const isAlpha = branch === Branch.Alpha
+    const fileName = getKernelFileName(isAlpha)
     const kernelFilePath = CoreWorkingDirectory + '/' + fileName
-    const kernelWorkDir = envStore.env.basePath + '/' + CoreWorkingDirectory
 
     loading.value = true
 
@@ -398,7 +401,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       )
       const pid = await ExecBackground(
         kernelFilePath,
-        ['run', '--disable-color', '-c', kernelWorkDir + '/config.json', '-D', kernelWorkDir],
+        getKernelRuntimeArgs(isAlpha),
         (out) => {
           logsStore.recordKernelLog(out)
           if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
@@ -408,6 +411,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         onCoreStopped,
         {
           stopOutputKeyword: CoreStopOutputKeyword,
+          env: getKernelRuntimeEnv(isAlpha),
         },
       )
     } catch (error) {

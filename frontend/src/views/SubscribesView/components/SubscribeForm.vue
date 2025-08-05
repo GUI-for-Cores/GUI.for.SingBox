@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, computed } from 'vue'
+import { ref, inject, computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DefaultSubscribeScript, RequestMethodOptions } from '@/constant/app'
@@ -9,17 +9,15 @@ import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
 import { deepClone, sampleID, message } from '@/utils'
 
+import Button from '@/components/Button/index.vue'
+
 import type { Subscription } from '@/types/app'
 
 interface Props {
   id?: string
-  isUpdate?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  id: '',
-  isUpdate: false,
-})
+const props = defineProps<Props>()
 
 const loading = ref(false)
 
@@ -64,7 +62,7 @@ const handleSubmit = async () => {
   loading.value = true
 
   try {
-    if (props.isUpdate) {
+    if (props.id) {
       await subscribeStore.editSubscribe(props.id, sub.value)
     } else {
       await subscribeStore.addSubscribe(sub.value)
@@ -78,17 +76,42 @@ const handleSubmit = async () => {
   loading.value = false
 }
 
-if (props.isUpdate) {
+if (props.id) {
   const s = subscribeStore.getSubscribeById(props.id)
   if (s) {
     sub.value = deepClone(s)
   }
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        loading: loading.value,
+        disabled: !sub.value.name || !sub.value.path || (!sub.value.url && !isManual.value),
+        onClick: handleSubmit,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
   <div class="form">
-    <div class="form-item row">
+    <div class="form-item">
       <div class="name">
         {{ t('subscribes.subtype') }}
       </div>
@@ -193,38 +216,15 @@ if (props.isUpdate) {
       </template>
     </div>
   </div>
-  <div class="form-action">
-    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button
-      @click="handleSubmit"
-      :loading="loading"
-      :disabled="!sub.name || !sub.path || (!sub.url && !isManual)"
-      type="primary"
-    >
-      {{ t('common.save') }}
-    </Button>
-  </div>
 </template>
 
 <style lang="less" scoped>
 .form {
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
   .name {
-    font-size: 14px;
-    padding: 8px 8px 8px 0;
     white-space: nowrap;
   }
   .input {
     width: 77%;
-  }
-  .row {
-    display: flex;
-    align-items: center;
-    .name {
-      margin-right: 8px;
-    }
   }
 }
 </style>

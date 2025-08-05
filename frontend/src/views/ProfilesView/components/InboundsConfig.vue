@@ -72,7 +72,7 @@ const inbounds = [
 ]
 
 const handleAdd = async () => {
-  const fns = await picker.multi<(() => void)[]>('common.add', inbounds as any)
+  const fns = await picker.multi('common.add', inbounds)
   fns.forEach((fn) => fn())
 }
 
@@ -82,7 +82,7 @@ defineExpose({ handleAdd })
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
-      <div class="flex">
+      <div class="flex gap-8">
         <Button v-for="inbound in inbounds" :key="inbound.label" @click="inbound.value">
           {{ t('common.add') }} {{ inbound.label }}
         </Button>

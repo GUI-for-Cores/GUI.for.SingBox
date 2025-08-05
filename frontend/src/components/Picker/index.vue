@@ -1,56 +1,65 @@
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup lang="ts" generic="ValueType = any, PickerType extends 'single' | 'multi' = 'single'">
+import { ref, toRaw, type Ref } from 'vue'
 
 import useI18n from '@/lang'
 
-export type PickerItem = {
+export type PickerItem<T> = {
   label: string
-  value: string
+  value: T
   description?: string
   background?: string
   onSelect?: (args: {
-    value: PickerItem['value']
-    option: PickerItem
-    options: PickerItem[]
-    selected: PickerItem['value'][]
+    value: PickerItem<T>['value']
+    option: PickerItem<T>
+    options: PickerItem<T>[]
+    selected: PickerItem<T>['value'][]
   }) => void
 }
 
-interface Props {
-  type: 'single' | 'multi'
+interface Props<T, K> {
+  type: K
   title: string
-  options: PickerItem[]
-  initialValue?: string[]
+  options: PickerItem<T>[]
+  initialValue?: T[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<ValueType, PickerType>>(), {
   options: () => [],
   initialValue: () => [],
 })
 
-const emits = defineEmits(['confirm', 'cancel', 'finish'])
+const emit = defineEmits<{
+  confirm: [val: PickerType extends 'single' ? ValueType : ValueType[]]
+  cancel: []
+  finish: []
+}>()
 
-const selected = ref(new Set<string>(props.initialValue))
+const selected = ref(
+  new Set(
+    props.initialValue.filter((v) => props.options.find((o) => o.value === v)).map((v) => toRaw(v)),
+  ),
+) as Ref<Set<ValueType>>
 
 const { t } = useI18n.global
 
 const handleConfirm = () => {
-  let res: any = Array.from(selected.value)
+  const res: any = Array.from(selected.value).map((v) => toRaw(v))
   if (props.type === 'single') {
-    res = res[0]
+    emit('confirm', res[0])
+  } else {
+    emit('confirm', res)
   }
-  emits('confirm', res)
-  emits('finish')
+  emit('finish')
 }
 
 const handleCancel = () => {
-  emits('cancel')
-  emits('finish')
+  emit('cancel')
+  emit('finish')
 }
 
-const isSelected = (option: string) => selected.value.has(option)
+const isSelected = (option: ValueType) => selected.value.has(option)
 
-const handleSelect = (option: PickerItem) => {
+const handleSelect = (option: PickerItem<ValueType>) => {
   if (isSelected(option.value)) {
     selected.value.delete(option.value)
   } else {
@@ -60,7 +69,7 @@ const handleSelect = (option: PickerItem) => {
       value: option.value,
       option,
       options: props.options,
-      selected: [...selected.value],
+      selected: Array.from(selected.value).map((v) => toRaw(v)),
     })
   }
 }
@@ -76,32 +85,32 @@ const handleSelectAll = () => {
 
 <template>
   <Transition name="slide-down" appear>
-    <div class="picker">
-      <div class="title">{{ t(title) }}</div>
+    <div class="gui-picker flex flex-col p-8 shadow rounded-8">
+      <div class="font-bold px-4 py-8">{{ t(title) }}</div>
 
-      <div class="options">
+      <div class="flex-1 overflow-auto">
         <div
           v-for="(o, i) in options"
           :key="i"
           @click="handleSelect(o)"
           :style="{ background: o.background }"
-          class="item"
+          class="item my-4 py-8 px-8 break-all"
         >
-          <div class="label">
-            <div>{{ t(o.label) }}</div>
+          <div class="flex items-center justify-between leading-relaxed">
+            <div class="font-bold">{{ t(o.label) }}</div>
             <Icon
               v-show="isSelected(o.value)"
-              :size="32"
+              :size="26"
               icon="selected"
               fill="var(--primary-color)"
-              style="flex-shrink: 0"
+              class="shrink-0"
             />
           </div>
-          <div class="description">{{ o.description }}</div>
+          <div class="text-12 leading-relaxed" style="opacity: 0.7">{{ o.description }}</div>
         </div>
       </div>
 
-      <div class="form-action">
+      <div class="form-action gap-4">
         <Button v-if="type === 'multi'" @click="handleSelectAll" type="text" size="small">
           {{ t('common.selectAll') }}
         </Button>
@@ -118,48 +127,17 @@ const handleSelectAll = () => {
 </template>
 
 <style lang="less" scoped>
-.picker {
-  display: flex;
-  flex-direction: column;
+.gui-picker {
   min-width: 340px;
   max-width: 60%;
-  padding: 8px;
   background: var(--toast-bg);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
 
-  .title {
-    font-weight: bold;
-    padding: 8px 4px;
-  }
-
-  .options {
-    flex: 1;
-    overflow: auto;
-  }
   .item {
-    margin: 4px 0;
-    padding: 0 8px;
-    word-wrap: break-word;
-    word-break: break-all;
     &:nth-child(odd) {
       background: var(--table-tr-odd-bg);
     }
     &:nth-child(even) {
       background: var(--table-tr-even-bg);
-    }
-
-    .label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      line-height: 32px;
-    }
-
-    .description {
-      font-size: 12px;
-      line-height: 22px;
-      opacity: 0.7;
     }
   }
 }

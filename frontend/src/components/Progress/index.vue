@@ -37,23 +37,21 @@ const circleStyle = computed(() => {
 </script>
 
 <template>
-  <div v-if="type === 'line'" class="line">
-    <div :style="innerStyle" :class="status" class="inner"></div>
+  <div v-if="type === 'line'" class="gui-progress-line h-10 rounded-8 overflow-hidden">
+    <div :style="innerStyle" :class="status" class="inner h-full rounded-8 duration-200"></div>
   </div>
-  <div v-if="type === 'circle'" :style="circleStyle" class="circle"></div>
+  <div
+    v-if="type === 'circle'"
+    :style="circleStyle"
+    class="gui-progress-circle relative rounded-full"
+  ></div>
 </template>
 
 <style lang="less" scoped>
-.line {
-  height: 10px;
+.gui-progress-line {
   background-color: var(--progress-bg);
-  border-radius: 8px;
-  overflow: hidden;
   .inner {
-    height: 100%;
-    border-radius: 8px;
     background-color: var(--progress-inner-bg);
-    transition: all 0.2s;
   }
   .warning {
     background-color: #ffc107;
@@ -61,10 +59,5 @@ const circleStyle = computed(() => {
   .danger {
     background-color: #f44336;
   }
-}
-
-.circle {
-  position: relative;
-  border-radius: 50%;
 }
 </style>

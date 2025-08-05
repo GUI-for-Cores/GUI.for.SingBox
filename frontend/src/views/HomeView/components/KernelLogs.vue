@@ -1,40 +1,48 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { h, withDirectives } from 'vue'
 
+import { ClipboardSetText } from '@/bridge'
+import vTips from '@/directives/tips'
 import { useLogsStore } from '@/stores'
+import { message } from '@/utils'
 
-const { t } = useI18n()
+import Button from '@/components/Button/index.vue'
+
 const logsStore = useLogsStore()
+
+const modalSlots = {
+  toolbar: () =>
+    withDirectives(
+      h(Button, {
+        type: 'text',
+        icon: 'file',
+        onClick: async () => {
+          if (logsStore.isEmpty) return
+          await ClipboardSetText(logsStore.kernelLogs.join('\n'))
+          message.success('common.success')
+        },
+      }),
+      [[vTips, 'common.copy']],
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="logs">
-    <Empty v-if="logsStore.isEmpty" :description="t('home.overview.noLogs')" style="flex: 1" />
+  <div class="h-full overflow-y-auto">
+    <Empty v-if="logsStore.isEmpty" description="home.overview.noLogs" />
     <template v-else>
-      <div v-for="(log, i) in logsStore.kernelLogs" :key="i" class="log">
+      <div
+        v-for="(log, i) in logsStore.kernelLogs"
+        :key="i"
+        :style="{
+          background: 'var(--card-bg)',
+        }"
+        class="text-12 my-4 py-2 px-4"
+      >
         {{ log }}
       </div>
     </template>
   </div>
 </template>
-
-<style lang="less" scoped>
-.logs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  .log {
-    font-size: 12px;
-    padding: 2px 4px;
-    margin: 4px 0;
-    background: var(--card-bg);
-  }
-}
-
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>

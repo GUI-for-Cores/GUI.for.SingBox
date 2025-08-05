@@ -34,17 +34,5 @@ fetchAndUpdatePluginCode()
 </script>
 
 <template>
-  <div class="plugin-view">
-    <CodeViewer v-model="code" lang="javascript" mode="diff" />
-  </div>
+  <CodeViewer v-model="code" lang="javascript" mode="diff" />
 </template>
-
-<style lang="less" scoped>
-.plugin-view {
-  display: flex;
-  flex-direction: column;
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-}
-</style>

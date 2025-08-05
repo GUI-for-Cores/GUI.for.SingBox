@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, inject, watch, computed } from 'vue'
+import { ref, inject, watch, computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { RulesetFormatOptions } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
-import { type RuleSetType, useRulesetsStore } from '@/stores'
+import { type RuleSet, useRulesetsStore } from '@/stores'
 import { deepClone, message, sampleID } from '@/utils'
+
+import Button from '@/components/Button/index.vue'
 
 interface Props {
   id?: string
@@ -19,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const loading = ref(false)
 
-const ruleset = ref<RuleSetType>({
+const ruleset = ref<RuleSet>({
   id: sampleID(),
   tag: '',
   updateTime: 0,
@@ -102,14 +104,37 @@ if (props.isUpdate) {
     ruleset.value = deepClone(r)
   }
 }
+
+const modalSlots = {
+  cancel: () =>
+    h(
+      Button,
+      {
+        disabled: loading.value,
+        onClick: handleCancel,
+      },
+      () => t('common.cancel'),
+    ),
+  submit: () =>
+    h(
+      Button,
+      {
+        type: 'primary',
+        disabled: disabled.value,
+        loading: loading.value,
+        onClick: handleSubmit,
+      },
+      () => t('common.save'),
+    ),
+}
+
+defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="form">
+  <div>
     <div class="form-item">
-      <div class="name">
-        {{ t('ruleset.rulesetType') }}
-      </div>
+      {{ t('ruleset.rulesetType') }}
       <Radio
         v-model="ruleset.type"
         :options="[
@@ -120,17 +145,15 @@ if (props.isUpdate) {
       />
     </div>
     <div v-show="ruleset.type !== 'Manual'" class="form-item">
-      <div class="name">
-        {{ t('ruleset.format.name') }}
-      </div>
+      {{ t('ruleset.format.name') }}
       <Radio v-model="ruleset.format" :options="RulesetFormatOptions" />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('ruleset.name') }} *</div>
-      <Input v-model="ruleset.tag" auto-size autofocus class="input" />
+      {{ t('ruleset.name') }} *
+      <Input v-model="ruleset.tag" autofocus class="min-w-[75%]" />
     </div>
     <div v-show="ruleset.type !== 'Manual'" class="form-item">
-      <div class="name">{{ t('ruleset.url') }} *</div>
+      {{ t('ruleset.url') }} *
       <Input
         v-model="ruleset.url"
         :placeholder="
@@ -138,41 +161,16 @@ if (props.isUpdate) {
             ? 'http(s)://'
             : 'data/local/{filename}.' + (ruleset.format === RulesetFormat.Binary ? 'srs' : 'json')
         "
-        auto-size
-        class="input"
+        class="min-w-[75%]"
       />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('ruleset.path') }} *</div>
+      {{ t('ruleset.path') }} *
       <Input
         v-model="ruleset.path"
         :placeholder="`data/rulesets/{filename}.${ruleset.format === RulesetFormat.Binary ? 'srs' : 'json'}`"
-        auto-size
-        class="input"
+        class="min-w-[75%]"
       />
     </div>
   </div>
-
-  <div class="form-action">
-    <Button @click="handleCancel">{{ t('common.cancel') }}</Button>
-    <Button @click="handleSubmit" :loading="loading" :disabled="disabled" type="primary">
-      {{ t('common.save') }}
-    </Button>
-  </div>
 </template>
-
-<style lang="less" scoped>
-.form {
-  padding: 0 8px;
-  overflow-y: auto;
-  max-height: 70vh;
-  .name {
-    font-size: 14px;
-    padding: 8px 0;
-    white-space: nowrap;
-  }
-  .input {
-    width: 78%;
-  }
-}
-</style>

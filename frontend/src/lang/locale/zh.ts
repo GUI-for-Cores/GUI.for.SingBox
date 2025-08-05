@@ -46,6 +46,7 @@ export default {
     develop: '开发',
     canceled: '已取消',
     downloading: '下载中...',
+    empty: '数据为空',
   },
   kernel: {
     rule: '规则',
@@ -651,6 +652,11 @@ export default {
       rollbackTip: '回滚到上一版本',
       rollback: '确定回滚到上一版本吗？',
       clearCache: '清除缓存',
+      config: {
+        name: '运行时配置',
+        env: '环境变量',
+        args: '运行参数',
+      },
     },
     userAgent: {
       name: '用户代理(User-Agent)',

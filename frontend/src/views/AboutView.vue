@@ -20,10 +20,10 @@ appStore.checkForUpdates()
 </script>
 
 <template>
-  <div class="about">
+  <div class="about flex flex-col items-center">
     <img src="@/assets/logo.png" style="width: 128px" draggable="false" />
-    <div class="appname">{{ APP_TITLE }}</div>
-    <div class="appver">
+    <div class="py-8 font-bold">{{ APP_TITLE }}</div>
+    <div class="flex items-center pb-8 my-4">
       <Button v-if="appStore.restartable" @click="handleRestartApp" size="small" type="primary">
         <Icon icon="restartApp" fill="var(--btn-primary-color)" style="margin-top: 1px" />
         <span style="margin-left: 4px">{{ t('about.restart') }}</span>
@@ -47,9 +47,13 @@ appStore.checkForUpdates()
         </Button>
       </template>
     </div>
-    <div @click="BrowserOpenURL(PROJECT_URL)" class="url"><Icon icon="github" />GitHub</div>
-    <div @click="BrowserOpenURL(TG_GROUP)" class="url"><Icon icon="telegram" />Telegram Group</div>
-    <div @click="BrowserOpenURL(TG_CHANNEL)" class="url">
+    <div @click="BrowserOpenURL(PROJECT_URL)" class="text-12 underline flex items-center">
+      <Icon icon="github" />GitHub
+    </div>
+    <div @click="BrowserOpenURL(TG_GROUP)" class="text-12 underline flex items-center">
+      <Icon icon="telegram" />Telegram Group
+    </div>
+    <div @click="BrowserOpenURL(TG_CHANNEL)" class="text-12 underline flex items-center">
       <Icon icon="telegram" />Telegram Channel
     </div>
   </div>
@@ -58,28 +62,5 @@ appStore.checkForUpdates()
 <style lang="less" scoped>
 .about {
   padding: 36px 0 0 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .appname {
-    font-weight: bold;
-    font-size: 16px;
-    padding: 8px 0;
-  }
-  .appver {
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    min-height: 40px;
-  }
-  .url {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    text-decoration: underline;
-  }
 }
 </style>

@@ -46,6 +46,7 @@ export default {
     develop: 'Develop',
     canceled: 'Canceled',
     downloading: 'Downloading...',
+    empty: 'Data is empty',
   },
   kernel: {
     rule: 'Rule',
@@ -652,6 +653,11 @@ export default {
       rollbackTip: 'Rollback to the previous version',
       rollback: 'Are you sure you want to roll back to the previous version?',
       clearCache: 'Clear Cache',
+      config: {
+        name: 'Runtime Configuration',
+        env: 'Environment Variables',
+        args: 'Runtime Arguments',
+      },
     },
     userAgent: {
       name: 'User-Agent',

@@ -1,29 +1,44 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 interface Props {
   color?: 'cyan' | 'green' | 'red' | 'default' | 'primary'
   size?: 'small' | 'default'
+  closeable?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   color: 'default',
+  closable: false,
 })
+
+const emit = defineEmits(['close'])
+
+const show = ref(true)
+const handleClose = () => {
+  emit('close')
+  show.value = false
+}
 </script>
 
 <template>
-  <div :class="[color, size]" class="tag">
-    <slot />
+  <div
+    v-if="show"
+    :class="[color, size]"
+    class="gui-tag px-8 mx-4 rounded-6 inline-block text-12 whitespace-nowrap inline-flex items-center"
+  >
+    <slot></slot>
+    <Icon
+      v-if="closeable"
+      @click="handleClose"
+      :size="size === 'small' ? 12 : 14"
+      icon="close"
+      class="ml-2"
+    />
   </div>
 </template>
 
 <style lang="less" scoped>
-.tag {
-  padding: 0 7px;
-  margin: 0 4px;
-  border-radius: 6px;
-  display: inline-block;
-  font-size: 12px;
-  white-space: nowrap;
-}
 .cyan {
   color: #22a3a7;
   background-color: #e6fffb;

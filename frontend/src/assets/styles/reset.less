@@ -1,0 +1,30 @@
+div,
+input {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color);
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: clip 0.5s ease-in;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 6px;
+  background: var(--scrollbar-track-bg);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: var(--scrollbar-thumb-bg);
+}

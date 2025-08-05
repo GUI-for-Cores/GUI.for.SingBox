@@ -141,21 +141,30 @@ const renderRule = (rule: IRule) => {
   </Empty>
 
   <div v-draggable="[model, DraggableOptions]">
-    <Card v-for="(rule, index) in model" :key="rule.id" class="rule-item">
-      <div class="font-bold">
-        <span v-if="hasLost(rule)" @click="showLost" class="warn"> [ ! ] </span>
-        {{ renderRule(rule) }}
-      </div>
-      <div class="flex text-nowrap ml-auto">
-        <Button
-          v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
-          @click="handleClearRuleset(rule)"
-          type="text"
-        >
-          {{ t('common.clear') }}
-        </Button>
-        <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-        <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+    <Card v-for="(rule, index) in model" :key="rule.id" class="mb-2">
+      <div class="flex items-center py-2">
+        <div class="font-bold">
+          <span
+            v-if="hasLost(rule)"
+            @click="showLost"
+            class="cursor-pointer"
+            :style="{ color: 'rgb(200, 193, 11)' }"
+          >
+            [ ! ]
+          </span>
+          {{ renderRule(rule) }}
+        </div>
+        <div class="ml-auto">
+          <Button
+            v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
+            @click="handleClearRuleset(rule)"
+            type="text"
+          >
+            {{ t('common.clear') }}
+          </Button>
+          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
+          <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+        </div>
       </div>
     </Card>
   </div>
@@ -251,7 +260,7 @@ const renderRule = (rule: IRule) => {
 
     <template v-if="fields.type === RuleType.RuleSet">
       <Divider>{{ t('kernel.route.tab.rule_set') }}</Divider>
-      <div class="rulesets">
+      <div class="grid grid-cols-3 gap-8">
         <Empty v-if="ruleSet.length === 0" :description="t('kernel.route.rule_set.empty')" />
         <template v-else>
           <Card
@@ -263,37 +272,13 @@ const renderRule = (rule: IRule) => {
             v-tips="ruleset.type"
             class="ruleset"
           >
-            {{ ruleset.type }}
-            {{ ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format }}
+            <div class="text-12">
+              {{ ruleset.type }}
+              {{ ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format }}
+            </div>
           </Card>
         </template>
       </div>
     </template>
   </Modal>
 </template>
-
-<style lang="less" scoped>
-.rule-item {
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  margin-bottom: 2px;
-  .warn {
-    color: rgb(200, 193, 11);
-    cursor: pointer;
-  }
-}
-
-.rulesets {
-  display: flex;
-  flex-wrap: wrap;
-  .ruleset {
-    width: calc(33.3333% - 16px);
-    margin: 8px;
-    font-size: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-</style>

@@ -50,6 +50,7 @@ export const useAppStore = defineStore('app', () => {
   /* Actions */
   const customActions = ref<Recordable<(CustomAction | CustomActionFn)[]>>({
     core_state: [],
+    title_bar: [],
   })
   const addCustomActions = (
     target: string,
@@ -123,6 +124,7 @@ export const useAppStore = defineStore('app', () => {
       }
 
       await Removefile(downloadCacheFile)
+      await ignoredError(Removefile, 'data/rolling-release')
       await ignoredError(Removefile, 'data/rolling-release-alpha')
     } catch (error: any) {
       console.log(error)

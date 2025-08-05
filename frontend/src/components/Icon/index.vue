@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import icons from './icons'
+import { type Component } from 'vue'
 
-import type { Component } from 'vue'
+import icons from './icons'
 
 type IconFuncType = Record<string, { default: Component }>
 
@@ -34,5 +34,3 @@ withDefaults(defineProps<Props>(), { size: 16 })
     fill="var(--color)"
   />
 </template>
-
-<style lang="less" scoped></style>
