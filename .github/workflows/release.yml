@@ -34,6 +34,7 @@ jobs:
           #   GOOS: linux
           #   GOARCH: arm64
     runs-on: ${{ matrix.build.os }}
+    if: github.repository == 'GUI-for-Cores/GUI.for.SingBox'
     env:
       APP_NAME: GUI.for.SingBox
       ZIP_FILE: GUI.for.SingBox-${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}.zip
