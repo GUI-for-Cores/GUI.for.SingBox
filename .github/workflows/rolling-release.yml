@@ -12,6 +12,7 @@ jobs:
   Build:
     permissions: write-all
     runs-on: ubuntu-latest
+    if: github.repository == 'GUI-for-Cores/GUI.for.SingBox'
     steps:
       - uses: actions/checkout@v4
         with:
