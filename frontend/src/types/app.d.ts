@@ -69,6 +69,7 @@ export interface AppSettings {
     autoClose: boolean
     unAvailable: boolean
     cardMode: boolean
+    cardColumns: number
     sortByDelay: boolean
     testUrl: string
     concurrencyLimit: number

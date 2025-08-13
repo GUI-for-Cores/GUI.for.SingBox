@@ -354,6 +354,7 @@ export default {
       sortBy: 'Sort By Delay',
       delay: 'Delay test URL',
       concurrencyLimit: 'Latency test concurrency',
+      cardColumns: 'Number of card columns',
       closeMode: {
         name: 'Controller Close Mode',
         all: 'Scroll or Button',

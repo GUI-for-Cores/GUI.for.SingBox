@@ -67,6 +67,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       autoClose: true,
       unAvailable: true,
       cardMode: true,
+      cardColumns: 5,
       sortByDelay: false,
       testUrl: DefaultTestURL,
       concurrencyLimit: DefaultConcurrencyLimit,
@@ -124,6 +125,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     if (!app.value.kernel.main) {
       app.value.kernel.main = DefaultCoreConfig()
       app.value.kernel.alpha = DefaultCoreConfig()
+    }
+
+    if (!app.value.kernel.cardColumns) {
+      app.value.kernel.cardColumns = 5
     }
 
     firstOpen = !!data

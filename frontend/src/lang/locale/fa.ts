@@ -354,6 +354,7 @@ export default {
       sortBy: 'مرتب‌سازی بر اساس تأخیر',
       delay: 'آزمایش تأخیر URL',
       concurrencyLimit: 'همزمانی در تست تأخیر',
+      cardColumns: 'تعداد ستون‌های کارت',
       closeMode: {
         name: 'حالت بستن کنترلر',
         all: 'اسکرول یا دکمه',

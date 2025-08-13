@@ -273,7 +273,11 @@ onActivated(() => {
     <Transition name="expand">
       <div v-if="isExpanded(group.name)" class="py-8 px-4">
         <Empty v-if="group.all.length === 0" />
-        <div v-else-if="appSettings.app.kernel.cardMode" class="grid grid-cols-5 gap-8">
+        <div
+          v-else-if="appSettings.app.kernel.cardMode"
+          :class="`grid-cols-${appSettings.app.kernel.cardColumns}`"
+          class="grid gap-8"
+        >
           <Card
             v-for="proxy in group.all"
             :title="proxy.name"
@@ -353,6 +357,14 @@ onActivated(() => {
       <Radio
         v-model="appSettings.app.kernel.controllerCloseMode"
         :options="ControllerCloseModeOptions"
+      />
+    </div>
+
+    <div class="form-item">
+      {{ t('home.controller.cardColumns') }}
+      <Radio
+        v-model="appSettings.app.kernel.cardColumns"
+        :options="Array.from({ length: 5 }, (_, i) => ({ label: String(i + 1), value: i + 1 }))"
       />
     </div>
   </Modal>
