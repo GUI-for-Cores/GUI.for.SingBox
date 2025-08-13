@@ -3,7 +3,12 @@ import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getProxyDelay } from '@/api/kernel'
-import { ControllerCloseModeOptions, DefaultConcurrencyLimit, DefaultTestURL } from '@/constant/app'
+import {
+  ControllerCloseModeOptions,
+  DefaultCardColumns,
+  DefaultConcurrencyLimit,
+  DefaultTestURL,
+} from '@/constant/app'
 import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
@@ -183,6 +188,7 @@ const handleResetMoreSettings = () => {
   appSettings.app.kernel.testUrl = DefaultTestURL
   appSettings.app.kernel.concurrencyLimit = DefaultConcurrencyLimit
   appSettings.app.kernel.controllerCloseMode = ControllerCloseMode.All
+  appSettings.app.kernel.cardColumns = DefaultCardColumns
   message.success('common.success')
 }
 
