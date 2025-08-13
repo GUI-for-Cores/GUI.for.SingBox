@@ -20,8 +20,8 @@ appStore.checkForUpdates()
 </script>
 
 <template>
-  <div class="about flex flex-col items-center">
-    <img src="@/assets/logo.png" style="width: 128px" draggable="false" />
+  <div class="flex flex-col items-center pt-36">
+    <img src="@/assets/logo.png" class="w-128" draggable="false" />
     <div class="py-8 font-bold">{{ APP_TITLE }}</div>
     <div class="flex items-center pb-8 my-4">
       <Button v-if="appStore.restartable" @click="handleRestartApp" size="small" type="primary">
@@ -58,9 +58,3 @@ appStore.checkForUpdates()
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.about {
-  padding: 36px 0 0 0;
-}
-</style>

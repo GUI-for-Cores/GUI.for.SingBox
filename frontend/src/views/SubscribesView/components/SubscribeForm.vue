@@ -110,11 +110,9 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="form">
+  <div>
     <div class="form-item">
-      <div class="name">
-        {{ t('subscribes.subtype') }}
-      </div>
+      {{ t('subscribes.subtype') }}
       <Radio
         v-model="sub.type"
         :options="[
@@ -125,28 +123,20 @@ defineExpose({ modalSlots })
       />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('subscribe.name') }} *</div>
-      <Input v-model="sub.name" auto-size autofocus class="input" />
+      {{ t('subscribe.name') }} *
+      <Input v-model="sub.name" autofocus class="min-w-[75%]" />
     </div>
     <div v-if="!isManual" class="form-item">
-      <div class="name">
-        {{ t(sub.type === 'Http' ? 'subscribe.url' : 'subscribe.localPath') }} *
-      </div>
+      {{ t(sub.type === 'Http' ? 'subscribe.url' : 'subscribe.localPath') }} *
       <Input
         v-model="sub.url"
         :placeholder="sub.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.json'"
-        auto-size
-        class="input"
+        class="min-w-[75%]"
       />
     </div>
     <div class="form-item">
-      <div class="name">{{ t('subscribe.path') }} *</div>
-      <Input
-        v-model="sub.path"
-        placeholder="data/subscribes/{filename}.json"
-        auto-size
-        class="input"
-      />
+      {{ t('subscribe.path') }} *
+      <Input v-model="sub.path" placeholder="data/subscribes/{filename}.json" class="min-w-[75%]" />
     </div>
     <Divider v-if="!isManual">
       <Button @click="toggleShowMore" type="text" size="small">
@@ -155,76 +145,61 @@ defineExpose({ modalSlots })
     </Divider>
     <div v-if="showMore && !isManual">
       <div class="form-item">
-        <div class="name">{{ t('subscribe.include') }}</div>
-        <Input v-model="sub.include" placeholder="keyword1|keyword2" auto-size class="input" />
+        {{ t('subscribe.include') }}
+        <Input v-model="sub.include" placeholder="keyword1|keyword2" class="min-w-[75%]" />
       </div>
       <div class="form-item">
-        <div class="name">{{ t('subscribe.exclude') }}</div>
-        <Input v-model="sub.exclude" placeholder="keyword1|keyword2" auto-size class="input" />
+        {{ t('subscribe.exclude') }}
+        <Input v-model="sub.exclude" placeholder="keyword1|keyword2" class="min-w-[75%]" />
       </div>
       <div class="form-item">
-        <div class="name">{{ t('subscribe.includeProtocol') }}</div>
+        {{ t('subscribe.includeProtocol') }}
         <Input
           v-model="sub.includeProtocol"
           placeholder="direct|mixed|socks|http..."
-          auto-size
-          class="input"
+          class="min-w-[75%]"
         />
       </div>
       <div class="form-item">
-        <div class="name">{{ t('subscribe.excludeProtocol') }}</div>
+        {{ t('subscribe.excludeProtocol') }}
         <Input
           v-model="sub.excludeProtocol"
           placeholder="direct|mixed|socks|http..."
-          auto-size
-          class="input"
+          class="min-w-[75%]"
         />
       </div>
       <div class="form-item">
-        <div class="name">{{ t('subscribe.proxyPrefix') }}</div>
-        <Input v-model="sub.proxyPrefix" auto-size class="input" />
+        {{ t('subscribe.proxyPrefix') }}
+        <Input v-model="sub.proxyPrefix" class="min-w-[75%]" />
       </div>
       <template v-if="isRemote">
         <div class="form-item">
-          <div class="name">
-            {{ t('subscribe.website') }}
-          </div>
-          <Input v-model="sub.website" placeholder="http(s)://" auto-size class="input" />
+          {{ t('subscribe.website') }}
+          <Input v-model="sub.website" placeholder="http(s)://" class="min-w-[75%]" />
         </div>
         <div class="form-item">
-          <div class="name">{{ t('subscribe.inSecure') }}</div>
+          {{ t('subscribe.inSecure') }}
           <Switch v-model="sub.inSecure" />
         </div>
         <div class="form-item">
-          <div class="name">{{ t('subscribe.requestMethod') }}</div>
+          {{ t('subscribe.requestMethod') }}
           <Radio v-model="sub.requestMethod" :options="RequestMethodOptions" />
         </div>
         <div
-          :class="{ 'flex-start': Object.keys(sub.header.request).length !== 0 }"
+          :class="{ 'items-start': Object.keys(sub.header.request).length !== 0 }"
           class="form-item"
         >
-          <div class="name">{{ t('subscribe.header.request') }}</div>
+          {{ t('subscribe.header.request') }}
           <KeyValueEditor v-model="sub.header.request" />
         </div>
         <div
-          :class="{ 'flex-start': Object.keys(sub.header.response).length !== 0 }"
+          :class="{ 'items-start': Object.keys(sub.header.response).length !== 0 }"
           class="form-item"
         >
-          <div class="name">{{ t('subscribe.header.response') }}</div>
+          {{ t('subscribe.header.response') }}
           <KeyValueEditor v-model="sub.header.response" />
         </div>
       </template>
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.form {
-  .name {
-    white-space: nowrap;
-  }
-  .input {
-    width: 77%;
-  }
-}
-</style>

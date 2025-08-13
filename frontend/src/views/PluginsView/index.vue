@@ -283,8 +283,10 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
         </Tag>
         <div
           v-show="p.status !== 0"
-          :class="{ 0: '', 1: 'running', 2: 'stopped' }[p.status]"
-          class="status"
+          :style="{
+            color: { 1: 'greenyellow', 2: 'red' }[p.status],
+          }"
+          class="pr-4"
         >
           ●
         </div>
@@ -376,15 +378,21 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
 
       <div
         v-tips="p.description"
-        :class="{ description: appSettingsStore.app.pluginsView === View.Grid }"
+        :class="{ 'line-clamp-1': appSettingsStore.app.pluginsView === View.Grid }"
       >
         {{ t('plugin.description') }}
         :
         {{ p.description || '--' }}
       </div>
 
-      <div class="action">
-        <Button @click="handleEditPluginCode(p.id, p.name)" type="link" size="small" class="edit">
+      <div class="flex mt-4">
+        <Button
+          @click="handleEditPluginCode(p.id, p.name)"
+          type="link"
+          size="small"
+          class="pl-4"
+          style="margin-left: -8px"
+        >
           {{ t('plugins.source') }}
         </Button>
 
@@ -419,32 +427,3 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
 
   <Modal />
 </template>
-
-<style lang="less" scoped>
-.description {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.action {
-  display: flex;
-  margin-top: 4px;
-  .edit {
-    margin-left: -4px;
-    padding-left: 4px;
-  }
-}
-
-.status {
-  padding-right: 4px;
-}
-
-.running {
-  color: greenyellow;
-}
-
-.stopped {
-  color: red;
-}
-</style>

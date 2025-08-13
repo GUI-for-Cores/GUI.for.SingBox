@@ -96,9 +96,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <div v-show="showCommandPanel" class="command-view">
-    <div class="input-view">
-      <Icon icon="arrowRight" class="command-arrow" />
+  <div
+    v-show="showCommandPanel"
+    class="fixed z-9999 left-1/2 -translate-x-1/2 shadow rounded-4 min-w-[50%]"
+    style="top: 40px; background: var(--modal-bg)"
+  >
+    <div class="relative p-6 shadow z-9">
+      <Icon icon="arrowRight" class="absolute" style="top: 13px; left: 12px" />
       <Input
         ref="inputRef"
         v-model="userInput"
@@ -108,9 +112,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         clearable
         pl="24px"
       />
-      <Icon v-show="loading" icon="loading" class="rotation" />
+      <Icon
+        v-show="loading"
+        icon="loading"
+        class="rotation absolute"
+        style="top: 13px; right: 38px"
+      />
     </div>
-    <div class="commands">
+    <div class="overflow-y-auto p-8" style="max-height: calc(100vh - 130px)">
       <div
         v-for="(c, index) in hitCommand"
         :key="c.label"
@@ -127,7 +136,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
           <div>{{ c.cmd }}</div>
         </Card>
       </div>
-      <div class="no-cmds" v-show="hitCommand.length === 0">
+      <div class="p-4 text-12" v-show="hitCommand.length === 0">
         {{ t('commands.noMatching') }}
       </div>
     </div>
@@ -135,46 +144,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </template>
 
 <style lang="less" scoped>
-.command-view {
-  position: fixed;
-  z-index: 9999;
-  top: 40px;
-  left: 50%;
-  border-radius: 4px;
-  min-width: 50%;
-  transform: translateX(-50%);
-  background: var(--modal-bg);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-}
-
-.input-view {
-  padding: 6px;
-  position: relative;
-  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.06);
-  z-index: 9;
-}
-
-.command-arrow {
-  position: absolute;
-  top: 13px;
-  left: 12px;
-}
-
-.commands {
-  overflow-y: auto;
-  max-height: calc(100vh - 130px);
-  padding: 8px;
-}
-
-.no-cmds {
-  padding: 4px;
-  font-size: 12px;
-}
-
 .rotation {
-  position: absolute;
-  top: 13px;
-  right: 38px;
   animation: rotate 2s infinite linear;
 }
 </style>
