@@ -12,7 +12,7 @@ import PromptComp from '@/components/Prompt/index.vue'
 import type { ConfirmOptions } from '@/components/Confirm/index.vue'
 import type { Props as InputProps } from '@/components/Input/index.vue'
 import type { MessageIcon } from '@/components/Message/index.vue'
-import type { Props as ModalProps } from '@/components/Modal/index.vue'
+import type { Props as ModalProps, Slots as ModalSlots } from '@/components/Modal/index.vue'
 import type { PickerItem } from '@/components/Picker/index.vue'
 
 const ContainerCssText = `
@@ -244,8 +244,8 @@ export const confirm = (
   return buildConfirm(title, message, options)
 }
 
-export const modal = (options: ModalProps = {}) => {
-  const [Modal, api] = useModal(options)
+export const modal = (options: ModalProps = {}, slots: ModalSlots = {}) => {
+  const [Modal, api] = useModal(options, slots)
   const vnode = h(Modal)
   bindAppContext(vnode)
 
