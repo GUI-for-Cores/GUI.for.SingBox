@@ -47,6 +47,7 @@ export default {
     canceled: 'Canceled',
     downloading: 'Downloading...',
     empty: 'Data is empty',
+    pressAgainToClose: 'Press again to close the modal',
   },
   kernel: {
     rule: 'Rule',

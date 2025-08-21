@@ -53,12 +53,19 @@ EventsOn('onBeforeExitApp', async () => {
 
 EventsOn('exitApp', () => exitApp())
 
-const showError = (err: string) => {
-  hasError.value = true
-  message.error(err)
-}
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const closeFn = appStore.modalStack.at(-1)
+    closeFn?.()
+  }
+})
 
 envStore.setupEnv().then(async () => {
+  const showError = (err: string) => {
+    hasError.value = true
+    message.error(err)
+  }
+
   await Promise.all([
     appSettings.setupAppSettings(),
     profilesStore.setupProfiles(),

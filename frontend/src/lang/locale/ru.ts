@@ -47,6 +47,7 @@ export default {
     canceled: 'Отменено',
     downloading: 'Скачивание...',
     empty: 'Данные отсутствуют',
+    pressAgainToClose: 'Нажмите ещё раз, чтобы закрыть окно',
   },
   kernel: {
     rule: 'По правилам',

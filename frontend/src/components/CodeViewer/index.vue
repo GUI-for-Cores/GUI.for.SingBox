@@ -173,7 +173,7 @@ const initEditor = () => {
 </script>
 
 <template>
-  <div ref="domRef">
+  <div ref="domRef" @keydown.esc.stop @keydown.esc.prevent>
     <div class="flex justify-center">
       <Button loading type="link" />
     </div>

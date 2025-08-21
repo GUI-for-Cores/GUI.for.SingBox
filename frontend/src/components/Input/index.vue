@@ -142,6 +142,8 @@ defineExpose({
         @input="($event) => onInput($event)"
         @blur="onSubmit"
         @keydown.enter="inputRef?.blur"
+        @keydown.esc.stop
+        @keydown.esc.prevent
         autocomplete="off"
         ref="inputRef"
         class="flex-1 inline-block py-6 outline-none border-0 bg-transparent"

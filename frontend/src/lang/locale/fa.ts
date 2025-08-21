@@ -47,6 +47,7 @@ export default {
     canceled: 'لغو شد',
     downloading: 'در حال دانلود...',
     empty: 'داده‌ای وجود ندارد',
+    pressAgainToClose: 'برای بستن پنجره دوباره فشار دهید',
   },
   kernel: {
     rule: 'قانون',

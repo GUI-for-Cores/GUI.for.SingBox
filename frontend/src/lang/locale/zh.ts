@@ -47,6 +47,7 @@ export default {
     canceled: '已取消',
     downloading: '下载中...',
     empty: '数据为空',
+    pressAgainToClose: '再按一次关闭弹窗',
   },
   kernel: {
     rule: '规则',

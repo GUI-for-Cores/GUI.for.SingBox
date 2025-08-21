@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, provide, ref } from 'vue'
+import { computed, provide, ref, watch } from 'vue'
 
 import { useBool } from '@/hooks'
 import useI18n from '@/lang'
+import { useAppStore } from '@/stores'
+import { message } from '@/utils'
 
 export interface Props {
   title?: string
@@ -66,6 +68,8 @@ const open = defineModel('open', { default: false })
 const cancelLoading = ref(false)
 const submitLoading = ref(false)
 
+const modalZindex = ref()
+const appStore = useAppStore()
 const [isMaximize, toggleMaximize] = useBool(false)
 // const [isMinimize, toggleMinimize] = useBool(false)
 
@@ -102,6 +106,39 @@ const contentStyle = computed(() => ({
   height: props.height + '%',
 }))
 
+let lastEscTime = 0
+let closeMessage: () => void
+
+const closeFn = () => {
+  if (props.maskClosable) {
+    handleCancel()
+    return
+  }
+  const now = performance.now()
+  if (now - lastEscTime < 1000) {
+    handleCancel()
+    lastEscTime = 0
+    closeMessage?.()
+  } else {
+    const { destroy } = message.info('common.pressAgainToClose', 1_000)
+    closeMessage = destroy
+    lastEscTime = now
+  }
+}
+
+watch(open, (v) => {
+  if (v) {
+    modalZindex.value = ++appStore.modalZIndexCounter
+    appStore.modalStack.push(closeFn)
+  } else {
+    closeMessage?.()
+    const idx = appStore.modalStack.findIndex((fn) => fn === closeFn)
+    if (idx !== -1) {
+      appStore.modalStack.splice(idx, 1)
+    }
+  }
+})
+
 provide('cancel', handleCancel)
 provide('submit', handleSubmit)
 </script>
@@ -112,7 +149,8 @@ provide('submit', handleSubmit)
       <div
         v-if="open"
         @click.self="onMaskClick"
-        class="gui-modal-mask fixed inset-0 z-999 flex items-center justify-center backdrop-blur-sm"
+        :style="{ zIndex: modalZindex }"
+        class="gui-modal-mask fixed inset-0 flex items-center justify-center backdrop-blur-sm"
         style="--wails-draggable: drag"
       >
         <div

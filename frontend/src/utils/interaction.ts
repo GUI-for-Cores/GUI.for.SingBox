@@ -1,4 +1,4 @@
-import { render, h, type VNode } from 'vue'
+import { render, h, type VNode, nextTick } from 'vue'
 
 import i18n from '@/lang'
 import { APP_TITLE, sampleID } from '@/utils'
@@ -254,8 +254,11 @@ export const modal = (options: ModalProps = {}, slots: ModalSlots = {}) => {
   render(vnode, container)
 
   const destroy = () => {
-    render(null, container)
-    container.remove()
+    api.close()
+    nextTick(() => {
+      render(null, container)
+      container.remove()
+    })
   }
 
   const powerApi = { ...api, destroy }
