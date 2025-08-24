@@ -110,6 +110,10 @@ let lastEscTime = 0
 let closeMessage: () => void
 
 const closeFn = () => {
+  if (isMaximize.value) {
+    toggleMaximize()
+    return
+  }
   if (props.maskClosable) {
     handleCancel()
     return
