@@ -79,12 +79,7 @@ export const restoreProfile = (config: Recordable) => {
               mtu: inbound.mtu || 9000,
               auto_route: !!inbound.auto_route,
               strict_route: !!inbound.strict_route,
-              route_address: inbound.route_address || [
-                '0.0.0.0/1',
-                '128.0.0.0/1',
-                '::/1',
-                '8000::/1',
-              ],
+              route_address: inbound.route_address || [],
               endpoint_independent_nat: !!inbound.endpoint_independent_nat,
               stack: inbound.stack || TunStack.Mixed,
             },
