@@ -8,7 +8,7 @@ export function AddScheduledTask(arg1:string,arg2:string):Promise<bridge.FlagRes
 
 export function CloseMMDB(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
-export function Copyfile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+export function CopyFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Download(arg1:string,arg2:string,arg3:string,arg4:Record<string, string>,arg5:string,arg6:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
@@ -30,9 +30,9 @@ export function KillProcess(arg1:number,arg2:number):Promise<bridge.FlagResult>;
 
 export function ListServer():Promise<bridge.FlagResult>;
 
-export function Makedir(arg1:string):Promise<bridge.FlagResult>;
+export function MakeDir(arg1:string):Promise<bridge.FlagResult>;
 
-export function Movefile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
+export function MoveFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function Notify(arg1:string,arg2:string,arg3:string,arg4:bridge.NotifyOptions):Promise<bridge.FlagResult>;
 
@@ -42,13 +42,13 @@ export function ProcessInfo(arg1:number):Promise<bridge.FlagResult>;
 
 export function QueryMMDB(arg1:string,arg2:string,arg3:string):Promise<bridge.FlagResult>;
 
-export function Readdir(arg1:string):Promise<bridge.FlagResult>;
+export function ReadDir(arg1:string):Promise<bridge.FlagResult>;
 
-export function Readfile(arg1:string,arg2:bridge.IOOptions):Promise<bridge.FlagResult>;
+export function ReadFile(arg1:string,arg2:bridge.IOOptions):Promise<bridge.FlagResult>;
+
+export function RemoveFile(arg1:string):Promise<bridge.FlagResult>;
 
 export function RemoveScheduledTask(arg1:number):Promise<void>;
-
-export function Removefile(arg1:string):Promise<bridge.FlagResult>;
 
 export function Requests(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
@@ -74,4 +74,4 @@ export function Upload(arg1:string,arg2:string,arg3:string,arg4:Record<string, s
 
 export function ValidateCron(arg1:string):Promise<bridge.FlagResult>;
 
-export function Writefile(arg1:string,arg2:string,arg3:bridge.IOOptions):Promise<bridge.FlagResult>;
+export function WriteFile(arg1:string,arg2:string,arg3:bridge.IOOptions):Promise<bridge.FlagResult>;

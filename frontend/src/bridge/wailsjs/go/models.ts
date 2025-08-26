@@ -2,6 +2,7 @@ export namespace bridge {
 	
 	export class EnvResult {
 	    appName: string;
+	    appVersion: string;
 	    basePath: string;
 	    os: string;
 	    arch: string;
@@ -14,6 +15,7 @@ export namespace bridge {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.appName = source["appName"];
+	        this.appVersion = source["appVersion"];
 	        this.basePath = source["basePath"];
 	        this.os = source["os"];
 	        this.arch = source["arch"];
@@ -21,9 +23,9 @@ export namespace bridge {
 	    }
 	}
 	export class ExecOptions {
-	    stopOutputKeyword: string;
-	    convert: boolean;
-	    env: Record<string, string>;
+	    StopOutputKeyword: string;
+	    Convert: boolean;
+	    Env: Record<string, string>;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExecOptions(source);
@@ -31,9 +33,9 @@ export namespace bridge {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.stopOutputKeyword = source["stopOutputKeyword"];
-	        this.convert = source["convert"];
-	        this.env = source["env"];
+	        this.StopOutputKeyword = source["StopOutputKeyword"];
+	        this.Convert = source["Convert"];
+	        this.Env = source["Env"];
 	    }
 	}
 	export class FlagResult {

@@ -8,7 +8,7 @@
     "lib": ["ESNext", "DOM"],
     "paths": {
       "@/*": ["./src/*"],
-      "@wails/*": ["./wailsjs/*"]
+      "@wails/*": ["./src/bridge/wailsjs/*"]
     }
   }
 }

@@ -14,8 +14,8 @@ export function CloseMMDB(arg1, arg2) {
   return window['go']['bridge']['App']['CloseMMDB'](arg1, arg2);
 }
 
-export function Copyfile(arg1, arg2) {
-  return window['go']['bridge']['App']['Copyfile'](arg1, arg2);
+export function CopyFile(arg1, arg2) {
+  return window['go']['bridge']['App']['CopyFile'](arg1, arg2);
 }
 
 export function Download(arg1, arg2, arg3, arg4, arg5, arg6) {
@@ -58,12 +58,12 @@ export function ListServer() {
   return window['go']['bridge']['App']['ListServer']();
 }
 
-export function Makedir(arg1) {
-  return window['go']['bridge']['App']['Makedir'](arg1);
+export function MakeDir(arg1) {
+  return window['go']['bridge']['App']['MakeDir'](arg1);
 }
 
-export function Movefile(arg1, arg2) {
-  return window['go']['bridge']['App']['Movefile'](arg1, arg2);
+export function MoveFile(arg1, arg2) {
+  return window['go']['bridge']['App']['MoveFile'](arg1, arg2);
 }
 
 export function Notify(arg1, arg2, arg3, arg4) {
@@ -82,20 +82,20 @@ export function QueryMMDB(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['QueryMMDB'](arg1, arg2, arg3);
 }
 
-export function Readdir(arg1) {
-  return window['go']['bridge']['App']['Readdir'](arg1);
+export function ReadDir(arg1) {
+  return window['go']['bridge']['App']['ReadDir'](arg1);
 }
 
-export function Readfile(arg1, arg2) {
-  return window['go']['bridge']['App']['Readfile'](arg1, arg2);
+export function ReadFile(arg1, arg2) {
+  return window['go']['bridge']['App']['ReadFile'](arg1, arg2);
+}
+
+export function RemoveFile(arg1) {
+  return window['go']['bridge']['App']['RemoveFile'](arg1);
 }
 
 export function RemoveScheduledTask(arg1) {
   return window['go']['bridge']['App']['RemoveScheduledTask'](arg1);
-}
-
-export function Removefile(arg1) {
-  return window['go']['bridge']['App']['Removefile'](arg1);
 }
 
 export function Requests(arg1, arg2, arg3, arg4, arg5) {
@@ -146,6 +146,6 @@ export function ValidateCron(arg1) {
   return window['go']['bridge']['App']['ValidateCron'](arg1);
 }
 
-export function Writefile(arg1, arg2, arg3) {
-  return window['go']['bridge']['App']['Writefile'](arg1, arg2, arg3);
+export function WriteFile(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['WriteFile'](arg1, arg2, arg3);
 }
