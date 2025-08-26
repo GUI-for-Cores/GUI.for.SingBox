@@ -2,7 +2,7 @@ package bridge
 
 import (
 	"bufio"
-	"errors"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -142,23 +142,28 @@ func (a *App) KillProcess(pid int, timeout int) FlagResult {
 }
 
 func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int) error {
-	done := make(chan error, 1)
-	go func() {
-		_, err := process.Wait()
-		done <- err
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSeconds)*time.Second)
+	defer cancel()
 
-	timer := time.NewTimer(time.Duration(timeoutSeconds) * time.Second)
-	defer timer.Stop()
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
 
-	select {
-	case err := <-done:
-		return err
-	case <-timer.C:
-		if killErr := process.Kill(); killErr != nil {
-			return fmt.Errorf("timeout reached and failed to kill process: %w", killErr)
+	for {
+		select {
+		case <-ctx.Done():
+			if killErr := process.Kill(); killErr != nil {
+				return fmt.Errorf("timed out after %d seconds waiting for process %d, and failed to kill it: %w", timeoutSeconds, process.Pid, killErr)
+			}
+			return nil
+
+		case <-ticker.C:
+			alive, err := IsProcessAlive(process)
+			if err != nil {
+				return fmt.Errorf("failed to check status of process %d: %w", process.Pid, err)
+			}
+			if !alive {
+				return nil
+			}
 		}
-		<-done
-		return errors.New("timeout waiting for process to exit")
 	}
 }
