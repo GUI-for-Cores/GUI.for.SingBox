@@ -2,7 +2,7 @@
 import { ref, computed, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ClipboardSetText, Readfile, Writefile } from '@/bridge'
+import { ClipboardSetText, ReadFile, WriteFile } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
@@ -130,7 +130,7 @@ const handleSave = async () => {
       proxies.some((vv) => vv.tag === v.tag),
     )
     const sortedArray = proxies.map((v) => filteredProxies.find((vv) => vv.tag === v.tag))
-    await Writefile(path, JSON.stringify(sortedArray, null, 2))
+    await WriteFile(path, JSON.stringify(sortedArray, null, 2))
     await subscribeStore.editSubscribe(id, sub.value)
     handleSubmit()
   } catch (error: any) {
@@ -184,7 +184,7 @@ const onEditEnd = async () => {
 
 const initAllFieldsProxies = async () => {
   if (allFieldsProxies.value.length) return
-  const content = (await ignoredError(Readfile, sub.value!.path)) || '[]'
+  const content = (await ignoredError(ReadFile, sub.value!.path)) || '[]'
   allFieldsProxies.value = JSON.parse(content)
 }
 

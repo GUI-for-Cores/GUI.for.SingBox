@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-import { Removefile } from '@/bridge'
+import { RemoveFile } from '@/bridge'
 import { CoreCacheFilePath } from '@/constant/kernel'
 import { useCoreBranch } from '@/hooks/useCoreBranch'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
@@ -42,9 +42,9 @@ const {
 const handleClearCoreCache = async () => {
   try {
     if (appSettings.app.kernel.running) {
-      await kernelApiStore.restartKernel(() => Removefile(CoreCacheFilePath))
+      await kernelApiStore.restartKernel(() => RemoveFile(CoreCacheFilePath))
     } else {
-      await Removefile(CoreCacheFilePath)
+      await RemoveFile(CoreCacheFilePath)
     }
     message.success('common.success')
   } catch (error: any) {

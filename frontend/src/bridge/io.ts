@@ -4,40 +4,40 @@ interface IOOptions {
   Mode?: 'Binary' | 'Text'
 }
 
-export const Writefile = async (path: string, content: string, options: IOOptions = {}) => {
-  const { flag, data } = await App.Writefile(path, content, { Mode: 'Text', ...options })
+export const WriteFile = async (path: string, content: string, options: IOOptions = {}) => {
+  const { flag, data } = await App.WriteFile(path, content, { Mode: 'Text', ...options })
   if (!flag) {
     throw data
   }
   return data
 }
 
-export const Readfile = async (path: string, options: IOOptions = {}) => {
-  const { flag, data } = await App.Readfile(path, { Mode: 'Text', ...options })
+export const ReadFile = async (path: string, options: IOOptions = {}) => {
+  const { flag, data } = await App.ReadFile(path, { Mode: 'Text', ...options })
   if (!flag) {
     throw data
   }
   return data
 }
 
-export const Movefile = async (source: string, target: string) => {
-  const { flag, data } = await App.Movefile(source, target)
+export const MoveFile = async (source: string, target: string) => {
+  const { flag, data } = await App.MoveFile(source, target)
   if (!flag) {
     throw data
   }
   return data
 }
 
-export const Removefile = async (path: string) => {
-  const { flag, data } = await App.Removefile(path)
+export const RemoveFile = async (path: string) => {
+  const { flag, data } = await App.RemoveFile(path)
   if (!flag) {
     throw data
   }
   return data
 }
 
-export const Copyfile = async (source: string, target: string) => {
-  const { flag, data } = await App.Copyfile(source, target)
+export const CopyFile = async (source: string, target: string) => {
+  const { flag, data } = await App.CopyFile(source, target)
   if (!flag) {
     throw data
   }
@@ -60,16 +60,16 @@ export const AbsolutePath = async (path: string) => {
   return data
 }
 
-export const Makedir = async (path: string) => {
-  const { flag, data } = await App.Makedir(path)
+export const MakeDir = async (path: string) => {
+  const { flag, data } = await App.MakeDir(path)
   if (!flag) {
     throw data
   }
   return data
 }
 
-export const Readdir = async (path: string) => {
-  const { flag, data } = await App.Readdir(path)
+export const ReadDir = async (path: string) => {
+  const { flag, data } = await App.ReadDir(path)
   if (!flag) {
     throw data
   }
@@ -105,3 +105,11 @@ export const UnzipTarGZFile = async (path: string, output: string) => {
   }
   return data
 }
+
+export const Writefile = WriteFile
+export const Readfile = ReadFile
+export const Movefile = MoveFile
+export const Removefile = RemoveFile
+export const Copyfile = CopyFile
+export const Makedir = MakeDir
+export const Readdir = ReadDir

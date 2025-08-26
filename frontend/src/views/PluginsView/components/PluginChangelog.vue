@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { HttpGet, Readfile } from '@/bridge'
+import { HttpGet, ReadFile } from '@/bridge'
 import { usePluginsStore } from '@/stores'
 import { ignoredError } from '@/utils'
 
@@ -22,7 +22,7 @@ const fetchAndUpdatePluginCode = async () => {
     if (_code) {
       code.value = _code
     } else {
-      const content = (await ignoredError(Readfile, p.path)) || ''
+      const content = (await ignoredError(ReadFile, p.path)) || ''
       code.value = content
     }
     const { body } = await HttpGet(p.url)

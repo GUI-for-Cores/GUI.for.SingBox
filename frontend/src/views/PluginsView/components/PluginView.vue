@@ -2,7 +2,7 @@
 import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { Readfile, Writefile } from '@/bridge'
+import { ReadFile, WriteFile } from '@/bridge'
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore } from '@/stores'
 import { deepClone, ignoredError, message } from '@/utils'
@@ -33,7 +33,7 @@ const handleSave = async () => {
   if (!plugin.value) return
   loading.value = true
   try {
-    await Writefile(plugin.value.path, code.value)
+    await WriteFile(plugin.value.path, code.value)
     await pluginsStore.reloadPlugin(plugin.value, code.value, false)
     handleSubmit()
   } catch (error: any) {
@@ -80,7 +80,7 @@ const initPluginCode = async (p: Plugin) => {
     code.value = _code
     return
   }
-  const content = (await ignoredError(Readfile, p.path)) || ''
+  const content = (await ignoredError(ReadFile, p.path)) || ''
   code.value = content
 }
 

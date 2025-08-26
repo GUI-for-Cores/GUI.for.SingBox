@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { stringify, parse } from 'yaml'
 
-import { Readfile, Writefile, Requests } from '@/bridge'
+import { ReadFile, WriteFile, Requests } from '@/bridge'
 import { DefaultSubscribeScript, SubscribesFilePath } from '@/constant/app'
 import { DefaultExcludeProtocols } from '@/constant/kernel'
 import { PluginTriggerEvent, RequestMethod } from '@/enums/app'
@@ -24,7 +24,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   const subscribes = ref<Subscription[]>([])
 
   const setupSubscribes = async () => {
-    const data = await ignoredError(Readfile, SubscribesFilePath)
+    const data = await ignoredError(ReadFile, SubscribesFilePath)
     data && (subscribes.value = parse(data))
 
     let needSync = false
@@ -59,7 +59,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
 
   const saveSubscribes = debounce(async () => {
     const s = omitArray(subscribes.value, ['updating'])
-    await Writefile(SubscribesFilePath, stringify(s))
+    await WriteFile(SubscribesFilePath, stringify(s))
   }, 500)
 
   const addSubscribe = async (s: Subscription) => {
@@ -135,11 +135,11 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     let proxies: Record<string, any>[] = []
 
     if (s.type === 'Manual') {
-      body = await Readfile(s.path)
+      body = await ReadFile(s.path)
     }
 
     if (s.type === 'File') {
-      body = await Readfile(s.url)
+      body = await ReadFile(s.url)
     }
 
     if (s.type === 'Http') {
@@ -220,7 +220,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       return { id, tag, type }
     })
 
-    await Writefile(s.path, JSON.stringify(_proxies, null, 2))
+    await WriteFile(s.path, JSON.stringify(_proxies, null, 2))
   }
 
   const updateSubscribe = async (id: string) => {

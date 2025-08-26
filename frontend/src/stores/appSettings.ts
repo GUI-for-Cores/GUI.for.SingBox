@@ -3,8 +3,8 @@ import { ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
 import {
-  Readfile,
-  Writefile,
+  ReadFile,
+  WriteFile,
   WindowSetSystemDefaultTheme,
   WindowIsMaximised,
   WindowIsMinimised,
@@ -87,11 +87,11 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   })
 
   const saveAppSettings = debounce((config: string) => {
-    Writefile(UserFilePath, config)
+    WriteFile(UserFilePath, config)
   }, 500)
 
   const setupAppSettings = async () => {
-    const data = await ignoredError(Readfile, UserFilePath)
+    const data = await ignoredError(ReadFile, UserFilePath)
     data && (app.value = Object.assign(app.value, parse(data)))
 
     if ((app.value.kernel.branch as any) === 'latest') {

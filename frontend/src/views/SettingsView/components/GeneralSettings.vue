@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { BrowserOpenURL, GetEnv, Writefile, Removefile, AbsolutePath } from '@/bridge'
+import { BrowserOpenURL, GetEnv, WriteFile, RemoveFile, AbsolutePath } from '@/bridge'
 import { DefaultFontFamily } from '@/constant/app'
 import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
 import routes from '@/router/routes'
@@ -169,9 +169,9 @@ const onStartupDelayChange = async (delay: number) => {
 const createSchTask = async (delay = 30) => {
   const xmlPath = 'data/.cache/tasksch.xml'
   const xmlContent = await getTaskSchXmlString(delay)
-  await Writefile(xmlPath, xmlContent)
+  await WriteFile(xmlPath, xmlContent)
   await CreateSchTask(APP_TITLE, await AbsolutePath(xmlPath))
-  await Removefile(xmlPath)
+  await RemoveFile(xmlPath)
 }
 
 const onThemeClick = (e: MouseEvent) => {

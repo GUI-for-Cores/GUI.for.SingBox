@@ -6,10 +6,10 @@ import {
   Download,
   HttpGet,
   BrowserOpenURL,
-  Movefile,
+  MoveFile,
   UnzipZIPFile,
-  Makedir,
-  Removefile,
+  MakeDir,
+  RemoveFile,
   AbsolutePath,
   HttpCancel,
 } from '@/bridge'
@@ -97,10 +97,10 @@ export const useAppStore = defineStore('app', () => {
 
       const { update, destroy } = message.info('common.downloading', 10 * 60 * 1_000, () => {
         HttpCancel(downloadCancelId)
-        setTimeout(() => Removefile(downloadCacheFile), 1000)
+        setTimeout(() => RemoveFile(downloadCacheFile), 1000)
       })
 
-      await Makedir('data/.cache')
+      await MakeDir('data/.cache')
       await Download(
         downloadUrl.value,
         downloadCacheFile,
@@ -115,10 +115,10 @@ export const useAppStore = defineStore('app', () => {
 
       const { appName, os } = envStore.env
       if (os !== 'darwin') {
-        await Movefile(appName, appName + '.bak')
+        await MoveFile(appName, appName + '.bak')
         await UnzipZIPFile(downloadCacheFile, '.')
         const suffix = { windows: '.exe', linux: '' }[os]
-        await Movefile(APP_TITLE + suffix, appName)
+        await MoveFile(APP_TITLE + suffix, appName)
         message.success('about.updateSuccessfulRestart')
         restartable.value = true
       } else {
@@ -127,9 +127,9 @@ export const useAppStore = defineStore('app', () => {
         BrowserOpenURL(await AbsolutePath('data'))
       }
 
-      await Removefile(downloadCacheFile)
-      await ignoredError(Removefile, 'data/rolling-release')
-      await ignoredError(Removefile, 'data/rolling-release-alpha')
+      await RemoveFile(downloadCacheFile)
+      await ignoredError(RemoveFile, 'data/rolling-release')
+      await ignoredError(RemoveFile, 'data/rolling-release-alpha')
     } catch (error: any) {
       console.log(error)
       message.error(error.message || error, 5_000)

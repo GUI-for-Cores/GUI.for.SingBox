@@ -1,4 +1,4 @@
-import { Readfile, Writefile } from '@/bridge'
+import { ReadFile, WriteFile } from '@/bridge'
 import { CoreConfigFilePath } from '@/constant/kernel'
 import {
   DnsServer,
@@ -126,7 +126,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
           if (!SubscriptionCache[subId]) {
             const sub = subscribesStore.getSubscribeById(subId)
             if (sub) {
-              const subStr = await Readfile(sub.path)
+              const subStr = await ReadFile(sub.path)
               const proxies = JSON.parse(subStr)
               SubscriptionCache[subId] = proxies
             }
@@ -419,5 +419,5 @@ export const generateConfigFile = async (
 
   config.experimental.cache_file.path = 'cache.db'
 
-  await Writefile(CoreConfigFilePath, JSON.stringify(config, null, 2))
+  await WriteFile(CoreConfigFilePath, JSON.stringify(config, null, 2))
 }

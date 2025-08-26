@@ -4,8 +4,8 @@ import { stringify, parse } from 'yaml'
 
 import {
   Notify,
-  Readfile,
-  Writefile,
+  ReadFile,
+  WriteFile,
   AddScheduledTask,
   RemoveScheduledTask,
   EventsOn,
@@ -24,7 +24,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const ScheduledTasksIDs: number[] = []
 
   const setupScheduledTasks = async () => {
-    const data = await ignoredError(Readfile, ScheduledTasksFilePath)
+    const data = await ignoredError(ReadFile, ScheduledTasksFilePath)
     data && (scheduledtasks.value = parse(data))
   }
 
@@ -111,7 +111,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   }
 
   const saveScheduledTasks = debounce(async () => {
-    await Writefile(ScheduledTasksFilePath, stringify(scheduledtasks.value))
+    await WriteFile(ScheduledTasksFilePath, stringify(scheduledtasks.value))
   }, 500)
 
   const addScheduledTask = async (s: ScheduledTask) => {

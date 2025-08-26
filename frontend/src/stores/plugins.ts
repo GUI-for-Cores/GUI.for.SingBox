@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
-import { HttpGet, Readfile, Removefile, Writefile } from '@/bridge'
+import { HttpGet, ReadFile, RemoveFile, WriteFile } from '@/bridge'
 import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
 import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
@@ -76,15 +76,15 @@ export const usePluginsStore = defineStore('plugins', () => {
   const pluginHub = ref<Plugin[]>([])
 
   const setupPlugins = async () => {
-    const data = await ignoredError(Readfile, PluginsFilePath)
+    const data = await ignoredError(ReadFile, PluginsFilePath)
     data && (plugins.value = parse(data))
 
-    const list = await ignoredError(Readfile, PluginHubFilePath)
+    const list = await ignoredError(ReadFile, PluginHubFilePath)
     list && (pluginHub.value = JSON.parse(list))
 
     for (let i = 0; i < plugins.value.length; i++) {
       const { id, triggers, path, context, hasUI, tags } = plugins.value[i]
-      const code = await ignoredError(Readfile, path)
+      const code = await ignoredError(ReadFile, path)
       if (code) {
         PluginsCache[id] = { plugin: plugins.value[i], code }
         triggers.forEach((trigger) => {
@@ -139,7 +139,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   const reloadPlugin = async (plugin: Plugin, code = '', reloadTrigger = false) => {
     const { path } = plugin
     if (!code) {
-      code = await Readfile(path)
+      code = await ReadFile(path)
     }
     PluginsCache[plugin.id] = { plugin, code }
     reloadTrigger && updatePluginTrigger(plugin)
@@ -162,7 +162,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   const savePlugins = debounce(async () => {
     const p = omitArray(plugins.value, ['updating', 'loading', 'running'])
-    await Writefile(PluginsFilePath, stringify(p))
+    await WriteFile(PluginsFilePath, stringify(p))
   }, 100)
 
   const addPlugin = async (plugin: Plugin) => {
@@ -189,7 +189,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       plugins.value.splice(idx, 0, plugin)
       throw error
     }
-    plugin.path.startsWith('data') && Removefile(plugin.path)
+    plugin.path.startsWith('data') && RemoveFile(plugin.path)
     // Remove configuration
     if (appSettingsStore.app.pluginSettings[plugin.id]) {
       if (await confirm('Tips', 'plugins.removeConfiguration').catch(() => 0)) {
@@ -247,7 +247,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     let code = ''
 
     if (plugin.type === 'File') {
-      code = await Readfile(plugin.path).catch(() => '')
+      code = await ReadFile(plugin.path).catch(() => '')
     }
 
     if (plugin.type === 'Http') {
@@ -256,7 +256,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
 
     if (plugin.type !== 'File') {
-      await Writefile(plugin.path, code)
+      await WriteFile(plugin.path, code)
     }
 
     PluginsCache[plugin.id] = { plugin, code }
@@ -318,7 +318,7 @@ export const usePluginsStore = defineStore('plugins', () => {
         'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json',
       )
       pluginHub.value = [...JSON.parse(body1), ...JSON.parse(body2)]
-      await Writefile(PluginHubFilePath, JSON.stringify(pluginHub.value))
+      await WriteFile(PluginHubFilePath, JSON.stringify(pluginHub.value))
     } finally {
       pluginHubLoading.value = false
     }

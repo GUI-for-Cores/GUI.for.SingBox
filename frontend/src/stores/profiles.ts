@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { parse, stringify } from 'yaml'
 
-import { Readfile, Writefile, Readdir, Movefile } from '@/bridge'
+import { ReadFile, WriteFile, ReadDir, MoveFile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import {
   debounce,
@@ -16,7 +16,7 @@ export const useProfilesStore = defineStore('profiles', () => {
   const profiles = ref<IProfile[]>([])
 
   const setupProfiles = async () => {
-    const data = await ignoredError(Readfile, ProfilesFilePath)
+    const data = await ignoredError(ReadFile, ProfilesFilePath)
     data && (profiles.value = parse(data))
 
     let needsDiskSync = false
@@ -27,16 +27,16 @@ export const useProfilesStore = defineStore('profiles', () => {
       }
     })
 
-    const dirs = await Readdir('data/.cache')
+    const dirs = await ReadDir('data/.cache')
     const backupProfiles = dirs.find((file) => file.name === 'profiles-backup.yaml')
     if (backupProfiles) {
-      const txt = await Readfile('data/.cache/profiles-backup.yaml')
+      const txt = await ReadFile('data/.cache/profiles-backup.yaml')
       const oldProfiles = parse(txt)
       for (const p of oldProfiles) {
         profiles.value.push(transformProfileV189To190(p))
         needsDiskSync = true
       }
-      await Movefile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
+      await MoveFile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
     }
 
     if (needsDiskSync) {
@@ -75,7 +75,7 @@ export const useProfilesStore = defineStore('profiles', () => {
   }
 
   const saveProfiles = debounce(async () => {
-    await Writefile(ProfilesFilePath, stringify(profiles.value))
+    await WriteFile(ProfilesFilePath, stringify(profiles.value))
   }, 100)
 
   const addProfile = async (p: IProfile) => {

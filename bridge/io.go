@@ -18,8 +18,8 @@ const (
 	Text   = "Text"
 )
 
-func (a *App) Writefile(path string, content string, options IOOptions) FlagResult {
-	log.Printf("Writefile [%s]: %s", options.Mode, path)
+func (a *App) WriteFile(path string, content string, options IOOptions) FlagResult {
+	log.Printf("WriteFile [%s]: %s", options.Mode, path)
 
 	fullPath := GetPath(path)
 
@@ -49,8 +49,8 @@ func (a *App) Writefile(path string, content string, options IOOptions) FlagResu
 	return FlagResult{true, "Success"}
 }
 
-func (a *App) Readfile(path string, options IOOptions) FlagResult {
-	log.Printf("Readfile [%s]: %s", options.Mode, path)
+func (a *App) ReadFile(path string, options IOOptions) FlagResult {
+	log.Printf("ReadFile [%s]: %s", options.Mode, path)
 
 	fullPath := GetPath(path)
 
@@ -69,8 +69,8 @@ func (a *App) Readfile(path string, options IOOptions) FlagResult {
 	}
 }
 
-func (a *App) Movefile(source string, target string) FlagResult {
-	log.Printf("Movefile: %s -> %s", source, target)
+func (a *App) MoveFile(source string, target string) FlagResult {
+	log.Printf("MoveFile: %s -> %s", source, target)
 
 	fullSource := GetPath(source)
 	fullTarget := GetPath(target)
@@ -86,7 +86,7 @@ func (a *App) Movefile(source string, target string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
-func (a *App) Removefile(path string) FlagResult {
+func (a *App) RemoveFile(path string) FlagResult {
 	log.Printf("RemoveFile: %s", path)
 
 	fullPath := GetPath(path)
@@ -98,8 +98,8 @@ func (a *App) Removefile(path string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
-func (a *App) Copyfile(src string, dst string) FlagResult {
-	log.Printf("Copyfile: %s -> %s", src, dst)
+func (a *App) CopyFile(src string, dst string) FlagResult {
+	log.Printf("CopyFile: %s -> %s", src, dst)
 
 	srcPath := GetPath(src)
 	dstPath := GetPath(dst)
@@ -127,8 +127,8 @@ func (a *App) Copyfile(src string, dst string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
-func (a *App) Makedir(path string) FlagResult {
-	log.Printf("Makedir: %s", path)
+func (a *App) MakeDir(path string) FlagResult {
+	log.Printf("MakeDir: %s", path)
 
 	fullPath := GetPath(path)
 
@@ -139,8 +139,8 @@ func (a *App) Makedir(path string) FlagResult {
 	return FlagResult{true, "Success"}
 }
 
-func (a *App) Readdir(path string) FlagResult {
-	log.Printf("Readdir: %s", path)
+func (a *App) ReadDir(path string) FlagResult {
+	log.Printf("ReadDir: %s", path)
 
 	fullPath := GetPath(path)
 

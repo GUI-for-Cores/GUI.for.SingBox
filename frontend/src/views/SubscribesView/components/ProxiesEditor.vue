@@ -2,7 +2,7 @@
 import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { Readfile, Writefile } from '@/bridge'
+import { ReadFile, WriteFile } from '@/bridge'
 import { useSubscribesStore } from '@/stores'
 import { deepClone, ignoredError, message, omitArray, sampleID } from '@/utils'
 
@@ -36,7 +36,7 @@ const handleSave = async () => {
       tag: v.tag,
       type: v.type,
     }))
-    await Writefile(path, JSON.stringify(omitArray(proxiesWithId, ['__id_in_gui']), null, 2))
+    await WriteFile(path, JSON.stringify(omitArray(proxiesWithId, ['__id_in_gui']), null, 2))
     await subscribeStore.editSubscribe(id, sub.value)
     handleSubmit()
   } catch (error: any) {
@@ -48,7 +48,7 @@ const handleSave = async () => {
 }
 
 const initProxiesText = async () => {
-  const content = (await ignoredError(Readfile, sub.value.path)) || '[]'
+  const content = (await ignoredError(ReadFile, sub.value.path)) || '[]'
   const proxies: Subscription['proxies'] = JSON.parse(content)
   const proxiesWithId = proxies.map((proxy) => {
     return {

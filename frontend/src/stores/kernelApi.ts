@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 import { getProxies, getConfigs, setConfigs, Api } from '@/api/kernel'
-import { ProcessInfo, KillProcess, ExecBackground, Readfile } from '@/bridge'
+import { ProcessInfo, KillProcess, ExecBackground, ReadFile } from '@/bridge'
 import { CoreConfigFilePath, CoreStopOutputKeyword, CoreWorkingDirectory } from '@/constant/kernel'
 import { DefaultInboundMixed } from '@/constant/profile'
 import { Branch } from '@/enums/app'
@@ -74,7 +74,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
 
     if (!runtimeProfile) {
-      const txt = await Readfile(CoreConfigFilePath)
+      const txt = await ReadFile(CoreConfigFilePath)
       runtimeProfile = restoreProfile(JSON.parse(txt))
       const profile = profilesStore.getProfileById(appSettingsStore.app.kernel.profile)
       if (profile) {
@@ -411,8 +411,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         },
         onCoreStopped,
         {
-          stopOutputKeyword: CoreStopOutputKeyword,
-          env: getKernelRuntimeEnv(isAlpha),
+          StopOutputKeyword: CoreStopOutputKeyword,
+          Env: getKernelRuntimeEnv(isAlpha),
         },
       )
     } catch (error) {

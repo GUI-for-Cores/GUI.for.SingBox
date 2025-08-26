@@ -1,5 +1,5 @@
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
-import { AbsolutePath, Exec, ExitApp, Readfile, Writefile } from '@/bridge'
+import { AbsolutePath, Exec, ExitApp, ReadFile, WriteFile } from '@/bridge'
 import { CoreWorkingDirectory } from '@/constant/kernel'
 import i18n from '@/lang'
 import {
@@ -34,7 +34,7 @@ export const SwitchPermissions = async (enable: boolean) => {
         basePath + '\\' + appName,
         '/f',
       ]
-  await Exec('reg', args, { convert: true })
+  await Exec('reg', args, { Convert: true })
 }
 
 export const CheckPermissions = async () => {
@@ -50,7 +50,7 @@ export const CheckPermissions = async () => {
         '/t',
         'REG_SZ',
       ],
-      { convert: true },
+      { Convert: true },
     )
     return out.includes('RunAsAdmin')
   } catch {
@@ -406,15 +406,15 @@ export const GetSystemOrKernelProxy = async () => {
 }
 
 export const QuerySchTask = async (taskName: string) => {
-  await Exec('Schtasks', ['/Query', '/TN', taskName, '/XML'], { convert: true })
+  await Exec('Schtasks', ['/Query', '/TN', taskName, '/XML'], { Convert: true })
 }
 
 export const CreateSchTask = async (taskName: string, xmlPath: string) => {
-  await Exec('SchTasks', ['/Create', '/F', '/TN', taskName, '/XML', xmlPath], { convert: true })
+  await Exec('SchTasks', ['/Create', '/F', '/TN', taskName, '/XML', xmlPath], { Convert: true })
 }
 
 export const DeleteSchTask = async (taskName: string) => {
-  await Exec('SchTasks', ['/Delete', '/F', '/TN', taskName], { convert: true })
+  await Exec('SchTasks', ['/Delete', '/F', '/TN', taskName], { Convert: true })
 }
 
 // Others
@@ -453,7 +453,7 @@ export const addToRuleSet = async (
   payloads: Record<string, any>[],
 ) => {
   const path = `data/rulesets/${ruleset}.json`
-  const content = (await ignoredError(Readfile, path)) || '{ "version": 1, "rules": [] }'
+  const content = (await ignoredError(ReadFile, path)) || '{ "version": 1, "rules": [] }'
   const { rules = [] } = JSON.parse(content)
   rules[0] = rules[0] || {}
   payloads.forEach((payload) => {
@@ -471,7 +471,7 @@ export const addToRuleSet = async (
       ]
     }
   })
-  await Writefile(path, JSON.stringify({ version: 1, rules }, null, 2))
+  await WriteFile(path, JSON.stringify({ version: 1, rules }, null, 2))
 }
 
 export const exitApp = async () => {

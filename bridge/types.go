@@ -17,6 +17,7 @@ type EnvResult struct {
 	IsStartup   bool   `json:"-"`
 	FromTaskSch bool   `json:"-"`
 	AppName     string `json:"appName"`
+	AppVersion  string `json:"appVersion"`
 	BasePath    string `json:"basePath"`
 	OS          string `json:"os"`
 	ARCH        string `json:"arch"`
@@ -33,9 +34,9 @@ type RequestOptions struct {
 }
 
 type ExecOptions struct {
-	StopOutputKeyword string            `json:"stopOutputKeyword"`
-	Convert           bool              `json:"convert"`
-	Env               map[string]string `json:"env"`
+	StopOutputKeyword string
+	Convert           bool
+	Env               map[string]string
 }
 
 type IOOptions struct {
@@ -48,18 +49,18 @@ type FlagResult struct {
 }
 
 type ServerOptions struct {
-	Cert          string `json:"Cert"`
-	Key           string `json:"Key"`
-	StaticPath    string `json:"StaticPath"`
-	StaticRoute   string `json:"StaticRoute"`
-	UploadPath    string `json:"UploadPath"`
-	UploadRoute   string `json:"UploadRoute"`
-	MaxUploadSize int64  `json:"MaxUploadSize"`
+	Cert          string
+	Key           string
+	StaticPath    string
+	StaticRoute   string
+	UploadPath    string
+	UploadRoute   string
+	MaxUploadSize int64
 }
 
 type NotifyOptions struct {
-	AppName string `json:"AppName"`
-	Beep    bool   `json:"Beep"`
+	AppName string
+	Beep    bool
 }
 
 type HTTPResult struct {

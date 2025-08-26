@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { BrowserOpenURL, ClipboardSetText, Removefile } from '@/bridge'
+import { BrowserOpenURL, ClipboardSetText, RemoveFile } from '@/bridge'
 import { DraggableOptions } from '@/constant/app'
 import { View } from '@/enums/app'
 import { useSubscribesStore, useAppSettingsStore, usePluginsStore } from '@/stores'
@@ -144,7 +144,7 @@ const handleUpdateSub = async (s: Subscription) => {
 
 const handleDeleteSub = async (s: Subscription) => {
   try {
-    await ignoredError(Removefile, s.path)
+    await ignoredError(RemoveFile, s.path)
     await subscribeStore.deleteSubscribe(s.id)
   } catch (error: any) {
     console.error('deleteSubscribe: ', error)

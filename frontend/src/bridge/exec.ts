@@ -4,13 +4,20 @@ import { EventsOn, EventsOff } from '@wails/runtime/runtime'
 import { sampleID } from '@/utils'
 
 interface ExecOptions {
+  Convert?: boolean
+  Env?: Record<string, any>
+  StopOutputKeyword?: string
   convert?: boolean
   env?: Record<string, any>
   stopOutputKeyword?: string
 }
 
 const mergeExecOptions = (options: ExecOptions) => {
-  const mergedExecOpts = { convert: false, env: {}, stopOutputKeyword: '', ...options }
+  const mergedExecOpts = {
+    Convert: options.Convert ?? options.convert ?? false,
+    Env: options.Env ?? options.env ?? {},
+    StopOutputKeyword: options.StopOutputKeyword ?? options.stopOutputKeyword ?? '',
+  }
   return mergedExecOpts
 }
 
