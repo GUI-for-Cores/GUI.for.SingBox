@@ -27,6 +27,7 @@ var Env = &EnvResult{
 	IsStartup:   true,
 	FromTaskSch: false,
 	AppName:     "",
+	AppVersion:  "",
 	BasePath:    "",
 	OS:          sysruntime.GOOS,
 	ARCH:        sysruntime.GOARCH,
@@ -92,11 +93,12 @@ func (a *App) RestartApp() FlagResult {
 
 func (a *App) GetEnv() EnvResult {
 	return EnvResult{
-		AppName:  Env.AppName,
-		BasePath: Env.BasePath,
-		OS:       Env.OS,
-		ARCH:     Env.ARCH,
-		X64Level: Env.X64Level,
+		AppName:    Env.AppName,
+		AppVersion: Env.AppVersion,
+		BasePath:   Env.BasePath,
+		OS:         Env.OS,
+		ARCH:       Env.ARCH,
+		X64Level:   Env.X64Level,
 	}
 }
 
@@ -139,7 +141,7 @@ func createMacOSMenus(app *App) {
 	})
 	appMenu.AddSeparator()
 	appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
-		runtime.EventsEmit(app.Ctx, "exitApp")
+		runtime.EventsEmit(app.Ctx, "onExitApp")
 	})
 
 	// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut

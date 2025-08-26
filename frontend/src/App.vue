@@ -51,7 +51,7 @@ EventsOn('onBeforeExitApp', async () => {
   }
 })
 
-EventsOn('exitApp', () => exitApp())
+EventsOn('onExitApp', () => exitApp())
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {

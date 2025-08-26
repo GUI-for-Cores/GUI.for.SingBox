@@ -2,10 +2,11 @@
 import { useI18n } from 'vue-i18n'
 
 import { RestartApp, BrowserOpenURL } from '@/bridge'
-import { useAppStore } from '@/stores'
+import { useAppStore, useEnvStore } from '@/stores'
 import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, message } from '@/utils'
 
 const { t } = useI18n()
+const envStore = useEnvStore()
 const appStore = useAppStore()
 
 const handleRestartApp = async () => {
@@ -35,7 +36,7 @@ appStore.checkForUpdates()
           type="link"
           size="small"
         >
-          {{ APP_VERSION }}
+          Bridge: {{ envStore.env.appVersion }} - UI: {{ APP_VERSION }}
         </Button>
         <Button
           v-if="appStore.updatable"

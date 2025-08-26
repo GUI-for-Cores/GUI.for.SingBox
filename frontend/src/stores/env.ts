@@ -8,6 +8,7 @@ import { updateTrayMenus, SetSystemProxy, GetSystemProxy } from '@/utils'
 export const useEnvStore = defineStore('env', () => {
   const env = ref({
     appName: '',
+    appVersion: '',
     basePath: '',
     os: '',
     arch: '',
