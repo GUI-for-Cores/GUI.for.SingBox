@@ -65,7 +65,7 @@ const renderCell = (column: Column, record: Recordable) => {
   const value = getValue(record, column.key)
   let result = column.customRender?.({ value, record }) ?? value ?? '-'
   if (!isVNode(result)) {
-    result = h('div', result)
+    result = h('div', String(result))
   }
   return result
 }
