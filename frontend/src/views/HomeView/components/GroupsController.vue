@@ -12,7 +12,7 @@ import {
 import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { ignoredError, sleep, handleUseProxy, message, prompt, asyncPool } from '@/utils'
+import { ignoredError, sleep, handleUseProxy, message, prompt, createAsyncPool } from '@/utils'
 
 const expandedSet = ref<Set<string>>(new Set())
 const loadingSet = ref<Set<string>>(new Set())
@@ -128,13 +128,22 @@ const handleGroupDelay = async (group: string) => {
       }
       loadingSet.value.delete(proxy)
     }
-    const { update, destroy, success: msgSuccess } = message.info('Testing...', 99999)
+
     loadingSet.value.add(group)
-    await asyncPool(
+    const { run, controller } = createAsyncPool(
       appSettings.app.kernel.concurrencyLimit || DefaultConcurrencyLimit,
       _group.all,
       delayTest,
     )
+    const {
+      update,
+      destroy,
+      success: msgSuccess,
+    } = message.info('Testing...', 99999, () => {
+      controller.cancel()
+      message.warn('common.canceled')
+    })
+    await run()
     loadingSet.value.delete(group)
     msgSuccess(
       `Completed. ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`,

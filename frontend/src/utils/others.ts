@@ -82,15 +82,32 @@ export const getValue = <T = unknown>(obj: unknown, expr: string): T | undefined
   }, obj) as T
 }
 
-export const asyncPool = async <T>(
+type IteratorFn<T> = (item: T, array: T[]) => Promise<any>
+type PoolController = { pause: () => void; resume: () => void; cancel: () => void }
+interface RunPoolOptions {
+  shouldPause?: () => Promise<void>
+  shouldCancel?: () => boolean
+}
+
+async function runPool<T>(
   poolLimit: number,
   array: T[],
-  iteratorFn: (item: T, array: T[]) => Promise<any>,
-) => {
+  iteratorFn: IteratorFn<T>,
+  options: RunPoolOptions = {},
+) {
   const results: Promise<any>[] = []
   const activePromises = new Set<Promise<any>>()
+  const { shouldPause, shouldCancel } = options
 
   for (const item of array) {
+    if (shouldCancel?.()) break
+
+    if (shouldPause) {
+      await shouldPause()
+    }
+
+    if (shouldCancel?.()) break
+
     const promise = Promise.resolve().then(() => iteratorFn(item, array))
     results.push(promise)
 
@@ -105,7 +122,49 @@ export const asyncPool = async <T>(
     }
   }
 
-  return Promise.all(results)
+  return Promise.allSettled(results).then((res) =>
+    res
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => (r as PromiseFulfilledResult<any>).value),
+  )
+}
+
+export const asyncPool = <T>(poolLimit: number, array: T[], iteratorFn: IteratorFn<T>) => {
+  return runPool(poolLimit, array, iteratorFn)
+}
+
+export const createAsyncPool = <T>(poolLimit: number, array: T[], iteratorFn: IteratorFn<T>) => {
+  let paused = false
+  let cancelled = false
+  let resumeResolve: (() => void) | null = null
+
+  const controller: PoolController = {
+    pause() {
+      paused = true
+    },
+    resume() {
+      paused = false
+      resumeResolve?.()
+      resumeResolve = null
+    },
+    cancel() {
+      cancelled = true
+      resumeResolve?.()
+      resumeResolve = null
+    },
+  }
+
+  const shouldPause = async () => {
+    if (paused) {
+      await new Promise<void>((resolve) => (resumeResolve = resolve))
+    }
+  }
+
+  const shouldCancel = () => cancelled
+
+  const run = () => runPool(poolLimit, array, iteratorFn, { shouldPause, shouldCancel })
+
+  return { run, controller }
 }
 
 export const getUserAgent = () => {
