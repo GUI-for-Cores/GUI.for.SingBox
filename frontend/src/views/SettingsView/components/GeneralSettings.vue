@@ -332,5 +332,12 @@ if (envStore.env.os === 'windows') {
       </div>
       <Switch v-model="appSettings.app.debugOutline" />
     </div>
+    <div class="px-16 py-8">
+      <div class="text-18 font-bold pt-8 pb-16">
+        {{ t('settings.debugNoAnimation') }}
+        <span class="font-normal text-12">(debug)</span>
+      </div>
+      <Switch v-model="appSettings.app.debugNoAnimation" />
+    </div>
   </div>
 </template>

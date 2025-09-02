@@ -636,6 +636,7 @@ export default {
     multipleInstance: 'Allow Multiple APP Instances',
     rollingRelease: 'Enable Rolling Release',
     debugOutline: 'Show interface outline',
+    debugNoAnimation: 'Disable Animation',
     startup: {
       name: 'Startup on boot',
       delay: 'Delay(s)',

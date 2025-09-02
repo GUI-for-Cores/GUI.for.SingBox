@@ -635,6 +635,7 @@ export default {
     multipleInstance: '允许多APP实例运行',
     rollingRelease: '启用滚动发行',
     debugOutline: '显示界面轮廓',
+    debugNoAnimation: '禁用动画',
     startup: {
       name: '开机时启动',
       delay: '延迟(秒)',

@@ -83,6 +83,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     addGroupToMenu: false,
     rollingRelease: true,
     debugOutline: false,
+    debugNoAnimation: false,
     pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins'],
   })
 
@@ -168,6 +169,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     document.documentElement.style.setProperty('--secondary-color', secondary)
     document.body.style.fontFamily = settings.fontFamily
     document.body.setAttribute('debug-outline', String(settings.debugOutline))
+    document.body.setAttribute('debug-no-animation', String(settings.debugNoAnimation))
   }
 
   watch(

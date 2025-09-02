@@ -636,6 +636,7 @@ export default {
     multipleInstance: 'Разрешить несколько экземпляров приложения',
     rollingRelease: 'Включить потоковые обновления',
     debugOutline: 'Показать контур интерфейса',
+    debugNoAnimation: 'Отключить анимацию',
     startup: {
       name: 'Запускать при входе в систему',
       delay: 'Задержка (сек.)',

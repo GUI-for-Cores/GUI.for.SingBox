@@ -636,6 +636,7 @@ export default {
     multipleInstance: 'اجازه به چندین نمونه از برنامه',
     rollingRelease: 'فعال کردن نسخه‌ منتشر شونده مداوم',
     debugOutline: 'نمایش حاشیه رابط کاربری',
+    debugNoAnimation: 'غیرفعال کردن انیمیشن',
     startup: {
       name: 'شروع در بوت',
       delay: 'تاخیر (ثانیه)',

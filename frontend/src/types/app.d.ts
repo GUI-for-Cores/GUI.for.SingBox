@@ -90,6 +90,7 @@ export interface AppSettings {
   addGroupToMenu: boolean
   rollingRelease: boolean
   debugOutline: boolean
+  debugNoAnimation: boolean
   pages: string[]
 }
 
