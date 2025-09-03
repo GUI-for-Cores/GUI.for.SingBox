@@ -293,6 +293,17 @@ export const DefaultRoute = (): IRoute => ({
     },
     {
       id: sampleID(),
+      type: RuleType.Network,
+      payload: 'icmp',
+      invert: false,
+      action: RuleAction.Route,
+      outbound: DefaultOutboundIds.Direct,
+      sniffer: [],
+      strategy: Strategy.Default,
+      server: '',
+    },
+    {
+      id: sampleID(),
       type: RuleType.Protocol,
       payload: 'quic',
       invert: false,
