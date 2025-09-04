@@ -22,7 +22,7 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div
     :class="[type, size, { 'pointer-events-none': disabled || loading }]"
-    class="gui-button inline-flex items-center justify-center text-center align-middle rounded-6 text-14 cursor-pointer px-12 py-6 duration-200"
+    class="gui-button inline-flex items-center justify-center text-center align-middle rounded-6 text-14 text-nowrap cursor-pointer px-12 py-6 duration-200"
   >
     <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
     <template v-else>

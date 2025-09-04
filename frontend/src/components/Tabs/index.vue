@@ -50,7 +50,7 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
 <style lang="less" scoped>
 .position-left {
   .gui-tabs-tab {
-    width: 20%;
+    min-width: 20%;
     flex-direction: column;
   }
   .slot {
