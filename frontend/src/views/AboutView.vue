@@ -48,13 +48,22 @@ appStore.checkForUpdates()
         </Button>
       </template>
     </div>
-    <div @click="BrowserOpenURL(PROJECT_URL)" class="text-12 underline flex items-center">
+    <div
+      @click="BrowserOpenURL(PROJECT_URL)"
+      class="text-12 underline flex items-center cursor-pointer"
+    >
       <Icon icon="github" />GitHub
     </div>
-    <div @click="BrowserOpenURL(TG_GROUP)" class="text-12 underline flex items-center">
+    <div
+      @click="BrowserOpenURL(TG_GROUP)"
+      class="text-12 underline flex items-center cursor-pointer"
+    >
       <Icon icon="telegram" />Telegram Group
     </div>
-    <div @click="BrowserOpenURL(TG_CHANNEL)" class="text-12 underline flex items-center">
+    <div
+      @click="BrowserOpenURL(TG_CHANNEL)"
+      class="text-12 underline flex items-center cursor-pointer"
+    >
       <Icon icon="telegram" />Telegram Channel
     </div>
   </div>
