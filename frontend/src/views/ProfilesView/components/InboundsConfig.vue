@@ -114,7 +114,7 @@ defineExpose({ handleAdd })
           {{ t('kernel.inbounds.listen.listen_port') }}
           <Input v-model="inbound[inbound.type]!.listen.listen_port" type="number" />
         </div>
-        <div :class="{ 'flex-start': inbound[inbound.type]!.users.length }" class="form-item">
+        <div :class="{ 'items-start': inbound[inbound.type]!.users.length }" class="form-item">
           {{ t('kernel.inbounds.users') }}
           <InputList v-model="inbound[inbound.type]!.users" placeholder="user:password" />
         </div>
@@ -156,11 +156,11 @@ defineExpose({ handleAdd })
           {{ t('kernel.inbounds.tun.mtu') }}
           <Input v-model="inbound.tun.mtu" type="number" editable />
         </div>
-        <div :class="{ 'flex-start': inbound.tun.address.length }" class="form-item">
+        <div :class="{ 'items-start': inbound.tun.address.length }" class="form-item">
           {{ t('kernel.inbounds.tun.address') }}
           <InputList v-model="inbound.tun.address" />
         </div>
-        <div :class="{ 'flex-start': inbound.tun.route_address.length }" class="form-item">
+        <div :class="{ 'items-start': inbound.tun.route_address.length }" class="form-item">
           {{ t('kernel.inbounds.tun.route_address') }}
           <InputList v-model="inbound.tun.route_address" placeholder="0.0.0.0/1 ::1" />
         </div>

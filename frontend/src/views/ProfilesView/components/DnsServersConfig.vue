@@ -186,12 +186,12 @@ const renderServer = (server: IDNSServer) => {
         </template>
       </template>
       <template v-if="fields.type === DnsServer.Hosts">
-        <div :class="{ 'flex-start': fields.hosts_path.length !== 0 }" class="form-item">
+        <div :class="{ 'items-start': fields.hosts_path.length !== 0 }" class="form-item">
           {{ t('kernel.dns.hosts_path') }}
           <InputList v-model="fields.hosts_path" placeholder="/etc/hosts,c:\...\hosts" />
         </div>
         <div
-          :class="{ 'flex-start': Object.keys(fields.predefined).length !== 0 }"
+          :class="{ 'items-start': Object.keys(fields.predefined).length !== 0 }"
           class="form-item"
         >
           {{ t('kernel.dns.predefined') }}

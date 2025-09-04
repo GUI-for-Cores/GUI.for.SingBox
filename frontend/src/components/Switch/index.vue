@@ -29,9 +29,8 @@ const toggle = () => {
 <template>
   <div
     @click="toggle"
-    :style="{ 'justify-content': !model ? 'flex-start' : 'flex-end' }"
     :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
-    class="gui-switch relative cursor-pointer h-24 inline-flex items-center rounded-full duration-200 text-12"
+    class="gui-switch relative cursor-pointer h-24 inline-flex items-center rounded-full text-12"
   >
     <div class="dot absolute h-18 w-18 rounded-full duration-200"></div>
 
