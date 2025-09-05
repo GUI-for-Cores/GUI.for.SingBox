@@ -13,6 +13,7 @@ import {
   Colors,
   DefaultCardColumns,
   DefaultConcurrencyLimit,
+  DefaultControllerSensitivity,
   DefaultFontFamily,
   DefaultTestURL,
   UserFilePath,
@@ -73,6 +74,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       testUrl: DefaultTestURL,
       concurrencyLimit: DefaultConcurrencyLimit,
       controllerCloseMode: ControllerCloseMode.All,
+      controllerSensitivity: DefaultControllerSensitivity,
       main: DefaultCoreConfig(),
       alpha: DefaultCoreConfig(),
     },
@@ -100,6 +102,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (app.value.kernel.controllerCloseMode === undefined) {
       app.value.kernel.controllerCloseMode = ControllerCloseMode.All
+    }
+    if (app.value.kernel.controllerSensitivity === undefined) {
+      app.value.kernel.controllerSensitivity = DefaultControllerSensitivity
     }
     if (app.value.addGroupToMenu === undefined) {
       app.value.addGroupToMenu = false

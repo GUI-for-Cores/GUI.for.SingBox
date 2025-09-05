@@ -109,3 +109,5 @@ export const DefaultTestURL = 'https://www.gstatic.com/generate_204'
 export const DefaultConcurrencyLimit = 20
 
 export const DefaultCardColumns = 5
+
+export const DefaultControllerSensitivity = 2

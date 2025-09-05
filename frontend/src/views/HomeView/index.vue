@@ -65,7 +65,7 @@ const onMouseWheel = (e: WheelEvent) => {
     if (isScrollingDown || currentScrollTop === 0) {
       scrollEventCount += 1
     }
-    if (scrollEventCount >= 2) {
+    if (scrollEventCount >= appSettingsStore.app.kernel.controllerSensitivity) {
       showController.value = isScrollingDown || currentScrollTop !== 0
     }
   }

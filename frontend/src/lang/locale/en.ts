@@ -356,6 +356,7 @@ export default {
       delay: 'Delay test URL',
       concurrencyLimit: 'Latency test concurrency',
       cardColumns: 'Number of card columns',
+      sensitivity: 'Controller Scroll Sensitivity',
       closeMode: {
         name: 'Controller Close Mode',
         all: 'Scroll or Button',

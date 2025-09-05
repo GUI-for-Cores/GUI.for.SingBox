@@ -356,6 +356,7 @@ export default {
       delay: 'آزمایش تأخیر URL',
       concurrencyLimit: 'همزمانی در تست تأخیر',
       cardColumns: 'تعداد ستون‌های کارت',
+      sensitivity: 'حساسیت پیمایش کنترلر',
       closeMode: {
         name: 'حالت بستن کنترلر',
         all: 'اسکرول یا دکمه',
