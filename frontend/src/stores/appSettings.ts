@@ -18,7 +18,7 @@ import {
   DefaultTestURL,
   UserFilePath,
 } from '@/constant/app'
-import { DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
+import { CorePidFilePath, DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
 import {
   Theme,
   WindowStartState,
@@ -137,6 +137,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     // @ts-expect-error(Deprecated)
     if (app.value.kernel.running !== undefined) {
+      // @ts-expect-error(Deprecated)
+      await WriteFile(CorePidFilePath, String(app.value.kernel.pid))
       // @ts-expect-error(Deprecated)
       delete app.value.kernel.running
       // @ts-expect-error(Deprecated)
