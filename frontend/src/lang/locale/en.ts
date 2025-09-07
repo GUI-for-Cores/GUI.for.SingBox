@@ -105,6 +105,7 @@ export default {
         auto_route: 'Auto Route',
         strict_route: 'Strict Route',
         route_address: 'Route Address',
+        route_exclude_address: 'Route Exclude Address',
         endpoint_independent_nat: 'Endpoint Independent NAT',
         stack: 'Stack',
         system: 'System',

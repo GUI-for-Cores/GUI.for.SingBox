@@ -105,6 +105,7 @@ export default {
         auto_route: 'Автоматическая маршрутизация',
         strict_route: 'Строгая маршрутизация',
         route_address: 'Адрес маршрутизации',
+        route_exclude_address: 'Адрес исключения маршрута',
         endpoint_independent_nat: 'Независимый от конечной точки NAT',
         stack: 'Реализация TUN',
         system: 'System',

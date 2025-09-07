@@ -80,6 +80,7 @@ export const restoreProfile = (config: Recordable) => {
               auto_route: !!inbound.auto_route,
               strict_route: !!inbound.strict_route,
               route_address: inbound.route_address || [],
+              route_exclude_address: inbound.route_exclude_address || [],
               endpoint_independent_nat: !!inbound.endpoint_independent_nat,
               stack: inbound.stack || TunStack.Mixed,
             },

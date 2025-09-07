@@ -82,6 +82,9 @@ const generateInbounds = (inbounds: IInbound[]) => {
         tag: inbound.tag,
         ...inbound.tun!,
         route_address: inbound.tun!.route_address?.length ? inbound.tun!.route_address : undefined,
+        route_exclude_address: inbound.tun!.route_exclude_address?.length
+          ? inbound.tun!.route_exclude_address
+          : undefined,
       }
     }
   })

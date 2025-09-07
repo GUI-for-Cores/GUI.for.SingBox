@@ -164,6 +164,13 @@ defineExpose({ handleAdd })
           {{ t('kernel.inbounds.tun.route_address') }}
           <InputList v-model="inbound.tun.route_address" placeholder="0.0.0.0/1 ::1" />
         </div>
+        <div :class="{ 'items-start': inbound.tun.route_exclude_address.length }" class="form-item">
+          {{ t('kernel.inbounds.tun.route_exclude_address') }}
+          <InputList
+            v-model="inbound.tun.route_exclude_address"
+            placeholder="192.168.0.0/16 fc00::/7"
+          />
+        </div>
       </div>
     </Card>
   </div>

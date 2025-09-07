@@ -84,6 +84,7 @@ interface IInbound {
     auto_route: boolean
     strict_route: boolean
     route_address: string[]
+    route_exclude_address: string[]
     endpoint_independent_nat: boolean
     stack: TunStackEnum
   }

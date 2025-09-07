@@ -105,6 +105,7 @@ export default {
         auto_route: 'مسیر یابی خودکار',
         strict_route: 'مسیر یابی سخت‌گیرانه',
         route_address: 'آدرس مسیر',
+        route_exclude_address: 'آدرس مستثنی از مسیر',
         endpoint_independent_nat: 'NAT مستقل از نقطه انتهایی',
         stack: 'پشته',
         system: 'سیستم',

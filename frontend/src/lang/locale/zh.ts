@@ -105,6 +105,7 @@ export default {
         auto_route: '自动设置全局路由',
         strict_route: '严格路由',
         route_address: '自定义路由',
+        route_exclude_address: '排除自定义路由',
         endpoint_independent_nat: '独立于端点的 NAT',
         stack: 'TUN模式堆栈',
         system: 'System',

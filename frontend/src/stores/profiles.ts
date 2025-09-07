@@ -67,6 +67,12 @@ export const useProfilesStore = defineStore('profiles', () => {
         needsDiskSync = true
         profiles.value[index] = transformProfileV194(profile)
       }
+      profile.inbounds.forEach((inbound) => {
+        if (inbound.tun && !inbound.tun.route_exclude_address) {
+          inbound.tun.route_exclude_address = []
+          needsDiskSync = true
+        }
+      })
     })
 
     if (needsDiskSync) {
