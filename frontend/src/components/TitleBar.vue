@@ -91,7 +91,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
         @dblclick="WindowToggleMaximise"
         :class="isDarwin ? 'justify-center py-4 text-12' : 'text-14'"
         :style="{
-          color: appSettingsStore.app.kernel.running ? 'var(--primary-color)' : 'var(--color)',
+          color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
         }"
         class="font-bold w-full h-full flex items-center"
       >

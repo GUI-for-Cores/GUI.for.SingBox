@@ -55,8 +55,8 @@ export const useCoreBranch = (isAlpha = false) => {
   const kernelApiStore = useKernelApiStore()
 
   const restartable = computed(() => {
-    const { running, branch } = appSettings.app.kernel
-    if (!running) return false
+    const { branch } = appSettings.app.kernel
+    if (!kernelApiStore.running) return false
     return localVersion.value && downloadCompleted.value && (branch === Branch.Alpha) === isAlpha
   })
 
@@ -175,9 +175,9 @@ export const useCoreBranch = (isAlpha = false) => {
   }
 
   const restartCore = async () => {
-    if (!appSettings.app.kernel.running) return
+    if (!kernelApiStore.running) return
     try {
-      await kernelApiStore.restartKernel()
+      await kernelApiStore.restartCore()
       downloadCompleted.value = false
       message.success('common.success')
     } catch (error: any) {
@@ -203,10 +203,10 @@ export const useCoreBranch = (isAlpha = false) => {
 
     const doRollback = () => MoveFile(CoreBakFilePath, CoreFilePath)
 
-    const { running, branch } = appSettings.app.kernel
-    const isCurrentRunning = running && (branch === Branch.Alpha) === isAlpha
+    const { branch } = appSettings.app.kernel
+    const isCurrentRunning = kernelApiStore.running && (branch === Branch.Alpha) === isAlpha
     if (isCurrentRunning) {
-      await kernelApiStore.restartKernel(doRollback)
+      await kernelApiStore.restartCore(doRollback)
     } else {
       await doRollback()
     }

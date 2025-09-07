@@ -90,7 +90,7 @@ envStore.setupEnv().then(async () => {
   await sleep(Math.max(0, 1000 - duration))
 
   loading.value = false
-  kernelApiStore.updateKernelState()
+  kernelApiStore.updateCoreState()
 })
 </script>
 

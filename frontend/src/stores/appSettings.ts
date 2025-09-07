@@ -64,8 +64,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     kernel: {
       branch: Branch.Main,
       profile: '',
-      pid: 0,
-      running: false,
       autoClose: true,
       unAvailable: true,
       cardMode: true,
@@ -136,6 +134,13 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
     if (!app.value.kernel.cardColumns) {
       app.value.kernel.cardColumns = DefaultCardColumns
+    }
+    // @ts-expect-error(Deprecated)
+    if (app.value.kernel.running !== undefined) {
+      // @ts-expect-error(Deprecated)
+      delete app.value.kernel.running
+      // @ts-expect-error(Deprecated)
+      delete app.value.kernel.pid
     }
 
     firstOpen = !!data
@@ -213,13 +218,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   )
 
   watch(
-    [
-      themeMode,
-      () => app.value.color,
-      () => app.value.lang,
-      () => app.value.addPluginToMenu,
-      () => app.value.kernel.running,
-    ],
+    [themeMode, () => app.value.color, () => app.value.lang, () => app.value.addPluginToMenu],
     updateTrayMenus,
   )
 

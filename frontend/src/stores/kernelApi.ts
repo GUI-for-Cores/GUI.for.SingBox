@@ -2,8 +2,13 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 import { getProxies, getConfigs, setConfigs, Api } from '@/api/kernel'
-import { ProcessInfo, KillProcess, ExecBackground, ReadFile } from '@/bridge'
-import { CoreConfigFilePath, CoreStopOutputKeyword, CoreWorkingDirectory } from '@/constant/kernel'
+import { ProcessInfo, KillProcess, ExecBackground, ReadFile, WriteFile, RemoveFile } from '@/bridge'
+import {
+  CoreConfigFilePath,
+  CorePidFilePath,
+  CoreStopOutputKeyword,
+  CoreWorkingDirectory,
+} from '@/constant/kernel'
 import { DefaultInboundMixed } from '@/constant/profile'
 import { Branch } from '@/enums/app'
 import { Inbound, TunStack } from '@/enums/kernel'
@@ -16,7 +21,6 @@ import {
 } from '@/stores'
 import {
   generateConfigFile,
-  ignoredError,
   updateTrayMenus,
   getKernelFileName,
   restoreProfile,
@@ -186,7 +190,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     fieldHandlerMap[field]?.()
 
-    await restartKernel()
+    await restartCore()
     await envStore.updateSystemProxyStatus()
   }
 
@@ -317,69 +321,91 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   /* Bridge API */
+  const corePid = ref(-1)
+  const running = ref(false)
   const loading = ref(false)
-  const statusLoading = ref(true)
+  const coreStateLoading = ref(true)
   let isCoreStartedByThisInstance = false
-  let doneCoreStopped: (value: unknown) => void
+  let coreStoppedResolver: (value: unknown) => void
   let coreStoppedPromise: Promise<unknown>
-  let doneFirstCoreUpdate: (value: unknown) => void
-  const firstCoreUpdatePromise = new Promise((r) => (doneFirstCoreUpdate = r))
 
-  const isKernelRunning = async (pid: number) => {
-    return pid && (await ProcessInfo(pid)).startsWith('sing-box')
-  }
+  const updateCoreState = async () => {
+    corePid.value = Number(await ReadFile(CorePidFilePath).catch(() => -1))
+    const processName = corePid.value === -1 ? '' : await ProcessInfo(corePid.value).catch(() => '')
+    running.value = processName.startsWith('sing-box')
 
-  const updateKernelState = async () => {
-    appSettingsStore.app.kernel.running = !!(await ignoredError(
-      isKernelRunning,
-      appSettingsStore.app.kernel.pid,
-    ))
+    coreStateLoading.value = false
 
-    if (!appSettingsStore.app.kernel.running) {
-      appSettingsStore.app.kernel.pid = 0
-    }
-
-    statusLoading.value = false
-
-    if (appSettingsStore.app.kernel.running) {
+    if (running.value) {
+      initCoreWebsockets()
+      longLivedWS.setup?.()
       await Promise.all([refreshConfig(), refreshProviderProxies()])
       await envStore.updateSystemProxyStatus()
     } else if (appSettingsStore.app.autoStartKernel) {
-      await startKernel()
+      await startCore()
     }
+  }
 
-    doneFirstCoreUpdate(null)
+  const runCoreProcess = (coreFilePath: string, args: string[], env: Recordable) => {
+    return new Promise<number>((resolve) => {
+      const pid = ExecBackground(
+        coreFilePath,
+        args,
+        (out) => {
+          logsStore.recordKernelLog(out)
+          if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
+            resolve(pid)
+          }
+        },
+        () => {
+          onCoreStopped()
+          resolve(0)
+        },
+        { StopOutputKeyword: CoreStopOutputKeyword, Env: env },
+      )
+    })
   }
 
   const onCoreStarted = async (pid: number) => {
-    loading.value = false
-    appSettingsStore.app.kernel.pid = pid
-    appSettingsStore.app.kernel.running = true
+    await WriteFile(CorePidFilePath, String(pid))
 
+    corePid.value = pid
+    loading.value = false
+    running.value = true
     isCoreStartedByThisInstance = true
-    coreStoppedPromise = new Promise((r) => (doneCoreStopped = r))
+    coreStoppedPromise = new Promise((r) => (coreStoppedResolver = r))
+
     await Promise.all([refreshConfig(), refreshProviderProxies()])
 
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.setSystemProxy().catch((err) => message.error(err))
     }
     await pluginsStore.onCoreStartedTrigger()
+
+    initCoreWebsockets()
+    longLivedWS.setup?.()
   }
 
   const onCoreStopped = async () => {
+    await RemoveFile(CorePidFilePath)
+
+    corePid.value = -1
     loading.value = false
-    appSettingsStore.app.kernel.pid = 0
-    appSettingsStore.app.kernel.running = false
+    running.value = false
 
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.clearSystemProxy()
     }
     await pluginsStore.onCoreStoppedTrigger()
 
-    isCoreStartedByThisInstance && doneCoreStopped(null)
+    isCoreStartedByThisInstance && coreStoppedResolver(null)
+
+    destroyCoreWebsockets()
   }
 
-  const startKernel = async (_profile?: IProfile) => {
+  const startCore = async (_profile?: IProfile) => {
+    if (running.value) throw 'The core is already running'
+
     const { profile: profileID, branch } = appSettingsStore.app.kernel
     const profile = _profile || profilesStore.getProfileById(profileID)
     if (!profile) throw 'Choose a profile first'
@@ -387,8 +413,6 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     if (!_profile) {
       runtimeProfile = undefined
     }
-
-    await stopKernel()
 
     const isAlpha = branch === Branch.Alpha
     const fileName = getKernelFileName(isAlpha)
@@ -400,43 +424,32 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       await generateConfigFile(profile, (config) =>
         pluginsStore.onBeforeCoreStartTrigger(config, profile),
       )
-      const pid = await ExecBackground(
+      const pid = await runCoreProcess(
         kernelFilePath,
         getKernelRuntimeArgs(isAlpha),
-        (out) => {
-          logsStore.recordKernelLog(out)
-          if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
-            onCoreStarted(pid)
-          }
-        },
-        onCoreStopped,
-        {
-          StopOutputKeyword: CoreStopOutputKeyword,
-          Env: getKernelRuntimeEnv(isAlpha),
-        },
+        getKernelRuntimeEnv(isAlpha),
       )
+      pid && (await onCoreStarted(pid))
     } catch (error) {
       loading.value = false
       throw error
     }
   }
 
-  const stopKernel = async () => {
-    const { pid } = appSettingsStore.app.kernel
-    const running = await ignoredError(isKernelRunning, pid)
-    if (running) {
-      await pluginsStore.onBeforeCoreStopTrigger()
-      await KillProcess(pid)
-      await (isCoreStartedByThisInstance ? coreStoppedPromise : onCoreStopped())
-    }
+  const stopCore = async () => {
+    if (!running.value) throw 'The core is not running'
+
+    await pluginsStore.onBeforeCoreStopTrigger()
+    await KillProcess(corePid.value)
+    await (isCoreStartedByThisInstance ? coreStoppedPromise : onCoreStopped())
 
     logsStore.clearKernelLog()
   }
 
-  const restartKernel = async (cleanupTask?: () => Promise<any>, keepRuntimeProfile = true) => {
-    await stopKernel()
+  const restartCore = async (cleanupTask?: () => Promise<any>, keepRuntimeProfile = true) => {
+    await stopCore()
     await cleanupTask?.()
-    await startKernel(keepRuntimeProfile ? runtimeProfile : undefined)
+    await startCore(keepRuntimeProfile ? runtimeProfile : undefined)
   }
 
   const getProxyPort = ():
@@ -482,28 +495,17 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     return source.concat([proxySignature, unAvailable, sortByDelay]).join('')
   })
 
-  watch(watchSources, updateTrayMenus)
-
-  watch(
-    () => appSettingsStore.app.kernel.running,
-    async (v) => {
-      await firstCoreUpdatePromise
-      if (v) {
-        initCoreWebsockets()
-        longLivedWS.setup?.()
-      } else {
-        destroyCoreWebsockets()
-      }
-    },
-  )
+  watch([watchSources, running], updateTrayMenus)
 
   return {
-    startKernel,
-    stopKernel,
-    restartKernel,
-    updateKernelState,
+    startCore,
+    stopCore,
+    restartCore,
+    updateCoreState,
+    pid: corePid,
+    running,
     loading,
-    statusLoading,
+    coreStateLoading,
     config,
     proxies,
     refreshConfig,
@@ -515,5 +517,19 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     onMemory: createCoreWSHandlerRegister(websocketHandlers.memory),
     onTraffic: createCoreWSHandlerRegister(websocketHandlers.traffic),
     onConnections: createCoreWSHandlerRegister(websocketHandlers.connections),
+
+    // Deprecated
+    startKernel: (...args: any[]) => {
+      console.warn('[Deprecated] "startKernel" is deprecated. Please use "startCore" instead.')
+      startCore(...args)
+    },
+    stopKernel: () => {
+      console.warn('[Deprecated] "stopKernel" is deprecated. Please use "stopCore" instead.')
+      stopCore()
+    },
+    restartKernel: (...args: any[]) => {
+      console.warn('[Deprecated] "restartKernel" is deprecated. Please use "restartCore" instead.')
+      restartCore(...args)
+    },
   }
 })

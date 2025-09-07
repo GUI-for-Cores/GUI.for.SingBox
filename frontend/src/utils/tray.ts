@@ -32,7 +32,7 @@ const getTrayIcons = () => {
   const folder = envStore.env.os === 'linux' ? 'imgs' : 'icons'
   let icon = `data/.cache/${folder}/tray_normal_${themeMode}${ext}`
 
-  if (appSettings.app.kernel.running) {
+  if (kernelApiStore.running) {
     if (kernelApiStore.config.tun.enable) {
       icon = `data/.cache/${folder}/tray_tun_${themeMode}${ext}`
     } else if (envStore.systemProxy) {
@@ -171,7 +171,7 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'kernel.mode',
-      hidden: !appSettings.app.kernel.running,
+      hidden: !kernelApiStore.running,
       children: [
         {
           type: 'item',
@@ -196,7 +196,7 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'tray.proxyGroup',
-      hidden: groupMenusHidden || !appSettings.app.kernel.running,
+      hidden: groupMenusHidden || !kernelApiStore.running,
       children: groupMenus,
     },
     {
@@ -206,31 +206,31 @@ const getTrayMenus = () => {
         {
           type: 'item',
           text: 'tray.startKernel',
-          hidden: appSettings.app.kernel.running,
-          event: kernelApiStore.startKernel,
+          hidden: kernelApiStore.running,
+          event: kernelApiStore.startCore,
         },
         {
           type: 'item',
           text: 'tray.restartKernel',
-          hidden: !appSettings.app.kernel.running,
-          event: kernelApiStore.restartKernel,
+          hidden: !kernelApiStore.running,
+          event: kernelApiStore.restartCore,
         },
         {
           type: 'item',
           text: 'tray.stopKernel',
-          hidden: !appSettings.app.kernel.running,
-          event: kernelApiStore.stopKernel,
+          hidden: !kernelApiStore.running,
+          event: kernelApiStore.stopCore,
         },
       ],
     },
     {
       type: 'separator',
-      hidden: !appSettings.app.kernel.running,
+      hidden: !kernelApiStore.running,
     },
     {
       type: 'item',
       text: 'tray.proxy',
-      hidden: !appSettings.app.kernel.running,
+      hidden: !kernelApiStore.running,
       children: [
         {
           type: 'item',
@@ -249,7 +249,7 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'tray.tun',
-      hidden: !appSettings.app.kernel.running,
+      hidden: !kernelApiStore.running,
       children: [
         {
           type: 'item',

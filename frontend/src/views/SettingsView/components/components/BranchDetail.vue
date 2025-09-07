@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { RemoveFile } from '@/bridge'
 import { CoreCacheFilePath } from '@/constant/kernel'
 import { useCoreBranch } from '@/hooks/useCoreBranch'
-import { useAppSettingsStore, useKernelApiStore } from '@/stores'
+import { useKernelApiStore } from '@/stores'
 import { message } from '@/utils'
 
 interface Props {
@@ -16,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), { isAlpha: false })
 const emit = defineEmits(['config'])
 
 const { t } = useI18n()
-const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
 const {
@@ -41,8 +40,8 @@ const {
 
 const handleClearCoreCache = async () => {
   try {
-    if (appSettings.app.kernel.running) {
-      await kernelApiStore.restartKernel(() => RemoveFile(CoreCacheFilePath))
+    if (kernelApiStore.running) {
+      await kernelApiStore.restartCore(() => RemoveFile(CoreCacheFilePath))
     } else {
       await RemoveFile(CoreCacheFilePath)
     }

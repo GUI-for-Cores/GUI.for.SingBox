@@ -386,7 +386,7 @@ const proxy_cache: { proxyPromise: Promise<string> | null; lastAccessTime: numbe
 }
 
 export const GetSystemOrKernelProxy = async () => {
-  if (useAppSettingsStore().app.kernel.running) {
+  if (useKernelApiStore().running) {
     const kernelProxy = useKernelApiStore().getProxyPort()
     if (kernelProxy !== undefined) {
       if (kernelProxy.proxyType === 'socks') {
@@ -482,8 +482,8 @@ export const exitApp = async () => {
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
 
-  if (appSettings.app.kernel.running && appSettings.app.closeKernelOnExit) {
-    await kernelApiStore.stopKernel()
+  if (kernelApiStore.running && appSettings.app.closeKernelOnExit) {
+    await kernelApiStore.stopCore()
     if (appSettings.app.autoSetSystemProxy) {
       await envStore.clearSystemProxy()
     }

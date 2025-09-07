@@ -25,7 +25,7 @@ const kernelApiStore = useKernelApiStore()
 
 const handleStartKernel = async () => {
   try {
-    await kernelApiStore.startKernel()
+    await kernelApiStore.startCore()
   } catch (error: any) {
     console.error(error)
     message.error(error.message || error)
@@ -53,7 +53,7 @@ let scrollEventCount = 0
 const resetScrollEventCount = debounce(() => (scrollEventCount = 0), 100)
 
 const onMouseWheel = (e: WheelEvent) => {
-  if (!appSettingsStore.app.kernel.running) return
+  if (!kernelApiStore.running) return
 
   const isScrollingDown = e.deltaY > 0
 
@@ -85,7 +85,7 @@ watch(showController, (v) => {
 <template>
   <div @wheel="onMouseWheel" class="relative overflow-hidden h-full">
     <div
-      v-if="!appSettingsStore.app.kernel.running || kernelApiStore.loading"
+      v-if="!kernelApiStore.running || kernelApiStore.loading"
       class="w-full h-[90%] flex flex-col items-center justify-center"
     >
       <img src="@/assets/logo.png" draggable="false" class="w-128 mb-16" />
@@ -149,7 +149,7 @@ watch(showController, (v) => {
       </template>
     </div>
 
-    <template v-else-if="!kernelApiStore.statusLoading">
+    <template v-else-if="!kernelApiStore.coreStateLoading">
       <div :class="{ 'blur-3xl': showController }">
         <OverView />
         <Divider>

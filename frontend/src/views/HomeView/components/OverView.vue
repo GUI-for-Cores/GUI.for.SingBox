@@ -30,7 +30,7 @@ const kernelApiStore = useKernelApiStore()
 
 const handleRestartKernel = async () => {
   try {
-    await kernelApiStore.restartKernel()
+    await kernelApiStore.restartCore()
   } catch (error: any) {
     console.error(error)
     message.error(error)
@@ -39,7 +39,7 @@ const handleRestartKernel = async () => {
 
 const handleStopKernel = async () => {
   try {
-    await kernelApiStore.stopKernel()
+    await kernelApiStore.stopCore()
   } catch (error: any) {
     console.error(error)
     message.error(error)

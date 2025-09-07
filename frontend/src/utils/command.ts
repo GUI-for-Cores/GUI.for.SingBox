@@ -56,18 +56,18 @@ export const getCommands = () => {
       children: [
         {
           label: 'tray.startKernel',
-          cmd: 'Start Kernel',
-          handler: kernelStore.startKernel,
+          cmd: 'Start Core',
+          handler: kernelStore.startCore,
         },
         {
           label: 'tray.stopKernel',
-          cmd: 'Stop Kernel',
-          handler: kernelStore.stopKernel,
+          cmd: 'Stop Core',
+          handler: kernelStore.stopCore,
         },
         {
           label: 'tray.restartKernel',
-          cmd: 'Restart Kernel',
-          handler: kernelStore.restartKernel,
+          cmd: 'Restart Core',
+          handler: kernelStore.restartCore,
         },
         {
           label: 'tray.enableTunMode',

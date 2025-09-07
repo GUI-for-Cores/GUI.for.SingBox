@@ -12,10 +12,10 @@ const kernelApiStore = useKernelApiStore()
 const handleUseBranch = async (branch: Branch) => {
   appSettings.app.kernel.branch = branch
 
-  if (!appSettings.app.kernel.running) return
+  if (!kernelApiStore.running) return
 
   try {
-    await kernelApiStore.restartKernel()
+    await kernelApiStore.restartCore()
     message.success('common.success')
   } catch (error: any) {
     message.error(error)
