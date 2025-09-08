@@ -346,12 +346,14 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   }
 
-  const runCoreProcess = (coreFilePath: string, args: string[], env: Recordable) => {
-    return new Promise<number>((resolve) => {
+  const runCoreProcess = (isAlpha: boolean) => {
+    return new Promise<number | void>((resolve, reject) => {
+      let output: string
       const pid = ExecBackground(
-        coreFilePath,
-        args,
+        CoreWorkingDirectory + '/' + getKernelFileName(isAlpha),
+        getKernelRuntimeArgs(isAlpha),
         (out) => {
+          output = out
           logsStore.recordKernelLog(out)
           if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
             resolve(pid)
@@ -359,10 +361,10 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         },
         () => {
           onCoreStopped()
-          resolve(0)
+          reject(output)
         },
-        { StopOutputKeyword: CoreStopOutputKeyword, Env: env },
-      )
+        { StopOutputKeyword: CoreStopOutputKeyword, Env: getKernelRuntimeEnv(isAlpha) },
+      ).catch((e) => reject(e))
     })
   }
 
@@ -414,21 +416,14 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       runtimeProfile = undefined
     }
 
-    const isAlpha = branch === Branch.Alpha
-    const fileName = getKernelFileName(isAlpha)
-    const kernelFilePath = CoreWorkingDirectory + '/' + fileName
-
     loading.value = true
 
     try {
       await generateConfigFile(profile, (config) =>
         pluginsStore.onBeforeCoreStartTrigger(config, profile),
       )
-      const pid = await runCoreProcess(
-        kernelFilePath,
-        getKernelRuntimeArgs(isAlpha),
-        getKernelRuntimeEnv(isAlpha),
-      )
+      const isAlpha = branch === Branch.Alpha
+      const pid = await runCoreProcess(isAlpha)
       pid && (await onCoreStarted(pid))
     } catch (error) {
       loading.value = false

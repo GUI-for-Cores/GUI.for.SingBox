@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-import { message } from '@/utils'
-
 type TaskLogType = {
   name: string
   startTime: number
@@ -15,7 +13,6 @@ export const useLogsStore = defineStore('logs', () => {
   const scheduledtasksLogs = ref<TaskLogType[]>([])
 
   const recordKernelLog = (msg: string) => {
-    msg.includes('FATAL') && message.error(msg)
     kernelLogs.value.unshift(msg)
   }
 
