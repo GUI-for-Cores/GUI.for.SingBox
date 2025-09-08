@@ -128,9 +128,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   }
 
   const _doUpdateSub = async (s: Subscription) => {
-    const pattern =
-      /upload=(-?)([E+.\d]+);\s*download=(-?)([E+.\d]+);\s*total=([E+.\d]+);\s*expire=(\d*)/
-    let userInfo = 'upload=0; download=0; total=0; expire=0'
+    const userInfo: Recordable = {}
     let body = ''
     let proxies: Record<string, any>[] = []
 
@@ -153,7 +151,12 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         },
       })
       Object.assign(h, s.header.response)
-      h['Subscription-Userinfo'] && (userInfo = h['Subscription-Userinfo'] as string)
+      if (h['Subscription-Userinfo']) {
+        ;(h['Subscription-Userinfo'] as string).split(/\s*;\s*/).forEach((part) => {
+          const [key, value] = part.split('=')
+          userInfo[key] = parseInt(value) || 0
+        })
+      }
       body = b
     }
 
@@ -193,13 +196,10 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
     }
 
-    const match = userInfo.match(pattern) || [0, 0, 0, 0, 0]
-
-    const [, , upload = 0, , download = 0, total = 0, expire = 0] = match
-    s.upload = Number(upload)
-    s.download = Number(download)
-    s.total = Number(total)
-    s.expire = Number(expire) * 1000
+    s.upload = userInfo.upload ?? 0
+    s.download = userInfo.download ?? 0
+    s.total = userInfo.total ?? 0
+    s.expire = userInfo.expire * 1000
     s.updateTime = Date.now()
     s.proxies = proxies.map(({ tag, type }) => {
       // Keep the original ID value of the proxy unchanged
