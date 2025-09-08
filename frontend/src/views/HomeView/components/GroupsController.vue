@@ -127,6 +127,7 @@ const handleGroupDelay = async (group: string) => {
         failure += 1
         _proxy.history.push({ delay: 0 })
       }
+      update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
       loadingSet.value.delete(proxy)
     }
 
