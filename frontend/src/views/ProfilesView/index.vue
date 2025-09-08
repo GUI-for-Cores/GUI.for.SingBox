@@ -51,6 +51,10 @@ const secondaryMenusList: Menu[] = [
     handler: async (id: string) => {
       appSettingsStore.app.kernel.profile = id
       try {
+        const e = await kernelApiStore.stopCore().catch((e) => e)
+        if (e && e !== 'The core is not running') {
+          throw e
+        }
         await kernelApiStore.startCore()
       } catch (error: any) {
         message.error(error)
