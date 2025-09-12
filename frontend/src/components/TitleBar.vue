@@ -97,7 +97,12 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       >
         {{ APP_TITLE }} {{ APP_VERSION }}
         <CustomAction :actions="appStore.customActions.title_bar" />
-        <Button v-if="kernelApiStore.loading" type="text" size="small" loading />
+        <Button
+          v-if="kernelApiStore.starting || kernelApiStore.stopping || kernelApiStore.restarting"
+          type="text"
+          size="small"
+          loading
+        />
       </div>
     </template>
 

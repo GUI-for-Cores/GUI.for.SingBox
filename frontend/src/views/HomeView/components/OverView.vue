@@ -166,6 +166,7 @@ onUnmounted(() => {
       <Button
         @click="handleRestartKernel"
         v-tips="'home.overview.restart'"
+        :loading="kernelApiStore.restarting"
         type="text"
         size="small"
         icon="restart"
@@ -173,6 +174,7 @@ onUnmounted(() => {
       <Button
         @click="handleStopKernel"
         v-tips="'home.overview.stop'"
+        :loading="kernelApiStore.stopping"
         type="text"
         size="small"
         icon="stop"

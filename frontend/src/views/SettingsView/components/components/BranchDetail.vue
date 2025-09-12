@@ -111,7 +111,7 @@ const handleClearCoreCache = async () => {
     <Button
       v-show="!localVersionLoading && !remoteVersionLoading && restartable"
       @click="restartCore"
-      :loading="kernelApiStore.loading"
+      :loading="kernelApiStore.restarting"
       size="small"
       type="primary"
     >

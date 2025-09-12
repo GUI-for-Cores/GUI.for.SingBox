@@ -85,7 +85,7 @@ watch(showController, (v) => {
 <template>
   <div @wheel="onMouseWheel" class="relative overflow-hidden h-full">
     <div
-      v-if="!kernelApiStore.running || kernelApiStore.loading"
+      v-if="!kernelApiStore.running || kernelApiStore.starting"
       class="w-full h-[90%] flex flex-col items-center justify-center"
     >
       <img src="@/assets/logo.png" draggable="false" class="w-128 mb-16" />
@@ -140,7 +140,7 @@ watch(showController, (v) => {
             </div>
           </Card>
         </div>
-        <Button @click="handleStartKernel" :loading="kernelApiStore.loading" type="primary">
+        <Button @click="handleStartKernel" :loading="kernelApiStore.starting" type="primary">
           {{ t('home.overview.start') }}
         </Button>
         <Button @click="handleShowKernelLogs" type="link" size="small" class="mt-4">
