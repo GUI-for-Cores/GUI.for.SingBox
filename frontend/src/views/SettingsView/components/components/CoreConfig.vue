@@ -89,13 +89,17 @@ defineExpose({ modalSlots })
               class="flex items-center"
             >
               <Tag class="w-[25%] self-stretch">
-                <div class="h-full flex items-center justify-center py-2 break-all">
+                <div
+                  class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
+                >
                   {{ key }}
                 </div>
               </Tag>
               :
               <Tag class="w-[75%] self-stretch">
-                <div class="h-full flex items-center justify-center py-2 break-all">
+                <div
+                  class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
+                >
                   {{ processMagicVariables(value) }}
                 </div>
               </Tag>
@@ -111,7 +115,9 @@ defineExpose({ modalSlots })
           <div v-draggable="[model.args, DraggableOptions]" class="flex flex-wrap items-center">
             <div v-for="item in model.args" :key="item">
               <Tag size="small">
-                <div class="py-2">{{ processMagicVariables(item) }}</div>
+                <div class="py-2 break-all whitespace-pre-wrap">
+                  {{ processMagicVariables(item) }}
+                </div>
               </Tag>
             </div>
           </div>
