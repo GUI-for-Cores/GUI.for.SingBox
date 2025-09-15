@@ -5,124 +5,170 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
-  Build:
-    permissions: write-all
-    strategy:
-      fail-fast: false
-      matrix:
-        build:
-          - os: windows-latest
-            GOOS: windows
-            GOARCH: amd64
-          - os: windows-latest
-            GOOS: windows
-            GOARCH: arm64
-          - os: windows-latest
-            GOOS: windows
-            GOARCH: 386
-          - os: macos-latest
-            GOOS: darwin
-            GOARCH: amd64
-          - os: macos-latest
-            GOOS: darwin
-            GOARCH: arm64
-          - os: ubuntu-latest
-            GOOS: linux
-            GOARCH: amd64
-          # - os: ubuntu-latest
-          #   GOOS: linux
-          #   GOARCH: arm64
-    runs-on: ${{ matrix.build.os }}
+  Build-Frontend:
+    runs-on: ubuntu-latest
     if: github.repository == 'GUI-for-Cores/GUI.for.SingBox'
-    env:
-      APP_NAME: GUI.for.SingBox
-      ZIP_FILE: GUI.for.SingBox-${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}.zip
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          check-latest: true
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: latest
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "latest"
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
-      - name: Install dependencies
-        run: |
-          cd frontend && pnpm install --frozen-lockfile
-          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - run: |
+          cd frontend
+          pnpm install --frozen-lockfile
+          pnpm build-only
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
 
-      # Dependencies: GNU/Linux
-      - name: Update system and dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev
+  Build-Windows:
+    needs: Build-Frontend
+    runs-on: windows-latest
+    env:
+      APP_NAME: GUI.for.SingBox
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+      - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
 
-      # Hide dock bar icon: macOS
-      - name: Update system and dependencies
-        if: runner.os == 'macOS'
+      - name: Build & Pack Windows
+        shell: pwsh
         run: |
+          function Build-And-Pack {
+            param([string]$arch)
+            $env:GOOS="windows"
+            $env:GOARCH=$arch
+
+            Write-Host "==> Building Windows $arch..."
+            ~/go/bin/wails build -m -s -trimpath -skipbindings -devtools -tags webkit2_41 -o "$env:APP_NAME.exe"
+
+            cd build/bin
+            $zipName = "$env:APP_NAME-windows-$arch.zip"
+            Compress-Archive -Path "$env:APP_NAME.exe" -DestinationPath $zipName -Force
+            cd ../..
+          }
+
+          $arches = @("amd64","arm64","386")
+          foreach ($arch in $arches) { Build-And-Pack $arch }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-builds
+          path: build/bin/*.zip
+
+  Build-macOS:
+    needs: Build-Frontend
+    runs-on: macos-latest
+    env:
+      APP_NAME: GUI.for.SingBox
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+      - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+      - run: |
           go mod vendor
           sed -i "" "s/\[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular\]/[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory]/g" vendor/github.com/wailsapp/wails/v2/internal/frontend/desktop/darwin/AppDelegate.m
 
-      - name: Build Frontend
-        run: cd frontend && pnpm build-only
-
-      # Build
-      - name: Build for ${{ matrix.build.GOOS }}-${{ matrix.build.GOARCH }}
-        env:
-          GOOS: ${{ matrix.build.GOOS }}
-          GOARCH: ${{ matrix.build.GOARCH }}
-        run: ~/go/bin/wails build -m -s -trimpath -skipbindings -devtools -tags webkit2_41 -o ${{ env.APP_NAME }}.exe
-
-      # Compress: macOS
-      - name: Create a compressed file for macOS
-        if: runner.os == 'macOS'
+      - name: Build & Pack macOS
         run: |
-          cd ./build/bin
-          # The compiled product name of macos is always "${{ env.APP_NAME }}.app"
-          zip -q -r ${{ env.ZIP_FILE }} ${{ env.APP_NAME }}.app
+          build_and_pack() {
+            arch=$1
+            export GOOS=darwin GOARCH=$arch
 
-      # Compress: Windows
-      - name: Create a compressed file for Windows
-        if: runner.os == 'Windows'
-        run: |
-          cd ./build/bin
-          Compress-Archive -Path ${{ env.APP_NAME }}.exe -DestinationPath ${{ env.ZIP_FILE }}
+            echo "==> Building macOS $arch..."
+            ~/go/bin/wails build -m -s -trimpath -skipbindings -devtools -tags webkit2_41 -o $APP_NAME.exe
 
-      # Compress: GNU/Linux
-      - name: Create a compressed file for GNU/Linux
-        if: runner.os == 'Linux'
-        run: |
-          cd ./build/bin
-          mv ${{ env.APP_NAME }}.exe ${{ env.APP_NAME }}
-          zip ${{ env.ZIP_FILE }} ${{ env.APP_NAME }}
+            cd build/bin
+            zip -q -r $APP_NAME-darwin-$arch.zip $APP_NAME.app
+            cd ../..
+          }
 
-      # Artifact
-      # - name: Upload Artifact ${{ env.ZIP_FILE }}
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ env.ZIP_FILE }}
-      #     path: ./build/bin/${{ env.ZIP_FILE }}
+          for arch in amd64 arm64; do build_and_pack $arch; done
 
-      - name: Create Release and Upload Assets
-        uses: svenstaro/upload-release-action@v2
+      - uses: actions/upload-artifact@v4
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./build/bin/${{ env.ZIP_FILE }}
-          asset_name: ${{ env.ZIP_FILE }}
-          tag: ${{ github.ref }}
-          release_name: ${{ github.ref_name }}
-          overwrite: true
+          name: macos-builds
+          path: build/bin/*.zip
+
+  Build-Linux:
+    needs: Build-Frontend
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: GUI.for.SingBox
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+      - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+      - run: |
+          sudo apt-get update
+          sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Build & Pack Linux
+        run: |
+          build_and_pack() {
+            arch=$1
+            export GOOS=linux GOARCH=$arch
+
+            echo "==> Building Linux $arch..."
+            ~/go/bin/wails build -m -s -trimpath -skipbindings -devtools -tags webkit2_41 -o $APP_NAME.exe
+
+            cd build/bin
+            mv $APP_NAME.exe $APP_NAME
+            zip $APP_NAME-linux-$arch.zip $APP_NAME
+            cd ../..
+          }
+
+          build_and_pack amd64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-builds
+          path: build/bin/*.zip
+
+  Release:
+    needs: [Build-Windows, Build-macOS, Build-Linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: release-assets/**/*.zip
           draft: false
           prerelease: false
           body: |
