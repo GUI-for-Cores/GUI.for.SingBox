@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { onMounted, onUnmounted, ref, watch, nextTick, useTemplateRef } from 'vue'
 
 type TriggerType = 'click' | 'hover'
 
@@ -14,32 +14,112 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const domRef = useTemplateRef('domRef')
+const overlayRef = useTemplateRef('overlayRef')
+const overlayStyle = ref({ top: 'auto', left: '0px', bottom: 'auto', maxHeight: 'none' })
 const show = ref(false)
 const transformOrigin = ref(props.placement === 'top' ? 'bottom' : 'top')
 
+const updatePosition = () => {
+  if (!domRef.value || !overlayRef.value || !show.value) return
+
+  const triggerRect = domRef.value.getBoundingClientRect()
+  const overlayEl = overlayRef.value
+
+  overlayEl.style.minWidth = `${triggerRect.width}px`
+
+  const overlayHeight = overlayEl.offsetHeight
+  const overlayWidth = overlayEl.offsetWidth
+
+  const screenEdgeMargin = 8
+
+  const totalSpaceBelow = window.innerHeight - triggerRect.bottom
+  const totalSpaceAbove = triggerRect.top
+
+  let finalPlacement: 'top' | 'bottom'
+
+  const canPlaceBottom = totalSpaceBelow >= overlayHeight
+  const canPlaceTop = totalSpaceAbove >= overlayHeight
+
+  if (props.placement === 'bottom') {
+    if (canPlaceBottom) {
+      finalPlacement = 'bottom'
+    } else if (canPlaceTop) {
+      finalPlacement = 'top'
+    } else {
+      finalPlacement = totalSpaceBelow > totalSpaceAbove ? 'bottom' : 'top'
+    }
+  } else {
+    if (canPlaceTop) {
+      finalPlacement = 'top'
+    } else if (canPlaceBottom) {
+      finalPlacement = 'bottom'
+    } else {
+      finalPlacement = totalSpaceAbove > totalSpaceBelow ? 'top' : 'bottom'
+    }
+  }
+
+  transformOrigin.value = finalPlacement === 'top' ? 'bottom' : 'top'
+
+  if (finalPlacement === 'bottom') {
+    overlayStyle.value.top = `${triggerRect.bottom}px`
+    overlayStyle.value.bottom = 'auto'
+    const availableHeight = totalSpaceBelow - screenEdgeMargin
+    overlayStyle.value.maxHeight = `${Math.max(0, availableHeight)}px`
+  } else {
+    overlayStyle.value.bottom = `${window.innerHeight - triggerRect.top}px`
+    overlayStyle.value.top = 'auto'
+    const availableHeight = totalSpaceAbove - screenEdgeMargin
+    overlayStyle.value.maxHeight = `${Math.max(0, availableHeight)}px`
+  }
+
+  let left = triggerRect.left + triggerRect.width / 2 - overlayWidth / 2
+
+  if (left + overlayWidth > window.innerWidth - screenEdgeMargin) {
+    left = window.innerWidth - overlayWidth - screenEdgeMargin
+  }
+  if (left < screenEdgeMargin) {
+    left = screenEdgeMargin
+  }
+  overlayStyle.value.left = `${left}px`
+}
+
+watch(show, async (isVisible) => {
+  if (isVisible) {
+    await nextTick()
+    updatePosition()
+    window.addEventListener('scroll', updatePosition, true)
+    window.addEventListener('resize', updatePosition)
+  } else {
+    window.removeEventListener('scroll', updatePosition, true)
+    window.removeEventListener('resize', updatePosition)
+  }
+})
+
+const open = () => (show.value = true)
+const close = () => (show.value = false)
 const hasTrigger = (t: TriggerType) => props.trigger.includes(t)
 
 const onMouseEnter = () => {
   if (hasTrigger('hover')) {
-    show.value = true
+    open()
   }
 }
 
 const onMouseLeave = () => {
   if (hasTrigger('hover')) {
-    show.value = false
+    close()
   }
 }
 
 const onClick = () => {
   if (hasTrigger('click')) {
-    show.value = true
+    show.value = !show.value
   }
 }
 
 const onDomClick = (e: MouseEvent) => {
-  if (!domRef.value?.contains(e.target as any)) {
-    show.value = false
+  if (!domRef.value?.contains(e.target as Node) && !overlayRef.value?.contains(e.target as Node)) {
+    close()
   }
 }
 
@@ -53,6 +133,8 @@ onUnmounted(() => {
   if (hasTrigger('click')) {
     document.removeEventListener('click', onDomClick)
   }
+  window.removeEventListener('scroll', updatePosition, true)
+  window.removeEventListener('resize', updatePosition)
 })
 </script>
 
@@ -64,17 +146,16 @@ onUnmounted(() => {
     @click="onClick"
     class="gui-dropdown relative flex flex-col items-center"
   >
-    <slot></slot>
+    <slot :="{ open, close }"></slot>
     <Transition name="overlay">
       <div
         v-show="show"
-        :style="{
-          bottom: placement === 'top' ? '100%' : '',
-          top: placement === 'top' ? '' : '100%',
-        }"
-        class="gui-dropdown-overlay absolute z-99 rounded-8 backdrop-blur-sm shadow"
+        ref="overlayRef"
+        :style="overlayStyle"
+        class="gui-dropdown-overlay fixed z-99 rounded-8 backdrop-blur-sm shadow overflow-y-auto"
+        @click.stop
       >
-        <slot name="overlay"> </slot>
+        <slot name="overlay" :="{ open, close }"></slot>
       </div>
     </Transition>
   </div>
