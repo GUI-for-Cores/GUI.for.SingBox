@@ -215,20 +215,12 @@ onActivated(() => {
       class="sticky flex gap-8 items-center p-8 rounded-8 backdrop-blur-sm"
       style="background-color: var(--card-bg)"
     >
-      <Switch v-model="appSettings.app.kernel.autoClose">
-        {{ t('home.controller.autoClose') }}
-      </Switch>
-      <Switch v-model="appSettings.app.kernel.unAvailable">
-        {{ t('home.controller.unAvailable') }}
-      </Switch>
-      <Switch v-model="appSettings.app.kernel.cardMode">
-        {{ t('home.controller.cardMode') }}
-      </Switch>
-      <Switch v-model="appSettings.app.kernel.sortByDelay">
-        {{ t('home.controller.sortBy') }}
-      </Switch>
+      <Switch v-model="appSettings.app.kernel.autoClose" label="home.controller.autoClose" />
+      <Switch v-model="appSettings.app.kernel.unAvailable" label="home.controller.unAvailable" />
+      <Switch v-model="appSettings.app.kernel.cardMode" label="home.controller.cardMode" />
+      <Switch v-model="appSettings.app.kernel.sortByDelay" label="home.controller.sortBy" />
       <Button @click="toggleMoreSettings" type="primary" size="small"> ... </Button>
-      <div class="ml-auto">
+      <div class="ml-auto flex items-center">
         <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" icon="expand" />
         <Button
           @click="collapseAll"

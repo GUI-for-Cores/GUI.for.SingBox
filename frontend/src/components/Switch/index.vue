@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
 
+import i18n from '@/lang'
+
 interface Props {
   size?: 'default' | 'small'
   border?: 'default' | 'square'
+  label?: string
   disabled?: boolean
 }
 
@@ -19,6 +22,8 @@ const emits = defineEmits<{
   (e: 'change', val: boolean): void
 }>()
 
+const { t } = i18n.global
+
 const toggle = () => {
   if (props.disabled) return
   model.value = !model.value
@@ -29,13 +34,15 @@ const toggle = () => {
 <template>
   <div
     @click="toggle"
+    v-tips.slow="label"
     :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
     class="gui-switch relative cursor-pointer h-24 inline-flex items-center rounded-full text-12"
   >
     <div class="dot absolute h-18 w-18 rounded-full duration-200"></div>
 
-    <div v-if="$slots.default" class="slot">
-      <slot></slot>
+    <div v-if="$slots.default || label" class="slot line-clamp-1 break-all">
+      <span v-if="label">{{ t(label) }}</span>
+      <slot v-if="$slots.default"></slot>
     </div>
   </div>
 </template>

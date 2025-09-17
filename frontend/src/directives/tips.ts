@@ -18,8 +18,10 @@ export default {
     }, delay)
 
     el.onmouseenter = (e: MouseEvent) => {
-      el.dataset.showTips = 'true'
-      show(e.clientX, e.clientY)
+      if (binding.value) {
+        el.dataset.showTips = 'true'
+        show(e.clientX, e.clientY)
+      }
     }
 
     el.onmouseleave = () => {
