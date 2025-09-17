@@ -30,7 +30,7 @@ import {
 } from '@/utils'
 
 const StableUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
-const AlphaUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases'
+const AlphaUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases?per_page=2'
 
 const StablePage = 'https://github.com/SagerNet/sing-box/releases/latest'
 const AlphaPage = 'https://github.com/SagerNet/sing-box/releases'
@@ -77,7 +77,9 @@ export const useCoreBranch = (isAlpha = false) => {
       })
       if (body.message) throw body.message
 
-      const { assets, name } = isAlpha ? body.find((v: any) => v.prerelease === true) : body
+      const release = isAlpha ? body.find((v: any) => v.prerelease === true) : body
+      if (!release) throw 'Not Found'
+      const { assets, name } = release
       const assetName = getKernelAssetFileName(name)
       const asset = assets.find((v: any) => v.name === assetName)
       if (!asset) throw 'Asset Not Found:' + assetName
@@ -162,8 +164,9 @@ export const useCoreBranch = (isAlpha = false) => {
       const { body } = await HttpGet<Record<string, any>>(releaseUrl, {
         Authorization: getGitHubApiAuthorization(),
       })
-      const asset = isAlpha ? body.find((v: any) => v.prerelease === true) : body
-      const { name, tag_name } = asset
+      const release = isAlpha ? body.find((v: any) => v.prerelease === true) : body
+      if (!release) throw 'Not Found'
+      const { name, tag_name } = release
       return (name || tag_name).replace('v', '') as string
     } catch (error: any) {
       console.log(error)
