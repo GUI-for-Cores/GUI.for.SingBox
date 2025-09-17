@@ -606,10 +606,9 @@ export default {
     },
     lang: {
       name: 'Language',
+      load: 'Load language files',
       zh: '简体中文',
       en: 'English',
-      ru: 'Русский',
-      fa: 'فارسی',
     },
     pages: {
       name: 'Page visibility',

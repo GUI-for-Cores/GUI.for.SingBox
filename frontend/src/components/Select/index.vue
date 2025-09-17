@@ -40,15 +40,17 @@ const handleClear = () => {
 
 <template>
   <Dropdown :trigger="['click']">
-    <template #default="{ open }">
+    <template #default="{ toggle }">
       <div
         :class="{ border, [size]: true, 'auto-size': autoSize }"
         class="gui-select cursor-pointer min-h-30 inline-flex items-center min-w-128 rounded-4 px-8"
       >
-        {{ t(displayLabel) }}
+        <span class="line-clamp-1 break-all">
+          {{ t(displayLabel) }}
+        </span>
         <Button
           :icon="clearable && model ? 'close' : 'arrowDown'"
-          @click.stop="() => (clearable && model ? handleClear() : open())"
+          @click.stop="() => (clearable && model ? handleClear() : toggle())"
           type="text"
           size="small"
           class="ml-auto"

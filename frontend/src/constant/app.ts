@@ -7,6 +7,8 @@ import {
   View,
 } from '@/enums/app'
 
+export const LocalesFilePath = 'data/locales'
+
 export const UserFilePath = 'data/user.yaml'
 
 export const ProfilesFilePath = 'data/profiles.yaml'

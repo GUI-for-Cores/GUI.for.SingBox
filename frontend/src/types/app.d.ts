@@ -38,7 +38,7 @@ export interface MenuItem {
 }
 
 export interface AppSettings {
-  lang: Lang
+  lang: Lang | string
   theme: Theme
   color: Color
   fontFamily: string

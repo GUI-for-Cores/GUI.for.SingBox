@@ -7,7 +7,7 @@ import {
   UpdateTrayMenus,
   ShowMainWindow,
 } from '@/bridge'
-import { Theme, Color, Lang } from '@/enums/app'
+import { Theme, Color } from '@/enums/app'
 import { ClashMode } from '@/enums/kernel'
 import i18n from '@/lang'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
@@ -344,32 +344,12 @@ const getTrayMenus = () => {
         {
           type: 'item',
           text: 'settings.lang.name',
-          children: [
-            {
-              type: 'item',
-              text: 'settings.lang.zh',
-              checked: appSettings.app.lang === Lang.ZH,
-              event: () => (appSettings.app.lang = Lang.ZH),
-            },
-            {
-              type: 'item',
-              text: 'settings.lang.en',
-              checked: appSettings.app.lang === Lang.EN,
-              event: () => (appSettings.app.lang = Lang.EN),
-            },
-            {
-              type: 'item',
-              text: 'settings.lang.ru',
-              checked: appSettings.app.lang === Lang.RU,
-              event: () => (appSettings.app.lang = Lang.RU),
-            },
-            {
-              type: 'item',
-              text: 'settings.lang.fa',
-              checked: appSettings.app.lang === Lang.FA,
-              event: () => (appSettings.app.lang = Lang.FA),
-            },
-          ],
+          children: appSettings.locales.map((v) => ({
+            type: 'item',
+            text: v.label,
+            checked: appSettings.app.lang === v.value,
+            event: () => (appSettings.app.lang = v.value),
+          })),
         },
       ],
     },

@@ -24,13 +24,14 @@ const handleSelect = (val: string | number | boolean) => {
 </script>
 
 <template>
-  <div :class="[size]" class="gui-radio inline-flex rounded-8 text-12 overflow-hidden">
+  <div :class="[size]" class="gui-radio inline-flex rounded-full text-12 overflow-hidden">
     <div
       v-for="o in options"
       :key="o.value.toString()"
+      v-tips.slow="o.label"
       @click="handleSelect(o.value)"
       :class="{ active: o.value === model }"
-      class="gui-radio-button cursor-pointer px-12 py-6 duration-200"
+      class="gui-radio-button cursor-pointer px-12 py-6 duration-200 line-clamp-1 break-all"
     >
       {{ t(o.label) }}
     </div>

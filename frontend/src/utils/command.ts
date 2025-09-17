@@ -1,5 +1,5 @@
 import { ExitApp, RestartApp, WindowReloadApp } from '@/bridge'
-import { Color, Lang, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
+import { Color, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
 import { ClashMode } from '@/enums/kernel'
 import useI18n from '@/lang'
 import {
@@ -137,25 +137,18 @@ export const getCommands = () => {
           cmd: 'Language',
           children: [
             {
-              label: 'settings.lang.zh',
-              cmd: 'Chinese',
-              handler: () => (appSettings.app.lang = Lang.ZH),
+              label: 'settings.lang.load',
+              cmd: 'Load language files',
+              handler: async () => {
+                await appSettings.loadLocales(true)
+                message.success('common.success')
+              },
             },
-            {
-              label: 'settings.lang.en',
-              cmd: 'English',
-              handler: () => (appSettings.app.lang = Lang.EN),
-            },
-            {
-              label: 'settings.lang.ru',
-              cmd: 'Русский',
-              handler: () => (appSettings.app.lang = Lang.RU),
-            },
-            {
-              label: 'settings.lang.fa',
-              cmd: 'فارسی',
-              handler: () => (appSettings.app.lang = Lang.FA),
-            },
+            ...appSettings.locales.map((v) => ({
+              label: v.label,
+              cmd: v.value,
+              handler: () => (appSettings.app.lang = v.value),
+            })),
           ],
         },
         {

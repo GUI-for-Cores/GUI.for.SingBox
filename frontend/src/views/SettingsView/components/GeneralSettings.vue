@@ -2,14 +2,15 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { BrowserOpenURL, GetEnv, WriteFile, RemoveFile, AbsolutePath } from '@/bridge'
-import { DefaultFontFamily } from '@/constant/app'
-import { Theme, Lang, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
+import { BrowserOpenURL, WriteFile, RemoveFile, AbsolutePath, MakeDir } from '@/bridge'
+import { DefaultFontFamily, LocalesFilePath } from '@/constant/app'
+import { Theme, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
 import routes from '@/router/routes'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import {
   APP_TITLE,
   APP_VERSION,
+  APP_LOCALES_URL,
   getTaskSchXmlString,
   message,
   QuerySchTask,
@@ -72,25 +73,6 @@ const colors = [
   },
 ]
 
-const langs = [
-  {
-    label: 'settings.lang.zh',
-    value: Lang.ZH,
-  },
-  {
-    label: 'settings.lang.en',
-    value: Lang.EN,
-  },
-  {
-    label: 'settings.lang.ru',
-    value: Lang.RU,
-  },
-  {
-    label: 'settings.lang.fa',
-    value: Lang.FA,
-  },
-]
-
 const pages = routes.flatMap((route) => {
   if (route.meta?.hidden !== undefined) return []
   return {
@@ -129,8 +111,13 @@ const onPermChange = async (v: boolean) => {
 }
 
 const handleOpenFolder = async () => {
-  const { basePath } = await GetEnv()
-  BrowserOpenURL(basePath)
+  BrowserOpenURL(envStore.env.basePath)
+}
+
+const handleOpenLocalesFolder = async () => {
+  await MakeDir(LocalesFilePath)
+  const path = await AbsolutePath(LocalesFilePath)
+  BrowserOpenURL(path)
 }
 
 const checkSchtask = async () => {
@@ -203,8 +190,21 @@ if (envStore.env.os === 'windows') {
       <Radio v-model="appSettings.app.color" :options="colors" />
     </div>
     <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.lang.name') }}</div>
-      <Radio v-model="appSettings.app.lang" :options="langs" />
+      <div class="text-18 font-bold pt-8 pb-16">
+        {{ t('settings.lang.name') }}
+        <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link" />
+      </div>
+      <div class="flex items-center">
+        <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
+        <Button
+          @click="appSettings.loadLocales(true)"
+          :loading="appSettings.localesLoading"
+          v-tips="'common.refresh'"
+          type="text"
+          icon="refresh"
+        />
+        <Radio v-model="appSettings.app.lang" :options="appSettings.locales" class="ml-8" />
+      </div>
     </div>
     <div class="px-16 py-8">
       <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.fontFamily') }}</div>

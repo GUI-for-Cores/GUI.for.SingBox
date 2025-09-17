@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
 import {
+  ReadDir,
   ReadFile,
   WriteFile,
   WindowSetSystemDefaultTheme,
@@ -17,6 +18,7 @@ import {
   DefaultFontFamily,
   DefaultTestURL,
   UserFilePath,
+  LocalesFilePath,
 } from '@/constant/app'
 import { CorePidFilePath, DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
 import {
@@ -29,15 +31,12 @@ import {
   ControllerCloseMode,
   Branch,
 } from '@/enums/app'
-import i18n from '@/lang'
-import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION } from '@/utils'
+import i18n, { loadLocaleMessages } from '@/lang'
+import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION, sleep } from '@/utils'
 
 import type { AppSettings } from '@/types/app'
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
-  let firstOpen = true
-  let latestUserConfig = ''
-
   const themeMode = ref<Theme.Dark | Theme.Light>(Theme.Light)
 
   const app = ref<AppSettings>({
@@ -91,9 +90,46 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     WriteFile(UserFilePath, config)
   }, 500)
 
+  const localesLoading = ref(false)
+  const locales = ref<{ label: string; value: string }[]>([])
+  const loadLocales = async (delay = false) => {
+    localesLoading.value = true
+    locales.value = [
+      {
+        label: 'settings.lang.zh',
+        value: Lang.ZH,
+      },
+      {
+        label: 'settings.lang.en',
+        value: Lang.EN,
+      },
+    ]
+    const dirs = await ignoredError(ReadDir, LocalesFilePath)
+    if (dirs) {
+      const files = dirs.flatMap((file) => {
+        if (file.isDir) return []
+        const [name, ext] = file.name.split('.')
+        return name && ext === 'json' ? { label: name, value: name } : []
+      })
+      locales.value.push(...files)
+    }
+    delay && (await sleep(200))
+    localesLoading.value = false
+  }
+
+  let latestUserSettings: string
+
   const setupAppSettings = async () => {
     const data = await ignoredError(ReadFile, UserFilePath)
-    data && (app.value = Object.assign(app.value, parse(data)))
+    if (data) {
+      const settings = parse(data)
+      latestUserSettings = stringify(settings)
+      app.value = Object.assign(app.value, settings)
+    } else {
+      latestUserSettings = ''
+    }
+
+    await loadLocales()
 
     if ((app.value.kernel.branch as any) === 'latest') {
       app.value.kernel.branch = Branch.Alpha
@@ -144,10 +180,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       // @ts-expect-error(Deprecated)
       delete app.value.kernel.pid
     }
-
-    firstOpen = !!data
-
-    updateAppSettings(app.value)
   }
 
   const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
@@ -169,6 +201,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   }
 
   const updateAppSettings = (settings: AppSettings) => {
+    loadLocaleMessages(settings.lang)
     i18n.global.locale.value = settings.lang
     themeMode.value =
       settings.theme === Theme.Auto
@@ -189,20 +222,16 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     (settings) => {
       updateAppSettings(settings)
 
-      if (!firstOpen) {
-        const lastModifiedConfig = stringify(settings)
-        if (latestUserConfig !== lastModifiedConfig) {
-          saveAppSettings(lastModifiedConfig).then(() => {
-            latestUserConfig = lastModifiedConfig
-          })
-        } else {
-          saveAppSettings.cancel()
-        }
+      const lastModifiedSettings = stringify(settings)
+      if (latestUserSettings !== undefined && latestUserSettings !== lastModifiedSettings) {
+        saveAppSettings(lastModifiedSettings).then(() => {
+          latestUserSettings = lastModifiedSettings
+        })
+      } else {
+        saveAppSettings.cancel()
       }
-
-      firstOpen = false
     },
-    { deep: true },
+    { deep: true, immediate: true },
   )
 
   window.addEventListener(
@@ -220,11 +249,17 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   )
 
   watch(
-    [themeMode, () => app.value.color, () => app.value.lang, () => app.value.addPluginToMenu],
+    [
+      themeMode,
+      locales,
+      () => app.value.color,
+      () => app.value.lang,
+      () => app.value.addPluginToMenu,
+    ],
     updateTrayMenus,
   )
 
   watch(themeMode, setAppTheme, { immediate: true })
 
-  return { setupAppSettings, app, themeMode }
+  return { setupAppSettings, app, themeMode, locales, localesLoading, loadLocales }
 })

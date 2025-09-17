@@ -89,7 +89,7 @@ const updateCommands = debounce(() => {
   commands.value = getCommands()
 }, 200)
 
-watch([() => appSettings.app.lang, pluginsStore.plugins], updateCommands)
+watch([() => appSettings.app.lang, pluginsStore.plugins, () => appSettings.locales], updateCommands)
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))

@@ -97,6 +97,7 @@ watch(show, async (isVisible) => {
 
 const open = () => (show.value = true)
 const close = () => (show.value = false)
+const toggle = () => (show.value = !show.value)
 const hasTrigger = (t: TriggerType) => props.trigger.includes(t)
 
 const onMouseEnter = () => {
@@ -146,7 +147,7 @@ onUnmounted(() => {
     @click="onClick"
     class="gui-dropdown relative flex flex-col items-center"
   >
-    <slot :="{ open, close }"></slot>
+    <slot v-bind="{ open, close, toggle }"></slot>
     <Transition name="overlay">
       <div
         v-show="show"
@@ -155,7 +156,7 @@ onUnmounted(() => {
         class="gui-dropdown-overlay fixed z-99 rounded-8 backdrop-blur-sm shadow overflow-y-auto"
         @click.stop
       >
-        <slot name="overlay" :="{ open, close }"></slot>
+        <slot name="overlay" v-bind="{ open, close, toggle }"></slot>
       </div>
     </Transition>
   </div>
