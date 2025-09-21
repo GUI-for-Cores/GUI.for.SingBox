@@ -8,7 +8,7 @@ import { ReadFile, WriteFile } from '@/bridge'
 import { ScheduledTasksFilePath } from '@/constant/app'
 import { ScheduledTasksType, PluginTriggerEvent } from '@/enums/app'
 import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
-import { debounce, ignoredError, stringifyNoFolding } from '@/utils'
+import { ignoredError, stringifyNoFolding } from '@/utils'
 
 import type { ScheduledTask } from '@/types/app'
 
@@ -20,9 +20,9 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     const data = await ignoredError(ReadFile, ScheduledTasksFilePath)
     data && (scheduledtasks.value = parse(data))
 
-    scheduledtasks.value.forEach(async ({ disabled, cron, id, name }) => {
+    scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {
       if (!disabled) {
-        cronJobsMap[id] = new Cron(cron, { name }, () => runScheduledTask(id))
+        cronJobsMap[id] = new Cron(cron, () => runScheduledTask(id))
       }
     })
   }
@@ -90,14 +90,14 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     }
   }
 
-  const saveScheduledTasks = debounce(async () => {
-    await WriteFile(ScheduledTasksFilePath, stringifyNoFolding(scheduledtasks.value))
-  }, 500)
+  const saveScheduledTasks = () => {
+    return WriteFile(ScheduledTasksFilePath, stringifyNoFolding(scheduledtasks.value))
+  }
 
   const addScheduledTask = async (s: ScheduledTask) => {
     scheduledtasks.value.push(s)
     try {
-      cronJobsMap[s.id] = new Cron(s.cron, { name: s.name }, () => runScheduledTask(s.id))
+      cronJobsMap[s.id] = new Cron(s.cron, () => runScheduledTask(s.id))
       await saveScheduledTasks()
     } catch (error) {
       cronJobsMap[s.id]?.stop()
@@ -134,7 +134,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
       if (s.disabled) {
         delete cronJobsMap[id]
       } else {
-        cronJobsMap[id] = new Cron(s.cron, { name: s.name }, () => runScheduledTask(id))
+        cronJobsMap[id] = new Cron(s.cron, () => runScheduledTask(id))
       }
     } catch (error) {
       scheduledtasks.value.splice(idx, 1, backup)
