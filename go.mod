@@ -5,7 +5,6 @@ go 1.24
 require (
 	github.com/energye/systray v1.0.2
 	github.com/gen2brain/beeep v0.11.1
-	github.com/klauspost/cpuid/v2 v2.3.0
 	github.com/oschwald/geoip2-golang v1.13.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil v3.21.11+incompatible

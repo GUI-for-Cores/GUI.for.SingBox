@@ -21,7 +21,6 @@ type EnvResult struct {
 	BasePath    string `json:"basePath"`
 	OS          string `json:"os"`
 	ARCH        string `json:"arch"`
-	X64Level    int    `json:"x64Level"`
 }
 
 type RequestOptions struct {

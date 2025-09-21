@@ -13,7 +13,6 @@ import (
 
 	sysruntime "runtime"
 
-	"github.com/klauspost/cpuid/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -31,7 +30,6 @@ var Env = &EnvResult{
 	BasePath:    "",
 	OS:          sysruntime.GOOS,
 	ARCH:        sysruntime.GOARCH,
-	X64Level:    cpuid.CPU.X64Level(),
 }
 
 // NewApp creates a new App application struct
@@ -98,7 +96,6 @@ func (a *App) GetEnv() EnvResult {
 		BasePath:   Env.BasePath,
 		OS:         Env.OS,
 		ARCH:       Env.ARCH,
-		X64Level:   Env.X64Level,
 	}
 }
 
