@@ -1,42 +1,29 @@
+import { Cron } from 'croner'
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
-import { stringify, parse } from 'yaml'
+import { ref } from 'vue'
+import { parse } from 'yaml'
 
-import {
-  Notify,
-  ReadFile,
-  WriteFile,
-  AddScheduledTask,
-  RemoveScheduledTask,
-  EventsOn,
-  EventsOff,
-} from '@/bridge'
+import { Notify } from '@/bridge'
+import { ReadFile, WriteFile } from '@/bridge'
 import { ScheduledTasksFilePath } from '@/constant/app'
 import { ScheduledTasksType, PluginTriggerEvent } from '@/enums/app'
 import { useSubscribesStore, useRulesetsStore, usePluginsStore, useLogsStore } from '@/stores'
-import { debounce, ignoredError } from '@/utils'
+import { debounce, ignoredError, stringifyNoFolding } from '@/utils'
 
 import type { ScheduledTask } from '@/types/app'
 
 export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const scheduledtasks = ref<ScheduledTask[]>([])
-  const ScheduledTasksEvents: string[] = []
-  const ScheduledTasksIDs: number[] = []
+  const cronJobsMap: Recordable<Cron> = {}
 
   const setupScheduledTasks = async () => {
     const data = await ignoredError(ReadFile, ScheduledTasksFilePath)
     data && (scheduledtasks.value = parse(data))
-  }
 
-  const initScheduledTasks = async () => {
-    removeScheduledTasks()
-
-    scheduledtasks.value.forEach(async ({ disabled, cron, id }) => {
-      if (disabled) return
-      const taskID = await AddScheduledTask(cron, id)
-      ScheduledTasksEvents.push(id)
-      ScheduledTasksIDs.push(taskID)
-      EventsOn(id, () => runScheduledTask(id))
+    scheduledtasks.value.forEach(async ({ disabled, cron, id, name }) => {
+      if (!disabled) {
+        cronJobsMap[id] = new Cron(cron, { name }, () => runScheduledTask(id))
+      }
     })
   }
 
@@ -60,13 +47,6 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
       endTime: Date.now(),
       result,
     })
-  }
-
-  const removeScheduledTasks = () => {
-    ScheduledTasksEvents.forEach((event) => EventsOff(event))
-    ScheduledTasksIDs.forEach((id) => RemoveScheduledTask(id))
-    ScheduledTasksEvents.splice(0)
-    ScheduledTasksIDs.splice(0)
   }
 
   const withOutput = (list: string[], fn: (id: string) => Promise<string>) => {
@@ -111,15 +91,21 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   }
 
   const saveScheduledTasks = debounce(async () => {
-    await WriteFile(ScheduledTasksFilePath, stringify(scheduledtasks.value))
+    await WriteFile(ScheduledTasksFilePath, stringifyNoFolding(scheduledtasks.value))
   }, 500)
 
   const addScheduledTask = async (s: ScheduledTask) => {
     scheduledtasks.value.push(s)
     try {
+      cronJobsMap[s.id] = new Cron(s.cron, { name: s.name }, () => runScheduledTask(s.id))
       await saveScheduledTasks()
     } catch (error) {
-      scheduledtasks.value.pop()
+      cronJobsMap[s.id]?.stop()
+      delete cronJobsMap[s.id]
+      const idx = scheduledtasks.value.indexOf(s)
+      if (idx !== -1) {
+        scheduledtasks.value.splice(idx, 1)
+      }
       throw error
     }
   }
@@ -130,6 +116,8 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     const backup = scheduledtasks.value.splice(idx, 1)[0]
     try {
       await saveScheduledTasks()
+      cronJobsMap[id]?.stop()
+      delete cronJobsMap[id]
     } catch (error) {
       scheduledtasks.value.splice(idx, 0, backup)
       throw error
@@ -142,6 +130,12 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     const backup = scheduledtasks.value.splice(idx, 1, s)[0]
     try {
       await saveScheduledTasks()
+      cronJobsMap[id]?.stop()
+      if (s.disabled) {
+        delete cronJobsMap[id]
+      } else {
+        cronJobsMap[id] = new Cron(s.cron, { name: s.name }, () => runScheduledTask(id))
+      }
     } catch (error) {
       scheduledtasks.value.splice(idx, 1, backup)
       throw error
@@ -149,26 +143,6 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   }
 
   const getScheduledTaskById = (id: string) => scheduledtasks.value.find((v) => v.id === id)
-
-  const _watchCron = computed(() =>
-    scheduledtasks.value
-      .map((v) => v.cron)
-      .sort()
-      .join(),
-  )
-
-  const _watchDisabled = computed(() =>
-    scheduledtasks.value
-      .map((v) => v.disabled)
-      .sort()
-      .join(),
-  )
-
-  watch([_watchCron, _watchDisabled], () => {
-    initScheduledTasks()
-  })
-
-  window.addEventListener('beforeunload', removeScheduledTasks)
 
   return {
     scheduledtasks,
@@ -179,7 +153,6 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     deleteScheduledTask,
     getScheduledTaskById,
     getTaskFn,
-    removeScheduledTasks,
     runScheduledTask,
   }
 })

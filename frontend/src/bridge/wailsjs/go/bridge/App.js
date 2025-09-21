@@ -6,10 +6,6 @@ export function AbsolutePath(arg1) {
   return window['go']['bridge']['App']['AbsolutePath'](arg1);
 }
 
-export function AddScheduledTask(arg1, arg2) {
-  return window['go']['bridge']['App']['AddScheduledTask'](arg1, arg2);
-}
-
 export function CloseMMDB(arg1, arg2) {
   return window['go']['bridge']['App']['CloseMMDB'](arg1, arg2);
 }
@@ -94,10 +90,6 @@ export function RemoveFile(arg1) {
   return window['go']['bridge']['App']['RemoveFile'](arg1);
 }
 
-export function RemoveScheduledTask(arg1) {
-  return window['go']['bridge']['App']['RemoveScheduledTask'](arg1);
-}
-
 export function Requests(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['bridge']['App']['Requests'](arg1, arg2, arg3, arg4, arg5);
 }
@@ -140,10 +132,6 @@ export function UpdateTrayMenus(arg1) {
 
 export function Upload(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['bridge']['App']['Upload'](arg1, arg2, arg3, arg4, arg5, arg6);
-}
-
-export function ValidateCron(arg1) {
-  return window['go']['bridge']['App']['ValidateCron'](arg1);
 }
 
 export function WriteFile(arg1, arg2, arg3) {

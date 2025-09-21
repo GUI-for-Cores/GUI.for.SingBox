@@ -79,9 +79,7 @@ func main() {
 			},
 		},
 		OnStartup: func(ctx context.Context) {
-			runtime.LogSetLogLevel(ctx, logger.INFO)
 			app.Ctx = ctx
-			bridge.InitScheduledTasks()
 			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
@@ -91,6 +89,7 @@ func main() {
 		Bind: []any{
 			app,
 		},
+		LogLevel: logger.INFO,
 		Debug: options.Debug{
 			OpenInspectorOnStartup: true,
 		},

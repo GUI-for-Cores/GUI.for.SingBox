@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { Cron } from 'croner'
 import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ValidateCron } from '@/bridge/scheduledTasks'
 import { ScheduledTaskOptions } from '@/constant/app'
 import { ScheduledTasksType } from '@/enums/app'
 import {
@@ -49,9 +49,10 @@ const handleCancel = inject('cancel') as any
 
 const handleSubmit = async () => {
   try {
-    await ValidateCron(task.value.cron)
+    const job = new Cron(task.value.cron, () => {})
+    job.stop()
   } catch (error: any) {
-    message.error(error)
+    message.error(error.message)
     return
   }
 
