@@ -42,8 +42,14 @@ const handleClear = () => {
   <Dropdown :trigger="['click']">
     <template #default="{ toggle }">
       <div
-        :class="{ border, [size]: true, 'auto-size': autoSize }"
-        class="gui-select cursor-pointer min-h-30 inline-flex items-center min-w-128 rounded-4 px-8"
+        :class="{
+          border,
+          [size]: true,
+          'auto-size': autoSize,
+          'min-h-28': size === 'small',
+          'min-h-30': size === 'default',
+        }"
+        class="gui-select cursor-pointer inline-flex items-center min-w-128 rounded-4 px-8"
       >
         <span class="line-clamp-1 break-all">
           {{ t(displayLabel) }}
