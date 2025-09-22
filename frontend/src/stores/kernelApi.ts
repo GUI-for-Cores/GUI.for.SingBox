@@ -328,8 +328,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   const restarting = ref(false)
   const coreStateLoading = ref(true)
   let isCoreStartedByThisInstance = false
-  let coreStoppedResolver: (value: unknown) => void
-  let coreStoppedPromise: Promise<unknown>
+  let { promise: coreStoppedPromise, resolve: coreStoppedResolver } = Promise.withResolvers()
 
   const updateCoreState = async () => {
     corePid.value = Number(await ReadFile(CorePidFilePath).catch(() => -1))
@@ -400,7 +399,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
     await pluginsStore.onCoreStoppedTrigger()
 
-    isCoreStartedByThisInstance && coreStoppedResolver(null)
+    coreStoppedResolver(null)
 
     destroyCoreWebsockets()
   }
