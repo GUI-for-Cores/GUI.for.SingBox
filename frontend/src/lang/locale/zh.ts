@@ -631,6 +631,7 @@ export default {
     closeKernelOnExit: '退出程序时同时关闭内核',
     autoSetSystemProxy: '自动配置/清除系统代理',
     autoStartKernel: '自动启动内核程序',
+    realMemoryUsage: '显示真实的核心内存占用',
     admin: '以管理员身份运行',
     addPluginToMenu: '将插件添加到托盘菜单',
     addGroupToMenu: '将代理组添加到托盘菜单',

@@ -243,6 +243,12 @@ if (envStore.env.os === 'windows') {
     </div>
     <div class="px-16 py-8">
       <div class="text-18 font-bold pt-8 pb-16">
+        {{ t('settings.realMemoryUsage') }}
+      </div>
+      <Switch v-model="appSettings.app.kernel.realMemoryUsage" />
+    </div>
+    <div class="px-16 py-8">
+      <div class="text-18 font-bold pt-8 pb-16">
         {{ t('settings.autoStartKernel') }}
       </div>
       <Switch v-model="appSettings.app.autoStartKernel" />

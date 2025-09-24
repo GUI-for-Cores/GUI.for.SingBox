@@ -2,8 +2,9 @@
 import { ref, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { ProcessMemory } from '@/bridge'
 import { ModeOptions } from '@/constant/kernel'
-import { useEnvStore, useAppStore, useKernelApiStore } from '@/stores'
+import { useEnvStore, useAppStore, useKernelApiStore, useAppSettingsStore } from '@/stores'
 import { formatBytes, handleChangeMode, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
@@ -20,12 +21,14 @@ const statistics = ref({
   uploadTotal: 0,
   connections: [] as any[],
   inuse: 0,
+  memUsage: 0,
 })
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
 const appStore = useAppStore()
 const envStore = useEnvStore()
+const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 
 const handleRestartKernel = async () => {
@@ -101,8 +104,21 @@ const onSystemProxySwitchChange = async (enable: boolean) => {
   }
 }
 
-const unregisterMemoryHandler = kernelApiStore.onMemory((data) => {
+let latestCoreMemoryUsageTime: number
+const getCoreMemoryUsage = async (fallback: number) => {
+  if (latestCoreMemoryUsageTime && Date.now() - latestCoreMemoryUsageTime < 3_000) {
+    return fallback
+  }
+  const useage = await ProcessMemory(kernelApiStore.pid).catch(() => fallback)
+  latestCoreMemoryUsageTime = Date.now()
+  return useage
+}
+
+const unregisterMemoryHandler = kernelApiStore.onMemory(async (data) => {
   statistics.value.inuse = data.inuse
+  if (appSettings.app.kernel.realMemoryUsage) {
+    statistics.value.memUsage = await getCoreMemoryUsage(statistics.value.memUsage || data.inuse)
+  }
 })
 
 const unregisterTrafficHandler = kernelApiStore.onTraffic((data) => {
@@ -203,6 +219,9 @@ onUnmounted(() => {
       <Card :title="t('home.overview.memory')" class="flex-1">
         <div class="py-8 text-12">
           {{ formatBytes(statistics.inuse) }}
+          <span v-if="appSettings.app.kernel.realMemoryUsage">
+            / ({{ formatBytes(statistics.memUsage) }})
+          </span>
         </div>
       </Card>
     </div>

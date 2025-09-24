@@ -62,6 +62,7 @@ export interface AppSettings {
     order: string[]
   }
   kernel: {
+    realMemoryUsage: boolean
     branch: Branch
     profile: string
     autoClose: boolean

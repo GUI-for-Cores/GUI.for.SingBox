@@ -632,6 +632,7 @@ export default {
     closeKernelOnExit: 'Close Kernel When APP Exits',
     autoSetSystemProxy: 'Auto Set / Clear System Proxy',
     autoStartKernel: 'Auto Start Kernel',
+    realMemoryUsage: 'Show actual core memory usage',
     admin: 'Run As Admin',
     addPluginToMenu: 'Add Plugin To Tray Menu',
     addGroupToMenu: 'Add Proxy Group To Tray Menu',

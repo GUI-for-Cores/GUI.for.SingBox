@@ -61,6 +61,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     startupDelay: 30,
     connections: DefaultConnections(),
     kernel: {
+      realMemoryUsage: false,
       branch: Branch.Main,
       profile: '',
       autoClose: true,
@@ -179,6 +180,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       delete app.value.kernel.running
       // @ts-expect-error(Deprecated)
       delete app.value.kernel.pid
+    }
+    if (app.value.kernel.realMemoryUsage === undefined) {
+      app.value.kernel.realMemoryUsage = false
     }
   }
 
