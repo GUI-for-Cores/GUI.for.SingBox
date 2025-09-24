@@ -26,7 +26,7 @@ var Env = &EnvResult{
 	IsStartup:   true,
 	FromTaskSch: false,
 	AppName:     "",
-	AppVersion:  "v1.10.0",
+	AppVersion:  "v1.11.0",
 	BasePath:    "",
 	OS:          sysruntime.GOOS,
 	ARCH:        sysruntime.GOARCH,
