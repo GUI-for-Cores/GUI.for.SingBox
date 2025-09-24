@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shirou/gopsutil/process"
+	"github.com/shirou/gopsutil/v3/process"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -120,6 +120,22 @@ func (a *App) ProcessInfo(pid int32) FlagResult {
 	}
 
 	return FlagResult{true, name}
+}
+
+func (a *App) ProcessMemory(pid int32) FlagResult {
+	log.Printf("ProcessMemory: %d", pid)
+
+	proc, err := process.NewProcess(pid)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	memInfo, err := proc.MemoryInfo()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, strconv.FormatUint(memInfo.RSS, 10)}
 }
 
 func (a *App) KillProcess(pid int, timeout int) FlagResult {

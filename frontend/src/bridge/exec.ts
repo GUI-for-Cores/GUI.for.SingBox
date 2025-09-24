@@ -73,6 +73,14 @@ export const ProcessInfo = async (pid: number) => {
   return data
 }
 
+export const ProcessMemory = async (pid: number) => {
+  const { flag, data } = await App.ProcessMemory(pid)
+  if (!flag) {
+    throw data
+  }
+  return Number(data)
+}
+
 export const KillProcess = async (pid: number, timeout = 10) => {
   const { flag, data } = await App.KillProcess(pid, timeout)
   if (!flag) {

@@ -38,6 +38,8 @@ export function OpenMMDB(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function ProcessInfo(arg1:number):Promise<bridge.FlagResult>;
 
+export function ProcessMemory(arg1:number):Promise<bridge.FlagResult>;
+
 export function QueryMMDB(arg1:string,arg2:string,arg3:string):Promise<bridge.FlagResult>;
 
 export function ReadDir(arg1:string):Promise<bridge.FlagResult>;

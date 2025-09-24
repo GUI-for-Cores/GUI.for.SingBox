@@ -74,6 +74,10 @@ export function ProcessInfo(arg1) {
   return window['go']['bridge']['App']['ProcessInfo'](arg1);
 }
 
+export function ProcessMemory(arg1) {
+  return window['go']['bridge']['App']['ProcessMemory'](arg1);
+}
+
 export function QueryMMDB(arg1, arg2, arg3) {
   return window['go']['bridge']['App']['QueryMMDB'](arg1, arg2, arg3);
 }
