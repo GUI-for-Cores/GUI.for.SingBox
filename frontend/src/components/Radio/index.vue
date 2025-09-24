@@ -18,8 +18,12 @@ const emits = defineEmits(['change'])
 const { t } = useI18n()
 
 const handleSelect = (val: string | number | boolean) => {
+  const oldValue = model.value
+  if (oldValue === val) {
+    return
+  }
   model.value = val
-  emits('change', val)
+  emits('change', val, oldValue)
 }
 </script>
 

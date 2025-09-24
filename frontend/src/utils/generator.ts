@@ -1,3 +1,5 @@
+import { parse } from 'yaml'
+
 import { ReadFile, WriteFile } from '@/bridge'
 import { CoreConfigFilePath } from '@/constant/kernel'
 import {
@@ -384,9 +386,9 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   // step 3
   const { priority, config: mixin } = originalProfile.mixin
   if (priority === 'mixin') {
-    deepAssign(_config, JSON.parse(mixin))
+    deepAssign(_config, parse(mixin))
   } else if (priority === 'gui') {
-    deepAssign(_config, deepAssign(JSON.parse(mixin), _config))
+    deepAssign(_config, deepAssign(parse(mixin), _config))
   }
 
   // step 4

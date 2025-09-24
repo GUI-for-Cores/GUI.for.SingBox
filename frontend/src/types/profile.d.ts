@@ -225,6 +225,7 @@ type MixinPriority = 'mixin' | 'gui'
 
 interface IMixin {
   priority: MixinPriority
+  format: 'json' | 'yaml'
   config: string
 }
 

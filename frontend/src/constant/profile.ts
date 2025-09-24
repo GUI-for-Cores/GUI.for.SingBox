@@ -637,7 +637,7 @@ export const DefaultDns = (): IDNS => ({
 })
 
 export const DefaultMixin = (): IProfile['mixin'] => {
-  return { priority: 'mixin', config: '{}' }
+  return { priority: 'mixin', format: 'json', config: '' }
 }
 
 export const DefaultScript = (): IProfile['script'] => {

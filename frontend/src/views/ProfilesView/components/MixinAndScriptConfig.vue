@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { parse, stringify } from 'yaml'
+
+import { message } from '@/utils'
 
 const model = defineModel<{ mixin: IProfile['mixin']; script: IProfile['script'] }>({
   required: true,
@@ -19,6 +22,30 @@ const MixinPriorityOptions = [
   { label: 'profile.mixinSettings.mixin', value: 'mixin' },
   { label: 'profile.mixinSettings.gui', value: 'gui' },
 ]
+
+const MixinFormatOptions = [
+  { label: 'JSON', value: 'json' },
+  { label: 'YAML', value: 'yaml' },
+]
+
+const MixinEditorKey = ref(0)
+
+const onFormatChange = (val: 'json' | 'yaml', old: 'json' | 'yaml') => {
+  try {
+    const config = parse(model.value.mixin.config)
+    if (config) {
+      if (val === 'json') {
+        model.value.mixin.config = JSON.stringify(config, null, 2)
+      } else {
+        model.value.mixin.config = stringify(config)
+      }
+    }
+    MixinEditorKey.value += 1
+  } catch (e: any) {
+    model.value.mixin.format = old
+    message.error(e.message || e)
+  }
+}
 </script>
 
 <template>
@@ -28,7 +55,20 @@ const MixinPriorityOptions = [
         {{ t('profile.mixinSettings.priority') }}
         <Radio v-model="model.mixin.priority" :options="MixinPriorityOptions" />
       </div>
-      <CodeViewer v-model="model.mixin.config" lang="json" editable />
+      <div class="form-item">
+        {{ t('profile.mixinSettings.format') }}
+        <Radio
+          v-model="model.mixin.format"
+          @change="onFormatChange"
+          :options="MixinFormatOptions"
+        />
+      </div>
+      <CodeViewer
+        v-model="model.mixin.config"
+        :key="MixinEditorKey"
+        :lang="model.mixin.format"
+        editable
+      />
     </template>
     <template #script>
       <CodeViewer v-model="model.script.code" lang="javascript" editable />

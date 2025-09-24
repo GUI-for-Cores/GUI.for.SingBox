@@ -451,6 +451,7 @@ export default {
     mixinSettings: {
       name: '混入配置',
       priority: '优先级',
+      format: '格式',
       mixin: '混入优先',
       gui: 'GUI优先',
     },

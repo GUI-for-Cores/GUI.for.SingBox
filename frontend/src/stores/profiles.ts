@@ -73,6 +73,10 @@ export const useProfilesStore = defineStore('profiles', () => {
           needsDiskSync = true
         }
       })
+      if (!profile.mixin.format) {
+        profile.mixin.format = 'json'
+        needsDiskSync = true
+      }
     })
 
     if (needsDiskSync) {
