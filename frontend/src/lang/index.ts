@@ -19,10 +19,16 @@ const i18n = createI18n({
   messages,
 })
 
+export const reloadLocale = async (locale = i18n.global.locale.value) => {
+  if (!['zh', 'en'].includes(locale)) {
+    const messages = await ReadFile(`${LocalesFilePath}/${locale}.json`).catch(() => '')
+    messages && i18n.global.setLocaleMessage(locale, JSON.parse(messages))
+  }
+}
+
 export const loadLocaleMessages = async (locale: string) => {
   if (!i18n.global.availableLocales.includes(locale)) {
-    const messages = await ReadFile(`${LocalesFilePath}/${locale}.json`)
-    i18n.global.setLocaleMessage(locale, JSON.parse(messages))
+    await reloadLocale(locale)
   }
 }
 

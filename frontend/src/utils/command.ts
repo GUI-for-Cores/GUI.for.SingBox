@@ -140,7 +140,7 @@ export const getCommands = () => {
               label: 'settings.lang.load',
               cmd: 'Load language files',
               handler: async () => {
-                await appSettings.loadLocales(true)
+                await appSettings.loadLocales()
                 message.success('common.success')
               },
             },

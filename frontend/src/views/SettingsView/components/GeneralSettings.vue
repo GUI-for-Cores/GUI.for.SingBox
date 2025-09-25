@@ -197,7 +197,7 @@ if (envStore.env.os === 'windows') {
       <div class="flex items-center">
         <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
         <Button
-          @click="appSettings.loadLocales(true)"
+          @click="appSettings.loadLocales()"
           :loading="appSettings.localesLoading"
           v-tips="'settings.lang.load'"
           type="text"
