@@ -73,6 +73,10 @@ const handleShowApiConnections = () => {
   modalApi.setContent(ConnectionsController).open()
 }
 
+const handleToggleRealMemoryUsage = () => {
+  appSettings.app.kernel.realMemoryUsage = !appSettings.app.kernel.realMemoryUsage
+}
+
 const handleShowSettings = () => {
   modalApi.setProps({
     title: 'home.overview.settings',
@@ -216,7 +220,11 @@ onUnmounted(() => {
           {{ statistics.connections.length }}
         </div>
       </Card>
-      <Card :title="t('home.overview.memory')" class="flex-1">
+      <Card
+        @click="handleToggleRealMemoryUsage"
+        :title="t('home.overview.memory')"
+        class="flex-1 cursor-pointer"
+      >
         <div class="py-8 text-12">
           {{ formatBytes(statistics.inuse) }}
           <span v-if="appSettings.app.kernel.realMemoryUsage">

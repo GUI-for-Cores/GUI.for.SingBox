@@ -199,7 +199,7 @@ if (envStore.env.os === 'windows') {
         <Button
           @click="appSettings.loadLocales(true)"
           :loading="appSettings.localesLoading"
-          v-tips="'common.refresh'"
+          v-tips="'settings.lang.load'"
           type="text"
           icon="refresh"
         />
