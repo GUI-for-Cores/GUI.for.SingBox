@@ -316,10 +316,12 @@ const generateDns = (
           if (rule.strategy !== Strategy.Default) {
             extra.strategy = rule.strategy
           }
-        } else if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(rule.action as any)) {
-          deepAssign(extra, JSON.parse(rule.server))
         }
-      } else if (rule.action === RuleAction.Reject) {
+      }
+      if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(rule.action as any)) {
+        deepAssign(extra, JSON.parse(rule.server))
+      }
+      if (rule.action === RuleAction.Reject) {
         extra.method = rule.server
       }
       return extra
