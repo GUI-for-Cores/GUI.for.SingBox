@@ -253,7 +253,7 @@ const renderRule = (rule: IRule) => {
       <Switch
         v-else-if="fields.type === RuleType.IpIsPrivate"
         :model-value="fields.payload === 'true'"
-        @change="(val) => (fields.payload = val ? 'false' : 'true')"
+        @change="(val) => (fields.payload = val ? 'true' : 'false')"
       />
       <Input v-else v-model="fields.payload" autofocus />
     </div>
