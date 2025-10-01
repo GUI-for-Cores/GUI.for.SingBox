@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DraggableOptions } from '@/constant/app'
+import { RuleActionRejectOptions } from '@/constant/kernel'
 import {
   DomainStrategyOptions,
   RuleActionOptions,
@@ -198,6 +199,12 @@ const renderRule = (rule: IRule) => {
       <div class="form-item">
         {{ t('kernel.route.rules.routeOptions') }}
         <CodeViewer v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
+      </div>
+    </template>
+    <template v-else-if="fields.action === RuleAction.Reject">
+      <div class="form-item">
+        {{ t('kernel.route.rules.action.rejectMethod') }}
+        <Radio v-model="fields.outbound" :options="RuleActionRejectOptions" />
       </div>
     </template>
     <template v-else-if="fields.action === RuleAction.Sniff">

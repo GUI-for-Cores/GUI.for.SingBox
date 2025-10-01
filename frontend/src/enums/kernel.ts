@@ -103,6 +103,7 @@ export enum RuleAction {
 export enum RuleActionReject {
   Default = 'default',
   Drop = 'drop',
+  Reply = 'reply',
 }
 
 export enum Sniffer {

@@ -8,6 +8,7 @@ import {
   LogLevel,
   Outbound,
   RuleAction,
+  RuleActionReject,
   RulesetType,
   RuleType,
   Strategy,
@@ -181,6 +182,8 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
         extra.outbound = getOutbound(rule.outbound)
       } else if (rule.action === RuleAction.RouteOptions) {
         deepAssign(extra, JSON.parse(rule.outbound))
+      } else if (rule.action === RuleAction.Reject) {
+        extra.method = rule.outbound
       } else if (rule.action === RuleAction.Sniff) {
         if (rule.sniffer.length) {
           extra.sniffer = rule.sniffer
@@ -359,7 +362,13 @@ export const generateDnsServerURL = (dnsServer: IDNSServer) => {
 }
 
 const _adaptToStableBranch = (config: Recordable) => {
-  config
+  config.route.rules.forEach((rule: Recordable) => {
+    if (rule.action === RuleAction.Reject) {
+      if (rule.method === RuleActionReject.Reply) {
+        delete rule.method
+      }
+    }
+  })
 }
 
 export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {

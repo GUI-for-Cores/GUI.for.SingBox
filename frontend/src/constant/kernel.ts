@@ -206,6 +206,12 @@ export const RuleActionOptions = [
   { label: 'kernel.route.rules.action.resolve', value: RuleAction.Resolve },
 ]
 
+export const RuleActionRejectOptions = [
+  { label: 'kernel.route.rules.action.rejectDefault', value: RuleActionReject.Default },
+  { label: 'kernel.route.rules.action.rejectDrop', value: RuleActionReject.Drop },
+  { label: 'kernel.route.rules.action.rejectReply', value: RuleActionReject.Reply },
+]
+
 export const DnsServerTypeOptions = [
   { label: 'kernel.dns.type.local', value: DnsServer.Local },
   { label: 'kernel.dns.type.hosts', value: DnsServer.Hosts },
