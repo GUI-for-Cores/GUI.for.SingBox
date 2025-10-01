@@ -185,50 +185,6 @@ const renderRule = (rule: IRule) => {
       {{ t('kernel.route.rules.action.name') }}
       <Radio v-model="fields.action" :options="RuleActionOptions" class="ml-8" />
     </div>
-    <div class="form-item">
-      {{ t('kernel.route.rules.invert') }}
-      <Switch v-model="fields.invert" />
-    </div>
-    <template v-if="fields.action === RuleAction.Route">
-      <div class="form-item">
-        {{ t('kernel.route.rules.outbound') }}
-        <Select v-model="fields.outbound" :options="outboundOptions" clearable />
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.RouteOptions">
-      <div class="form-item">
-        {{ t('kernel.route.rules.routeOptions') }}
-        <CodeViewer v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.Reject">
-      <div class="form-item">
-        {{ t('kernel.route.rules.action.rejectMethod') }}
-        <Radio v-model="fields.outbound" :options="RuleActionRejectOptions" />
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.Sniff">
-      <div class="form-item">
-        {{ t('kernel.route.rules.sniffer.name') }}
-        <div class="flex items-center">
-          <Switch :model-value="fields.sniffer.length === 0" disabled>All</Switch>
-          <CheckBox v-model="fields.sniffer" :options="RuleSnifferOptions" class="ml-4" />
-        </div>
-      </div>
-    </template>
-    <template v-else-if="fields.action === RuleAction.Resolve">
-      <div class="form-item">
-        {{ t('kernel.strategy.name') }}
-        <Select v-model="fields.strategy" :options="DomainStrategyOptions" />
-      </div>
-      <div class="form-item">
-        {{ t('kernel.route.rules.server') }}
-        <Select
-          v-model="fields.server"
-          :options="[{ label: 'kernel.strategy.byDnsRules', value: '' }, ...serverOptions]"
-        />
-      </div>
-    </template>
     <div v-if="isSupportPayload" class="form-item">
       {{ t('kernel.route.rules.payload') }}
       <Radio
@@ -264,7 +220,66 @@ const renderRule = (rule: IRule) => {
       />
       <Input v-else v-model="fields.payload" autofocus />
     </div>
-
+    <div class="form-item">
+      {{ t('kernel.route.rules.invert') }}
+      <Switch v-model="fields.invert" />
+    </div>
+    <Card class="mt-4 mb-16">
+      <template v-if="fields.action === RuleAction.Route">
+        <div class="form-item">
+          {{ t('kernel.route.rules.outbound') }}
+          <Select v-model="fields.outbound" :options="outboundOptions" clearable />
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.RouteOptions">
+        <div class="form-item">
+          {{ t('kernel.route.rules.routeOptions') }}
+          <CodeViewer v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.Reject">
+        <div class="form-item">
+          {{ t('kernel.route.rules.action.rejectMethod') }}
+          <Radio v-model="fields.outbound" :options="RuleActionRejectOptions" />
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.HijackDNS">
+        <Empty description="common.none" />
+      </template>
+      <template v-else-if="fields.action === RuleAction.Sniff">
+        <div class="form-item">
+          <div>
+            {{ t('kernel.route.rules.sniffer.name') }}
+            <Switch :model-value="fields.sniffer.length === 0" disabled>All</Switch>
+          </div>
+          <div class="flex flex-col gap-4 items-end">
+            <CheckBox
+              v-model="fields.sniffer"
+              :options="RuleSnifferOptions.slice(0, 5)"
+              class="ml-4"
+            />
+            <CheckBox
+              v-model="fields.sniffer"
+              :options="RuleSnifferOptions.slice(5)"
+              class="ml-4"
+            />
+          </div>
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.Resolve">
+        <div class="form-item">
+          {{ t('kernel.strategy.name') }}
+          <Select v-model="fields.strategy" :options="DomainStrategyOptions" />
+        </div>
+        <div class="form-item">
+          {{ t('kernel.route.rules.server') }}
+          <Select
+            v-model="fields.server"
+            :options="[{ label: 'kernel.strategy.byDnsRules', value: '' }, ...serverOptions]"
+          />
+        </div>
+      </template>
+    </Card>
     <template v-if="fields.type === RuleType.RuleSet">
       <Divider>{{ t('kernel.route.tab.rule_set') }}</Divider>
       <div class="grid grid-cols-3 gap-8">

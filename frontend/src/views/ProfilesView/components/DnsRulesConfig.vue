@@ -217,7 +217,7 @@ const renderRule = (rule: IDNSRule) => {
       <Switch
         v-else-if="[RuleType.IpIsPrivate, RuleType.IpAcceptAny].includes(fields.type as any)"
         :model-value="fields.payload === 'true'"
-        @change="(val) => (fields.payload = val ? 'false' : 'true')"
+        @change="(val) => (fields.payload = val ? 'true' : 'false')"
       />
       <Input v-else v-model="fields.payload" autofocus />
     </div>
@@ -225,10 +225,7 @@ const renderRule = (rule: IDNSRule) => {
       {{ t('kernel.route.rules.invert') }}
       <Switch v-model="fields.invert" />
     </div>
-    <Card
-      v-if="[RuleAction.Route, RuleAction.RouteOptions].includes(fields.action as any)"
-      class="pt-4 mt-4"
-    >
+    <Card class="mt-4 mb-16">
       <template v-if="fields.action === RuleAction.Route">
         <div class="form-item">
           {{ t('kernel.dns.rules.server') }}
@@ -239,30 +236,34 @@ const renderRule = (rule: IDNSRule) => {
           <Select v-model="fields.strategy" :options="DomainStrategyOptions" />
         </div>
       </template>
-      <div v-else-if="fields.action === RuleAction.RouteOptions" class="form-item">
-        {{ t('kernel.route.rules.routeOptions') }}
-        <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
-      </div>
-      <div class="form-item">
-        {{ t('kernel.route.rules.disable_cache') }}
-        <Switch v-model="fields.disable_cache" />
-      </div>
-      <div class="form-item">
-        {{ t('kernel.route.rules.client_subnet') }}
-        <Input v-model="fields.client_subnet" editable />
-      </div>
-    </Card>
-    <Card v-else-if="fields.action === RuleAction.Reject" class="pt-4 mt-4">
-      <div class="form-item">
-        {{ t('kernel.route.rules.action.rejectMethod') }}
-        <Radio v-model="fields.server" :options="DnsRuleActionRejectOptions" />
-      </div>
-    </Card>
-    <Card v-else-if="fields.action === RuleAction.Predefined" class="pt-4 mt-4">
-      <div class="form-item">
-        {{ t('kernel.route.rules.action.predefined') }}
-        <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
-      </div>
+      <template v-else-if="fields.action === RuleAction.RouteOptions">
+        <div class="form-item">
+          {{ t('kernel.route.rules.routeOptions') }}
+          <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.Reject">
+        <div class="form-item">
+          {{ t('kernel.route.rules.action.rejectMethod') }}
+          <Radio v-model="fields.server" :options="DnsRuleActionRejectOptions" />
+        </div>
+      </template>
+      <template v-else-if="fields.action === RuleAction.Predefined">
+        <div class="form-item">
+          {{ t('kernel.route.rules.action.predefined') }}
+          <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
+        </div>
+      </template>
+      <template v-if="[RuleAction.Route, RuleAction.RouteOptions].includes(fields.action as any)">
+        <div class="form-item">
+          {{ t('kernel.route.rules.disable_cache') }}
+          <Switch v-model="fields.disable_cache" />
+        </div>
+        <div class="form-item">
+          {{ t('kernel.route.rules.client_subnet') }}
+          <Input v-model="fields.client_subnet" editable />
+        </div>
+      </template>
     </Card>
     <template v-if="fields.type === RuleType.RuleSet">
       <Divider>{{ t('kernel.route.tab.rule_set') }}</Divider>
