@@ -10,6 +10,7 @@ import {
   useKernelApiStore,
   useSubscribesStore,
   usePluginsStore,
+  useAppStore,
 } from '@/stores'
 import { debounce, deepClone, generateConfig, message, sampleID, alert } from '@/utils'
 
@@ -21,6 +22,7 @@ import type { Menu } from '@/types/app'
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
+const appStore = useAppStore()
 const profilesStore = useProfilesStore()
 const subscribesStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()
@@ -210,12 +212,16 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
             <Button @click="handleShowProfileForm()" type="link">{{ t('common.add') }}</Button>
           </template>
         </I18nT>
+        <div class="flex items-center">
+          <CustomAction :actions="appStore.customActions.profiles_header" />
+        </div>
       </template>
     </Empty>
   </div>
 
   <div v-else class="grid-list-header">
     <Radio v-model="appSettingsStore.app.profilesView" :options="ViewOptions" class="mr-auto" />
+    <CustomAction :actions="appStore.customActions.profiles_header" />
     <Button @click="handleShowProfileForm()" type="primary" icon="add">
       {{ t('common.add') }}
     </Button>

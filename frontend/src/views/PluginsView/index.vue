@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { BrowserOpenURL } from '@/bridge'
-import { DraggableOptions } from '@/constant/app'
+import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
 import { debounce, message } from '@/utils'
@@ -226,14 +226,8 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
   </div>
 
   <div v-else class="grid-list-header">
-    <Radio
-      v-model="appSettingsStore.app.pluginsView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List },
-      ]"
-    />
-    <Button @click="handleImportPlugin" type="link" class="ml-auto">
+    <Radio v-model="appSettingsStore.app.pluginsView" :options="ViewOptions" class="mr-auto" />
+    <Button @click="handleImportPlugin" type="link">
       {{ t('plugins.hub') }}
     </Button>
     <Dropdown>

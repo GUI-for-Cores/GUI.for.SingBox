@@ -213,31 +213,41 @@ defineExpose({ modalSlots })
     </div>
     <div class="form-item">
       {{ t('plugin.name') }} *
-      <Input v-model="plugin.name" autofocus class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="plugin.name" autofocus class="w-full" />
+      </div>
     </div>
     <div class="form-item">
       {{ t('plugin.version') }} *
-      <Input v-model="plugin.version" class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="plugin.version" class="w-full" />
+      </div>
     </div>
     <div v-show="plugin.type === 'Http'" class="form-item">
       {{ t('plugin.url') }} *
-      <Input
-        v-model="plugin.url"
-        :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
-        class="min-w-[75%]"
-      />
+      <div class="min-w-[75%]">
+        <Input
+          v-model="plugin.url"
+          :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
+          class="w-full"
+        />
+      </div>
     </div>
     <div class="form-item">
       {{ t('plugin.path') }} *
-      <Input
-        v-model="plugin.path"
-        placeholder="data/plugins/plugin-{filename}.js"
-        class="min-w-[75%]"
-      />
+      <div class="min-w-[75%]">
+        <Input
+          v-model="plugin.path"
+          placeholder="data/plugins/plugin-{filename}.js"
+          class="w-full"
+        />
+      </div>
     </div>
     <div class="form-item">
       {{ t('plugin.description') }}
-      <Input v-model="plugin.description" class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="plugin.description" class="w-full" />
+      </div>
     </div>
     <Divider>
       <Button @click="toggleShowMore" type="text" size="small">
@@ -294,25 +304,33 @@ defineExpose({ modalSlots })
             </template>
             <div class="form-item">
               {{ t('plugin.confName') }}
-              <Input v-model="conf.title" placeholder="title" class="min-w-[75%]" />
+              <div class="min-w-[75%]">
+                <Input v-model="conf.title" placeholder="title" class="w-full" />
+              </div>
             </div>
             <div class="form-item">
               {{ t('plugin.confDescription') }}
-              <Input v-model="conf.description" placeholder="description" class="min-w-[75%]" />
+              <div class="min-w-[75%]">
+                <Input v-model="conf.description" placeholder="description" class="w-full" />
+              </div>
             </div>
             <div class="form-item">
               {{ t('plugin.confKey') }}
-              <Input v-model="conf.key" placeholder="key" class="min-w-[75%]" />
+              <div class="min-w-[75%]">
+                <Input v-model="conf.key" placeholder="key" class="w-full" />
+              </div>
             </div>
             <div class="form-item" :class="{ 'items-start': conf.value.length !== 0 }">
               {{ t('plugin.confDefault') }}
-              <Component
-                :is="conf.component"
-                v-model="conf.value"
-                :options="getOptions(conf.options)"
-                editable
-                :class="conf.component === 'CodeViewer' ? 'min-w-[75%]' : ''"
-              />
+              <div :class="conf.component === 'CodeViewer' ? 'min-w-[75%]' : ''">
+                <Component
+                  :is="conf.component"
+                  v-model="conf.value"
+                  :options="getOptions(conf.options)"
+                  editable
+                  class="w-full"
+                />
+              </div>
             </div>
             <div
               v-if="hasOption(conf.component)"

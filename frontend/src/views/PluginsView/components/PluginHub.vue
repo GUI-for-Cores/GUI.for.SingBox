@@ -100,7 +100,7 @@ if (pluginsStore.pluginHub.length === 0) {
           size="small"
           class="flex-1"
         >
-          <template #extra>
+          <template #suffix>
             <Tag
               v-for="tag in tags"
               :key="tag"

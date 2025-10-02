@@ -124,19 +124,25 @@ defineExpose({ modalSlots })
     </div>
     <div class="form-item">
       {{ t('subscribe.name') }} *
-      <Input v-model="sub.name" autofocus class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="sub.name" autofocus class="w-full" />
+      </div>
     </div>
     <div v-if="!isManual" class="form-item">
       {{ t(sub.type === 'Http' ? 'subscribe.url' : 'subscribe.localPath') }} *
-      <Input
-        v-model="sub.url"
-        :placeholder="sub.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.json'"
-        class="min-w-[75%]"
-      />
+      <div class="min-w-[75%]">
+        <Input
+          v-model="sub.url"
+          :placeholder="sub.type === 'Http' ? 'http(s)://' : 'data/local/{filename}.json'"
+          class="w-full"
+        />
+      </div>
     </div>
     <div class="form-item">
       {{ t('subscribe.path') }} *
-      <Input v-model="sub.path" placeholder="data/subscribes/{filename}.json" class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="sub.path" placeholder="data/subscribes/{filename}.json" class="w-full" />
+      </div>
     </div>
     <Divider v-if="!isManual">
       <Button @click="toggleShowMore" type="text" size="small">
@@ -146,36 +152,48 @@ defineExpose({ modalSlots })
     <div v-if="showMore && !isManual">
       <div class="form-item">
         {{ t('subscribe.include') }}
-        <Input v-model="sub.include" placeholder="keyword1|keyword2" class="min-w-[75%]" />
+        <div class="min-w-[75%]">
+          <Input v-model="sub.include" placeholder="keyword1|keyword2" class="w-full" />
+        </div>
       </div>
       <div class="form-item">
         {{ t('subscribe.exclude') }}
-        <Input v-model="sub.exclude" placeholder="keyword1|keyword2" class="min-w-[75%]" />
+        <div class="min-w-[75%]">
+          <Input v-model="sub.exclude" placeholder="keyword1|keyword2" class="w-full" />
+        </div>
       </div>
       <div class="form-item">
         {{ t('subscribe.includeProtocol') }}
-        <Input
-          v-model="sub.includeProtocol"
-          placeholder="direct|mixed|socks|http..."
-          class="min-w-[75%]"
-        />
+        <div class="min-w-[75%]">
+          <Input
+            v-model="sub.includeProtocol"
+            placeholder="direct|mixed|socks|http..."
+            class="w-full"
+          />
+        </div>
       </div>
       <div class="form-item">
         {{ t('subscribe.excludeProtocol') }}
-        <Input
-          v-model="sub.excludeProtocol"
-          placeholder="direct|mixed|socks|http..."
-          class="min-w-[75%]"
-        />
+        <div class="min-w-[75%]">
+          <Input
+            v-model="sub.excludeProtocol"
+            placeholder="direct|mixed|socks|http..."
+            class="w-full"
+          />
+        </div>
       </div>
       <div class="form-item">
         {{ t('subscribe.proxyPrefix') }}
-        <Input v-model="sub.proxyPrefix" class="min-w-[75%]" />
+        <div class="min-w-[75%]">
+          <Input v-model="sub.proxyPrefix" class="w-full" />
+        </div>
       </div>
       <template v-if="isRemote">
         <div class="form-item">
           {{ t('subscribe.website') }}
-          <Input v-model="sub.website" placeholder="http(s)://" class="min-w-[75%]" />
+          <div class="min-w-[75%]">
+            <Input v-model="sub.website" placeholder="http(s)://" class="w-full" />
+          </div>
         </div>
         <div class="form-item">
           {{ t('subscribe.inSecure') }}

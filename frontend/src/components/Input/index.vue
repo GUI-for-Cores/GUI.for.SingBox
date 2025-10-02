@@ -5,7 +5,7 @@ import useI18n from '@/lang'
 import { debounce } from '@/utils'
 
 export interface Props {
-  modelValue: string | number
+  modelValue: string | number | undefined
   autoSize?: boolean
   placeholder?: string
   type?: 'number' | 'text' | 'code'
@@ -14,14 +14,11 @@ export interface Props {
   editable?: boolean
   clearable?: boolean
   autofocus?: boolean
-  width?: string
   min?: number
   max?: number
   disabled?: boolean
   border?: boolean
   delay?: number
-  pl?: string
-  pr?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,19 +29,18 @@ const props = withDefaults(defineProps<Props>(), {
   editable: false,
   autofocus: false,
   clearable: false,
-  width: '',
   disabled: false,
   border: true,
   delay: 0,
-  pl: '8px',
-  pr: '8px',
 })
 
 const emits = defineEmits(['update:modelValue', 'submit'])
 
 const showEdit = ref(false)
 const inputRef = useTemplateRef('inputRef')
-const innerClearable = computed(() => props.clearable && props.type !== 'code' && props.modelValue)
+const innerClearable = computed(
+  () => props.clearable && props.type !== 'code' && props.modelValue && !props.disabled,
+)
 
 const { t } = useI18n.global
 
@@ -97,26 +93,32 @@ defineExpose({
 
 <template>
   <div
+    v-bind="$attrs"
     :class="{
-      disabled,
-      border: (border && !editable) || showEdit,
+      border: border && (!editable || showEdit),
       'auto-size': autoSize,
-      'limit-width': !autoSize && (!editable || showEdit),
       'bg-color': !editable || showEdit,
+      'is-editable': editable && !showEdit,
       [size]: true,
+      disabled,
     }"
     :style="{
       height: type === 'code' ? '' : size === 'small' ? '26px' : '30px',
     }"
-    class="gui-input flex items-center rounded-4 overflow-hidden cursor-pointer"
+    class="gui-input inline-flex items-center rounded-4 cursor-pointer px-4"
   >
+    <div v-if="$slots.prefix" class="flex items-center shrink-0">
+      <slot name="prefix"></slot>
+    </div>
+    <Icon v-if="disabled" icon="forbidden" class="shrink-0" />
     <div
       v-if="editable && !showEdit"
       @click="showInput"
-      class="editable flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+      class="overflow-hidden whitespace-nowrap text-ellipsis"
     >
-      <Icon v-if="disabled" icon="forbidden" class="disabled shrink-0" />
-      {{ modelValue || t('common.none') }}
+      <slot name="editable" v-bind="{ value: modelValue }">
+        {{ modelValue || t('common.none') }}
+      </slot>
     </div>
     <template v-else>
       <CodeViewer
@@ -133,11 +135,6 @@ defineExpose({
         :value="modelValue"
         :placeholder="placeholder"
         :type="type"
-        :style="{
-          width: !autoSize ? '0' : width,
-          paddingLeft: pl,
-          paddingRight: clearable ? '0' : pr,
-        }"
         :disabled="disabled"
         @input="($event) => onInput($event)"
         @blur="onSubmit"
@@ -145,7 +142,7 @@ defineExpose({
         @keydown.esc.stop.prevent="inputRef?.blur"
         autocomplete="off"
         ref="inputRef"
-        class="flex-1 inline-block py-6 outline-none border-0 bg-transparent"
+        class="flex-1 inline-block py-6 outline-none border-0 bg-transparent w-0"
       />
       <Button
         v-if="innerClearable"
@@ -156,19 +153,16 @@ defineExpose({
         size="small"
       />
     </template>
-    <slot name="extra"></slot>
+    <div v-if="$slots.suffix" class="flex items-center shrink-0">
+      <slot name="suffix"></slot>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 .gui-input {
+  min-width: 220px;
   border: 1px solid transparent;
-  .editable {
-    max-width: 210px;
-    .disabled {
-      margin-bottom: -2px;
-    }
-  }
   input {
     color: var(--input-color);
   }
@@ -181,8 +175,9 @@ defineExpose({
   background: var(--input-bg);
 }
 
-.limit-width {
-  width: 210px;
+.is-editable {
+  min-width: 0;
+  max-width: 220px;
 }
 
 .auto-size {
@@ -190,6 +185,7 @@ defineExpose({
 }
 
 .disabled {
+  cursor: not-allowed;
   input {
     cursor: not-allowed;
   }

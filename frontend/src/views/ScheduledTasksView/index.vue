@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { DraggableOptions } from '@/constant/app'
+import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { View } from '@/enums/app'
 import { useAppSettingsStore, useScheduledTasksStore } from '@/stores'
 import { debounce, formatRelativeTime, formatDate, message } from '@/utils'
@@ -93,12 +93,10 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
   <div v-else class="grid-list-header">
     <Radio
       v-model="appSettingsStore.app.scheduledtasksView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List },
-      ]"
+      :options="ViewOptions"
+      class="mr-auto"
     />
-    <Button @click="handleShowTaskLogs()" type="text" class="ml-auto">
+    <Button @click="handleShowTaskLogs()" type="text">
       {{ t('scheduledtasks.logs') }}
     </Button>
     <Button @click="handleShowTaskForm()" type="primary" icon="add" class="ml-16">

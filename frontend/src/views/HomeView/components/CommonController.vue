@@ -20,7 +20,7 @@ const onInterfaceChange = (interface_name: string) =>
 <template>
   <div>
     <Divider class="w-full mb-8"> {{ t('home.overview.settingsTips') }} </Divider>
-    <div class="grid grid-cols-4 gap-8">
+    <div class="grid grid-cols-4 gap-8 pb-16">
       <Card :title="t('kernel.inbounds.mixedPort')">
         <Input
           v-model="kernelApiStore.config['mixed-port']"
@@ -31,6 +31,7 @@ const onInterfaceChange = (interface_name: string) =>
           :border="false"
           editable
           auto-size
+          class="w-full"
         />
       </Card>
       <Card :title="t('kernel.inbounds.httpPort')">
@@ -43,6 +44,7 @@ const onInterfaceChange = (interface_name: string) =>
           :border="false"
           editable
           auto-size
+          class="w-full"
         />
       </Card>
       <Card :title="t('kernel.inbounds.socksPort')">
@@ -55,6 +57,7 @@ const onInterfaceChange = (interface_name: string) =>
           editable
           :border="false"
           auto-size
+          class="w-full"
         />
       </Card>
       <Card :title="t('kernel.allow-lan')">
@@ -76,6 +79,7 @@ const onInterfaceChange = (interface_name: string) =>
           editable
           :border="false"
           auto-size
+          class="w-full"
         />
       </Card>
       <Card :title="t('kernel.route.default_interface')">

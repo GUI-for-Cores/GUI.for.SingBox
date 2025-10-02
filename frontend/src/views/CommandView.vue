@@ -101,23 +101,22 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     class="fixed z-9999 left-1/2 -translate-x-1/2 shadow rounded-4 min-w-[50%]"
     style="top: 40px; background: var(--modal-bg)"
   >
-    <div class="relative p-6 shadow z-9">
-      <Icon icon="arrowRight" class="absolute" style="top: 13px; left: 12px" />
+    <div class="p-6 shadow">
       <Input
         ref="inputRef"
         v-model="userInput"
         :disabled="loading"
-        auto-size
         autofocus
         clearable
-        pl="24px"
-      />
-      <Icon
-        v-show="loading"
-        icon="loading"
-        class="rotation absolute"
-        style="top: 13px; right: 38px"
-      />
+        class="w-full"
+      >
+        <template #prefix>
+          <Icon icon="arrowRight" />
+        </template>
+        <template #suffix>
+          <Icon v-show="loading" icon="loading" class="rotation" />
+        </template>
+      </Input>
     </div>
     <div class="overflow-y-auto p-8" style="max-height: calc(100vh - 130px)">
       <div

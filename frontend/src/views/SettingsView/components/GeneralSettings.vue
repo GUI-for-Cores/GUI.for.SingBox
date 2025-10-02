@@ -283,7 +283,7 @@ if (envStore.env.os === 'windows') {
             type="number"
             class="ml-4"
           >
-            <template #extra>
+            <template #suffix>
               <span class="ml-4">{{ t('settings.startup.delay') }}</span>
             </template>
           </Input>

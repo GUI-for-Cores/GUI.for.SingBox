@@ -13,7 +13,7 @@ import {
 import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { ignoredError, sleep, handleUseProxy, message, prompt, createAsyncPool } from '@/utils'
+import { ignoredError, sleep, handleUseProxy, message, createAsyncPool } from '@/utils'
 
 const expandedSet = ref<Set<string>>(new Set())
 const loadingSet = ref<Set<string>>(new Set())
@@ -42,7 +42,12 @@ const groups = computed(() => {
             proxies[proxy].all ||
             alive
           const keywords = filterKeywordsMap.value[group.name]
-          const condition2 = keywords ? new RegExp(keywords, 'i').test(proxy) : true
+          let condition2 = false
+          try {
+            condition2 = keywords ? new RegExp(keywords, 'i').test(proxy) : true
+          } catch {
+            condition2 = keywords ? proxy.includes(keywords) : true
+          }
           return condition1 && condition2
         })
         .map((proxy) => {
@@ -77,21 +82,6 @@ const toggleExpanded = (group: string) => {
   } else {
     expandedSet.value.add(group)
   }
-}
-
-const handleFilter = async (group: string) => {
-  const keywords =
-    (await ignoredError(prompt<string>, 'Tips', filterKeywordsMap.value[group], {
-      placeholder: 'keywords',
-    })) || ''
-  try {
-    new RegExp(keywords, 'i')
-  } catch {
-    message.error('Incorrect regular expression')
-    await handleFilter(group)
-    return
-  }
-  filterKeywordsMap.value[group] = keywords
 }
 
 const expandAll = () => groups.value.forEach(({ name }) => expandedSet.value.add(name))
@@ -244,7 +234,7 @@ onActivated(() => {
       class="sticky z-2 flex gap-8 items-center p-8 rounded-8 backdrop-blur-sm"
       style="top: 52px; background-color: var(--card-bg)"
     >
-      <div class="text-14 flex items-center gap-2">
+      <div class="text-14 flex items-center gap-2 text-nowrap overflow-hidden">
         <span class="font-bold text-18">{{ group.name }}</span>
         <span class="mx-8">
           {{ group.type }}
@@ -257,21 +247,29 @@ onActivated(() => {
           </Button>
         </template>
       </div>
-      <div class="ml-auto">
+      <div @click.stop class="ml-auto flex items-center">
+        <Input
+          v-model="filterKeywordsMap[group.name]"
+          :placeholder="t('common.keywords')"
+          editable
+          clearable
+        >
+          <template #editable>
+            <Button
+              type="text"
+              icon="filter"
+              :icon-color="isFiltered(group.name) ? 'var(--primary-color)' : ''"
+            />
+          </template>
+        </Input>
         <Button
-          @click.stop="handleFilter(group.name)"
-          type="text"
-          icon="filter"
-          :icon-color="isFiltered(group.name) ? 'var(--primary-color)' : ''"
-        />
-        <Button
-          @click.stop="handleGroupDelay(group.name)"
+          @click="handleGroupDelay(group.name)"
           v-tips="'home.overview.delayTest'"
           :loading="isLoading(group.name)"
           icon="speedTest"
           type="text"
         />
-        <Button @click.stop="toggleExpanded(group.name)" type="text">
+        <Button @click="toggleExpanded(group.name)" type="text">
           <Icon
             :class="{ 'action-expand-expanded': isExpanded(group.name) }"
             class="action-expand origin-center duration-200"

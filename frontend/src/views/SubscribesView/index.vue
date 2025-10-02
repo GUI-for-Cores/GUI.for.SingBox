@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { BrowserOpenURL, ClipboardSetText, RemoveFile } from '@/bridge'
-import { DraggableOptions } from '@/constant/app'
+import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { View } from '@/enums/app'
-import { useSubscribesStore, useAppSettingsStore, usePluginsStore } from '@/stores'
+import { useSubscribesStore, useAppSettingsStore, usePluginsStore, useAppStore } from '@/stores'
 import {
   formatBytes,
   formatRelativeTime,
@@ -54,6 +54,7 @@ const menuList: Menu[] = [
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
+const appStore = useAppStore()
 const subscribeStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
@@ -180,19 +181,16 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
             <Button @click="handleShowSubForm()" type="link">{{ t('common.add') }}</Button>
           </template>
         </I18nT>
+        <div class="flex items-center">
+          <CustomAction :actions="appStore.customActions.subscriptions_header" />
+        </div>
       </template>
     </Empty>
   </div>
 
   <div v-else class="grid-list-header">
-    <Radio
-      v-model="appSettingsStore.app.subscribesView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List },
-      ]"
-      class="mr-auto"
-    />
+    <Radio v-model="appSettingsStore.app.subscribesView" :options="ViewOptions" class="mr-auto" />
+    <CustomAction :actions="appStore.customActions.subscriptions_header" />
     <Button
       @click="handleUpdateSubs"
       :disabled="noUpdateNeeded"

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { RemoveFile, WriteFile, BrowserOpenURL } from '@/bridge'
-import { DraggableOptions } from '@/constant/app'
+import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { View } from '@/enums/app'
 import { RulesetFormat } from '@/enums/kernel'
@@ -162,14 +162,8 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
   </div>
 
   <div v-else class="grid-list-header">
-    <Radio
-      v-model="appSettingsStore.app.rulesetsView"
-      :options="[
-        { label: 'common.grid', value: View.Grid },
-        { label: 'common.list', value: View.List },
-      ]"
-    />
-    <Button @click="handleImportRuleset" type="link" class="ml-auto">
+    <Radio v-model="appSettingsStore.app.rulesetsView" :options="ViewOptions" class="mr-auto" />
+    <Button @click="handleImportRuleset" type="link">
       {{ t('rulesets.hub') }}
     </Button>
     <Button

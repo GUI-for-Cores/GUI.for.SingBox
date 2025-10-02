@@ -134,11 +134,15 @@ defineExpose({ modalSlots })
   <div>
     <div class="form-item">
       {{ t('scheduledtask.name') }} *
-      <Input v-model="task.name" autofocus class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="task.name" autofocus class="w-full" />
+      </div>
     </div>
     <div class="form-item">
       {{ t('scheduledtask.cron') }} *
-      <Input v-model="task.cron" :placeholder="t('scheduledtask.cronTips')" class="min-w-[75%]" />
+      <div class="min-w-[75%]">
+        <Input v-model="task.cron" :placeholder="t('scheduledtask.cronTips')" class="w-full" />
+      </div>
     </div>
     <div class="form-item">
       <div class="mr-8">{{ t('scheduledtask.type') }}</div>

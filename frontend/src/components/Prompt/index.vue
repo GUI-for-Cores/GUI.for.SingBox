@@ -46,8 +46,8 @@ const handleCancel = () => {
         :type="props.props.type || type"
         autofocus
         clearable
-        auto-size
         size="small"
+        class="w-full"
       />
       <div class="form-action gap-4">
         <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>

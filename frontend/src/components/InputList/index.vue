@@ -28,7 +28,7 @@ const handleDel = (i: number) => list.value.splice(i, 1)
 </script>
 
 <template>
-  <div class="inline-block rounded-4">
+  <div class="gui-input-list inline-block rounded-4">
     <div v-draggable="[list, DraggableOptions]" class="flex flex-col gap-2">
       <TransitionGroup name="list">
         <Card v-for="(l, i) in list" :key="i">
@@ -46,18 +46,21 @@ const handleDel = (i: number) => list.value.splice(i, 1)
       :placeholder="placeholder"
       @keydown.enter="handleAdd"
       type="text"
-      auto-size
+      clearable
       :autofocus="autofocus"
-      class="mt-4"
+      class="mt-4 w-full"
     >
-      <template #extra>
-        <Button @click="handleAdd" icon="add" size="small" type="primary" class="mr-4" />
+      <template #suffix>
+        <Button @click="handleAdd" icon="add" size="small" type="primary" />
       </template>
     </Input>
   </div>
 </template>
 
 <style lang="less" scoped>
+.gui-input-list {
+  min-width: 220px;
+}
 .list-enter-active,
 .list-leave-active {
   transition: all 0.2s ease;

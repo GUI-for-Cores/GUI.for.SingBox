@@ -19,6 +19,7 @@ const profilesStore = useProfilesStore()
 const appSettingsStore = useAppSettingsStore()
 
 const url = ref('')
+const name = ref('')
 const loading = ref(false)
 
 const handleCancel = inject('cancel') as any
@@ -27,9 +28,13 @@ const handleSubmit = inject('submit') as any
 const handleSave = async () => {
   const subscribeID = sampleID()
 
+  if (!name.value) {
+    name.value = sampleID()
+  }
+
   const subscribe: Subscription = {
     id: subscribeID,
-    name: subscribeID,
+    name: name.value,
     url: url.value,
     upload: 0,
     download: 0,
@@ -70,7 +75,7 @@ const handleSave = async () => {
 
   const profile: IProfile = {
     id: sampleID(),
-    name: sampleID(),
+    name: name.value,
     log: Defaults.DefaultLog(),
     experimental: Defaults.DefaultExperimental(),
     inbounds: Defaults.DefaultInbounds(),
@@ -122,7 +127,8 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div>
-    <Input v-model="url" auto-size placeholder="http(s)://" autofocus clearable />
+  <div class="flex gap-4">
+    <Input v-model="name" :placeholder="$t('profile.name')" auto-size clearable class="w-[25%]" />
+    <Input v-model="url" placeholder="http(s)://" autofocus clearable class="w-[75%]" />
   </div>
 </template>

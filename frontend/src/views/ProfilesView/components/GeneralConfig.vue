@@ -50,13 +50,16 @@ const [showMore, toggleMore] = useBool(false)
     <div class="form-item">
       {{ t('kernel.clash_api.secret') }}
       <div class="flex items-center">
-        <Input v-model="model.experimental.clash_api.secret" editable />
-        <Button
-          @click="() => (model.experimental.clash_api.secret = generateSecureKey())"
-          type="text"
-          size="small"
-          icon="refresh"
-        />
+        <Input v-model="model.experimental.clash_api.secret" editable>
+          <template #suffix>
+            <Button
+              @click="() => (model.experimental.clash_api.secret = generateSecureKey())"
+              type="text"
+              size="small"
+              icon="refresh"
+            />
+          </template>
+        </Input>
       </div>
     </div>
     <Divider>
