@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ]
+  }
+}

@@ -11,11 +11,11 @@ const Icons: IconFuncType = import.meta.glob('./*Icon.vue', { eager: true })
 
 const IconsMap: Record<string, Component> = {}
 
-for (const path in Icons) {
-  let name = path.slice(2, path.length - 8)
-  name = name.replace(name[0], name[0].toLowerCase())
-  IconsMap[name] = Icons[path].default
-}
+Object.entries(Icons).forEach(([path, comp]) => {
+  const name = path.slice(2, path.length - 8)
+  const key = name.replace(name[0]!, name[0]!.toLowerCase())
+  IconsMap[key] = comp.default
+})
 
 interface Props {
   icon: IconType

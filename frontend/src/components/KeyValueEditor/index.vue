@@ -29,7 +29,7 @@ watch(
   ([keys, values]) => {
     const obj = keys.reduce(
       (obj, key, index) => {
-        obj[key] = values[index]
+        obj[key] = values[index]!
         return obj
       },
       {} as Record<string, string>,

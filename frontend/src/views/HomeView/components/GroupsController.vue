@@ -34,12 +34,12 @@ const groups = computed(() => {
     .map((group) => {
       const all = (group.all || [])
         .filter((proxy) => {
-          const history = proxies[proxy].history || []
-          const alive = history[history.length - 1]?.delay > 0
+          const history = proxies[proxy]?.history || []
+          const alive = (history[history.length - 1]?.delay ?? 0) > 0
           const condition1 =
             appSettings.app.kernel.unAvailable ||
             ['direct', 'block'].includes(proxy) ||
-            proxies[proxy].all ||
+            proxies[proxy]?.all ||
             alive
           const keywords = filterKeywordsMap.value[group.name]
           let condition2 = false
@@ -51,9 +51,9 @@ const groups = computed(() => {
           return condition1 && condition2
         })
         .map((proxy) => {
-          const history = proxies[proxy].history || []
+          const history = proxies[proxy]?.history || []
           const delay = history[history.length - 1]?.delay || 0
-          return { ...proxies[proxy], delay }
+          return { ...proxies[proxy]!, delay }
         })
         .sort((a, b) => {
           if (!appSettings.app.kernel.sortByDelay || a.delay === b.delay) return 0
@@ -107,15 +107,15 @@ const handleGroupDelay = async (group: string) => {
       const _proxy = kernelApiStore.proxies[proxy]
       try {
         loadingSet.value.add(proxy)
-        const { delay } = await getProxyDelay(
+        const { delay = 0 } = await getProxyDelay(
           encodeURIComponent(proxy),
           appSettings.app.kernel.testUrl || DefaultTestURL,
         )
         success += 1
-        _proxy.history.push({ delay })
+        _proxy && _proxy.history.push({ delay })
       } catch {
         failure += 1
-        _proxy.history.push({ delay: 0 })
+        _proxy && _proxy.history.push({ delay: 0 })
       }
       update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
       loadingSet.value.delete(proxy)
@@ -148,12 +148,12 @@ const handleGroupDelay = async (group: string) => {
 const handleProxyDelay = async (proxy: string) => {
   loadingSet.value.add(proxy)
   try {
-    const { delay } = await getProxyDelay(
+    const { delay = 0 } = await getProxyDelay(
       encodeURIComponent(proxy),
       appSettings.app.kernel.testUrl || DefaultTestURL,
     )
     const _proxy = kernelApiStore.proxies[proxy]
-    _proxy.history.push({ delay })
+    _proxy && _proxy.history.push({ delay })
   } catch (error: any) {
     message.error(error + ': ' + proxy)
   }
@@ -170,7 +170,7 @@ const handleRefresh = async () => {
 
 const locateGroup = (group: any, chain: string) => {
   collapseAll()
-  if (kernelApiStore.proxies[chain].all) {
+  if (kernelApiStore.proxies[chain]?.all) {
     toggleExpanded(kernelApiStore.proxies[chain].name)
   } else {
     toggleExpanded(group.name)

@@ -50,7 +50,7 @@ const handleAddEnd = () => {
 
 const handleEdit = (index: number) => {
   ruleId = index
-  fields.value = deepClone(model.value[index])
+  fields.value = deepClone(model.value[index]!)
   showEditModal.value = true
 }
 

@@ -116,27 +116,27 @@ const onComponentChange = (component: ComponentType, index: number) => {
   switch (component) {
     case 'CheckBox':
     case 'InputList': {
-      plugin.value.configuration[index].value = []
-      plugin.value.configuration[index].options = []
+      plugin.value.configuration[index]!.value = []
+      plugin.value.configuration[index]!.options = []
       break
     }
     case 'CodeViewer':
     case 'Input':
     case 'Radio':
     case 'Select': {
-      plugin.value.configuration[index].value = ''
+      plugin.value.configuration[index]!.value = ''
       break
     }
     case 'KeyValueEditor': {
-      plugin.value.configuration[index].value = {}
+      plugin.value.configuration[index]!.value = {}
       break
     }
     case 'Switch': {
-      plugin.value.configuration[index].value = false
+      plugin.value.configuration[index]!.value = false
       break
     }
   }
-  plugin.value.configuration[index].component = component
+  plugin.value.configuration[index]!.component = component
 }
 
 const getOptions = (val: string[]) => {

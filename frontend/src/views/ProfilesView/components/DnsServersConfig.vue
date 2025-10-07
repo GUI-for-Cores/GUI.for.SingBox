@@ -103,7 +103,7 @@ const onAddEnd = async (server: IDNSServer) => {
 
 const handleEdit = (index: number) => {
   serverId = index
-  fields.value = deepClone(model.value[index])
+  fields.value = deepClone(model.value[index]!)
   showEditModal.value = true
 }
 

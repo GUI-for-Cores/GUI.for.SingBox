@@ -169,7 +169,7 @@ const onEditEnd = async () => {
   if (allFieldsProxiesIdx !== -1 && subProxiesIdx !== -1) {
     allFieldsProxies.value.splice(allFieldsProxiesIdx, 1, proxy)
     sub.value.proxies.splice(subProxiesIdx, 1, {
-      ...sub.value.proxies[subProxiesIdx],
+      ...sub.value.proxies[subProxiesIdx]!,
       tag: proxy.tag,
     })
   } else {

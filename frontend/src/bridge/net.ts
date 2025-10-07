@@ -43,7 +43,7 @@ const mergeRequestOptions = async (options: Request['options']) => {
 
 const transformResponseHeaders = (headers: Record<string, string[]>): Response['headers'] => {
   return Object.fromEntries(
-    Object.entries(headers).map(([key, value]) => [key, value.length > 1 ? value : value[0]]),
+    Object.entries(headers).map(([key, value]) => [key, value.length > 1 ? value : value[0]!]),
   )
 }
 

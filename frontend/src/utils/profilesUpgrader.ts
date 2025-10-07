@@ -314,7 +314,7 @@ export const transformProfileV189To190 = (config: Recordable) => {
         } else if (rule.type === 'fakeip') {
           extra.type = RuleType.Inline
           const fakeip = DefaultFakeIPDnsRule()
-          fakeip.rules[0].domain_suffix = config.dnsConfig['fake-ip-filter']
+          fakeip.rules[0]!.domain_suffix = config.dnsConfig['fake-ip-filter']
           extra.payload = JSON.stringify(fakeip, null, 2)
           extra.server = 'fakeip'
         } else {

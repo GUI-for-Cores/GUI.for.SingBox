@@ -139,11 +139,11 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
           }
           if (proxy.type === 'Subscription') {
             _outbound.outbounds.push(
-              ...SubscriptionCache[subId].map((v) => v.tag).filter((tag) => isTagMatching(tag)),
+              ...SubscriptionCache[subId]!.map((v) => v.tag).filter((tag) => isTagMatching(tag)),
             )
-            SubscriptionCache[subId].forEach((v) => proxiesSet.add(v))
+            SubscriptionCache[subId]!.forEach((v) => proxiesSet.add(v))
           } else {
-            const _proxy = SubscriptionCache[subId].find((v) => v.tag === proxy.tag)
+            const _proxy = SubscriptionCache[subId]!.find((v) => v.tag === proxy.tag)
             if (_proxy && isTagMatching(_proxy.tag)) {
               _outbound.outbounds.push(_proxy.tag)
               proxiesSet.add(_proxy)

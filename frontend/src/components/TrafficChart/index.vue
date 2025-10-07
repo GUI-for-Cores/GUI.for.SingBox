@@ -30,8 +30,8 @@ const strokeColors = computed(() => {
 })
 
 const maxValue = computed(() => {
-  const maxUpload = Math.max(...props.series[0], props.height)
-  const maxDownload = Math.max(...props.series[1], props.height)
+  const maxUpload = Math.max(...props.series[0]!, props.height)
+  const maxDownload = Math.max(...props.series[1]!, props.height)
   if (showLines.value[0] && showLines.value[1]) return Math.max(maxUpload, maxDownload)
   if (showLines.value[0]) return maxUpload
   if (showLines.value[1]) return maxDownload

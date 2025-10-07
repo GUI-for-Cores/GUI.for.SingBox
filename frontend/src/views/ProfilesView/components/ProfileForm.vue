@@ -52,7 +52,7 @@ const stepItems = [
   { title: 'profile.step.route' },
   { title: 'profile.step.dns' },
   { title: 'profile.step.mixin-script' },
-]
+] as const
 
 const profile = ref<IProfile>({
   id: sampleID(),
@@ -130,7 +130,7 @@ const handleAdd = () => {
     [Step.Route]: routeRef,
     [Step.Dns]: dnsRef,
   }
-  map[currentStep.value].value.handleAdd()
+  map[currentStep.value]!.value.handleAdd()
 }
 
 const handlePreview = async () => {
@@ -161,7 +161,7 @@ const modalSlots = {
             {
               class: 'font-bold',
             },
-            `${t(stepItems[currentStep.value].title)} （${currentStep.value + 1} / ${stepItems.length}）`,
+            `${t(stepItems[currentStep.value]!.title)} （${currentStep.value + 1} / ${stepItems.length}）`,
           ),
         overlay: () =>
           h(

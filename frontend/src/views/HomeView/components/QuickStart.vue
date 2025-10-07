@@ -86,8 +86,10 @@ const handleSave = async () => {
     script: Defaults.DefaultScript(),
   }
 
-  profile.outbounds[0].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
-  profile.outbounds[1].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
+  if (profile.outbounds[0] && profile.outbounds[1]) {
+    profile.outbounds[0].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
+    profile.outbounds[1].outbounds.push({ id: subscribeID, tag: subscribeID, type: 'Subscription' })
+  }
 
   await profilesStore.addProfile(profile)
 

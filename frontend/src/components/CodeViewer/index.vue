@@ -50,7 +50,7 @@ const onChange = debounce((content: string) => {
 
 const formatDoc = async (view: EditorView) => {
   const content = view.state.doc.toString()
-  const cursor = view.state.selection.ranges[0].from
+  const cursor = view.state.selection.ranges[0]?.from || 0
   try {
     const parser = { javascript: 'babel', yaml: 'yaml', json: 'json' }[props.lang]
     const plugins = {

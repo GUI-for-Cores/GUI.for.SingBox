@@ -77,7 +77,7 @@ export const ReadDir = async (path: string) => {
     .split('|')
     .filter((v) => v)
     .map((v) => {
-      const [name, size, isDir] = v.split(',')
+      const [name, size, isDir] = v.split(',') as [string, string, string]
       return { name, size: Number(size), isDir: isDir === 'true' }
     })
 }

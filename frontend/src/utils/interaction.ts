@@ -60,8 +60,8 @@ class Message {
       const id = sampleID()
       const dom = document.createElement('div')
 
-      const onMouseEnter = () => clearTimeout(this.instances[id].timer)
-      const onMouseLeave = () => (this.instances[id].timer = setTimeout(onDestroy, duration))
+      const onMouseEnter = () => clearTimeout(this.instances[id]!.timer)
+      const onMouseLeave = () => (this.instances[id]!.timer = setTimeout(onDestroy, duration))
 
       const onDestroy = () => {
         dom.removeEventListener('mouseenter', onMouseEnter)

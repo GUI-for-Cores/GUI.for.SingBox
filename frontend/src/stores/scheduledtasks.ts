@@ -112,7 +112,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const deleteScheduledTask = async (id: string) => {
     const idx = scheduledtasks.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const backup = scheduledtasks.value.splice(idx, 1)[0]
+    const backup = scheduledtasks.value.splice(idx, 1)[0]!
     try {
       await saveScheduledTasks()
       cronJobsMap[id]?.stop()
@@ -126,7 +126,7 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
   const editScheduledTask = async (id: string, s: ScheduledTask) => {
     const idx = scheduledtasks.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const backup = scheduledtasks.value.splice(idx, 1, s)[0]
+    const backup = scheduledtasks.value.splice(idx, 1, s)[0]!
     try {
       await saveScheduledTasks()
       cronJobsMap[id]?.stop()

@@ -30,19 +30,19 @@ export class WebSockets {
       query && (url += '?' + query)
 
       const open = () => {
-        if (!wsMap[name].ready) return
+        if (!wsMap[name]!.ready) return
         const ws = new WebSocket(this.base + url)
         ws.onmessage = (e) => cb(JSON.parse(e.data))
-        ws.onerror = () => (wsMap[name].ready = true)
-        ws.onclose = () => (wsMap[name].ready = true)
-        wsMap[name].close = () => {
+        ws.onerror = () => (wsMap[name]!.ready = true)
+        ws.onclose = () => (wsMap[name]!.ready = true)
+        wsMap[name]!.close = () => {
           ws.close()
-          wsMap[name].ready = true
+          wsMap[name]!.ready = true
         }
-        wsMap[name].ready = false
+        wsMap[name]!.ready = false
       }
 
-      wsMap[name] = { ready: true, open, close: () => (wsMap[name].ready = false) }
+      wsMap[name] = { ready: true, open, close: () => (wsMap[name]!.ready = false) }
     })
 
     return {

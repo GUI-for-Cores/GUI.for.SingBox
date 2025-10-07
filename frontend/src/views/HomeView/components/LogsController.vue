@@ -10,12 +10,12 @@ import { addToRuleSet, isValidIPv4, isValidIPv6, message, picker } from '@/utils
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Menu } from '@/types/app'
 
-const logType = ref('info')
+const logType = ref<'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'panic'>('info')
 const keywords = ref('')
 const logs = ref<{ type: string; payload: string }[]>([])
 const keywordsRegexp = computed(() => new RegExp(keywords.value))
 
-const LogLevelMap: Record<string, string[]> = {
+const LogLevelMap = {
   trace: ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'panic'],
   debug: ['debug', 'info', 'warn', 'error', 'fatal', 'panic'],
   info: ['info', 'warn', 'error', 'fatal', 'panic'],
@@ -59,6 +59,7 @@ const menus: Menu[] = (
       matches.forEach((match: string) => {
         // FIXME: IPv6
         const address = match.split(':')[0]
+        if (!address) return
         if (isValidIPv4(address) || isValidIPv6(address)) {
           options.push({
             label: t('kernel.rules.type.ip_cidr'),

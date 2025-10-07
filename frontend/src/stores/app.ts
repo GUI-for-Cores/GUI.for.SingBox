@@ -52,14 +52,14 @@ export const useAppStore = defineStore('app', () => {
   const modalZIndexCounter = 999
 
   /* Actions */
-  const customActions = ref<Recordable<(CustomAction | CustomActionFn)[]>>({
-    core_state: [],
-    title_bar: [],
-    profiles_header: [],
-    subscriptions_header: [],
+  const customActions = ref({
+    core_state: [] as (CustomAction | CustomActionFn)[],
+    title_bar: [] as (CustomAction | CustomActionFn)[],
+    profiles_header: [] as (CustomAction | CustomActionFn)[],
+    subscriptions_header: [] as (CustomAction | CustomActionFn)[],
   })
   const addCustomActions = (
-    target: string,
+    target: keyof typeof customActions.value,
     actions: CustomAction | CustomAction[] | CustomActionFn | CustomActionFn[],
   ) => {
     if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
@@ -73,7 +73,7 @@ export const useAppStore = defineStore('app', () => {
     }
     return remove
   }
-  const removeCustomActions = (target: string, id: string | string[]) => {
+  const removeCustomActions = (target: keyof typeof customActions.value, id: string | string[]) => {
     if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
     const ids = Array.isArray(id) ? id : [id]
     customActions.value[target] = customActions.value[target].filter((a) => !ids.includes(a.id!))

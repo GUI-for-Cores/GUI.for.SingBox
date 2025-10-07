@@ -8,7 +8,7 @@ type TabItemType = {
 
 interface Props {
   activeKey: string
-  items: TabItemType[]
+  items: readonly TabItemType[]
   height?: string
   tabPosition?: 'left' | 'top'
 }

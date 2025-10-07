@@ -82,18 +82,18 @@ export const usePluginsStore = defineStore('plugins', () => {
     const list = await ignoredError(ReadFile, PluginHubFilePath)
     list && (pluginHub.value = JSON.parse(list))
 
-    for (let i = 0; i < plugins.value.length; i++) {
-      const { id, triggers, path, context, hasUI, tags } = plugins.value[i]
+    for (const plugin of plugins.value) {
+      const { id, triggers, path, context, hasUI, tags } = plugin
       const code = await ignoredError(ReadFile, path)
       if (code) {
-        PluginsCache[id] = { plugin: plugins.value[i], code }
+        PluginsCache[id] = { plugin, code }
         triggers.forEach((trigger) => {
           PluginsTriggerMap[trigger].observers.push(id)
         })
       }
 
       if (!context) {
-        plugins.value[i].context = {
+        plugin.context = {
           profiles: {},
           subscriptions: {},
           rulesets: {},
@@ -103,11 +103,11 @@ export const usePluginsStore = defineStore('plugins', () => {
       }
 
       if (hasUI === undefined) {
-        plugins.value[i].hasUI = false
+        plugin.hasUI = false
       }
 
       if (tags === undefined) {
-        plugins.value[i].tags = []
+        plugin.tags = []
       }
     }
 
@@ -122,12 +122,16 @@ export const usePluginsStore = defineStore('plugins', () => {
     let configuration = appSettingsStore.app.pluginSettings[plugin.id]
     if (!configuration) {
       configuration = {}
-      plugin.configuration.forEach(({ key, value }) => (configuration[key] = value))
+      for (const [key, value] of Object.entries(plugin.configuration)) {
+        configuration[key] = value
+      }
     }
     return { ...plugin, ...configuration }
   }
 
-  const isPluginUnavailable = (cache: any) => {
+  const isPluginUnavailable = (
+    cache: undefined | { plugin: Plugin; code: string },
+  ): cache is undefined => {
     return (
       !cache ||
       !cache.plugin ||
@@ -180,7 +184,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   const deletePlugin = async (id: string) => {
     const idx = plugins.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const plugin = plugins.value.splice(idx, 1)[0]
+    const plugin = plugins.value.splice(idx, 1)[0]!
     try {
       await savePlugins()
       delete PluginsCache[id]
@@ -201,7 +205,7 @@ export const usePluginsStore = defineStore('plugins', () => {
   const editPlugin = async (id: string, newPlugin: Plugin) => {
     const idx = plugins.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const plugin = plugins.value.splice(idx, 1, newPlugin)[0]
+    const plugin = plugins.value.splice(idx, 1, newPlugin)[0]!
     try {
       await savePlugins()
       updatePluginTrigger(newPlugin)
@@ -333,9 +337,8 @@ export const usePluginsStore = defineStore('plugins', () => {
 
     let result = proxies
 
-    for (let i = 0; i < observers.length; i++) {
-      const pluginId = observers[i]
-      const cache = PluginsCache[pluginId]
+    for (const observer of observers) {
+      const cache = PluginsCache[observer]
 
       if (isPluginUnavailable(cache)) continue
 
@@ -362,9 +365,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     const { fnName, observers } = PluginsTriggerMap[trigger]
     if (observers.length === 0) return
 
-    for (let i = 0; i < observers.length; i++) {
-      const pluginId = observers[i]
-      const cache = PluginsCache[pluginId]
+    for (const observer of observers) {
+      const cache = PluginsCache[observer]
 
       if (isPluginUnavailable(cache)) continue
 
@@ -392,9 +394,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnGenerate]
     if (observers.length === 0) return params
 
-    for (let i = 0; i < observers.length; i++) {
-      const pluginId = observers[i]
-      const cache = PluginsCache[pluginId]
+    for (const observer of observers) {
+      const cache = PluginsCache[observer]
 
       if (isPluginUnavailable(cache)) continue
 
@@ -418,9 +419,8 @@ export const usePluginsStore = defineStore('plugins', () => {
     const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnBeforeCoreStart]
     if (observers.length === 0) return params
 
-    for (let i = 0; i < observers.length; i++) {
-      const pluginId = observers[i]
-      const cache = PluginsCache[pluginId]
+    for (const observer of observers) {
+      const cache = PluginsCache[observer]
 
       if (isPluginUnavailable(cache)) continue
 

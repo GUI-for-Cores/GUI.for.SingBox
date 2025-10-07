@@ -10,9 +10,9 @@ const Components = import.meta.glob<Component>('./*/index.vue', {
 
 export default {
   install: (app: App) => {
-    for (const path in Components) {
-      const name = path.split('/')[1]
-      app.component(name, Components[path])
-    }
+    Object.entries(Components).forEach(([path, comp]) => {
+      const name = (path.split('/') as [string, string])[1]
+      app.component(name, comp)
+    })
   },
 } as Plugin

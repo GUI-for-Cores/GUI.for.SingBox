@@ -134,7 +134,7 @@ async function setDarwinSystemProxy(server: string, enabled: boolean, proxyType:
       socksState,
     ])
 
-    const [serverName, serverPort] = server.split(':')
+    const [serverName, serverPort] = server.split(':') as [string, string]
 
     const promises = [p1, p2, p3]
     if (httpState === 'on') {
@@ -170,7 +170,7 @@ async function setDarwinSystemProxy(server: string, enabled: boolean, proxyType:
 }
 
 async function setLinuxSystemProxy(server: string, enabled: boolean, proxyType: ProxyType) {
-  const [serverName, serverPort] = server.split(':')
+  const [serverName, serverPort] = server.split(':') as [string, string]
   const httpEnabled = enabled && ['mixed', 'http'].includes(proxyType)
   const socksEnabled = enabled && ['mixed', 'socks'].includes(proxyType)
 
@@ -287,7 +287,7 @@ export const GetSystemProxy = async () => {
       const regex = /ProxyServer\s+REG_SZ\s+(\S+)/
       const match = out2.match(regex)
 
-      return match ? (match[1].startsWith('socks') ? match[1] : 'http://' + match[1]) : ''
+      return match ? (match?.[1]?.startsWith('socks') ? match[1] : 'http://' + match[1]) : ''
     }
 
     if (os === 'darwin') {
@@ -298,8 +298,8 @@ export const GetSystemProxy = async () => {
       let match
 
       while ((match = regex.exec(out)) !== null) {
-        const value = match[1].trim()
-        const key = match[0].split(':')[0].trim()
+        const value = match[1]?.trim()
+        const key = (match[0].split(':') as [string, string])[0].trim()
         map[key] = value
       }
 

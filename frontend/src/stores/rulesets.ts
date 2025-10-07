@@ -61,7 +61,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const deleteRuleset = async (id: string) => {
     const idx = rulesets.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const backup = rulesets.value.splice(idx, 1)[0]
+    const backup = rulesets.value.splice(idx, 1)[0]!
     try {
       await saveRulesets()
     } catch (error) {
@@ -73,7 +73,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const editRuleset = async (id: string, r: RuleSet) => {
     const idx = rulesets.value.findIndex((v) => v.id === id)
     if (idx === -1) return
-    const backup = rulesets.value.splice(idx, 1, r)[0]
+    const backup = rulesets.value.splice(idx, 1, r)[0]!
     try {
       await saveRulesets()
     } catch (error) {

@@ -26,7 +26,11 @@ const proxyGroup = ref([
   {
     id: 'Subscription',
     name: 'kernel.outbounds.subscriptions',
-    proxies: [],
+    proxies: [] as {
+      id: string
+      tag: string
+      type: string
+    }[],
   },
 ])
 
@@ -44,7 +48,7 @@ const handleAdd = () => {
 defineExpose({ handleAdd })
 
 const handleDeleteGroup = (index: number) => {
-  const id = model.value[index].id
+  const id = model.value[index]!.id
   model.value.splice(index, 1)
   proxyGroup.value = proxyGroup.value.map((v) => ({
     ...v,
@@ -71,14 +75,14 @@ const handleAddEnd = () => {
   // Add
   if (updateGroupId === -1) {
     model.value.unshift(fields.value)
-    proxyGroup.value[0].proxies.unshift({ id, tag, type })
+    proxyGroup.value[0]!.proxies.unshift({ id, tag, type })
     return
   }
   // Update
   model.value[updateGroupId] = fields.value
-  const idx = proxyGroup.value[0].proxies.findIndex((v) => v.id === id)
+  const idx = proxyGroup.value[0]!.proxies.findIndex((v) => v.id === id)
   if (idx !== -1) {
-    proxyGroup.value[0].proxies.splice(idx, 1, { id, tag, type })
+    proxyGroup.value[0]!.proxies.splice(idx, 1, { id, tag, type })
     model.value
       .filter((outbound) => [Outbound.Selector, Outbound.Urltest].includes(outbound.type as any))
       .forEach(({ outbounds }) => {
@@ -90,7 +94,7 @@ const handleAddEnd = () => {
 
 const handleEditGroup = (index: number) => {
   updateGroupId = index
-  fields.value = deepClone(model.value[index])
+  fields.value = deepClone(model.value[index]!)
   showEditModal.value = true
 }
 
@@ -130,7 +134,7 @@ const hasLost = (outbound: IOutbound) => {
 
 const handleSortGroup = (index: number) => {
   updateGroupId = index
-  fields.value = deepClone(model.value[index])
+  fields.value = deepClone(model.value[index]!)
   showSortModal.value = true
 }
 
@@ -174,7 +178,7 @@ const showLost = () => message.warn('kernel.outbounds.notFound')
 const showNeedToAdd = () => message.error('kernel.outbounds.needToAdd')
 
 subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
-  proxyGroup.value[1].proxies.push({ id, tag: name, type: 'Subscribe' })
+  proxyGroup.value[1]!.proxies.push({ id, tag: name, type: 'Subscribe' })
   proxyGroup.value.push({ id, name, proxies })
   SubscribesNameMap.value[id] = name
 })

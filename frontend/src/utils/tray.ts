@@ -91,17 +91,17 @@ const getTrayMenus = () => {
       .map((group) => {
         const all = (group.all || [])
           .filter((proxy) => {
-            const history = proxies[proxy].history || []
-            const alive = history[history.length - 1]?.delay > 0
+            const history = proxies[proxy]?.history || []
+            const alive = (history[history.length - 1]?.delay || 0) > 0
             return (
               appSettings.app.kernel.unAvailable ||
               ['direct', 'block'].includes(proxy) ||
-              proxies[proxy].all ||
+              proxies[proxy]?.all ||
               alive
             )
           })
           .map((proxy) => {
-            const history = proxies[proxy].history || []
+            const history = proxies[proxy]?.history || []
             const delay = history[history.length - 1]?.delay || 0
             return { ...proxies[proxy], delay }
           })

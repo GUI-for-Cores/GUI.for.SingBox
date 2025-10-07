@@ -39,7 +39,7 @@ const getRulesetUrlAndSuffix = (ruleset: RuleSetHub['list'][number], format: Rul
     geosite: rulesetsStore.rulesetHub.geosite,
     geoip: rulesetsStore.rulesetHub.geoip,
   }[ruleset.type]
-  return [basrUrl + ruleset.name + suffix, suffix]
+  return [basrUrl + ruleset.name + suffix, suffix] as const
 }
 
 const handleAddRuleset = async (ruleset: RuleSetHub['list'][number], format: RulesetFormat) => {
