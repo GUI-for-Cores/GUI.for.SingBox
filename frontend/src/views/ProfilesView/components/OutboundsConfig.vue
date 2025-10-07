@@ -26,11 +26,7 @@ const proxyGroup = ref([
   {
     id: 'Subscription',
     name: 'kernel.outbounds.subscriptions',
-    proxies: [] as {
-      id: string
-      tag: string
-      type: string
-    }[],
+    proxies: [],
   },
 ])
 
