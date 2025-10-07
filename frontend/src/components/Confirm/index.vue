@@ -109,6 +109,7 @@ marked.use({
 
 const mountCustomComp = (containerId: string, comp: VNode) => {
   let count = 0
+  comp.appContext = window.appInstance._context
   const tryToMount = () => {
     if (count >= 3) return
     count += 1
