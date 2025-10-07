@@ -120,9 +120,11 @@ const getCoreMemoryUsage = async (fallback: number) => {
 
 const unregisterMemoryHandler = kernelApiStore.onMemory(async (data) => {
   statistics.value.inuse = data.inuse
-  getCoreMemoryUsage(statistics.value.memUsage || data.inuse).then((usage) => {
-    statistics.value.memUsage = usage
-  })
+  if (appSettings.app.kernel.realMemoryUsage) {
+    getCoreMemoryUsage(statistics.value.memUsage || data.inuse).then((usage) => {
+      statistics.value.memUsage = usage
+    })
+  }
 })
 
 const unregisterTrafficHandler = kernelApiStore.onTraffic((data) => {
