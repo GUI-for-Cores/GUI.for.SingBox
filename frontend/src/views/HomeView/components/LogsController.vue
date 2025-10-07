@@ -33,14 +33,16 @@ const filteredLogs = computed(() => {
   })
 })
 
-const menus: Menu[] = [
-  ['home.connections.addToDirect', 'direct'],
-  ['home.connections.addToProxy', 'proxy'],
-  ['home.connections.addToReject', 'reject'],
-].map(([label, ruleset]) => {
+const menus: Menu[] = (
+  [
+    ['home.connections.addToDirect', 'direct'],
+    ['home.connections.addToProxy', 'proxy'],
+    ['home.connections.addToReject', 'reject'],
+  ] as const
+).map(([label, ruleset]) => {
   return {
     label,
-    handler: async ({ type, payload }: any) => {
+    handler: async ({ type, payload }) => {
       if (type !== 'info') {
         message.error('Not Support')
         return
@@ -75,7 +77,7 @@ const menus: Menu[] = [
       const payloads = await picker.multi('rulesets.selectRuleType', options)
 
       try {
-        await addToRuleSet(ruleset as any, payloads)
+        await addToRuleSet(ruleset, payloads)
         message.success('common.success')
       } catch (error: any) {
         message.error(error)

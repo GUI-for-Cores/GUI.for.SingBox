@@ -1,6 +1,7 @@
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
 import { AbsolutePath, Exec, ExitApp, ReadFile, WriteFile } from '@/bridge'
 import { CoreWorkingDirectory } from '@/constant/kernel'
+import { RulesetFormat } from '@/enums/kernel'
 import i18n from '@/lang'
 import {
   type ProxyType,
@@ -9,6 +10,7 @@ import {
   useEnvStore,
   useKernelApiStore,
   usePluginsStore,
+  useRulesetsStore,
 } from '@/stores'
 import { ignoredError, message, confirm } from '@/utils'
 
@@ -449,10 +451,27 @@ export const handleChangeMode = async (mode: 'direct' | 'global' | 'rule') => {
 }
 
 export const addToRuleSet = async (
-  ruleset: 'direct' | 'reject' | 'block',
+  id: 'direct' | 'reject' | 'proxy',
   payloads: Record<string, any>[],
 ) => {
-  const path = `data/rulesets/${ruleset}.json`
+  const path = `data/rulesets/${id}.json`
+
+  const rulesetsStoe = useRulesetsStore()
+  const ruleset = rulesetsStoe.getRulesetById(id)
+  if (!ruleset) {
+    rulesetsStoe.addRuleset({
+      id,
+      tag: id,
+      updateTime: Date.now(),
+      type: 'Manual',
+      format: RulesetFormat.Source,
+      url: '',
+      path,
+      count: payloads.length,
+      disabled: false,
+    })
+  }
+
   const content = (await ignoredError(ReadFile, path)) || '{ "version": 1, "rules": [] }'
   const { rules = [] } = JSON.parse(content)
   rules[0] = rules[0] || {}

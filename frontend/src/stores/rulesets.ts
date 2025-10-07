@@ -50,7 +50,10 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     try {
       await saveRulesets()
     } catch (error) {
-      rulesets.value.pop()
+      const idx = rulesets.value.indexOf(r)
+      if (idx !== -1) {
+        rulesets.value.splice(idx, 1)
+      }
       throw error
     }
   }
