@@ -122,7 +122,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     let configuration = appSettingsStore.app.pluginSettings[plugin.id]
     if (!configuration) {
       configuration = {}
-      for (const [key, value] of Object.entries(plugin.configuration)) {
+      for (const { key, value } of plugin.configuration) {
         configuration[key] = value
       }
     }
