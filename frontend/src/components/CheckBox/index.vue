@@ -1,21 +1,30 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
+  modelValue?: string[]
   options?: { label: string; value: string }[]
   size?: 'default' | 'small'
 }
 
-const model = defineModel<string[]>({ default: [] })
-
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => [],
   options: () => [],
   size: 'default',
 })
 
-const emits = defineEmits(['change'])
+const emit = defineEmits(['change', 'update:modelValue'])
 
+const model = ref<string[]>([...props.modelValue])
 const { t } = useI18n()
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    model.value = [...newVal]
+  },
+)
 
 const isActive = (val: string) => model.value.includes(val)
 
@@ -26,14 +35,15 @@ const handleSelect = (val: string) => {
   } else {
     model.value.push(val)
   }
-  emits('change', model.value)
+  emit('update:modelValue', [...model.value])
+  emit('change', [...model.value])
 }
 </script>
 
 <template>
   <div :class="[size]" class="gui-checkbox inline-flex rounded-8 overflow-hidden text-12">
     <div
-      v-for="o in options"
+      v-for="o in props.options"
       :key="o.value"
       @click="handleSelect(o.value)"
       :class="{ active: isActive(o.value) }"

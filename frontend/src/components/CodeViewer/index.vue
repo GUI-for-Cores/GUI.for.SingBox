@@ -14,7 +14,7 @@ import * as parserBabel from 'prettier/parser-babel'
 import * as parserYaml from 'prettier/parser-yaml'
 import estreePlugin from 'prettier/plugins/estree'
 import * as prettier from 'prettier/standalone'
-import { watch, onUnmounted, onMounted, useTemplateRef } from 'vue'
+import { watch, onUnmounted, onMounted, useTemplateRef, ref } from 'vue'
 
 import { Theme } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
@@ -22,6 +22,7 @@ import { debounce, message } from '@/utils'
 import { getCompletions } from '@/utils/completion'
 
 interface Props {
+  modelValue?: string
   editable?: boolean
   lang?: 'json' | 'javascript' | 'yaml'
   mode?: 'editor' | 'diff'
@@ -29,13 +30,35 @@ interface Props {
   plugin?: Record<string, any>
 }
 
-const model = defineModel<string>({ default: '' })
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'update:modelValue'])
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
   lang: 'json',
   mode: 'editor',
   placeholder: '',
 })
+
+const model = ref(props.modelValue)
+
+let internalUpdate = true
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    const view = editorView || mergeView?.b
+    if (view && val != view.state.doc.toString()) {
+      internalUpdate = false
+      model.value = val
+      view.dispatch({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: val,
+        },
+      })
+    }
+  },
+)
 
 let editorView: EditorView
 let mergeView: MergeView
@@ -45,7 +68,11 @@ const appSettings = useAppSettingsStore()
 
 const onChange = debounce((content: string) => {
   model.value = content
-  emit('change', content)
+  if (internalUpdate) {
+    emit('update:modelValue', content)
+    emit('change', content)
+  }
+  internalUpdate = true
 }, 300)
 
 const formatDoc = async (view: EditorView) => {
@@ -93,19 +120,6 @@ watch(
     })
   },
 )
-
-watch(model, (content) => {
-  const view = editorView || mergeView?.b
-  if (view && content != view.state.doc.toString()) {
-    view.dispatch({
-      changes: {
-        from: 0,
-        to: view.state.doc.length,
-        insert: content,
-      },
-    })
-  }
-})
 
 onMounted(() => setTimeout(() => initEditor(), 100))
 onUnmounted(() => (editorView || mergeView).destroy())

@@ -5,7 +5,7 @@ import useI18n from '@/lang'
 import { debounce } from '@/utils'
 
 export interface Props {
-  modelValue: string | number | undefined
+  modelValue?: string | number | undefined
   autoSize?: boolean
   placeholder?: string
   type?: 'number' | 'text' | 'code'
@@ -22,6 +22,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
   autoSize: false,
   type: 'text',
   lang: 'javascript',
@@ -34,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   delay: 0,
 })
 
-const emits = defineEmits(['update:modelValue', 'submit'])
+const emits = defineEmits(['change', 'update:modelValue', 'submit'])
 
 const showEdit = ref(false)
 const inputRef = useTemplateRef('inputRef')
@@ -44,8 +45,7 @@ const innerClearable = computed(
 
 const { t } = useI18n.global
 
-const onInput = debounce((e: any) => {
-  let val = e.target.value
+const validate = (val: string | number) => {
   if (props.type === 'number') {
     val = Number(val)
     const { min, max } = props
@@ -56,35 +56,38 @@ const onInput = debounce((e: any) => {
       val = val > max ? max : val
     }
   }
+  return val
+}
+
+const onInput = debounce((e: any) => {
+  const val = validate(e.target.value)
   emits('update:modelValue', val)
+  emits('change', val)
 }, props.delay)
 
 const handleClear = () => {
-  emits('update:modelValue', props.type === 'number' ? 0 : '')
-  nextTick(() => {
-    inputRef.value?.focus()
-  })
+  const val = props.type === 'number' ? Math.min(props.min || 0, 0) : ''
+  emits('update:modelValue', val)
+  emits('change', val)
+  !props.editable && nextTick(() => inputRef.value?.focus())
 }
 
 const showInput = () => {
   if (props.disabled) return
   showEdit.value = true
-  nextTick(() => {
-    inputRef.value?.focus()
-  })
+  nextTick(() => inputRef.value?.focus())
 }
 
-const onSubmit = () => {
-  setTimeout(
-    () => {
-      emits('submit', props.modelValue)
-      props.editable && (showEdit.value = false)
-    },
-    props.clearable ? 100 : 0,
-  )
-}
+const onSubmit = debounce(
+  (e: any) => {
+    const val = validate(e.target.value)
+    emits('submit', val)
+    props.editable && (showEdit.value = false)
+  },
+  props.clearable ? 100 : 0,
+)
 
-onMounted(() => props.autofocus && inputRef.value?.focus())
+onMounted(() => props.autofocus && !props.editable && inputRef.value?.focus())
 
 defineExpose({
   focus: () => inputRef.value?.focus(),
@@ -136,7 +139,7 @@ defineExpose({
         :placeholder="placeholder"
         :type="type"
         :disabled="disabled"
-        @input="($event) => onInput($event)"
+        @input="onInput"
         @blur="onSubmit"
         @keydown.enter="inputRef?.blur"
         @keydown.esc.stop.prevent="inputRef?.blur"

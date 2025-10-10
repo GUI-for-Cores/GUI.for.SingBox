@@ -2,50 +2,70 @@
 import { ref, watch } from 'vue'
 
 interface Props {
+  modelValue?: Recordable
   placeholder?: [string, string]
 }
 
-const model = defineModel<Record<string, string>>({ default: {} })
-
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => ({}),
   placeholder: () => ['key', 'value'],
 })
 
-const keys = ref(Object.keys(model.value))
-const values = ref(Object.values(model.value))
+const emit = defineEmits(['change', 'update:modelValue'])
+
+const entries = ref(Object.entries(props.modelValue))
 
 const handleDel = (i: number) => {
-  keys.value.splice(i, 1)
-  values.value.splice(i, 1)
+  entries.value.splice(i, 1)
+  emitUpdate()
 }
 
 const handleAdd = () => {
-  keys.value.push('')
-  values.value.push('')
+  entries.value.push(['', ''])
+  emitUpdate()
 }
 
+let internalUpdate = false
+
 watch(
-  [keys, values],
-  ([keys, values]) => {
-    const obj = keys.reduce(
-      (obj, key, index) => {
-        obj[key] = values[index]!
-        return obj
-      },
-      {} as Record<string, string>,
-    )
-    model.value = obj
+  () => props.modelValue,
+  (val) => {
+    if (!internalUpdate) {
+      entries.value = Object.entries(val)
+    }
+    internalUpdate = false
   },
   { deep: true },
 )
+
+const emitUpdate = () => {
+  const obj = Object.fromEntries(entries.value)
+  if (!internalUpdate) {
+    emit('update:modelValue', obj)
+  }
+  emit('change', obj)
+  internalUpdate = true
+}
 </script>
 
 <template>
   <div class="gui-kv-editor inline-flex flex-col">
-    <div v-for="(key, i) in keys" :key="i" class="flex items-center mb-4">
-      <Input v-model="keys[i]" :placeholder="placeholder[0]" auto-size class="flex-1" />
+    <div v-for="(entry, i) in entries" :key="i" class="flex items-center mb-4">
+      <Input
+        v-model="entry[0]"
+        @submit="emitUpdate"
+        :placeholder="placeholder[0]"
+        auto-size
+        class="flex-1"
+      />
       <Button @click="handleDel(i)" type="text" :icon-size="12" icon="close" />
-      <Input v-model="values[i]" :placeholder="placeholder[1]" auto-size class="flex-1" />
+      <Input
+        v-model="entry[1]"
+        @submit="emitUpdate"
+        :placeholder="placeholder[1]"
+        auto-size
+        class="flex-1"
+      />
     </div>
     <Button @click="handleAdd" type="primary" icon="add" />
   </div>

@@ -72,9 +72,11 @@ const handleClear = () => {
           :key="o.value"
           @click="
             () => {
-              model = o.value
+              if (o.value !== model) {
+                emits('change', o.value)
+                model = o.value
+              }
               close()
-              emits('change', o.value)
             }
           "
           type="text"

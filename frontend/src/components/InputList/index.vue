@@ -7,6 +7,7 @@ import { sampleID } from '@/utils'
 import Input from '@/components/Input/index.vue'
 
 interface Props {
+  modelValue?: string[]
   placeholder?: string
   autofocus?: boolean
 }
@@ -16,10 +17,14 @@ interface Item {
   id: string
 }
 
-withDefaults(defineProps<Props>(), { autofocus: true })
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => [],
+  autofocus: true,
+})
 
-const list = defineModel<string[]>({ default: [] })
-const innerList = ref<Item[]>(list.value.map((v, i) => ({ value: v, id: i.toString() })))
+const emit = defineEmits(['change', 'update:modelValue'])
+
+const innerList = ref<Item[]>(props.modelValue.map((v, i) => ({ value: v, id: i.toString() })))
 
 const editItem = ref<Item>()
 const inputVal = ref('')
@@ -36,35 +41,54 @@ const handleAdd = () => {
   }
   inputVal.value = ''
   inputRef.value?.focus()
+  emitUpdate()
 }
 
 const handleEdit = (item: Item) => {
   editItem.value = item
   inputVal.value = editItem.value.value
+  inputRef.value?.focus()
 }
 
 const handleDel = (item: Item) => {
   const idx = innerList.value.indexOf(item)
   if (idx !== -1) {
     innerList.value.splice(idx, 1)
+    emitUpdate()
   }
 }
 
+let internalUpdate = false
+
 watch(
-  innerList,
-  (v) => {
-    list.value = v.map((v) => v.value)
+  () => props.modelValue,
+  (val) => {
+    if (!internalUpdate) {
+      innerList.value.splice(0)
+      innerList.value.push(...val.map((v, i) => ({ value: v, id: i.toString() })))
+    }
+    internalUpdate = false
   },
-  { deep: true },
 )
+
+const emitUpdate = () => {
+  internalUpdate = true
+  const list = innerList.value.map((v) => v.value)
+  emit('update:modelValue', list)
+  emit('change', list)
+}
 </script>
 
 <template>
   <div class="gui-input-list inline-block rounded-4">
-    <div v-draggable="[innerList, DraggableOptions]" class="flex flex-col gap-2">
+    <div
+      v-draggable="[innerList, { ...DraggableOptions, onUpdate: emitUpdate }]"
+      class="flex flex-col gap-2"
+    >
       <TransitionGroup name="list">
         <Card v-for="item in innerList" :key="item.id">
-          <div class="flex items-center gap-4 py-4 break-all">
+          <div class="flex items-center py-4 break-all">
+            <span class="mr-auto">{{ item.value }}</span>
             <Button
               @click="handleEdit(item)"
               icon="edit"
@@ -72,7 +96,6 @@ watch(
               size="small"
               type="text"
             />
-            <span class="mr-auto">{{ item.value }}</span>
             <Button
               @click="handleDel(item)"
               icon="close"
