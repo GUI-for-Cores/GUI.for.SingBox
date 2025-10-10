@@ -119,13 +119,11 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
 
   const getPluginMetadata = (plugin: Plugin) => {
-    let configuration = appSettingsStore.app.pluginSettings[plugin.id]
-    if (!configuration) {
-      configuration = {}
-      for (const { key, value } of plugin.configuration) {
-        configuration[key] = value
-      }
+    const configuration: Recordable = {}
+    for (const { key, value } of plugin.configuration) {
+      configuration[key] = value
     }
+    Object.assign(configuration, appSettingsStore.app.pluginSettings[plugin.id] ?? {})
     return { ...plugin, ...configuration }
   }
 
