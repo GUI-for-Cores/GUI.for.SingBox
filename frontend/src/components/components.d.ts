@@ -19,6 +19,7 @@ declare module 'vue' {
     Menu: (typeof import('./Menu/index.vue'))['default']
     Message: (typeof import('./Message/index.vue'))['default']
     Modal: (typeof import('./Modal/index.vue'))['default']
+    MultipleSelect: (typeof import('./Select/index.vue'))['default']
     Pagination: (typeof import('./Pagination/index.vue'))['default']
     Picker: (typeof import('./Picker/index.vue'))['default']
     Progress: (typeof import('./Progress/index.vue'))['default']

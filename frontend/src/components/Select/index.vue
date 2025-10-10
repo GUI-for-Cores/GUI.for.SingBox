@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { deepClone } from '@/utils'
+
 interface Props {
-  options: { label: string; value: string }[]
+  modelValue?: string | string[]
+  options?: { label: string; value: string }[]
+  multiple?: boolean
   border?: boolean
   size?: 'default' | 'small'
   placeholder?: string
@@ -11,36 +15,106 @@ interface Props {
   clearable?: boolean
 }
 
-const model = defineModel<string>({ default: '' })
-
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: undefined,
   options: () => [],
+  multiple: false,
   border: true,
   size: 'default',
   autoSize: false,
   clearable: false,
 })
 
-const emits = defineEmits(['change'])
+const emit = defineEmits(['change', 'update:modelValue'])
+
+const model = ref(props.multiple ? deepClone(props.modelValue || []) : props.modelValue)
 
 const { t } = useI18n()
 
+const innerClearable = computed(
+  () => props.clearable && (props.multiple ? (model.value as string[]).length !== 0 : model.value),
+)
+
+const optionsValueLabelMapping = computed(() =>
+  props.options.reduce((p, c) => {
+    p[c.value] = c.label ?? c.value
+    return p
+  }, {} as Recordable),
+)
+
 const displayLabel = computed(() => {
-  const label = props.options.find((v) => v.value === model.value)?.label
-  if (label !== '' && label !== undefined) {
-    return label
+  if (props.multiple) {
+    const selected = model.value as string[]
+    if (selected.length === 0) {
+      return props.placeholder ?? 'common.none'
+    }
+    return selected.map((item) => optionsValueLabelMapping.value[item] ?? item).join('、')
   }
-  return (model.value || props.placeholder) ?? 'common.none'
+  const label = props.options.find((v) => v.value === model.value)?.label ?? (model.value as string)
+  return (label || props.placeholder) ?? 'common.none'
 })
 
+let internalUpdate = false
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (!internalUpdate) {
+      model.value = val
+    }
+    internalUpdate = false
+  },
+  { deep: true },
+)
+
+const isSelected = (val: string) => {
+  if (props.multiple) {
+    return (model.value as string[]).includes(val)
+  }
+  return model.value === val
+}
+
+const handleSelect = (value: string) => {
+  const oldModel = JSON.stringify(model.value)
+  if (props.multiple) {
+    if (!Array.isArray(model.value)) {
+      model.value = []
+    }
+    const idx = model.value?.indexOf(value) ?? -1
+    if (idx === -1) {
+      ;(model.value as string[]).push(value)
+    } else {
+      ;(model.value as string[]).splice(idx, 1)
+    }
+    if (oldModel !== JSON.stringify(model.value)) {
+      emit('update:modelValue', model.value)
+      emit('change', model.value)
+    }
+  } else if (value !== model.value) {
+    model.value = value
+    emit('update:modelValue', model.value)
+    emit('change', model.value)
+  }
+  internalUpdate = true
+}
+
 const handleClear = () => {
-  model.value = ''
+  if (props.multiple) {
+    model.value = []
+    emit('update:modelValue', [])
+    emit('change', [])
+  } else {
+    model.value = ''
+    emit('update:modelValue', '')
+    emit('change', '')
+  }
+  internalUpdate = true
 }
 </script>
 
 <template>
   <Dropdown :trigger="['click']">
-    <template #default="{ toggle }">
+    <template #default="{ toggle, close }">
       <div
         :class="{
           border,
@@ -55,8 +129,17 @@ const handleClear = () => {
           {{ t(displayLabel) }}
         </span>
         <Button
-          :icon="clearable && model ? 'close' : 'arrowDown'"
-          @click.stop="() => (clearable && model ? handleClear() : toggle())"
+          :icon="innerClearable ? 'close' : 'arrowDown'"
+          @click.stop="
+            () => {
+              if (innerClearable) {
+                handleClear()
+                close()
+              } else {
+                toggle()
+              }
+            }
+          "
           type="text"
           size="small"
           class="ml-auto"
@@ -72,16 +155,20 @@ const handleClear = () => {
           :key="o.value"
           @click="
             () => {
-              if (o.value !== model) {
-                emits('change', o.value)
-                model = o.value
-              }
-              close()
+              handleSelect(o.value)
+              !props.multiple && close()
             }
           "
           type="text"
         >
-          {{ t(o.label) }}
+          <div class="realtive w-full">
+            <div v-if="isSelected(o.value)" class="absolute left-8">
+              <Icon icon="selected" :size="18" />
+            </div>
+            <div class="">
+              {{ t(o.label) }}
+            </div>
+          </div>
         </Button>
       </div>
     </template>

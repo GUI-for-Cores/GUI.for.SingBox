@@ -107,6 +107,7 @@ export interface PluginConfiguration {
     | 'KeyValueEditor'
     | 'Radio'
     | 'Select'
+    | 'MultipleSelect'
     | 'Switch'
     | ''
   value: any

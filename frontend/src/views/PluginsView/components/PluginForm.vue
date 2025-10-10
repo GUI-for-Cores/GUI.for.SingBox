@@ -55,6 +55,7 @@ const componentList = [
   'KeyValueEditor',
   'Radio',
   'Select',
+  'MultipleSelect',
   'Switch',
 ] as const
 
@@ -108,14 +109,16 @@ const handleDelParam = (index: number) => {
 
 const hasOption = (component: ComponentType) => {
   return (
-    component !== 'InputList' && ['CheckBox', 'InputList', 'Radio', 'Select'].includes(component)
+    component !== 'InputList' &&
+    ['CheckBox', 'InputList', 'Radio', 'Select', 'MultipleSelect'].includes(component)
   )
 }
 
 const onComponentChange = (component: ComponentType, index: number) => {
   switch (component) {
     case 'CheckBox':
-    case 'InputList': {
+    case 'InputList':
+    case 'MultipleSelect': {
       plugin.value.configuration[index]!.value = []
       plugin.value.configuration[index]!.options = []
       break
