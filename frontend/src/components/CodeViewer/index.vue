@@ -14,12 +14,14 @@ import * as parserBabel from 'prettier/parser-babel'
 import * as parserYaml from 'prettier/parser-yaml'
 import estreePlugin from 'prettier/plugins/estree'
 import * as prettier from 'prettier/standalone'
-import { watch, onUnmounted, onMounted, useTemplateRef, ref } from 'vue'
+import { watch, onUnmounted, onMounted, useTemplateRef, ref, inject } from 'vue'
 
 import { Theme } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
 import { debounce, message } from '@/utils'
 import { getCompletions } from '@/utils/completion'
+
+import { IS_IN_MODAL } from '@/components/Modal/index.vue'
 
 interface Props {
   modelValue?: string
@@ -40,11 +42,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const model = ref(props.modelValue)
 
+const { promise: editorReady, resolve: markEditorReady } = Promise.withResolvers()
 let internalUpdate = true
 
 watch(
   () => props.modelValue,
-  (val) => {
+  async (val) => {
+    await editorReady
     const view = editorView || mergeView?.b
     if (view && val != view.state.doc.toString()) {
       internalUpdate = false
@@ -121,7 +125,7 @@ watch(
   },
 )
 
-onMounted(() => setTimeout(() => initEditor(), 100))
+onMounted(() => setTimeout(() => initEditor(), inject(IS_IN_MODAL, false) ? 100 : 0))
 onUnmounted(() => (editorView || mergeView).destroy())
 
 const initEditor = () => {
@@ -183,6 +187,8 @@ const initEditor = () => {
       },
     })
   }
+
+  markEditorReady(null)
 }
 </script>
 

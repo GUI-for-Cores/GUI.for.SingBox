@@ -17,7 +17,6 @@ const props = defineProps<Props>()
 const loading = ref(false)
 const ruleset = ref<RuleSet>()
 const rulesetContent = ref<string>('')
-const initialized = ref(false)
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -49,7 +48,6 @@ const initContent = async () => {
     const content = (await ignoredError(ReadFile, r.path)) || ''
     rulesetContent.value = content
   }
-  initialized.value = true
 }
 
 initContent()
@@ -80,5 +78,5 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <CodeViewer v-if="initialized" v-model="rulesetContent" lang="json" editable class="h-full" />
+  <CodeViewer v-model="rulesetContent" lang="json" editable class="h-full" />
 </template>

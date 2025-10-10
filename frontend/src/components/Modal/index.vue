@@ -1,3 +1,7 @@
+<script lang="ts">
+export const IS_IN_MODAL = 'IS_IN_MODAL'
+</script>
+
 <script setup lang="ts">
 import { computed, provide, ref, watch } from 'vue'
 
@@ -145,6 +149,7 @@ watch(open, (v) => {
 
 provide('cancel', handleCancel)
 provide('submit', handleSubmit)
+provide(IS_IN_MODAL, true)
 </script>
 
 <template>
