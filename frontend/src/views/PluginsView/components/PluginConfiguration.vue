@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore } from '@/stores'
-import { deepClone, message, sampleID } from '@/utils'
+import { deepClone, message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
@@ -16,7 +16,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const key = ref(sampleID())
 const loading = ref(false)
 const settings = ref<Record<string, any>>({})
 const oldSettings = ref<Record<string, any>>({})
@@ -67,7 +66,6 @@ const getOptions = (val: string[]) => {
 const handleRestoreConfiguration = (showMessage = false) => {
   settings.value = {}
   configuration.value.forEach(({ key, value }) => (settings.value[key] = deepClone(value)))
-  key.value = sampleID()
   showMessage && message.success('common.success')
 }
 
@@ -124,13 +122,12 @@ defineExpose({ modalSlots })
     <Card
       v-for="(conf, index) in configuration"
       :key="conf.id"
-      :title="`${index + 1}、${conf.title}`"
+      :title="`${index + 1}. ${conf.title}`"
       class="mb-8"
     >
       <div class="mb-8 text-12">{{ conf.description }}</div>
       <Component
         v-model="settings[conf.key]"
-        :key="key"
         :is="conf.component"
         :options="getOptions(conf.options)"
         :autofocus="false"

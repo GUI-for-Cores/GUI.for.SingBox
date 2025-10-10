@@ -295,7 +295,7 @@ defineExpose({ modalSlots })
           <Card v-if="conf.component" :title="conf.component">
             <template #title-prefix>
               <Icon icon="drag" class="drag" style="cursor: move" />
-              <div class="ml-8">{{ index + 1 }}、</div>
+              <div class="ml-8">{{ index + 1 }}.</div>
             </template>
             <template #extra>
               <Button @click="handleDelParam(index)" size="small" type="text">
