@@ -665,6 +665,10 @@ export default {
         args: '运行参数',
       },
     },
+    plugin: {
+      resetSetting: '重置设置',
+      resetSettings: '重置所有设置',
+    },
     userAgent: {
       name: '用户代理(User-Agent)',
       reset: ' 重置用户代理',

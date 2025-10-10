@@ -6,9 +6,11 @@ import { useAppStore } from '@/stores'
 
 import CoreSettings from './components/CoreSettings.vue'
 import GeneralSettings from './components/GeneralSettings.vue'
+import PluginSettings from './components/PluginSettings.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
+  { key: 'plugins', tab: 'router.plugins' },
   { key: 'kernel', tab: 'router.kernel' },
 ] as const
 
@@ -22,6 +24,10 @@ const appStore = useAppStore()
   <Tabs v-model:active-key="activeKey" :items="settings" height="100%">
     <template #general>
       <GeneralSettings />
+    </template>
+
+    <template #plugins>
+      <PluginSettings />
     </template>
 
     <template #kernel>

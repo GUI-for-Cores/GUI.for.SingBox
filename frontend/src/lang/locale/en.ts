@@ -666,6 +666,10 @@ export default {
         args: 'Runtime Arguments',
       },
     },
+    plugin: {
+      resetSetting: 'Reset setting',
+      resetSettings: 'Reset all settings',
+    },
     userAgent: {
       name: 'User-Agent',
       reset: 'Reset User-Agent',
