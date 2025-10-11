@@ -12,7 +12,7 @@ import Button from '@/components/Button/index.vue'
 import { useModal } from '@/components/Modal'
 
 import PluginChangelog from './components/PluginChangelog.vue'
-import PluginConfiguration from './components/PluginConfiguration.vue'
+import PluginConfigurator from './components/PluginConfigurator.vue'
 import PluginForm from './components/PluginForm.vue'
 import PluginHub from './components/PluginHub.vue'
 import PluginView from './components/PluginView.vue'
@@ -175,7 +175,7 @@ const generateMenus = (p: Plugin) => {
       label: 'plugins.configuration',
       handler: async () => {
         modalApi.setProps({ title: 'plugins.configuration' })
-        modalApi.setContent(PluginConfiguration, { id: p.id }).open()
+        modalApi.setContent(PluginConfigurator, { plugin: p }).open()
       },
     })
   }
