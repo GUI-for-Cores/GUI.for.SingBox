@@ -2,8 +2,7 @@
 import { computed } from 'vue'
 
 import { useAppSettingsStore, usePluginsStore } from '@/stores'
-
-import PluginConfigItem from './components/PluginConfigItem.vue'
+import PluginConfigItem from '@/views//PluginsView/components/PluginConfigItem.vue'
 
 const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()

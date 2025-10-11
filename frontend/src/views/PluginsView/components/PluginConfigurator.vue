@@ -5,9 +5,10 @@ import { useI18n } from 'vue-i18n'
 import { PluginTriggerEvent } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore } from '@/stores'
 import { message } from '@/utils'
-import PluginConfigItem from '@/views/SettingsView/components/components/PluginConfigItem.vue'
 
 import Button from '@/components/Button/index.vue'
+
+import PluginConfigItem from './PluginConfigItem.vue'
 
 import type { Plugin } from '@/types/app'
 
