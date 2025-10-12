@@ -632,6 +632,8 @@ export default {
     exitOnClose: 'Exit APP On Window Close',
     closeKernelOnExit: 'Close Kernel When APP Exits',
     autoSetSystemProxy: 'Auto Set / Clear System Proxy',
+    proxyBypassList: 'Proxy Bypass List',
+    proxyBypassListTips: 'Separate with semicolons',
     autoStartKernel: 'Auto Start Kernel',
     realMemoryUsage: 'Show actual core memory usage',
     admin: 'Run As Admin',

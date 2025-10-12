@@ -32,12 +32,24 @@ import {
   Branch,
 } from '@/enums/app'
 import i18n, { loadLocaleMessages, reloadLocale } from '@/lang'
-import { debounce, updateTrayMenus, APP_TITLE, ignoredError, APP_VERSION, sleep } from '@/utils'
+import {
+  debounce,
+  updateTrayMenus,
+  APP_TITLE,
+  ignoredError,
+  APP_VERSION,
+  sleep,
+  GetSystemProxyBypass,
+} from '@/utils'
+
+import { useEnvStore } from './env'
 
 import type { AppSettings } from '@/types/app'
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
   const themeMode = ref<Theme.Dark | Theme.Light>(Theme.Light)
+
+  const envStore = useEnvStore()
 
   const app = ref<AppSettings>({
     lang: Lang.EN,
@@ -56,6 +68,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     exitOnClose: true,
     closeKernelOnExit: true,
     autoSetSystemProxy: true,
+    proxyBypassList: '',
     autoStartKernel: false,
     userAgent: APP_TITLE + '/' + APP_VERSION,
     startupDelay: 30,
@@ -185,6 +198,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     if (app.value.kernel.realMemoryUsage === undefined) {
       app.value.kernel.realMemoryUsage = false
     }
+    if (!app.value.proxyBypassList) {
+      app.value.proxyBypassList = await GetSystemProxyBypass()
+    }
   }
 
   const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
@@ -265,6 +281,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   )
 
   watch(themeMode, setAppTheme, { immediate: true })
+
+  const setSystemProxy = debounce(() => envStore.systemProxy && envStore.setSystemProxy(), 3000)
+
+  watch(() => app.value.proxyBypassList, setSystemProxy)
 
   return { setupAppSettings, app, themeMode, locales, localesLoading, loadLocales }
 })

@@ -243,6 +243,13 @@ if (envStore.env.os === 'windows') {
     </div>
     <div class="px-16 py-8">
       <div class="text-18 font-bold pt-8 pb-16">
+        {{ t('settings.proxyBypassList') }}
+        <span class="font-normal text-12">({{ t('settings.proxyBypassListTips') }})</span>
+      </div>
+      <CodeViewer v-model="appSettings.app.proxyBypassList" editable lang="yaml" />
+    </div>
+    <div class="px-16 py-8">
+      <div class="text-18 font-bold pt-8 pb-16">
         {{ t('settings.realMemoryUsage') }}
       </div>
       <Switch v-model="appSettings.app.kernel.realMemoryUsage" />

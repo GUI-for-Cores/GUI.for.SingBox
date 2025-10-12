@@ -81,6 +81,7 @@ export const SetSystemProxy = async (
   enable: boolean,
   server: string,
   proxyType: ProxyType = 'mixed',
+  bypass = '',
 ) => {
   const { os } = useEnvStore().env
 
@@ -90,10 +91,15 @@ export const SetSystemProxy = async (
     linux: setLinuxSystemProxy,
   }[os]
 
-  await handler?.(server, enable, proxyType)
+  await handler?.(server, enable, proxyType, bypass)
 }
 
-async function setWindowsSystemProxy(server: string, enabled: boolean, proxyType: ProxyType) {
+async function setWindowsSystemProxy(
+  server: string,
+  enabled: boolean,
+  proxyType: ProxyType,
+  bypass: string,
+) {
   const p1 = ignoredError(Exec, 'reg', [
     'add',
     'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
@@ -116,10 +122,25 @@ async function setWindowsSystemProxy(server: string, enabled: boolean, proxyType
     '/f',
   ])
 
-  await Promise.all([p1, p2])
+  const p3 = ignoredError(Exec, 'reg', [
+    'add',
+    'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
+    '/v',
+    'ProxyOverride',
+    '/d',
+    enabled ? bypass : '',
+    '/f',
+  ])
+
+  await Promise.all([p1, p2, p3])
 }
 
-async function setDarwinSystemProxy(server: string, enabled: boolean, proxyType: ProxyType) {
+async function setDarwinSystemProxy(
+  server: string,
+  enabled: boolean,
+  proxyType: ProxyType,
+  bypass: string,
+) {
   async function _set(device: string) {
     const state = enabled ? 'on' : 'off'
 
@@ -133,10 +154,15 @@ async function setDarwinSystemProxy(server: string, enabled: boolean, proxyType:
       device,
       socksState,
     ])
+    const p4 = ignoredError(Exec, 'networksetup', [
+      '-setproxybypassdomains',
+      device,
+      enabled ? bypass.split(';').join(' ') : '',
+    ])
 
     const [serverName, serverPort] = server.split(':') as [string, string]
 
-    const promises = [p1, p2, p3]
+    const promises = [p1, p2, p3, p4]
     if (httpState === 'on') {
       const p1 = ignoredError(Exec, 'networksetup', [
         '-setwebproxy',
@@ -169,7 +195,12 @@ async function setDarwinSystemProxy(server: string, enabled: boolean, proxyType:
   await Promise.all([p1, p2])
 }
 
-async function setLinuxSystemProxy(server: string, enabled: boolean, proxyType: ProxyType) {
+async function setLinuxSystemProxy(
+  server: string,
+  enabled: boolean,
+  proxyType: ProxyType,
+  bypass: string,
+) {
   const [serverName, serverPort] = server.split(':') as [string, string]
   const httpEnabled = enabled && ['mixed', 'http'].includes(proxyType)
   const socksEnabled = enabled && ['mixed', 'socks'].includes(proxyType)
@@ -212,7 +243,21 @@ async function setLinuxSystemProxy(server: string, enabled: boolean, proxyType: 
       'socksProxy',
       socksEnabled ? `socks://${server}` : '',
     ])
-    await Promise.all([p1, p2, p3, p4])
+    const p5 = ignoredError(Exec, 'kwriteconfig5', [
+      '--file',
+      'kioslaverc',
+      '--group',
+      'Proxy Settings',
+      '--key',
+      'NoProxyFor',
+      enabled
+        ? bypass
+            .split(';')
+            .map((v) => v.trim())
+            .join(',')
+        : '',
+    ])
+    await Promise.all([p1, p2, p3, p4, p5])
   } else if (desktop.includes('GNOME')) {
     const p1 = ignoredError(Exec, 'gsettings', [
       'set',
@@ -256,7 +301,18 @@ async function setLinuxSystemProxy(server: string, enabled: boolean, proxyType: 
       'port',
       socksEnabled ? serverPort : '0',
     ])
-    await Promise.all([p1, p2, p3, p4, p5, p6, p7])
+    const p8 = ignoredError(Exec, 'gsettings', [
+      'set',
+      'org.gnome.system.proxy',
+      'ignore-hosts',
+      enabled
+        ? `[${bypass
+            .split(';')
+            .map((v) => `'${v.trim()}'`)
+            .join(',')}]`
+        : '[]',
+    ])
+    await Promise.all([p1, p2, p3, p4, p5, p6, p7, p8])
   }
 }
 
@@ -378,6 +434,65 @@ export const GetSystemProxy = async () => {
     }
   } catch (error) {
     console.log('error', error)
+  }
+  return ''
+}
+
+export const GetSystemProxyBypass = async () => {
+  const { os } = useEnvStore().env
+
+  if (os === 'windows') {
+    const out = await ignoredError(Exec, 'reg', [
+      'query',
+      'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
+      '/v',
+      'ProxyOverride',
+    ])
+    if (!out) return ''
+    return out.match(/ProxyOverride\s+REG_SZ\s+(\S+)/)?.[1] || ''
+  }
+
+  if (os === 'darwin') {
+    async function _get(device: string) {
+      const out = await ignoredError(Exec, 'networksetup', ['-getproxybypassdomains', device])
+      if (!out) return []
+      return out.trim().split('\n').filter(Boolean)
+    }
+    const res = await Promise.all([_get('Ethernet'), _get('Wi-Fi')])
+    return res.flat().join(';')
+  }
+
+  if (os === 'linux') {
+    const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+    if (desktop.includes('KDE')) {
+      const out = await ignoredError(Exec, 'kreadconfig5', [
+        '--file',
+        'kioslaverc',
+        '--group',
+        'Proxy Settings',
+        '--key',
+        'NoProxyFor',
+      ])
+      if (!out) return ''
+      return out
+        .trim()
+        .split(',')
+        .map((v) => v.trim())
+        .join(';')
+    } else if (desktop.includes('GNOME')) {
+      const out = await ignoredError(Exec, 'gsettings', [
+        'get',
+        'org.gnome.system.proxy',
+        'ignore-hosts',
+      ])
+      if (!out) return ''
+      const arrStart = out.indexOf('[')
+      const arrStr = arrStart >= 0 ? out.slice(arrStart) : out
+      const jsonLike = arrStr.replace(/'/g, '"')
+      const arr = (await ignoredError(JSON.parse, jsonLike)) ?? []
+      if (!Array.isArray(arr)) return ''
+      return arr.join(';')
+    }
   }
   return ''
 }
