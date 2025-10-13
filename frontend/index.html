@@ -7,7 +7,32 @@
     <title>%VITE_APP_TITLE%</title>
   </head>
   <body>
+    <div id="ipc-error" style="display: none" class="px-32 leading-relaxed">
+      <h1>WebView2 Runtime Error</h1>
+      <p>
+        Your system's WebView2 Runtime version is not compatible with this software.<br />
+        Please follow the steps below to fix the issue:
+      </p>
+      <ol>
+        <li>
+          Go to
+          <a href="https://developer.microsoft.com/en-us/Microsoft-edge/webview2" target="_blank">
+            <b> https://developer.microsoft.com/en-us/Microsoft-edge/webview2 </b>
+          </a>
+          and download the fixed version.
+        </li>
+        <li>Create a <b>data/WebView2</b> folder in the same directory as the software.</li>
+        <li>Place the downloaded <code>.cab</code> file into this folder.</li>
+        <li>Restart the application.</li>
+      </ol>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      if (!window.WailsInvoke) {
+        document.getElementById('ipc-error').style.display = 'block'
+        document.getElementById('app').style.display = 'none'
+      }
+    </script>
   </body>
 </html>
