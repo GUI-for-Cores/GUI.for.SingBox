@@ -25,6 +25,7 @@ var Config = &AppConfig{}
 var Env = &EnvResult{
 	IsStartup:   true,
 	FromTaskSch: false,
+	WebviewPath: "",
 	AppName:     "",
 	AppVersion:  "v1.11.0",
 	BasePath:    "",
@@ -57,6 +58,10 @@ func CreateApp(fs embed.FS) *App {
 	if Env.OS == "darwin" {
 		createMacOSSymlink()
 		createMacOSMenus(app)
+	}
+
+	if Env.OS == "windows" {
+		processFixedWebView2Runtime()
 	}
 
 	extractEmbeddedFiles(fs)
@@ -143,6 +148,66 @@ func createMacOSMenus(app *App) {
 
 	// on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
 	app.AppMenu.Append(menu.EditMenu())
+}
+
+func processFixedWebView2Runtime() {
+	webviewDir := filepath.Join(Env.BasePath, "data", "WebView2")
+
+	err := filepath.Walk(webviewDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !info.IsDir() && strings.EqualFold(info.Name(), "msedgewebview2.exe") {
+			Env.WebviewPath = filepath.Dir(path)
+			log.Printf("WebView2 runtime already exists at: %s", Env.WebviewPath)
+			return filepath.SkipDir
+		}
+		return nil
+	})
+
+	if err != nil {
+		log.Printf("Error during recursive search: %v\n", err)
+		return
+	}
+
+	if Env.WebviewPath != "" {
+		return
+	}
+
+	entries, err := os.ReadDir(webviewDir)
+	if err != nil {
+		log.Printf("Failed to read directory: %v\n", err)
+		return
+	}
+
+	var cabFile string
+	for _, e := range entries {
+		if !e.IsDir() &&
+			strings.HasSuffix(strings.ToLower(e.Name()), ".cab") &&
+			strings.Contains(e.Name(), "Microsoft.WebView2.FixedVersionRuntime") {
+			cabFile = filepath.Join(webviewDir, e.Name())
+			break
+		}
+	}
+
+	if cabFile == "" {
+		log.Println("No WebView2 .cab file found. Skipping extraction.")
+		return
+	}
+
+	log.Printf("Found CAB file: %s\n", cabFile)
+
+	cmd := exec.Command("expand.exe", "-F:*", cabFile, webviewDir)
+	SetCmdWindowHidden(cmd)
+
+	log.Println("Extracting WebView2 Runtime...")
+	if err := cmd.Run(); err != nil {
+		log.Printf("Extraction failed: %v\n", err)
+		return
+	}
+
+	log.Printf("WebView2 Runtime extracted successfully into: %s\n", webviewDir)
+	Env.WebviewPath = strings.TrimSuffix(cabFile, ".cab")
 }
 
 func extractEmbeddedFiles(fs embed.FS) {
