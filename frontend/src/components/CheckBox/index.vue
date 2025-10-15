@@ -47,7 +47,7 @@ const handleSelect = (val: string) => {
       :key="o.value"
       @click="handleSelect(o.value)"
       :class="{ active: isActive(o.value) }"
-      class="gui-checkbox-button cursor-pointer px-12 py-6 transition duration-200 whitespace-nowrap"
+      class="gui-checkbox-button cursor-pointer px-12 py-6 transition duration-200 line-clamp-1 break-all"
     >
       {{ t(o.label) }}
     </div>
@@ -81,7 +81,7 @@ const handleSelect = (val: string) => {
 }
 
 .small {
-  .checkbox-button {
+  .gui-checkbox-button {
     font-size: 10px;
     padding: 4px 8px;
   }

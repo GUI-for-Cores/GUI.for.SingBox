@@ -83,7 +83,7 @@ watch(showController, (v) => {
 </script>
 
 <template>
-  <div @wheel="onMouseWheel" class="relative overflow-hidden h-full">
+  <div @wheel.passive="onMouseWheel" class="relative overflow-hidden h-full">
     <div
       v-if="(!kernelApiStore.running && !kernelApiStore.stopping) || kernelApiStore.starting"
       class="w-full h-[90%] flex flex-col items-center justify-center"
