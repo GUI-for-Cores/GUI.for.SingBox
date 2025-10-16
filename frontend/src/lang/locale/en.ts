@@ -300,6 +300,8 @@ export default {
     'allow-lan': 'Allow LAN',
     'disallow-lan': 'Disallow LAN',
     notFound: 'Core Not Found',
+    insertionPoint: 'The new rule will be inserted here',
+    addInsertionPoint: 'Add insertion point',
   },
   router: {
     overview: 'Overview',

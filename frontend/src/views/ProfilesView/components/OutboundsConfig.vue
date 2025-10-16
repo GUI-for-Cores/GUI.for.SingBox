@@ -183,9 +183,12 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
-      <Button @click="handleAdd">{{ t('common.add') }}</Button>
+      <Button @click="handleAdd" icon="add" type="primary" size="small">
+        {{ t('common.add') }}
+      </Button>
     </template>
   </Empty>
+
   <div v-draggable="[model, DraggableOptions]">
     <Card v-for="(outbound, index) in model" :key="outbound.id" class="mb-2">
       <div class="flex items-center py-2">

@@ -11,7 +11,14 @@ import {
   RulesTypeOptions,
 } from '@/constant/kernel'
 import { DefaultRouteRule } from '@/constant/profile'
-import { RuleAction, RulesetFormat, RulesetType, RuleType, ClashMode } from '@/enums/kernel'
+import {
+  RuleAction,
+  RulesetFormat,
+  RulesetType,
+  RuleType,
+  ClashMode,
+  Strategy,
+} from '@/enums/kernel'
 import { useBool } from '@/hooks'
 import { deepClone, message } from '@/utils'
 
@@ -40,11 +47,30 @@ const handleAdd = () => {
 
 defineExpose({ handleAdd })
 
+const handleAddInsertionPoint = () => {
+  model.value.unshift({
+    id: RuleType.InsertionPoint,
+    type: RuleType.InsertionPoint,
+    payload: '',
+    invert: false,
+    action: RuleAction.Sniff,
+    outbound: '',
+    sniffer: [],
+    strategy: Strategy.Default,
+    server: '',
+  })
+}
+
 const handleAddEnd = () => {
   if (ruleId !== -1) {
     model.value[ruleId] = fields.value
   } else {
-    model.value.unshift(fields.value)
+    const index = model.value.findIndex((v) => v.type === RuleType.InsertionPoint)
+    if (index !== -1) {
+      model.value.splice(index + 1, 0, fields.value)
+    } else {
+      model.value.unshift(fields.value)
+    }
   }
 }
 
@@ -79,6 +105,10 @@ const showLost = () => message.warn('kernel.route.rules.invalid')
 const isSupportPayload = computed(() => {
   return ![RuleType.RuleSet].includes(fields.value.type as any)
 })
+
+const isInsertionPointMissing = computed(
+  () => model.value.findIndex((rule) => rule.type === RuleType.InsertionPoint) === -1,
+)
 
 const hasLost = (rule: IRule) => {
   const rulesValidationFlags: boolean[] = []
@@ -133,7 +163,7 @@ const renderRule = (rule: IRule) => {
 </script>
 
 <template>
-  <Empty v-if="model.length === 0">
+  <Empty v-if="model.length === 0 || (model.length === 1 && !isInsertionPointMissing)">
     <template #description>
       <Button @click="handleAdd" icon="add" type="primary" size="small">
         {{ t('common.add') }}
@@ -141,9 +171,22 @@ const renderRule = (rule: IRule) => {
     </template>
   </Empty>
 
+  <Divider v-if="isInsertionPointMissing">
+    <Button @click="handleAddInsertionPoint" type="text" size="small">
+      {{ t('kernel.addInsertionPoint') }}
+    </Button>
+  </Divider>
+
   <div v-draggable="[model, DraggableOptions]">
     <Card v-for="(rule, index) in model" :key="rule.id" class="mb-2">
-      <div class="flex items-center py-2">
+      <div v-if="rule.type === RuleType.InsertionPoint" class="text-center font-bold">
+        <Divider class="cursor-move">
+          <Button @click="handleAdd" icon="add" type="text" size="small">
+            {{ t('kernel.insertionPoint') }}
+          </Button>
+        </Divider>
+      </div>
+      <div v-else class="flex items-center py-2">
         <div class="font-bold">
           <span
             v-if="hasLost(rule)"

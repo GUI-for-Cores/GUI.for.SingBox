@@ -131,6 +131,7 @@ type RuleType =
   | 'clash_mode'
   | 'outbound'
   | 'inline'
+  | 'InsertionPoint'
 
 interface IRule {
   id: string

@@ -67,6 +67,7 @@ export enum RuleType {
   IpAcceptAny = 'ip_accept_any',
   // GUI
   Inline = 'inline',
+  InsertionPoint = 'InsertionPoint',
 }
 
 export enum Strategy {

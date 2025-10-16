@@ -173,6 +173,9 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
   }
   return {
     rules: route.rules.flatMap((rule) => {
+      if (rule.type === RuleType.InsertionPoint) {
+        return []
+      }
       if (rule.type === RuleType.Inbound && !isInboundEnabled(rule.payload)) {
         return []
       }
@@ -304,6 +307,9 @@ const generateDns = (
       }
     }),
     rules: dns.rules.flatMap((rule) => {
+      if (rule.type === RuleType.InsertionPoint) {
+        return []
+      }
       const extra: Recordable = _generateRule(rule, rule_set, inbounds)
       if (rule.type === RuleType.Inline && rule.payload.includes('__is_fake_ip')) {
         if (!dns.servers.find((v) => v.type === DnsServer.FakeIP)) {

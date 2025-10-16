@@ -300,6 +300,8 @@ export default {
     'allow-lan': '允许局域网访问',
     'disallow-lan': '禁止局域网访问',
     notFound: '无核心',
+    insertionPoint: '新规则将插入到这里',
+    addInsertionPoint: '添加插入点',
   },
   router: {
     overview: '概览',
