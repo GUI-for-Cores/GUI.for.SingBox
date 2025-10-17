@@ -44,9 +44,9 @@ const modalSlots = {
         type: 'link',
         class: 'mr-auto',
         onClick: () => {
-          const defaultConfig = DefaultCoreConfig()
-          model.value.env = defaultConfig.env
-          model.value.args.splice(0, model.value.args.length, ...defaultConfig.args)
+          const { env, args } = DefaultCoreConfig()
+          model.value.env = env
+          model.value.args = args
           message.success('common.success')
         },
       },
