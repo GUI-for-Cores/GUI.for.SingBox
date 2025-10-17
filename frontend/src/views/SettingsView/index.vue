@@ -10,8 +10,8 @@ import PluginSettings from './components/PluginSettings.vue'
 
 const settings = [
   { key: 'general', tab: 'settings.general' },
-  { key: 'plugins', tab: 'router.plugins' },
   { key: 'kernel', tab: 'router.kernel' },
+  { key: 'plugins', tab: 'router.plugins' },
 ] as const
 
 const activeKey = ref<(typeof settings)[number]['key']>('general')

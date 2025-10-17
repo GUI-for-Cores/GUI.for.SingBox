@@ -655,6 +655,8 @@ export default {
       stable: 'Stable version',
       alpha: 'Alpha version',
       grant: 'Grant Privileges',
+      openTip: 'Open File Location',
+      linkTip: 'View on GitHub Releases',
       local: 'Local',
       remote: 'Remote',
       update: 'Update',

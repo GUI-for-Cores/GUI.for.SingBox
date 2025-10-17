@@ -221,6 +221,11 @@ export const useCoreBranch = (isAlpha = false) => {
     BrowserOpenURL(isAlpha ? AlphaPage : StablePage)
   }
 
+  const openFileLocation = async () => {
+    const path = await AbsolutePath(CoreWorkingDirectory)
+    BrowserOpenURL(path)
+  }
+
   watch(
     () => appSettings.app.kernel.branch,
     () => (downloadCompleted.value = false),
@@ -254,5 +259,6 @@ export const useCoreBranch = (isAlpha = false) => {
     rollbackCore,
     grantCorePermission,
     openReleasePage,
+    openFileLocation,
   }
 }

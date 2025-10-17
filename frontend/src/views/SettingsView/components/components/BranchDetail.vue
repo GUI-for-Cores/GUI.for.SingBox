@@ -36,6 +36,7 @@ const {
   rollbackCore,
   grantCorePermission,
   openReleasePage,
+  openFileLocation,
 } = useCoreBranch(props.isAlpha)
 
 const handleClearCoreCache = async () => {
@@ -54,17 +55,10 @@ const handleClearCoreCache = async () => {
 </script>
 
 <template>
-  <div class="font-bold text-16 mx-4 my-12">
-    {{ isAlpha ? 'Alpha' : t('settings.kernel.name') }}
-    <Button
-      @click="grantCorePermission"
-      v-if="grantable"
-      v-tips="'settings.kernel.grant'"
-      type="text"
-      size="small"
-      icon="grant"
-    />
-    <Button @click="openReleasePage" icon="link" type="text" size="small" />
+  <div class="flex items-center px-4 my-12">
+    <div class="mr-8 font-bold text-16">
+      {{ isAlpha ? 'Alpha' : t('settings.kernel.name') }}
+    </div>
     <Button
       @click="rollbackCore"
       v-if="rollbackable"
@@ -79,6 +73,28 @@ const handleClearCoreCache = async () => {
       type="text"
       size="small"
       icon="clear3"
+    />
+    <Button
+      @click="grantCorePermission"
+      v-if="grantable"
+      v-tips="'settings.kernel.grant'"
+      type="text"
+      size="small"
+      icon="grant"
+    />
+    <Button
+      @click="openReleasePage"
+      v-tips="'settings.kernel.linkTip'"
+      icon="link"
+      type="text"
+      size="small"
+    />
+    <Button
+      @click="openFileLocation"
+      v-tips="'settings.kernel.openTip'"
+      icon="folder2"
+      type="text"
+      size="small"
     />
     <Button
       @click="emit('config')"

@@ -654,6 +654,8 @@ export default {
       stable: '稳定版',
       alpha: '内测版',
       grant: '授予特权',
+      openTip: '打开文件所在位置',
+      linkTip: '在GitHub上查看发布版本',
       local: '本地',
       remote: '远程',
       update: '更新',

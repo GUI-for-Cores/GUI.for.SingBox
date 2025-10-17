@@ -23,6 +23,7 @@ const icons = [
   'error',
   'reset',
   'folder',
+  'folder2',
   'restartApp',
   'log',
   'settings',

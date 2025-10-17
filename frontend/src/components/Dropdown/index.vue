@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch, nextTick, useTemplateRef } from 'vue'
 
+import { debounce } from '@/utils'
+
 type TriggerType = 'click' | 'hover'
 
 interface Props {
   trigger?: TriggerType[]
   placement?: 'bottom' | 'top'
+  delay?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   trigger: () => ['hover'],
   placement: 'bottom',
+  delay: 0,
 })
 
 const domRef = useTemplateRef('domRef')
@@ -100,14 +104,17 @@ const close = () => (show.value = false)
 const toggle = () => (show.value = !show.value)
 const hasTrigger = (t: TriggerType) => props.trigger.includes(t)
 
+const debounceOpen = debounce(open, props.delay)
+
 const onMouseEnter = () => {
   if (hasTrigger('hover')) {
-    open()
+    debounceOpen()
   }
 }
 
 const onMouseLeave = () => {
   if (hasTrigger('hover')) {
+    debounceOpen.cancel()
     close()
   }
 }
