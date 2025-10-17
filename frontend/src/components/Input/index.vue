@@ -117,7 +117,7 @@ defineExpose({
     <div
       v-if="editable && !showEdit"
       @click="showInput"
-      class="overflow-hidden whitespace-nowrap text-ellipsis"
+      class="w-full overflow-hidden whitespace-nowrap text-ellipsis"
     >
       <slot name="editable" v-bind="{ value: modelValue }">
         {{ modelValue || t('common.none') }}
