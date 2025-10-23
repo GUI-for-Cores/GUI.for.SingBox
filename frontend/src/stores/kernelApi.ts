@@ -330,7 +330,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   let isCoreStartedByThisInstance = false
   let { promise: coreStoppedPromise, resolve: coreStoppedResolver } = Promise.withResolvers()
 
-  const updateCoreState = async () => {
+  const initCoreState = async () => {
     corePid.value = Number(await ReadFile(CorePidFilePath).catch(() => -1))
     const processName = corePid.value === -1 ? '' : await ProcessInfo(corePid.value).catch(() => '')
     running.value = processName.startsWith('sing-box')
@@ -356,7 +356,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         (out) => {
           output = out
           logsStore.recordKernelLog(out)
-          if (out.toLowerCase().includes(CoreStopOutputKeyword)) {
+          if (out.includes(CoreStopOutputKeyword)) {
             resolve(pid)
           }
         },
@@ -377,15 +377,16 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     isCoreStartedByThisInstance = true
     coreStoppedPromise = new Promise((r) => (coreStoppedResolver = r))
 
+    initCoreWebsockets()
+    longLivedWS.setup?.()
     await Promise.all([refreshConfig(), refreshProviderProxies()])
 
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.setSystemProxy().catch((err) => message.error(err))
     }
-    await pluginsStore.onCoreStartedTrigger()
+    await envStore.updateSystemProxyStatus()
 
-    initCoreWebsockets()
-    longLivedWS.setup?.()
+    await pluginsStore.onCoreStartedTrigger()
   }
 
   const onCoreStopped = async () => {
@@ -394,14 +395,14 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     corePid.value = -1
     running.value = false
 
+    destroyCoreWebsockets()
+
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.clearSystemProxy()
     }
     await pluginsStore.onCoreStoppedTrigger()
 
     coreStoppedResolver(null)
-
-    destroyCoreWebsockets()
   }
 
   const startCore = async (_profile?: IProfile) => {
@@ -503,7 +504,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     startCore,
     stopCore,
     restartCore,
-    updateCoreState,
+    initCoreState,
     pid: corePid,
     running,
     starting,
