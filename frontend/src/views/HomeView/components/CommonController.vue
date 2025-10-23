@@ -3,18 +3,46 @@ import { useI18n } from 'vue-i18n'
 
 import { TunStackOptions } from '@/constant/kernel'
 import { useKernelApiStore } from '@/stores'
+import { message } from '@/utils'
 
 const { t } = useI18n()
 const kernelApiStore = useKernelApiStore()
 
-const onPortSubmit = (port: number) => kernelApiStore.updateConfig('http', port)
-const onSocksPortSubmit = (port: number) => kernelApiStore.updateConfig('socks', port)
-const onMixedPortSubmit = (port: number) => kernelApiStore.updateConfig('mixed', port)
-const onAllowLanChange = (allow: boolean) => kernelApiStore.updateConfig('allow-lan', allow)
-const conStackChange = (stack: string) => kernelApiStore.updateConfig('tun-stack', { stack })
-const onTunDeviceSubmit = (device: string) => kernelApiStore.updateConfig('tun-device', { device })
-const onInterfaceChange = (interface_name: string) =>
-  kernelApiStore.updateConfig('interface-name', { interface_name })
+const createValueWatcher = (
+  initialValue: number | string | boolean,
+  callback: (value: number | string | boolean) => Promise<void>,
+) => {
+  let lastValue = initialValue
+  return (newValue: number | boolean) => {
+    if (newValue !== lastValue) {
+      lastValue = newValue
+      callback(newValue).catch((e) => message.error(e.message || e))
+    }
+  }
+}
+
+const onPortSubmit = createValueWatcher(kernelApiStore.config.port, (port) =>
+  kernelApiStore.updateConfig('http', port),
+)
+const onSocksPortSubmit = createValueWatcher(kernelApiStore.config['socks-port'], (port) =>
+  kernelApiStore.updateConfig('socks', port),
+)
+const onMixedPortSubmit = createValueWatcher(kernelApiStore.config['mixed-port'], (port) =>
+  kernelApiStore.updateConfig('mixed', port),
+)
+const onAllowLanChange = createValueWatcher(kernelApiStore.config['allow-lan'], (allow) =>
+  kernelApiStore.updateConfig('allow-lan', allow),
+)
+const conStackChange = createValueWatcher(kernelApiStore.config.tun.stack, (stack) =>
+  kernelApiStore.updateConfig('tun-stack', { stack }),
+)
+const onTunDeviceSubmit = createValueWatcher(kernelApiStore.config.tun.device, (device) =>
+  kernelApiStore.updateConfig('tun-device', { device }),
+)
+const onInterfaceChange = createValueWatcher(
+  kernelApiStore.config['interface-name'],
+  (interface_name) => kernelApiStore.updateConfig('interface-name', { interface_name }),
+)
 </script>
 
 <template>
