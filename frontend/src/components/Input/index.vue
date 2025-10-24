@@ -61,6 +61,7 @@ const validate = (val: string | number) => {
 
 const onInput = debounce((e: any) => {
   const val = validate(e.target.value)
+  e.target.value = val
   emits('update:modelValue', val)
   emits('change', val)
 }, props.delay)
@@ -81,6 +82,7 @@ const showInput = () => {
 const onSubmit = debounce(
   (e: any) => {
     const val = validate(e.target.value)
+    e.target.value = val
     emits('submit', val)
     props.editable && (showEdit.value = false)
   },
