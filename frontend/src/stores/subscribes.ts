@@ -35,6 +35,11 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       }
       if (!sub.requestMethod) {
         sub.requestMethod = RequestMethod.Get
+        needSync = true
+      }
+      if (!sub.requestTimeout) {
+        sub.requestTimeout = 15
+        needSync = true
       }
       if (!sub.header) {
         sub.header = {
@@ -97,6 +102,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       disabled: false,
       inSecure: false,
       requestMethod: RequestMethod.Get,
+      requestTimeout: 15,
       header: {
         request: {},
         response: {},
@@ -151,6 +157,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         autoTransformBody: false,
         options: {
           Insecure: s.inSecure,
+          Timeout: s.requestTimeout,
         },
       })
       Object.assign(h, s.header.response)

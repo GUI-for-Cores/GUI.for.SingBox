@@ -407,6 +407,7 @@ export default {
     useragent: '用户代理',
     inSecure: '跳过证书验证',
     requestMethod: '请求方式',
+    requestTimeout: '请求超时时间(秒)',
     header: {
       request: '请求头',
       response: '响应头',

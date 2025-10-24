@@ -41,6 +41,7 @@ const sub = ref<Subscription>({
   disabled: false,
   inSecure: false,
   requestMethod: RequestMethod.Get,
+  requestTimeout: 15,
   header: {
     request: {},
     response: {},
@@ -198,6 +199,10 @@ defineExpose({ modalSlots })
         <div class="form-item">
           {{ t('subscribe.inSecure') }}
           <Switch v-model="sub.inSecure" />
+        </div>
+        <div class="form-item">
+          {{ t('subscribe.requestTimeout') }}
+          <Input v-model="sub.requestTimeout" type="number" :min="3" :max="180" />
         </div>
         <div class="form-item">
           {{ t('subscribe.requestMethod') }}
