@@ -1,7 +1,6 @@
 package bridge
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -64,7 +63,7 @@ func RollingRelease(next http.Handler) http.Handler {
 			url = "/index.html"
 		}
 
-		log.Printf("[Rolling Release] %v %v\n", r.Method, url)
+		// log.Printf("[Rolling Release] %v %v\n", r.Method, url)
 
 		file := GetPath("data/rolling-release" + url)
 

@@ -37,7 +37,7 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 		return FlagResult{false, err.Error()}
 	}
 
-	output := ""
+	var output string
 	if options.Convert {
 		output = ConvertByte2String(out)
 	} else {
@@ -79,7 +79,12 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 			scanner := bufio.NewScanner(reader)
 			stopOutput := false
 			for scanner.Scan() {
-				text := scanner.Text()
+				var text string
+				if options.Convert {
+					text = ConvertByte2String(scanner.Bytes())
+				} else {
+					text = scanner.Text()
+				}
 
 				if !stopOutput {
 					runtime.EventsEmit(a.Ctx, outEvent, text)
@@ -161,8 +166,8 @@ func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int) erro
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSeconds)*time.Second)
 	defer cancel()
 
-	ticker := time.NewTicker(500 * time.Millisecond)
-	defer ticker.Stop()
+	interval := 10 * time.Millisecond
+	maxInterval := 1000 * time.Millisecond
 
 	for {
 		select {
@@ -172,7 +177,7 @@ func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int) erro
 			}
 			return nil
 
-		case <-ticker.C:
+		default:
 			alive, err := IsProcessAlive(process)
 			if err != nil {
 				return fmt.Errorf("failed to check status of process %d: %w", process.Pid, err)
@@ -180,6 +185,9 @@ func waitForProcessExitWithTimeout(process *os.Process, timeoutSeconds int) erro
 			if !alive {
 				return nil
 			}
+
+			time.Sleep(interval)
+			interval = min(time.Duration(interval*2), maxInterval)
 		}
 	}
 }

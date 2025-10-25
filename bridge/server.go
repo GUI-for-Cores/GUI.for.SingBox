@@ -1,10 +1,13 @@
 package bridge
 
 import (
+	"context"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -49,39 +52,44 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 		}
 
 		mux.HandleFunc(options.UploadRoute, func(w http.ResponseWriter, r *http.Request) {
-			a.handleFileUpload(w, r, uploadPath, maxUploadSize)
+			handleFileUpload(w, r, uploadPath, maxUploadSize)
 		})
 	}
 
-	mux.HandleFunc("/", a.handleHttpRequest(serverID))
+	var listener net.Listener
+	if options.Cert != "" && options.Key != "" {
+		cert, err := tls.LoadX509KeyPair(GetPath(options.Cert), GetPath(options.Key))
+		if err != nil {
+			return FlagResult{false, "Failed to load TLS cert: " + err.Error()}
+		}
+		tlsConfig := &tls.Config{Certificates: []tls.Certificate{cert}}
+		ln, err := net.Listen("tcp", address)
+		if err != nil {
+			return FlagResult{false, "Failed to bind address: " + err.Error()}
+		}
+		listener = tls.NewListener(ln, tlsConfig)
+	} else {
+		ln, err := net.Listen("tcp", address)
+		if err != nil {
+			return FlagResult{false, "Failed to bind address: " + err.Error()}
+		}
+		listener = ln
+	}
+
+	mux.HandleFunc("/", handleHttpRequest(a, serverID))
 
 	server := &http.Server{
 		Addr:    address,
 		Handler: mux,
 	}
 
-	var result error
-
 	go func() {
-		var err error
-		if options.Cert != "" && options.Key != "" {
-			err = server.ListenAndServeTLS(GetPath(options.Cert), GetPath(options.Key))
-		} else {
-			err = server.ListenAndServe()
-		}
-		if err != nil {
-			result = err
+		if err := server.Serve(listener); err != nil && err != http.ErrServerClosed {
+			log.Printf("Server error on %s: %v", address, err)
 		}
 	}()
 
-	time.Sleep(1 * time.Second)
-
-	if result != nil {
-		return FlagResult{false, result.Error()}
-	}
-
 	serverMap.Store(serverID, server)
-
 	return FlagResult{true, "Success"}
 }
 
@@ -124,12 +132,12 @@ func (a *App) ListServer() FlagResult {
 	return FlagResult{true, strings.Join(servers, "|")}
 }
 
-func (a *App) handleHttpRequest(serverID string) http.HandlerFunc {
+func handleHttpRequest(a *App, serverID string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, 20*1024*1024) // 20MB
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			w.WriteHeader(500)
-			w.Write([]byte("Failed to read request body: " + err.Error()))
+			http.Error(w, "Failed to read request body: "+err.Error(), 500)
 			return
 		}
 
@@ -137,53 +145,60 @@ func (a *App) handleHttpRequest(serverID string) http.HandlerFunc {
 		requestID := serverID + strconv.FormatUint(count, 10)
 		respChan := make(chan ResponseData, 1)
 
-		defer close(respChan)
+		ctx, cancel := context.WithTimeout(a.Ctx, 60*time.Second) // 60s
+		defer cancel()
 
-		runtime.EventsOn(a.Ctx, requestID, func(data ...any) {
-			runtime.EventsOff(a.Ctx, requestID)
-			resp := ResponseData{Status: 200, Headers: make(map[string]string), Body: "A sample http server"}
-
-			if len(data) >= 4 {
-				if status, ok := data[0].(float64); ok {
-					resp.Status = int(status)
-				}
-				if headers, ok := data[1].(string); ok {
-					json.Unmarshal([]byte(headers), &resp.Headers)
-				}
-				if body, ok := data[2].(string); ok {
-					resp.Body = body
-				}
-				if optionsStr, ok := data[3].(string); ok {
-					ioOptions := IOOptions{Mode: "Text"}
-					json.Unmarshal([]byte(optionsStr), &ioOptions)
-
-					if ioOptions.Mode == Binary {
-						body, err = base64.StdEncoding.DecodeString(resp.Body)
-						if err != nil {
-							resp.Status = 500
-							resp.Body = err.Error()
-						} else {
-							resp.Body = string(body)
-						}
-					}
-				}
-			}
-
+		runtime.EventsOn(ctx, requestID, func(data ...any) {
+			defer runtime.EventsOff(ctx, requestID)
+			resp := buildResponse(data)
 			respChan <- resp
 		})
 
 		runtime.EventsEmit(a.Ctx, serverID, requestID, r.Method, r.URL.RequestURI(), r.Header, body)
 
-		res := <-respChan
-		for key, value := range res.Headers {
-			w.Header().Set(key, value)
+		select {
+		case res := <-respChan:
+			for k, v := range res.Headers {
+				w.Header().Set(k, v)
+			}
+			w.WriteHeader(res.Status)
+			w.Write([]byte(res.Body))
+		case <-ctx.Done():
+			http.Error(w, "Request timed out", http.StatusGatewayTimeout)
 		}
-		w.WriteHeader(res.Status)
-		w.Write([]byte(res.Body))
 	}
 }
 
-func (a *App) handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string, maxUploadSize int64) {
+func buildResponse(data []any) ResponseData {
+	resp := ResponseData{Status: 200, Headers: make(map[string]string), Body: "A sample http server"}
+	if len(data) >= 4 {
+		if status, ok := data[0].(float64); ok {
+			resp.Status = int(status)
+		}
+		if headers, ok := data[1].(string); ok {
+			json.Unmarshal([]byte(headers), &resp.Headers)
+		}
+		if body, ok := data[2].(string); ok {
+			resp.Body = body
+		}
+		if optionsStr, ok := data[3].(string); ok {
+			var ioOptions IOOptions
+			json.Unmarshal([]byte(optionsStr), &ioOptions)
+			if ioOptions.Mode == Binary {
+				decoded, err := base64.StdEncoding.DecodeString(resp.Body)
+				if err != nil {
+					resp.Status = 500
+					resp.Body = err.Error()
+				} else {
+					resp.Body = string(decoded)
+				}
+			}
+		}
+	}
+	return resp
+}
+
+func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string, maxUploadSize int64) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
