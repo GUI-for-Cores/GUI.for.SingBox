@@ -585,6 +585,11 @@ export default {
     log: '查看日志',
   },
   settings: {
+    personalization: '个性化',
+    behavior: '行为',
+    systemProxy: '系统代理',
+    advanced: '高级',
+    debug: '调试',
     general: '通用',
     theme: {
       name: '主题',
@@ -632,11 +637,11 @@ export default {
     needRestart: '重启生效',
     needAdmin: '需要管理员权限',
     exitOnClose: '关闭窗口时退出程序',
-    closeKernelOnExit: '退出程序时同时关闭内核',
+    closeKernelOnExit: '程序退出时关闭核心',
     autoSetSystemProxy: '自动配置/清除系统代理',
     proxyBypassList: '不使用代理的地址',
     proxyBypassListTips: '分号分隔',
-    autoStartKernel: '自动启动内核程序',
+    autoStartKernel: '程序启动时开启核心',
     realMemoryUsage: '显示真实的核心内存占用',
     admin: '以管理员身份运行',
     addPluginToMenu: '将插件添加到托盘菜单',
@@ -646,8 +651,9 @@ export default {
     debugOutline: '显示界面轮廓',
     debugNoAnimation: '禁用动画',
     startup: {
-      name: '开机时启动',
+      name: '自启动',
       delay: '延迟(秒)',
+      startupDelay: '自启动延迟',
     },
     kernel: {
       name: 'sing-box',

@@ -241,18 +241,17 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
                 :disabled="s.disabled"
                 :loading="s.updating"
                 :type="s.disabled ? 'text' : 'text'"
-                size="small"
                 @click="handleUpdateSub(s)"
               >
                 {{ t('common.update') }}
               </Button>
-              <Button type="text" size="small" @click="handleDisableSub(s)">
+              <Button type="text" @click="handleDisableSub(s)">
                 {{ s.disabled ? t('common.enable') : t('common.disable') }}
               </Button>
-              <Button type="text" size="small" @click="handleShowSubForm(s.id)">
+              <Button type="text" @click="handleShowSubForm(s.id)">
                 {{ t('common.edit') }}
               </Button>
-              <Button type="text" size="small" @click="handleDeleteSub(s)">
+              <Button type="text" @click="handleDeleteSub(s)">
                 {{ t('common.delete') }}
               </Button>
             </div>

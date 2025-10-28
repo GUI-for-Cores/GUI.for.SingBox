@@ -176,181 +176,218 @@ if (envStore.env.os === 'windows') {
 </script>
 
 <template>
-  <div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.theme.name') }}
+  <div class="flex flex-col gap-8 pr-8 mb-8">
+    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.personalization') }}</div>
+
+    <Card>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.theme.name') }}</div>
+        <Radio v-model="appSettings.app.theme" @click="onThemeClick" :options="themes" />
       </div>
-      <Radio v-model="appSettings.app.theme" @click="onThemeClick" :options="themes" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.color.name') }}
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.color.name') }}</div>
+        <Radio v-model="appSettings.app.color" :options="colors" />
       </div>
-      <Radio v-model="appSettings.app.color" :options="colors" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.lang.name') }}
-        <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link" />
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.lang.name') }}
+          <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link" />
+        </div>
+        <div class="flex items-center">
+          <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
+          <Button
+            @click="appSettings.loadLocales()"
+            :loading="appSettings.localesLoading"
+            v-tips="'settings.lang.load'"
+            type="text"
+            icon="refresh"
+          />
+          <Radio v-model="appSettings.app.lang" :options="appSettings.locales" class="ml-8" />
+        </div>
       </div>
-      <div class="flex items-center">
-        <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
-        <Button
-          @click="appSettings.loadLocales()"
-          :loading="appSettings.localesLoading"
-          v-tips="'settings.lang.load'"
-          type="text"
-          icon="refresh"
-        />
-        <Radio v-model="appSettings.app.lang" :options="appSettings.locales" class="ml-8" />
-      </div>
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.fontFamily') }}</div>
-      <div class="flex items-center">
-        <Button @click="resetFontFamily" v-tips="'settings.resetFont'" type="text" icon="reset" />
-        <Input v-model="appSettings.app.fontFamily" editable class="ml-8" />
-      </div>
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.pages.name') }}</div>
-      <CheckBox v-model="appSettings.app.pages" :options="pages" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.appFolder.name') }}</div>
-      <Button @click="handleOpenFolder" type="primary" icon="folder">
-        <span class="ml-8">{{ t('settings.appFolder.open') }}</span>
-      </Button>
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.exitOnClose') }}
-      </div>
-      <Switch v-model="appSettings.app.exitOnClose" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.closeKernelOnExit') }}
-      </div>
-      <Switch v-model="appSettings.app.closeKernelOnExit" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.autoSetSystemProxy') }}
-      </div>
-      <Switch v-model="appSettings.app.autoSetSystemProxy" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.proxyBypassList') }}
-        <span class="font-normal text-12">({{ t('settings.proxyBypassListTips') }})</span>
-      </div>
-      <CodeViewer v-model="appSettings.app.proxyBypassList" editable lang="yaml" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.realMemoryUsage') }}
-      </div>
-      <Switch v-model="appSettings.app.kernel.realMemoryUsage" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.autoStartKernel') }}
-      </div>
-      <Switch v-model="appSettings.app.autoStartKernel" />
-    </div>
-    <div v-if="envStore.env.os === 'windows'" class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.admin') }}
-        <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
-      </div>
-      <Switch v-model="isAdmin" @change="onPermChange" />
-    </div>
-    <div v-if="envStore.env.os === 'linux'" class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.webviewGpuPolicy.name') }}
-        <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
-      </div>
-      <Radio v-model="appSettings.app.webviewGpuPolicy" :options="webviewGpuPolicy" />
-    </div>
-    <div v-if="envStore.env.os === 'windows'" class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.startup.name') }}
-        <span class="font-normal text-12">({{ t('settings.needAdmin') }})</span>
-      </div>
-      <div class="flex items-center">
-        <Switch v-model="isTaskScheduled" @change="onTaskSchChange" class="mr-16" />
-        <template v-if="isTaskScheduled">
-          <Radio v-model="appSettings.app.windowStartState" :options="windowStates" type="number" />
-          <Input
-            v-model="appSettings.app.startupDelay"
-            @submit="onStartupDelayChange"
-            :min="0"
-            type="number"
-            class="ml-4"
-          >
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.fontFamily') }}</div>
+        <div class="flex items-center">
+          <Input v-model="appSettings.app.fontFamily" editable class="ml-8">
             <template #suffix>
-              <span class="ml-4">{{ t('settings.startup.delay') }}</span>
+              <Button
+                @click="resetFontFamily"
+                v-tips="'settings.resetFont'"
+                type="text"
+                size="small"
+                icon="reset"
+              />
             </template>
           </Input>
-        </template>
+        </div>
       </div>
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.addPluginToMenu') }}</div>
-      <Switch v-model="appSettings.app.addPluginToMenu" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.addGroupToMenu') }}</div>
-      <Switch v-model="appSettings.app.addGroupToMenu" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.multipleInstance') }}
-        <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.pages.name') }}</div>
+        <CheckBox v-model="appSettings.app.pages" :options="pages" />
       </div>
-      <Switch v-model="appSettings.app.multipleInstance" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.rollingRelease') }}
-        <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+    </Card>
+
+    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.behavior') }}</div>
+
+    <Card>
+      <div
+        v-if="envStore.env.os === 'windows'"
+        class="px-8 py-12 flex items-center justify-between"
+      >
+        <div class="text-16 font-bold">
+          {{ t('settings.admin') }}
+          <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+        </div>
+        <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
-      <Switch v-model="appSettings.app.rollingRelease" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">{{ t('settings.userAgent.name') }}</div>
-      <div class="flex items-center">
-        <Button
-          @click="resetUserAgent"
-          v-tips="'settings.userAgent.reset'"
-          type="text"
-          icon="reset"
-        />
-        <Input v-model.lazy="appSettings.app.userAgent" editable class="ml-8" />
+      <div
+        v-if="envStore.env.os === 'windows' && isAdmin"
+        class="px-8 py-12 flex items-center justify-between"
+      >
+        <div class="text-16 font-bold">
+          {{ t('settings.startup.name') }}
+          <span class="font-normal text-12">({{ t('settings.needAdmin') }})</span>
+        </div>
+        <div class="flex items-center">
+          <Switch v-model="isTaskScheduled" @change="onTaskSchChange" />
+          <template v-if="isTaskScheduled">
+            <Radio
+              v-model="appSettings.app.windowStartState"
+              :options="windowStates"
+              type="number"
+              class="ml-16"
+            />
+          </template>
+        </div>
       </div>
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.githubapi.name') }}
-        <span class="font-normal text-12">({{ t('settings.githubapi.tips') }})</span>
+      <div
+        v-if="envStore.env.os === 'windows' && isAdmin"
+        class="px-8 py-12 flex items-center justify-between"
+      >
+        <div class="text-16 font-bold">
+          {{ t('settings.startup.startupDelay') }}
+          <span class="font-normal text-12">({{ t('settings.needAdmin') }})</span>
+        </div>
+        <Input
+          v-model="appSettings.app.startupDelay"
+          @submit="onStartupDelayChange"
+          :min="0"
+          type="number"
+          class="ml-4"
+        >
+          <template #suffix>
+            <span class="ml-4">{{ t('settings.startup.delay') }}</span>
+          </template>
+        </Input>
       </div>
-      <Input v-model.lazy="appSettings.app.githubApiToken" editable />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.debugOutline') }}
-        <span class="font-normal text-12">(debug)</span>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.exitOnClose') }}</div>
+        <Switch v-model="appSettings.app.exitOnClose" />
       </div>
-      <Switch v-model="appSettings.app.debugOutline" />
-    </div>
-    <div class="px-16 py-8">
-      <div class="text-18 font-bold pt-8 pb-16">
-        {{ t('settings.debugNoAnimation') }}
-        <span class="font-normal text-12">(debug)</span>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.autoStartKernel') }}</div>
+        <Switch v-model="appSettings.app.autoStartKernel" />
       </div>
-      <Switch v-model="appSettings.app.debugNoAnimation" />
-    </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.closeKernelOnExit') }}</div>
+        <Switch v-model="appSettings.app.closeKernelOnExit" />
+      </div>
+      <div v-if="envStore.env.os === 'linux'" class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.webviewGpuPolicy.name') }}
+          <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+        </div>
+        <Radio v-model="appSettings.app.webviewGpuPolicy" :options="webviewGpuPolicy" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.addPluginToMenu') }}</div>
+        <Switch v-model="appSettings.app.addPluginToMenu" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.addGroupToMenu') }}</div>
+        <Switch v-model="appSettings.app.addGroupToMenu" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.multipleInstance') }}
+          <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+        </div>
+        <Switch v-model="appSettings.app.multipleInstance" />
+      </div>
+    </Card>
+
+    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.systemProxy') }}</div>
+
+    <Card>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.autoSetSystemProxy') }}</div>
+        <Switch v-model="appSettings.app.autoSetSystemProxy" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.proxyBypassList') }}
+          <span class="font-normal text-12">({{ t('settings.proxyBypassListTips') }})</span>
+        </div>
+        <CodeViewer v-model="appSettings.app.proxyBypassList" editable lang="yaml" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.userAgent.name') }}</div>
+        <div class="flex items-center">
+          <Input v-model.lazy="appSettings.app.userAgent" editable>
+            <template #suffix>
+              <Button
+                @click="resetUserAgent"
+                v-tips="'settings.userAgent.reset'"
+                type="text"
+                size="small"
+                icon="reset"
+              />
+            </template>
+          </Input>
+        </div>
+      </div>
+    </Card>
+
+    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.advanced') }}</div>
+
+    <Card>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.appFolder.name') }}</div>
+        <Button @click="handleOpenFolder" type="primary" icon="folder">
+          <span class="ml-8">{{ t('settings.appFolder.open') }}</span>
+        </Button>
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.rollingRelease') }}
+          <span class="font-normal text-12">({{ t('settings.needRestart') }})</span>
+        </div>
+        <Switch v-model="appSettings.app.rollingRelease" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.realMemoryUsage') }}</div>
+        <Switch v-model="appSettings.app.kernel.realMemoryUsage" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">
+          {{ t('settings.githubapi.name') }}
+          <span class="font-normal text-12">({{ t('settings.githubapi.tips') }})</span>
+        </div>
+        <Input v-model.lazy="appSettings.app.githubApiToken" editable />
+      </div>
+    </Card>
+
+    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.debug') }}</div>
+
+    <Card>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.debugOutline') }}</div>
+        <Switch v-model="appSettings.app.debugOutline" />
+      </div>
+      <div class="px-8 py-12 flex items-center justify-between">
+        <div class="text-16 font-bold">{{ t('settings.debugNoAnimation') }}</div>
+        <Switch v-model="appSettings.app.debugNoAnimation" />
+      </div>
+    </Card>
   </div>
 </template>

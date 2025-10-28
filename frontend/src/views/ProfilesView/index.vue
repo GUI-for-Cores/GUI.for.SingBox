@@ -256,13 +256,13 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
           <Button type="link" size="small" icon="more" />
           <template #overlay>
             <div class="flex flex-col gap-4 min-w-64 p-4">
-              <Button @click="handleUseProfile(p)" type="text" size="small">
+              <Button @click="handleUseProfile(p)" type="text">
                 {{ t('common.use') }}
               </Button>
-              <Button @click="handleShowProfileForm(p.id)" type="text" size="small">
+              <Button @click="handleShowProfileForm(p.id)" type="text">
                 {{ t('common.edit') }}
               </Button>
-              <Button @click="handleDeleteProfile(p)" type="text" size="small">
+              <Button @click="handleDeleteProfile(p)" type="text">
                 {{ t('common.delete') }}
               </Button>
             </div>

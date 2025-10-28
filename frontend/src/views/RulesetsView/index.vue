@@ -205,18 +205,17 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
                 :disabled="r.disabled"
                 :loading="r.updating"
                 :type="r.disabled ? 'text' : 'text'"
-                size="small"
                 @click="handleUpdateRuleset(r)"
               >
                 {{ t('common.update') }}
               </Button>
-              <Button type="text" size="small" @click="handleDisableRuleset(r)">
+              <Button type="text" @click="handleDisableRuleset(r)">
                 {{ r.disabled ? t('common.enable') : t('common.disable') }}
               </Button>
-              <Button type="text" size="small" @click="handleShowRulesetForm(r.id, true)">
+              <Button type="text" @click="handleShowRulesetForm(r.id, true)">
                 {{ t('common.edit') }}
               </Button>
-              <Button type="text" size="small" @click="handleDeleteRuleset(r)">
+              <Button type="text" @click="handleDeleteRuleset(r)">
                 {{ t('common.delete') }}
               </Button>
             </div>

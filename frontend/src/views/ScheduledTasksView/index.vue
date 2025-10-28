@@ -124,13 +124,13 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
           <Button type="link" size="small" icon="more" />
           <template #overlay>
             <div class="flex flex-col gap-4 min-w-64 p-4">
-              <Button type="text" size="small" @click="handleDisableTask(s)">
+              <Button type="text" @click="handleDisableTask(s)">
                 {{ s.disabled ? t('common.enable') : t('common.disable') }}
               </Button>
-              <Button type="text" size="small" @click="handleShowTaskForm(s.id)">
+              <Button type="text" @click="handleShowTaskForm(s.id)">
                 {{ t('common.edit') }}
               </Button>
-              <Button type="text" size="small" @click="handleDeleteTask(s)">
+              <Button type="text" @click="handleDeleteTask(s)">
                 {{ t('common.delete') }}
               </Button>
             </div>
