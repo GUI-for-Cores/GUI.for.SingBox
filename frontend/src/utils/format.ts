@@ -18,6 +18,8 @@ export function formatRelativeTime(d: string | number) {
   const now = Date.now()
   const diffMs = date.getTime() - now
 
+  const isSameDay = formatDate(d, 'YYYY-MM-DD') === formatDate(now, 'YYYY-MM-DD')
+
   // now
   if (diffMs === 0) return formatter.format(0, 'second')
 
@@ -31,6 +33,7 @@ export function formatRelativeTime(d: string | number) {
   ]
 
   for (const { unit, threshold } of units) {
+    if (unit === 'day' && isSameDay) continue
     const amount = Math.round(diffMs / threshold)
     if (Math.abs(amount) > 0) return formatter.format(amount, unit)
   }
