@@ -122,7 +122,7 @@ defineExpose({
       class="w-full overflow-hidden whitespace-nowrap text-ellipsis"
     >
       <slot name="editable" v-bind="{ value: modelValue }">
-        {{ modelValue || t('common.none') }}
+        {{ modelValue || t(placeholder || 'common.none') }}
       </slot>
     </div>
     <template v-else>

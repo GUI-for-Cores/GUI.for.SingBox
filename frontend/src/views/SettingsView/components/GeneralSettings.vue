@@ -96,8 +96,8 @@ const resetFontFamily = () => {
   appSettings.app.fontFamily = DefaultFontFamily
 }
 
-const resetUserAgent = () => {
-  appSettings.app.userAgent = APP_TITLE + '/' + APP_VERSION
+const clearUserAgent = () => {
+  appSettings.app.userAgent = ''
 }
 
 const onPermChange = async (v: boolean) => {
@@ -176,7 +176,7 @@ if (envStore.env.os === 'windows') {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 pr-8 mb-8">
+  <div class="flex flex-col gap-8 px-8 mb-8">
     <div class="px-8 py-8 text-18 font-bold">{{ t('settings.personalization') }}</div>
 
     <Card>
@@ -191,9 +191,7 @@ if (envStore.env.os === 'windows') {
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">
           {{ t('settings.lang.name') }}
-          <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link" />
-        </div>
-        <div class="flex items-center">
+          <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link2" />
           <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
           <Button
             @click="appSettings.loadLocales()"
@@ -202,8 +200,8 @@ if (envStore.env.os === 'windows') {
             type="text"
             icon="refresh"
           />
-          <Radio v-model="appSettings.app.lang" :options="appSettings.locales" class="ml-8" />
         </div>
+        <Radio v-model="appSettings.app.lang" :options="appSettings.locales" />
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">{{ t('settings.fontFamily') }}</div>
@@ -249,19 +247,17 @@ if (envStore.env.os === 'windows') {
           <span class="font-normal text-12">({{ t('settings.needAdmin') }})</span>
         </div>
         <div class="flex items-center">
-          <Switch v-model="isTaskScheduled" @change="onTaskSchChange" />
-          <template v-if="isTaskScheduled">
-            <Radio
-              v-model="appSettings.app.windowStartState"
-              :options="windowStates"
-              type="number"
-              class="ml-16"
-            />
-          </template>
+          <Radio
+            v-if="isTaskScheduled"
+            v-model="appSettings.app.windowStartState"
+            :options="windowStates"
+            type="number"
+          />
+          <Switch v-model="isTaskScheduled" @change="onTaskSchChange" class="ml-16" />
         </div>
       </div>
       <div
-        v-if="envStore.env.os === 'windows' && isAdmin"
+        v-if="envStore.env.os === 'windows' && isAdmin && isTaskScheduled"
         class="px-8 py-12 flex items-center justify-between"
       >
         <div class="text-16 font-bold">
@@ -272,8 +268,8 @@ if (envStore.env.os === 'windows') {
           v-model="appSettings.app.startupDelay"
           @submit="onStartupDelayChange"
           :min="0"
+          editable
           type="number"
-          class="ml-4"
         >
           <template #suffix>
             <span class="ml-4">{{ t('settings.startup.delay') }}</span>
@@ -328,15 +324,24 @@ if (envStore.env.os === 'windows') {
           {{ t('settings.proxyBypassList') }}
           <span class="font-normal text-12">({{ t('settings.proxyBypassListTips') }})</span>
         </div>
-        <CodeViewer v-model="appSettings.app.proxyBypassList" editable lang="yaml" />
+        <CodeViewer
+          v-model="appSettings.app.proxyBypassList"
+          editable
+          lang="yaml"
+          class="min-w-256"
+        />
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">{{ t('settings.userAgent.name') }}</div>
         <div class="flex items-center">
-          <Input v-model.lazy="appSettings.app.userAgent" editable>
+          <Input
+            v-model.lazy="appSettings.app.userAgent"
+            :placeholder="APP_TITLE + '/' + APP_VERSION"
+            editable
+          >
             <template #suffix>
               <Button
-                @click="resetUserAgent"
+                @click="clearUserAgent"
                 v-tips="'settings.userAgent.reset'"
                 type="text"
                 size="small"

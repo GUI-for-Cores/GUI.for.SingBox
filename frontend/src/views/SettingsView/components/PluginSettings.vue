@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import { useAppSettingsStore, usePluginsStore } from '@/stores'
-import PluginConfigItem from '@/views//PluginsView/components/PluginConfigItem.vue'
+import PluginConfigItem from '@/views/PluginsView/components/PluginConfigItem.vue'
 
 const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
@@ -13,9 +13,9 @@ const plugins = computed(() =>
 </script>
 
 <template>
-  <div class="flex flex-col pr-8">
+  <div class="flex flex-col gap-8 px-8 mb-8">
     <template v-if="plugins.length === 0">
-      <div class="text-18 font-bold pb-12">
+      <div class="px-8 py-8 text-18 font-bold">
         {{ $t('plugins.configuration') }}
       </div>
       <Card>
@@ -39,9 +39,15 @@ const plugins = computed(() =>
       "
     >
       <template #header="{ handleResetAll }">
-        <div class="flex items-center pb-12">
+        <div class="flex items-center px-8 py-8">
           <Dropdown>
-            <Button icon="settings" type="text"></Button>
+            <Button
+              icon="settings"
+              type="text"
+              size="small"
+              class="mr-4"
+              style="margin-left: -8px"
+            />
             <template #overlay="{ close }">
               <div class="flex flex-col gap-4 min-w-64 p-4">
                 <Button

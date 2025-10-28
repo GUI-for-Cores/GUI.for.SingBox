@@ -70,14 +70,14 @@ defineExpose({ reset: handleResetAll })
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col gap-8">
     <slot name="header" v-bind="{ handleResetAll }"></slot>
     <Card
       v-for="(conf, index) in plugin.configuration"
       :key="conf.id"
       :title="`${index + 1}. ${conf.title}`"
       :class="{ warn: model[conf.key] !== undefined }"
-      class="card mb-8"
+      class="card"
     >
       <template v-if="model[conf.key] !== undefined" #extra>
         <Button

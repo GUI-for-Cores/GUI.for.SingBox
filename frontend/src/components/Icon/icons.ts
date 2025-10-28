@@ -1,5 +1,6 @@
 const icons = [
   'link',
+  'link2',
   'loading',
   'selected',
   'disabled',

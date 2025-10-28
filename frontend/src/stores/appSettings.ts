@@ -32,15 +32,7 @@ import {
   Branch,
 } from '@/enums/app'
 import i18n, { loadLocaleMessages, reloadLocale } from '@/lang'
-import {
-  debounce,
-  updateTrayMenus,
-  APP_TITLE,
-  ignoredError,
-  APP_VERSION,
-  sleep,
-  GetSystemProxyBypass,
-} from '@/utils'
+import { debounce, updateTrayMenus, ignoredError, sleep, GetSystemProxyBypass } from '@/utils'
 
 import { useEnvStore } from './env'
 
@@ -70,7 +62,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     autoSetSystemProxy: true,
     proxyBypassList: '',
     autoStartKernel: false,
-    userAgent: APP_TITLE + '/' + APP_VERSION,
+    userAgent: '',
     startupDelay: 30,
     connections: DefaultConnections(),
     kernel: {
