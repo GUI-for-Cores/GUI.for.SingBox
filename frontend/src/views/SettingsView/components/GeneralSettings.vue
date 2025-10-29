@@ -176,8 +176,8 @@ if (envStore.env.os === 'windows') {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 px-8 mb-8">
-    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.personalization') }}</div>
+  <div class="flex flex-col gap-8 pr-20 mb-8">
+    <div class="px-8 py-12 text-18 font-bold">{{ t('settings.personalization') }}</div>
 
     <Card>
       <div class="px-8 py-12 flex items-center justify-between">
@@ -223,7 +223,7 @@ if (envStore.env.os === 'windows') {
       </div>
     </Card>
 
-    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.behavior') }}</div>
+    <div class="px-8 py-12 text-18 font-bold">{{ t('settings.behavior') }}</div>
 
     <Card>
       <div
@@ -311,7 +311,7 @@ if (envStore.env.os === 'windows') {
       </div>
     </Card>
 
-    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.systemProxy') }}</div>
+    <div class="px-8 py-12 text-18 font-bold">{{ t('settings.systemProxy') }}</div>
 
     <Card>
       <div class="px-8 py-12 flex items-center justify-between">
@@ -351,7 +351,7 @@ if (envStore.env.os === 'windows') {
       </div>
     </Card>
 
-    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.advanced') }}</div>
+    <div class="px-8 py-12 text-18 font-bold">{{ t('settings.advanced') }}</div>
 
     <Card>
       <div class="px-8 py-12 flex items-center justify-between">
@@ -380,7 +380,7 @@ if (envStore.env.os === 'windows') {
       </div>
     </Card>
 
-    <div class="px-8 py-8 text-18 font-bold">{{ t('settings.debug') }}</div>
+    <div class="px-8 py-12 text-18 font-bold">{{ t('settings.debug') }}</div>
 
     <Card>
       <div class="px-8 py-12 flex items-center justify-between">

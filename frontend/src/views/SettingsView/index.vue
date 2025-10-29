@@ -21,7 +21,13 @@ const appStore = useAppStore()
 </script>
 
 <template>
-  <Tabs v-model:active-key="activeKey" :items="settings" height="100%">
+  <Tabs
+    v-model:active-key="activeKey"
+    :items="settings"
+    tab-width="15%"
+    content-width="85%"
+    class="h-full"
+  >
     <template #general>
       <GeneralSettings />
     </template>

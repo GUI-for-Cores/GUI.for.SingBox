@@ -13,7 +13,7 @@ const plugins = computed(() =>
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 px-8 mb-8">
+  <div class="flex flex-col gap-8 pr-12 mb-8">
     <template v-if="plugins.length === 0">
       <div class="px-8 py-8 text-18 font-bold">
         {{ $t('plugins.configuration') }}
@@ -39,7 +39,7 @@ const plugins = computed(() =>
       "
     >
       <template #header="{ handleResetAll }">
-        <div class="flex items-center px-8 py-8">
+        <div class="flex items-center px-8 py-12">
           <Dropdown>
             <Button
               icon="settings"

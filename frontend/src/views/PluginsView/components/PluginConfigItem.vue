@@ -70,7 +70,7 @@ defineExpose({ reset: handleResetAll })
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-8 pr-8">
     <slot name="header" v-bind="{ handleResetAll }"></slot>
     <Card
       v-for="(conf, index) in plugin.configuration"
