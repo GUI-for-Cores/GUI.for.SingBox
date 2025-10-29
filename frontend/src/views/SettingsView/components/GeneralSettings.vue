@@ -189,8 +189,8 @@ if (envStore.env.os === 'windows') {
         <Radio v-model="appSettings.app.color" :options="colors" />
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
-        <div class="text-16 font-bold">
-          {{ t('settings.lang.name') }}
+        <div class="flex items-center text-16 font-bold">
+          <div class="mr-4">{{ t('settings.lang.name') }}</div>
           <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link2" />
           <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
           <Button
@@ -205,19 +205,17 @@ if (envStore.env.os === 'windows') {
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">{{ t('settings.fontFamily') }}</div>
-        <div class="flex items-center">
-          <Input v-model="appSettings.app.fontFamily" editable class="ml-8">
-            <template #suffix>
-              <Button
-                @click="resetFontFamily"
-                v-tips="'settings.resetFont'"
-                type="text"
-                size="small"
-                icon="reset"
-              />
-            </template>
-          </Input>
-        </div>
+        <Input v-model="appSettings.app.fontFamily" editable class="text-14">
+          <template #suffix>
+            <Button
+              @click="resetFontFamily"
+              v-tips="'settings.resetFont'"
+              type="text"
+              size="small"
+              icon="reset"
+            />
+          </template>
+        </Input>
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">{{ t('settings.pages.name') }}</div>
@@ -267,7 +265,8 @@ if (envStore.env.os === 'windows') {
         <Input
           v-model="appSettings.app.startupDelay"
           @submit="onStartupDelayChange"
-          :min="0"
+          :min="10"
+          :max="180"
           editable
           type="number"
         >
@@ -333,23 +332,22 @@ if (envStore.env.os === 'windows') {
       </div>
       <div class="px-8 py-12 flex items-center justify-between">
         <div class="text-16 font-bold">{{ t('settings.userAgent.name') }}</div>
-        <div class="flex items-center">
-          <Input
-            v-model.lazy="appSettings.app.userAgent"
-            :placeholder="APP_TITLE + '/' + APP_VERSION"
-            editable
-          >
-            <template #suffix>
-              <Button
-                @click="clearUserAgent"
-                v-tips="'settings.userAgent.reset'"
-                type="text"
-                size="small"
-                icon="reset"
-              />
-            </template>
-          </Input>
-        </div>
+        <Input
+          v-model.lazy="appSettings.app.userAgent"
+          :placeholder="APP_TITLE + '/' + APP_VERSION"
+          editable
+          class="text-14"
+        >
+          <template #suffix>
+            <Button
+              @click="clearUserAgent"
+              v-tips="'settings.userAgent.reset'"
+              type="text"
+              size="small"
+              icon="reset"
+            />
+          </template>
+        </Input>
       </div>
     </Card>
 
