@@ -23,6 +23,14 @@ const kernelApiStore = Stores.useKernelApiStore()
 const subscribesStore = Stores.useSubscribesStore()
 const scheduledTasksStore = Stores.useScheduledTasksStore()
 
+const handleRestartCore = async () => {
+  try {
+    await kernelApiStore.restartCore()
+  } catch (e: any) {
+    message.error(e.message || e)
+  }
+}
+
 EventsOn('onLaunchApp', async ([arg]: string[]) => {
   if (!arg) return
 
@@ -142,4 +150,14 @@ envStore.setupEnv().then(async () => {
   />
 
   <CommandView v-if="!loading" />
+
+  <div v-if="kernelApiStore.needRestart" class="fixed right-32 bottom-32">
+    <Button
+      @click="handleRestartCore"
+      v-tips="'home.overview.restart'"
+      :loading="kernelApiStore.restarting"
+      icon="restart"
+      class="rounded-full w-42 h-42 shadow"
+    />
+  </div>
 </template>

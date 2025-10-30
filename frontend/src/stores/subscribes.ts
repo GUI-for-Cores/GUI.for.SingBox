@@ -16,6 +16,7 @@ import {
   ignoredError,
   omitArray,
   asyncPool,
+  eventBus,
 } from '@/utils'
 
 import type { Subscription } from '@/types/app'
@@ -122,6 +123,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       subscribes.value.splice(idx, 0, backup)
       throw error
     }
+
+    eventBus.emit('subscriptionChange', { id })
   }
 
   const editSubscribe = async (id: string, s: Subscription) => {
@@ -134,6 +137,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       subscribes.value.splice(idx, 1, backup)
       throw error
     }
+
+    eventBus.emit('subscriptionChange', { id })
   }
 
   const _doUpdateSub = async (s: Subscription) => {
@@ -241,13 +246,16 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       s.updating = true
       await _doUpdateSub(s)
       await saveSubscribes()
-      return `Subscription [${s.name}] updated successfully.`
     } catch (error) {
       console.error('updateSubscribe: ', s.name, error)
       throw error
     } finally {
       s.updating = false
     }
+
+    eventBus.emit('subscriptionChange', { id })
+
+    return `Subscription [${s.name}] updated successfully.`
   }
 
   const updateSubscribes = async () => {
@@ -270,6 +278,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     )
 
     if (needSave) saveSubscribes()
+
+    eventBus.emit('subscriptionsChange', undefined)
   }
 
   const getSubscribeById = (id: string) => subscribes.value.find((v) => v.id === id)

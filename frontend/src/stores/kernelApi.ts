@@ -11,13 +11,15 @@ import {
 } from '@/constant/kernel'
 import { DefaultInboundMixed } from '@/constant/profile'
 import { Branch } from '@/enums/app'
-import { Inbound, TunStack } from '@/enums/kernel'
+import { Inbound, RulesetType, TunStack } from '@/enums/kernel'
 import {
   useAppSettingsStore,
   useProfilesStore,
   useLogsStore,
   useEnvStore,
   usePluginsStore,
+  useSubscribesStore,
+  useRulesetsStore,
 } from '@/stores'
 import {
   generateConfigFile,
@@ -30,6 +32,7 @@ import {
   message,
   getKernelRuntimeArgs,
   getKernelRuntimeEnv,
+  eventBus,
 } from '@/utils'
 
 import type {
@@ -48,6 +51,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   const logsStore = useLogsStore()
   const pluginsStore = usePluginsStore()
   const profilesStore = useProfilesStore()
+  const subscribesStore = useSubscribesStore()
+  const rulesetsStore = useRulesetsStore()
   const appSettingsStore = useAppSettingsStore()
 
   /** RESTful API */
@@ -60,7 +65,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     mode: '',
     tun: {
       enable: false,
-      stack: 'System',
+      stack: '',
       device: '',
     },
   })
@@ -326,6 +331,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   const starting = ref(false)
   const stopping = ref(false)
   const restarting = ref(false)
+  const needRestart = ref(false)
   const coreStateLoading = ref(true)
   let isCoreStartedByThisInstance = false
   let { promise: coreStoppedPromise, resolve: coreStoppedResolver } = Promise.withResolvers()
@@ -374,6 +380,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     corePid.value = pid
     running.value = true
+    needRestart.value = false
     isCoreStartedByThisInstance = true
     coreStoppedPromise = new Promise((r) => (coreStoppedResolver = r))
 
@@ -484,6 +491,66 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     return undefined
   }
 
+  eventBus.on('profileChange', ({ id }) => {
+    if (running.value && id === appSettingsStore.app.kernel.profile) {
+      needRestart.value = true
+    }
+  })
+
+  eventBus.on('subscriptionChange', ({ id }) => {
+    if (running.value && profilesStore.currentProfile) {
+      const inUse = profilesStore.currentProfile.outbounds.some(({ outbounds }) =>
+        outbounds.some((outbound) => outbound.type === 'Subscription' && outbound.id === id),
+      )
+      if (inUse) {
+        needRestart.value = true
+      }
+    }
+  })
+
+  eventBus.on('subscriptionsChange', () => {
+    if (running.value && profilesStore.currentProfile) {
+      const enabledSubs = subscribesStore.subscribes.flatMap((v) => (v.disabled ? [] : v.id))
+      const inUse = profilesStore.currentProfile.outbounds.some(({ outbounds }) =>
+        outbounds.some(
+          (outbound) => outbound.type === 'Subscription' && enabledSubs.includes(outbound.id),
+        ),
+      )
+      if (inUse) {
+        needRestart.value = true
+      }
+    }
+  })
+
+  const collectRulesetIDs = () => {
+    if (!profilesStore.currentProfile) return []
+    const l1 = profilesStore.currentProfile.route.rule_set.flatMap((ruleset) =>
+      ruleset.type === RulesetType.Local ? ruleset.path : [],
+    )
+    return l1
+  }
+
+  eventBus.on('rulesetChange', ({ id }) => {
+    if (running.value && profilesStore.currentProfile) {
+      const inUse = profilesStore.currentProfile.route.rule_set.some(
+        (ruleset) => ruleset.type === RulesetType.Local && ruleset.path === id,
+      )
+      if (inUse) {
+        needRestart.value = true
+      }
+    }
+  })
+
+  eventBus.on('rulesetsChange', () => {
+    if (running.value && profilesStore.currentProfile) {
+      const enabledRulesets = rulesetsStore.rulesets.flatMap((v) => (v.disabled ? [] : v.id))
+      const inUse = collectRulesetIDs().some((v) => enabledRulesets.includes(v))
+      if (inUse) {
+        needRestart.value = true
+      }
+    }
+  })
+
   const watchSources = computed(() => {
     const source = [config.value.mode, config.value.tun.enable]
     if (!appSettingsStore.app.addGroupToMenu) return source.join('')
@@ -510,6 +577,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     starting,
     stopping,
     restarting,
+    needRestart,
     coreStateLoading,
     config,
     proxies,

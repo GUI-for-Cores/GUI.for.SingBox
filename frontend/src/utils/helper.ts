@@ -578,19 +578,20 @@ export const addToRuleSet = async (
   const path = `data/rulesets/${id}.json`
 
   const rulesetsStoe = useRulesetsStore()
-  const ruleset = rulesetsStoe.getRulesetById(id)
+  let ruleset = rulesetsStoe.getRulesetById(id)
   if (!ruleset) {
-    rulesetsStoe.addRuleset({
+    ruleset = {
       id,
       tag: id,
-      updateTime: Date.now(),
+      updateTime: 0,
       type: 'Manual',
       format: RulesetFormat.Source,
       url: '',
       path,
-      count: payloads.length,
+      count: 0,
       disabled: false,
-    })
+    }
+    await rulesetsStoe.addRuleset(ruleset)
   }
 
   const content = (await ignoredError(ReadFile, path)) || '{ "version": 1, "rules": [] }'
@@ -612,6 +613,7 @@ export const addToRuleSet = async (
     }
   })
   await WriteFile(path, JSON.stringify({ version: 1, rules }, null, 2))
+  await rulesetsStoe.updateRuleset(id)
 }
 
 export const exitApp = async () => {

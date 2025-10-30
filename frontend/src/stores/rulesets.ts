@@ -6,7 +6,7 @@ import { ReadFile, WriteFile, CopyFile, Download, FileExists, HttpGet } from '@/
 import { RulesetHubFilePath, RulesetsFilePath } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
-import { asyncPool, debounce, ignoredError, isValidRulesJson, omitArray } from '@/utils'
+import { asyncPool, debounce, eventBus, ignoredError, isValidRulesJson, omitArray } from '@/utils'
 
 export interface RuleSet {
   id: string
@@ -68,6 +68,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       rulesets.value.splice(idx, 0, backup)
       throw error
     }
+
+    eventBus.emit('rulesetChange', { id })
   }
 
   const editRuleset = async (id: string, r: RuleSet) => {
@@ -80,6 +82,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       rulesets.value.splice(idx, 1, backup)
       throw error
     }
+
+    eventBus.emit('rulesetChange', { id })
   }
 
   const _doUpdateRuleset = async (r: RuleSet) => {
@@ -96,11 +100,10 @@ export const useRulesetsStore = defineStore('rulesets', () => {
           body = JSON.stringify(body)
         }
       } else if (r.type === 'Manual') {
-        isExist = await FileExists(r.path)
-        if (isExist) {
-          body = await ReadFile(r.path)
-        } else {
+        body = await ReadFile(r.path).catch(() => '')
+        if (!body) {
           body = JSON.stringify(EmptyRuleSet)
+          isExist = false
         }
       }
 
@@ -146,10 +149,13 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       r.updating = true
       await _doUpdateRuleset(r)
       await saveRulesets()
-      return `Ruleset [${r.tag}] updated successfully.`
     } finally {
       r.updating = false
     }
+
+    eventBus.emit('rulesetChange', { id })
+
+    return `Ruleset [${r.tag}] updated successfully.`
   }
 
   const updateRulesets = async () => {
@@ -172,6 +178,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     )
 
     if (needSave) saveRulesets()
+
+    eventBus.emit('rulesetsChange', undefined)
   }
 
   const rulesetHubLoading = ref(false)

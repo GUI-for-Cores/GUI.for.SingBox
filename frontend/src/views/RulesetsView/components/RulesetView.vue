@@ -32,7 +32,8 @@ const handleSave = async () => {
       throw 'syntax error'
     }
     await WriteFile(ruleset.value.path, rulesetContent.value)
-    handleSubmit()
+    await rulesetsStore.updateRuleset(ruleset.value.id)
+    await handleSubmit()
   } catch (error: any) {
     message.error(error)
     console.log(error)
