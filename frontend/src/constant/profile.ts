@@ -69,7 +69,7 @@ export const DefaultExperimental = (): IExperimental => ({
   cache_file: {
     enabled: true,
     path: 'cache.db',
-    cache_id: '',
+    cache_id: sampleID(),
     store_fakeip: true,
     store_rdrc: true,
     rdrc_timeout: '7d',
