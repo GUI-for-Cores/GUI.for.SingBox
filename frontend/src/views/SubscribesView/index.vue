@@ -221,6 +221,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
         <Icon
           v-if="s.type !== 'File' && s.website"
           v-tips="'subscribe.website'"
+          :size="14"
           icon="link2"
           @click="BrowserOpenURL(s.website)"
           class="mx-4 cursor-pointer shrink-0"

@@ -20,17 +20,19 @@ Object.entries(Icons).forEach(([path, comp]) => {
 interface Props {
   icon: IconType
   size?: number
+  color?: string
 }
 
-withDefaults(defineProps<Props>(), { size: 16 })
+withDefaults(defineProps<Props>(), { size: 16, color: 'var(--color)' })
 </script>
 
 <template>
-  <Component
-    v-bind="$attrs"
-    :is="IconsMap[icon] || IconsMap['error']"
-    :width="size + 'px'"
-    :height="size + 'px'"
-    fill="var(--color)"
-  />
+  <div v-bind="$attrs" class="flex">
+    <Component
+      :is="IconsMap[icon] || IconsMap['error']"
+      :width="size + 'px'"
+      :height="size + 'px'"
+      :fill="color"
+    />
+  </div>
 </template>

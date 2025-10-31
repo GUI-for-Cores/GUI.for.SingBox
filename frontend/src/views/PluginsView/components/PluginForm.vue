@@ -297,7 +297,7 @@ defineExpose({ modalSlots })
         <template v-for="(conf, index) in plugin.configuration" :key="conf.id">
           <Card v-if="conf.component" :title="conf.component">
             <template #title-prefix>
-              <Icon icon="drag" class="drag" style="cursor: move" />
+              <Icon icon="drag" class="drag cursor-move" />
               <div class="ml-8">{{ index + 1 }}.</div>
             </template>
             <template #extra>

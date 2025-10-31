@@ -102,7 +102,7 @@ const handleSelectAll = () => {
               v-show="isSelected(o.value)"
               :size="26"
               icon="selected"
-              fill="var(--primary-color)"
+              color="var(--primary-color)"
               class="shrink-0"
             />
           </div>

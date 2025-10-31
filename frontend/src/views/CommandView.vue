@@ -141,9 +141,3 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     </div>
   </div>
 </template>
-
-<style lang="less" scoped>
-.rotation {
-  animation: rotate 2s infinite linear;
-}
-</style>

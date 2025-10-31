@@ -97,11 +97,11 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       >
         {{ APP_TITLE }} {{ APP_VERSION }}
         <CustomAction :actions="appStore.customActions.title_bar" />
-        <Button
+        <Icon
           v-if="kernelApiStore.starting || kernelApiStore.stopping || kernelApiStore.restarting"
-          type="text"
-          size="small"
-          loading
+          :size="14"
+          icon="loading"
+          class="rotation mx-4"
         />
       </div>
     </template>

@@ -24,11 +24,17 @@ withDefaults(defineProps<Props>(), {
     :class="[type, size, { 'pointer-events-none': disabled || loading }]"
     class="gui-button inline-flex items-center justify-center text-center align-middle rounded-6 text-14 text-nowrap cursor-pointer px-12 py-6 duration-200"
   >
-    <Icon v-if="loading" :fill="`var(--btn-${type}-color)`" icon="loading" class="rotation" />
+    <Icon
+      v-if="loading"
+      :color="`var(--btn-${type}-color)`"
+      :size="size === 'small' ? 14 : 16"
+      icon="loading"
+      class="rotation"
+    />
     <template v-else>
       <Icon
         v-if="disabled"
-        :fill="`var(--btn-${type}-color)`"
+        :color="`var(--btn-${type}-color)`"
         icon="forbidden"
         class="pointer-events-none shrink-0"
       />
@@ -36,7 +42,7 @@ withDefaults(defineProps<Props>(), {
         v-if="icon"
         :icon="icon"
         :size="iconSize"
-        :fill="iconColor || `var(--btn-${type}-color)`"
+        :color="iconColor || `var(--btn-${type}-color)`"
         :class="$slots.default ? 'mr-4' : ''"
       />
     </template>
@@ -103,9 +109,5 @@ withDefaults(defineProps<Props>(), {
 .large {
   padding: 8px 12px;
   font-size: 16px;
-}
-
-.rotation {
-  animation: rotate 2s infinite linear;
 }
 </style>

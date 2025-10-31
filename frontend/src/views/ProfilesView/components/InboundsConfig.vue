@@ -92,7 +92,7 @@ defineExpose({ handleAdd })
   <div v-draggable="[model, { ...DraggableOptions, handle: '.drag' }]">
     <Card v-for="(inbound, index) in model" :key="inbound.id" :title="inbound.tag" class="mb-8">
       <template #title-prefix>
-        <Icon icon="drag" class="drag" style="cursor: move" />
+        <Icon icon="drag" class="drag cursor-move" />
       </template>
       <template #extra>
         <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />

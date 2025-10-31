@@ -25,9 +25,14 @@ appStore.checkForUpdates()
     <img src="@/assets/logo.png" class="w-128" draggable="false" />
     <div class="py-8 font-bold">{{ APP_TITLE }}</div>
     <div class="flex items-center pb-8 my-4">
-      <Button v-if="appStore.restartable" @click="handleRestartApp" size="small" type="primary">
-        <Icon icon="restartApp" fill="var(--btn-primary-color)" style="margin-top: 1px" />
-        <span style="margin-left: 4px">{{ t('about.restart') }}</span>
+      <Button
+        v-if="appStore.restartable"
+        @click="handleRestartApp"
+        icon="restartApp"
+        size="small"
+        type="primary"
+      >
+        {{ t('about.restart') }}
       </Button>
       <template v-else>
         <Button
