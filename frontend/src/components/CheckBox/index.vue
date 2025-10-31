@@ -19,10 +19,15 @@ const emit = defineEmits(['change', 'update:modelValue'])
 const model = ref<string[]>([...props.modelValue])
 const { t } = useI18n()
 
+let internalUpdate = false
+
 watch(
   () => props.modelValue,
   (newVal) => {
-    model.value = [...newVal]
+    if (!internalUpdate) {
+      model.value = [...newVal]
+    }
+    internalUpdate = false
   },
   {
     deep: true,
@@ -38,6 +43,7 @@ const handleSelect = (val: string) => {
   } else {
     model.value.push(val)
   }
+  internalUpdate = true
   emit('update:modelValue', [...model.value])
   emit('change', [...model.value])
 }
