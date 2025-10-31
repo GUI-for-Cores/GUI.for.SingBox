@@ -25,7 +25,7 @@ const scheduledTasksStore = Stores.useScheduledTasksStore()
 
 const handleRestartCore = async () => {
   try {
-    await kernelApiStore.restartCore()
+    await kernelApiStore.restartCore(undefined, false)
   } catch (e: any) {
     message.error(e.message || e)
   }
