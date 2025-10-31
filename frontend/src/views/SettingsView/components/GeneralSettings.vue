@@ -237,7 +237,7 @@ if (envStore.env.os === 'windows') {
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
       <div
-        v-if="envStore.env.os === 'windows' && isAdmin"
+        v-if="envStore.env.os === 'windows'"
         class="px-8 py-12 flex items-center justify-between"
       >
         <div class="text-16 font-bold">
@@ -255,7 +255,7 @@ if (envStore.env.os === 'windows') {
         </div>
       </div>
       <div
-        v-if="envStore.env.os === 'windows' && isAdmin && isTaskScheduled"
+        v-if="envStore.env.os === 'windows' && isTaskScheduled"
         class="px-8 py-12 flex items-center justify-between"
       >
         <div class="text-16 font-bold">
