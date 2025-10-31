@@ -100,6 +100,10 @@ const clearUserAgent = () => {
   appSettings.app.userAgent = ''
 }
 
+const clearApiToken = () => {
+  appSettings.app.githubApiToken = ''
+}
+
 const onPermChange = async (v: boolean) => {
   try {
     await SwitchPermissions(v)
@@ -376,7 +380,17 @@ if (envStore.env.os === 'windows') {
           {{ t('settings.githubapi.name') }}
           <span class="font-normal text-12">({{ t('settings.githubapi.tips') }})</span>
         </div>
-        <Input v-model.lazy="appSettings.app.githubApiToken" editable />
+        <Input v-model.lazy="appSettings.app.githubApiToken" editable class="text-14">
+          <template #suffix>
+            <Button
+              @click="clearApiToken"
+              v-tips="'settings.userAgent.reset'"
+              type="text"
+              size="small"
+              icon="reset"
+            />
+          </template>
+        </Input>
       </div>
     </Card>
 
