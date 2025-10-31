@@ -69,6 +69,9 @@ watch(
     }
     internalUpdate = false
   },
+  {
+    deep: true,
+  },
 )
 
 const emitUpdate = () => {

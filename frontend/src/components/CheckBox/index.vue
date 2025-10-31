@@ -24,6 +24,9 @@ watch(
   (newVal) => {
     model.value = [...newVal]
   },
+  {
+    deep: true,
+  },
 )
 
 const isActive = (val: string) => model.value.includes(val)
