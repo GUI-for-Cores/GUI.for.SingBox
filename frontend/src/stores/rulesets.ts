@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { stringify, parse } from 'yaml'
 
-import { ReadFile, WriteFile, CopyFile, Download, FileExists, HttpGet } from '@/bridge'
+import { ReadFile, WriteFile, CopyFile, Download, HttpGet } from '@/bridge'
 import { RulesetHubFilePath, RulesetsFilePath } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'

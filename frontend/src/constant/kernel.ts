@@ -78,6 +78,7 @@ export const InboundOptions = [
 
 export const OutboundOptions = [
   { label: 'kernel.outbounds.direct', value: Outbound.Direct },
+  { label: 'kernel.outbounds.block', value: Outbound.Block },
   { label: 'kernel.outbounds.selector', value: Outbound.Selector },
   { label: 'kernel.outbounds.urltest', value: Outbound.Urltest },
 ]
@@ -256,6 +257,8 @@ export const EmptyRuleSet = {
 }
 
 export const DefaultExcludeProtocols = 'direct|reject|selector|urltest|block|dns|shadowsocksr'
+
+export const BuiltInOutbound = [Outbound.Direct, Outbound.Block]
 
 export const DefaultConnections = () => {
   return {

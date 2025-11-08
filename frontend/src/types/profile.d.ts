@@ -90,7 +90,7 @@ interface IInbound {
   }
 }
 
-type OutboundType = 'direct' | 'selector' | 'urltest'
+type OutboundType = 'direct' | 'block' | 'selector' | 'urltest'
 
 type RuleAction = 'route' | 'route-options' | 'reject' | 'hijack-dns' | 'sniff' | 'resolve'
 type DnsRuleAction = 'route' | 'route-options' | 'reject' | 'predefined'

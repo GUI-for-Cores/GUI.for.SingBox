@@ -23,6 +23,7 @@ export enum Inbound {
 
 export enum Outbound {
   Direct = 'direct',
+  Block = 'block',
   Selector = 'selector',
   Urltest = 'urltest',
 }

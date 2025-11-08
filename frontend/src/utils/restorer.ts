@@ -104,7 +104,11 @@ export const restoreProfile = (config: Recordable) => {
       })
     } else if (field === 'outbounds') {
       profile.outbounds = value.flatMap((outbound: any) => {
-        if (![Outbound.Selector, Outbound.Direct, Outbound.Urltest].includes(outbound.type)) {
+        if (
+          ![Outbound.Selector, Outbound.Direct, Outbound.Block, Outbound.Urltest].includes(
+            outbound.type,
+          )
+        ) {
           return []
         }
         const extra: Recordable = Defaults.DefaultOutbound()

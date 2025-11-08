@@ -97,6 +97,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
   const result: Recordable[] = []
   const SubscriptionCache: Recordable<any[]> = {}
   const proxiesSet = new Set<any>()
+  const builtInProxiesSet = new Set<string>()
 
   const createTagMatcher = (include: string, exclude: string) => {
     const includeRegex = include ? new RegExp(include) : null
@@ -126,6 +127,9 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
       const isTagMatching = createTagMatcher(outbound.include, outbound.exclude)
       for (const proxy of outbound.outbounds) {
         if (proxy.type === 'Built-in') {
+          if ([Outbound.Direct, Outbound.Block].includes(proxy.id as Outbound)) {
+            builtInProxiesSet.add(proxy.id)
+          }
           _outbound.outbounds.push(proxy.tag)
         } else {
           const subId = proxy.type === 'Subscription' ? proxy.id : proxy.type
@@ -156,6 +160,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
   }
 
   result.push(...proxiesSet)
+  result.push(...Array.from(builtInProxiesSet).map((v) => ({ type: v, tag: v })))
 
   return result
 }

@@ -125,6 +125,7 @@ export default {
       tolerance: 'Tolerance(ms)',
       interrupt_exist_connections: 'Interrupt Exist Connections',
       direct: 'Direct',
+      block: 'Block',
       directDesc: 'No settings',
       selector: 'Selector',
       urltest: 'URLTest',

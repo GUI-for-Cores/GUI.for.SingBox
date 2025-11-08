@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DraggableOptions } from '@/constant/app'
-import { OutboundOptions } from '@/constant/kernel'
+import { OutboundOptions, BuiltInOutbound } from '@/constant/kernel'
 import { DefaultOutbound } from '@/constant/profile'
 import { Outbound } from '@/enums/kernel'
 import { useSubscribesStore } from '@/stores'
@@ -21,7 +21,10 @@ const proxyGroup = ref([
   {
     id: 'Built-in',
     name: 'kernel.outbounds.builtIn',
-    proxies: model.value.map(({ id, tag, type }) => ({ id, tag, type: type as string })),
+    proxies: [
+      ...BuiltInOutbound.map((v) => ({ id: v, tag: v, type: 'Built-In' })),
+      ...model.value.map(({ id, tag, type }) => ({ id, tag, type: type as string })),
+    ],
   },
   {
     id: 'Subscription',
@@ -114,6 +117,9 @@ const hasLost = (outbound: IOutbound) => {
   if ([Outbound.Selector, Outbound.Urltest].includes(outbound.type as any)) {
     return outbound.outbounds.some(({ id, type }) => {
       if (type === 'Built-in') {
+        if (BuiltInOutbound.includes(id as Outbound)) {
+          return false
+        }
         return model.value.every((v) => v.id !== id)
       } else if (type === 'Subscription') {
         const sub = subscribesStore.getSubscribeById(id)
@@ -261,7 +267,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       {{ t('kernel.outbounds.type') }}
       <Radio v-model="fields.type" :options="OutboundOptions" />
     </div>
-    <template v-if="fields.type !== Outbound.Direct">
+    <template v-if="Outbound.Selector === fields.type || Outbound.Urltest === fields.type">
       <div class="form-item">
         {{ t('kernel.outbounds.interrupt_exist_connections') }}
         <Switch v-model="fields.interrupt_exist_connections" />
@@ -275,7 +281,7 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
         <Input v-model="fields.exclude" placeholder="keywords1|keywords2" />
       </div>
     </template>
-    <template v-if="fields.type === Outbound.Direct">
+    <template v-if="Outbound.Direct === fields.type || Outbound.Block === fields.type">
       <Empty :description="t('kernel.outbounds.directDesc')" />
     </template>
     <template v-else-if="fields.type === Outbound.Urltest">
