@@ -113,7 +113,7 @@ export const DefaultInboundMixed = (): IInbound['mixed'] => ({
 export const DefaultInboundTun = (): IInbound['tun'] => ({
   interface_name: '',
   address: ['172.18.0.1/30', 'fdfe:dcba:9876::1/126'],
-  mtu: 9000,
+  mtu: 0,
   auto_route: true,
   strict_route: true,
   route_address: [],

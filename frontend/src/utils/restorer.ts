@@ -76,7 +76,7 @@ export const restoreProfile = (config: Recordable) => {
             tun: {
               interface_name: inbound.interface_name || '',
               address: inbound.address || ['172.18.0.1/30', 'fdfe:dcba:9876::1/126'],
-              mtu: inbound.mtu || 9000,
+              mtu: inbound.mtu || 0,
               auto_route: !!inbound.auto_route,
               strict_route: !!inbound.strict_route,
               route_address: inbound.route_address || [],
