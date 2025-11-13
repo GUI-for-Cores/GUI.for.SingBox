@@ -27,6 +27,7 @@ const handleRestartCore = async () => {
   try {
     await kernelApiStore.restartCore(undefined, false)
   } catch (e: any) {
+    kernelApiStore.needRestart = false
     message.error(e.message || e)
   }
 }
