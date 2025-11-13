@@ -401,6 +401,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     corePid.value = -1
     running.value = false
+    needRestart.value = false
 
     destroyCoreWebsockets()
 
@@ -458,6 +459,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       await cleanupTask?.()
       await startCore(keepRuntimeProfile ? runtimeProfile : undefined)
     } finally {
+      needRestart.value = false
       restarting.value = false
     }
   }

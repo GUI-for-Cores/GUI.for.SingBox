@@ -27,7 +27,6 @@ const handleRestartCore = async () => {
   try {
     await kernelApiStore.restartCore(undefined, false)
   } catch (e: any) {
-    kernelApiStore.needRestart = false
     message.error(e.message || e)
   }
 }
@@ -152,7 +151,10 @@ envStore.setupEnv().then(async () => {
 
   <CommandView v-if="!loading" />
 
-  <div v-if="kernelApiStore.needRestart" class="fixed right-32 bottom-32">
+  <div
+    v-if="kernelApiStore.needRestart || kernelApiStore.restarting"
+    class="fixed right-32 bottom-32"
+  >
     <Button
       @click="handleRestartCore"
       v-tips="'home.overview.restart'"
