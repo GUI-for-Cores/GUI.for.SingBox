@@ -84,12 +84,13 @@ export const DraggableOptions = {
 }
 
 export const PluginsTriggerOptions = [
-  { label: 'plugin.on::manual', value: PluginTrigger.OnManual },
   { label: 'plugin.on::startup', value: PluginTrigger.OnStartup },
   { label: 'plugin.on::ready', value: PluginTrigger.OnReady },
   { label: 'plugin.on::shutdown', value: PluginTrigger.OnShutdown },
+  { label: 'plugin.on::manual', value: PluginTrigger.OnManual },
   { label: 'plugin.on::generate', value: PluginTrigger.OnGenerate },
   { label: 'plugin.on::subscribe', value: PluginTrigger.OnSubscribe },
+  { label: 'plugin.on::tray::update', value: PluginTrigger.OnTrayUpdate },
   { label: 'plugin.on::before::core::start', value: PluginTrigger.OnBeforeCoreStart },
   { label: 'plugin.on::core::started', value: PluginTrigger.OnCoreStarted },
   { label: 'plugin.on::before::core::stop', value: PluginTrigger.OnBeforeCoreStop },

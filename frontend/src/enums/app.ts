@@ -64,12 +64,14 @@ export enum PluginTrigger {
   OnCoreStopped = 'on::core::stopped',
   OnBeforeCoreStart = 'on::before::core::start',
   OnBeforeCoreStop = 'on::before::core::stop',
+  OnTrayUpdate = 'on::tray::update',
 }
 
 export enum PluginTriggerEvent {
   OnInstall = 'onInstall',
   OnUninstall = 'onUninstall',
   OnManual = 'onRun',
+  OnTrayUpdate = 'onTrayUpdate',
   OnSubscribe = 'onSubscribe',
   OnGenerate = 'onGenerate',
   OnStartup = 'onStartup',

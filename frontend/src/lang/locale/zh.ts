@@ -518,6 +518,7 @@ export default {
     'on::core::stopped': '核心停止后',
     'on::before::core::start': '核心启动前',
     'on::before::core::stop': '核心停止前',
+    'on::tray::update': '托盘更新时',
     name: '名称',
     version: '版本号',
     description: '描述',

@@ -17,7 +17,7 @@ import {
   asyncPool,
 } from '@/utils'
 
-import type { Plugin, Subscription } from '@/types/app'
+import type { Plugin, Subscription, TrayContent, MenuItem } from '@/types/app'
 
 const PluginsCache: Recordable<{ plugin: Plugin; code: string }> = {}
 
@@ -29,6 +29,10 @@ const PluginsTriggerMap: {
 } = {
   [PluginTrigger.OnManual]: {
     fnName: PluginTriggerEvent.OnManual,
+    observers: [],
+  },
+  [PluginTrigger.OnTrayUpdate]: {
+    fnName: PluginTriggerEvent.OnTrayUpdate,
     observers: [],
   },
   [PluginTrigger.OnSubscribe]: {
@@ -124,7 +128,7 @@ export const usePluginsStore = defineStore('plugins', () => {
       configuration[key] = value
     }
     Object.assign(configuration, appSettingsStore.app.pluginSettings[plugin.id] ?? {})
-    return { ...plugin, ...configuration }
+    return deepClone({ ...plugin, ...configuration })
   }
 
   const isPluginUnavailable = (
@@ -465,6 +469,35 @@ export const usePluginsStore = defineStore('plugins', () => {
     }
   }
 
+  const onTrayUpdateTrigger = async (tray: TrayContent, menus: MenuItem[]) => {
+    const { fnName, observers } = PluginsTriggerMap[PluginTrigger.OnTrayUpdate]
+
+    let finalTray = tray
+    let finalMenus = menus
+    for (const observer of observers) {
+      const cache = PluginsCache[observer]
+
+      if (isPluginUnavailable(cache)) continue
+
+      const metadata = getPluginMetadata(cache.plugin)
+      try {
+        const fn = new window.AsyncFunction(
+          'Plugin',
+          'tray',
+          'menus',
+          `${cache.code}; return await ${fnName}(tray, menus)`,
+        )
+        const { tray, menus } = await fn(metadata, finalTray, finalMenus)
+        finalTray = tray
+        finalMenus = menus
+      } catch (error: any) {
+        throw `${cache.plugin.name} : ` + (error.message || error)
+      }
+    }
+
+    return [finalTray, finalMenus] as const
+  }
+
   const _watchDisabled = computed(() =>
     plugins.value
       .map((v) => v.disabled)
@@ -496,6 +529,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     updatePlugins,
     getPluginById,
     reloadPlugin,
+    onTrayUpdateTrigger,
     onSubscribeTrigger,
     onGenerateTrigger,
     onStartupTrigger: () => noParamsTrigger(PluginTrigger.OnStartup),

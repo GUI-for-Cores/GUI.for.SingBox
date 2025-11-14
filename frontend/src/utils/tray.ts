@@ -376,16 +376,21 @@ const getTrayMenus = () => {
     },
   ]
 
-  return generateUniqueEventsForMenu(trayMenus)
+  return trayMenus
 }
 
 export const updateTrayMenus = debounce(async () => {
   const trayMenus = getTrayMenus()
   const trayIcons = getTrayIcons()
+  const pluginsStore = usePluginsStore()
 
   const isDarwin = useEnvStore().env.os === 'darwin'
   const title = isDarwin ? '' : APP_TITLE
 
-  await UpdateTray({ icon: trayIcons, title, tooltip: APP_TITLE + ' ' + APP_VERSION })
-  await UpdateTrayMenus(trayMenus as any)
+  const tray = { icon: trayIcons, title, tooltip: APP_TITLE + ' ' + APP_VERSION }
+
+  const [finalTray, finalMenus] = await pluginsStore.onTrayUpdateTrigger(tray, trayMenus)
+
+  await UpdateTray(finalTray)
+  await UpdateTrayMenus(generateUniqueEventsForMenu(finalMenus) as any)
 }, 500)

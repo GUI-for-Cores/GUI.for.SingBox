@@ -45,6 +45,15 @@ export const getCompletions = (pluginScope: any = undefined) => {
       },
     ),
     snippetCompletion(
+      `/* ${t('plugin.trigger') + ' ' + t('plugin.on::tray::update')} */\n` +
+        `const ${PluginTriggerEvent.OnTrayUpdate} = async (tray, menus) => {\n\t\${}\n\treturn { tray, menus }\n}`,
+      {
+        label: PluginTriggerEvent.OnTrayUpdate,
+        type: 'keyword',
+        detail: t('plugin.trigger') + ' ' + t('plugin.on::tray::update'),
+      },
+    ),
+    snippetCompletion(
       `/* ${t('plugin.trigger') + ' ' + t('plugin.on::subscribe')} */\n` +
         `const ${PluginTriggerEvent.OnSubscribe} = async (proxies, subscription) => {\n\t\${}\n\treturn proxies\n}`,
       {

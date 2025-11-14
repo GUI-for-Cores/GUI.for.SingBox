@@ -519,6 +519,7 @@ export default {
     'on::core::stopped': 'on::core::stopped',
     'on::before::core::start': 'on::before::core::start',
     'on::before::core::stop': 'on::before::core::stop',
+    'on::tray::update': 'on::tray::update',
     name: 'Name',
     version: 'Version',
     description: 'Description',
