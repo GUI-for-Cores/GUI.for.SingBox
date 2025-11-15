@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { parse, stringify } from 'yaml'
+import { parse } from 'yaml'
 
 import { ReadFile, WriteFile, ReadDir, MoveFile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAppSettingsStore } from '@/stores'
 import {
-  debounce,
   ignoredError,
   transformProfileV189To190,
   transformProfileV194,
   alert,
   eventBus,
+  stringifyNoFolding,
 } from '@/utils'
 
 export const useProfilesStore = defineStore('profiles', () => {
@@ -89,16 +89,19 @@ export const useProfilesStore = defineStore('profiles', () => {
     }
   }
 
-  const saveProfiles = debounce(async () => {
-    await WriteFile(ProfilesFilePath, stringify(profiles.value))
-  }, 100)
+  const saveProfiles = () => {
+    return WriteFile(ProfilesFilePath, stringifyNoFolding(profiles.value))
+  }
 
   const addProfile = async (p: IProfile) => {
     profiles.value.push(p)
     try {
       await saveProfiles()
     } catch (error) {
-      profiles.value.pop()
+      const idx = profiles.value.indexOf(p)
+      if (idx !== -1) {
+        profiles.value.splice(idx, 1)
+      }
       throw error
     }
   }

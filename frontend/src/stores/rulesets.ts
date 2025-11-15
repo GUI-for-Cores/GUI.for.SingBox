@@ -6,7 +6,14 @@ import { ReadFile, WriteFile, CopyFile, Download, HttpGet } from '@/bridge'
 import { RulesetHubFilePath, RulesetsFilePath } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
-import { asyncPool, debounce, eventBus, ignoredError, isValidRulesJson, omitArray } from '@/utils'
+import {
+  asyncPool,
+  stringifyNoFolding,
+  eventBus,
+  ignoredError,
+  isValidRulesJson,
+  omitArray,
+} from '@/utils'
 
 export interface RuleSet {
   id: string
@@ -40,10 +47,10 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     list && (rulesetHub.value = JSON.parse(list))
   }
 
-  const saveRulesets = debounce(async () => {
+  const saveRulesets = () => {
     const r = omitArray(rulesets.value, ['updating'])
-    await WriteFile(RulesetsFilePath, stringify(r))
-  }, 500)
+    return WriteFile(RulesetsFilePath, stringifyNoFolding(r))
+  }
 
   const addRuleset = async (r: RuleSet) => {
     rulesets.value.push(r)
@@ -177,7 +184,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
       update,
     )
 
-    if (needSave) saveRulesets()
+    if (needSave) await saveRulesets()
 
     eventBus.emit('rulesetsChange', undefined)
   }

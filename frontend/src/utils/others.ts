@@ -108,7 +108,11 @@ async function runPool<T>(
 
     if (shouldCancel?.()) break
 
-    const promise = Promise.resolve().then(() => iteratorFn(item, array))
+    const promise = Promise.resolve()
+      .then(() => iteratorFn(item, array))
+      .then((value) => ({ ok: true, value }))
+      .catch((error) => ({ ok: false, error }))
+
     results.push(promise)
 
     if (poolLimit < array.length) {
@@ -122,11 +126,8 @@ async function runPool<T>(
     }
   }
 
-  return Promise.allSettled(results).then((res) =>
-    res
-      .filter((r) => r.status === 'fulfilled')
-      .map((r) => (r as PromiseFulfilledResult<any>).value),
-  )
+  const settled = await Promise.all(results)
+  return settled.filter((r) => r.ok).map((r) => r.value)
 }
 
 export const asyncPool = <T>(poolLimit: number, array: T[], iteratorFn: IteratorFn<T>) => {
