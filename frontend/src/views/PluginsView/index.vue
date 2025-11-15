@@ -231,13 +231,29 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       {{ t('plugins.hub') }}
     </Button>
     <Dropdown>
-      <Button @click="handleUpdatePluginHub" :loading="pluginsStore.pluginHubLoading" type="link">
-        {{ t('plugins.checkForUpdates') }}
-      </Button>
-      <template #overlay>
+      <template #default="{ close }">
+        <Button
+          @click="
+            () => {
+              handleUpdatePluginHub()
+              close()
+            }
+          "
+          :loading="pluginsStore.pluginHubLoading"
+          type="link"
+        >
+          {{ t('plugins.checkForUpdates') }}
+        </Button>
+      </template>
+      <template #overlay="{ close }">
         <div class="p-4 min-w-128">
           <Button
-            @click="handleUpdatePlugins"
+            @click="
+              () => {
+                handleUpdatePlugins()
+                close()
+              }
+            "
             :disabled="noUpdateNeeded"
             type="text"
             class="w-full"
