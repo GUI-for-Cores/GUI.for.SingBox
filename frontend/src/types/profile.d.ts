@@ -136,6 +136,7 @@ type RuleType =
 interface IRule {
   id: string
   type: RuleType
+  enable: boolean
   payload: string
   invert: boolean
   action: RuleAction
@@ -200,6 +201,7 @@ interface IDNSServer {
 interface IDNSRule {
   id: string
   type: RuleType
+  enable: boolean
   payload: string
   action: DnsRuleAction
   invert: boolean

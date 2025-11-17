@@ -422,6 +422,7 @@ export const transformProfileV194 = (config: Recordable) => {
     const _rule: IDNSRule = {
       id: rule.id,
       type: rule.type,
+      enable: true,
       payload: rule.payload,
       action: rule.action,
       invert: rule.invert,

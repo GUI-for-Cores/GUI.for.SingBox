@@ -178,7 +178,7 @@ const generateRoute = (route: IRoute, inbounds: IInbound[], outbounds: IOutbound
   }
   return {
     rules: route.rules.flatMap((rule) => {
-      if (rule.type === RuleType.InsertionPoint) {
+      if (rule.type === RuleType.InsertionPoint || !rule.enable) {
         return []
       }
       if (rule.type === RuleType.Inbound && !isInboundEnabled(rule.payload)) {
@@ -312,7 +312,7 @@ const generateDns = (
       }
     }),
     rules: dns.rules.flatMap((rule) => {
-      if (rule.type === RuleType.InsertionPoint) {
+      if (rule.type === RuleType.InsertionPoint || !rule.enable) {
         return []
       }
       const extra: Recordable = _generateRule(rule, rule_set, inbounds)

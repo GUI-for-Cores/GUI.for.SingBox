@@ -74,6 +74,7 @@ const handleAddInsertionPoint = () => {
   model.value.unshift({
     id: RuleType.InsertionPoint,
     type: RuleType.InsertionPoint,
+    enable: true,
     payload: '',
     action: RuleAction.Route,
     server: '',
@@ -187,7 +188,8 @@ const renderRule = (rule: IDNSRule) => {
           </Button>
         </Divider>
       </div>
-      <div v-else class="flex items-center py-2">
+      <div v-else class="flex items-center py-2 gap-8">
+        <Switch v-model="rule.enable" border="square" size="small" />
         <div class="font-bold">
           <span v-if="hasLost(rule)" @click="showLost" class="warn cursor-pointer"> [ ! ] </span>
           {{ renderRule(rule) }}

@@ -245,6 +245,7 @@ export const DefaultOutbounds = (): IOutbound[] => [
 export const DefaultRouteRule = (): IRule => ({
   id: sampleID(),
   type: RuleType.RuleSet,
+  enable: true,
   payload: '',
   invert: false,
   action: RuleAction.Route,
@@ -272,6 +273,7 @@ export const DefaultRoute = (): IRoute => ({
       id: sampleID(),
       type: RuleType.Inbound,
       payload: DefaultInboundIds.Tun,
+      enable: true,
       invert: false,
       action: RuleAction.Sniff,
       outbound: '',
@@ -282,6 +284,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.Protocol,
+      enable: true,
       payload: 'dns',
       invert: false,
       action: RuleAction.HijackDNS,
@@ -294,6 +297,7 @@ export const DefaultRoute = (): IRoute => ({
       id: sampleID(),
       type: RuleType.ClashMode,
       payload: ClashMode.Direct,
+      enable: true,
       invert: false,
       action: RuleAction.Route,
       outbound: DefaultOutboundIds.Direct,
@@ -304,6 +308,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.ClashMode,
+      enable: true,
       payload: ClashMode.Global,
       invert: false,
       action: RuleAction.Route,
@@ -315,6 +320,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: RuleType.InsertionPoint,
       type: RuleType.InsertionPoint,
+      enable: true,
       payload: '',
       invert: false,
       action: RuleAction.Route,
@@ -326,6 +332,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.Network,
+      enable: true,
       payload: 'icmp',
       invert: false,
       action: RuleAction.Route,
@@ -337,6 +344,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.Protocol,
+      enable: true,
       payload: 'quic',
       invert: false,
       action: RuleAction.Route,
@@ -348,6 +356,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.CATEGORY_ADS,
       invert: false,
       action: RuleAction.Route,
@@ -359,6 +368,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.GEOSITE_PRIVATE,
       invert: false,
       action: RuleAction.Route,
@@ -370,6 +380,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.GEOSITE_CN,
       invert: false,
       action: RuleAction.Route,
@@ -381,6 +392,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.GEOIP_PRIVATE,
       invert: false,
       action: RuleAction.Route,
@@ -392,6 +404,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.GEOIP_CN,
       invert: false,
       action: RuleAction.Route,
@@ -403,6 +416,7 @@ export const DefaultRoute = (): IRoute => ({
     {
       id: sampleID(),
       type: RuleType.RuleSet,
+      enable: true,
       payload: DefaultRulesetIds.GEOLOCATION_NOT_CN,
       invert: false,
       action: RuleAction.Route,
@@ -598,6 +612,7 @@ export const DefaultFakeIPDnsRule = () => ({
 export const DefaultDnsRule = (): IDNSRule => ({
   id: sampleID(),
   type: RuleType.RuleSet,
+  enable: true,
   payload: '',
   action: RuleAction.Route,
   invert: false,
@@ -613,6 +628,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
   {
     id: sampleID(),
     type: RuleType.ClashMode,
+    enable: true,
     payload: ClashMode.Direct,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
@@ -624,6 +640,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
   {
     id: sampleID(),
     type: RuleType.ClashMode,
+    enable: true,
     payload: ClashMode.Global,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,
@@ -635,6 +652,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
   {
     id: RuleType.InsertionPoint,
     type: RuleType.InsertionPoint,
+    enable: true,
     payload: '',
     action: RuleAction.Route,
     server: '',
@@ -646,6 +664,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
   {
     id: sampleID(),
     type: RuleType.RuleSet,
+    enable: true,
     payload: DefaultRulesetIds.GEOSITE_CN,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.LocalDns,
@@ -657,6 +676,7 @@ export const DefaultDnsRules = (): IDNSRule[] => [
   {
     id: sampleID(),
     type: RuleType.RuleSet,
+    enable: true,
     payload: DefaultRulesetIds.GEOLOCATION_NOT_CN,
     action: RuleAction.Route,
     server: DefaultDnsServersIds.RemoteDns,

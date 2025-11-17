@@ -90,6 +90,7 @@ const onAddEnd = async (server: IDNSServer) => {
   emit('addRule', {
     id: sampleID(),
     type: RuleType.Inline,
+    enable: true,
     payload: JSON.stringify(DefaultFakeIPDnsRule(), null, 2),
     action: RuleAction.Route,
     invert: false,

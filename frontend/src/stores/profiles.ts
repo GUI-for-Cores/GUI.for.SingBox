@@ -66,6 +66,14 @@ export const useProfilesStore = defineStore('profiles', () => {
         if (typeof rule.invert === 'undefined') {
           rule.invert = false
         }
+        if (typeof rule.enable === 'undefined') {
+          rule.enable = true
+        }
+      })
+      profile.route.rules.forEach((rule) => {
+        if (typeof rule.enable === 'undefined') {
+          rule.enable = true
+        }
       })
       // @ts-expect-error(Deprecated)
       if (profile.dns.fakeip) {
