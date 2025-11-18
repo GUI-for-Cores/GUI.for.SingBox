@@ -646,6 +646,10 @@ export default {
     proxyBypassListTips: 'Separate with semicolons',
     autoStartKernel: 'Start core on launch',
     realMemoryUsage: 'Show actual core memory usage',
+    autoRestartKernel: {
+      name: 'Auto-restart core on config changes',
+      tips: 'It will interrupt all connections and may fail to restart',
+    },
     admin: 'Run as admin',
     addPluginToMenu: 'Add plugin to tray menu',
     addGroupToMenu: 'Add proxy group to tray menu',

@@ -645,6 +645,10 @@ export default {
     proxyBypassListTips: '分号分隔',
     autoStartKernel: '程序启动时开启核心',
     realMemoryUsage: '显示真实的核心内存占用',
+    autoRestartKernel: {
+      name: '相关配置变化时自动重启核心',
+      tips: '会中断所有连接，且可能重启失败',
+    },
     admin: '以管理员身份运行',
     addPluginToMenu: '将插件添加到托盘菜单',
     addGroupToMenu: '将代理组添加到托盘菜单',

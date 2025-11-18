@@ -62,6 +62,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     autoSetSystemProxy: true,
     proxyBypassList: '',
     autoStartKernel: false,
+    autoRestartKernel: false,
     userAgent: '',
     startupDelay: 30,
     connections: DefaultConnections(),

@@ -553,6 +553,12 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   })
 
+  watch(needRestart, (v) => {
+    if (v && appSettingsStore.app.autoRestartKernel) {
+      restartCore()
+    }
+  })
+
   const watchSources = computed(() => {
     const source = [config.value.mode, config.value.tun.enable]
     if (!appSettingsStore.app.addGroupToMenu) return source.join('')
