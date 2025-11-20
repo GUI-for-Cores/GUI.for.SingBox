@@ -66,8 +66,16 @@ export function Notify(arg1, arg2, arg3, arg4) {
   return window['go']['bridge']['App']['Notify'](arg1, arg2, arg3, arg4);
 }
 
+export function OpenDir(arg1) {
+  return window['go']['bridge']['App']['OpenDir'](arg1);
+}
+
 export function OpenMMDB(arg1, arg2) {
   return window['go']['bridge']['App']['OpenMMDB'](arg1, arg2);
+}
+
+export function OpenURI(arg1) {
+  return window['go']['bridge']['App']['OpenURI'](arg1);
 }
 
 export function ProcessInfo(arg1) {

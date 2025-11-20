@@ -15,7 +15,7 @@ func GetPath(path string) string {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(Env.BasePath, path)
 	}
-	return filepath.Clean(path)
+	return filepath.ToSlash(filepath.Clean(path))
 }
 
 func GetProxy(_proxy string) func(*http.Request) (*url.URL, error) {

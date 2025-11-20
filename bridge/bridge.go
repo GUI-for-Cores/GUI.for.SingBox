@@ -46,7 +46,7 @@ func CreateApp(fs embed.FS) *App {
 		panic(err)
 	}
 
-	Env.BasePath = filepath.Dir(exePath)
+	Env.BasePath = filepath.ToSlash(filepath.Dir(exePath))
 	Env.AppName = filepath.Base(exePath)
 
 	if slices.Contains(os.Args, "tasksch") {

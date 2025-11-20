@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/browser"
 )
 
 const (
@@ -160,6 +162,30 @@ func (a *App) ReadDir(path string) FlagResult {
 	return FlagResult{true, strings.Join(result, "|")}
 }
 
+func (a *App) OpenDir(path string) FlagResult {
+	log.Printf("OpenDir: %s", path)
+
+	fullPath := GetPath(path)
+
+	err := browser.OpenURL(fullPath)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, "Success"}
+}
+
+func (a *App) OpenURI(uri string) FlagResult {
+	log.Printf("OpenURI: %s", uri)
+
+	err := browser.OpenURL(uri)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, "Success"}
+}
+
 func (a *App) AbsolutePath(path string) FlagResult {
 	log.Printf("AbsolutePath: %s", path)
 
@@ -180,10 +206,10 @@ func (a *App) UnzipZIPFile(path string, output string) FlagResult {
 	}
 	defer archive.Close()
 
-	cleanOutputPath := outputPath + string(os.PathSeparator)
+	cleanOutputPath := outputPath + "/"
 
 	for _, f := range archive.File {
-		filePath := filepath.Join(outputPath, f.Name)
+		filePath := filepath.ToSlash(filepath.Clean(filepath.Join(outputPath, f.Name)))
 
 		if !strings.HasPrefix(filePath, cleanOutputPath) {
 			continue
@@ -242,7 +268,7 @@ func (a *App) UnzipTarGZFile(path string, output string) FlagResult {
 
 	tarReader := tar.NewReader(gzipReader)
 
-	cleanOutputPath := outputPath + string(os.PathSeparator)
+	cleanOutputPath := outputPath + "/"
 
 	for {
 		header, err := tarReader.Next()
@@ -253,7 +279,7 @@ func (a *App) UnzipTarGZFile(path string, output string) FlagResult {
 			return FlagResult{false, err.Error()}
 		}
 
-		filePath := filepath.Join(outputPath, header.Name)
+		filePath := filepath.ToSlash(filepath.Clean(filepath.Join(outputPath, header.Name)))
 
 		if !strings.HasPrefix(filePath, cleanOutputPath) {
 			continue

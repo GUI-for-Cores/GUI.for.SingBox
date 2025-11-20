@@ -82,6 +82,22 @@ export const ReadDir = async (path: string) => {
     })
 }
 
+export const OpenDir = async (path: string) => {
+  const { flag, data } = await App.OpenDir(path)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const OpenURI = async (uri: string) => {
+  const { flag, data } = await App.OpenURI(uri)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
 export const UnzipZIPFile = async (path: string, output: string) => {
   const { flag, data } = await App.UnzipZIPFile(path, output)
   if (!flag) {
