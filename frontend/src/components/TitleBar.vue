@@ -67,13 +67,8 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <template>
-  <div
-    v-if="!isDarwin"
-    v-menu="menus"
-    class="flex items-center py-8 gap-8 px-12"
-    style="--wails-draggable: drag"
-  >
-    <img class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
+  <div v-menu="menus" class="flex items-center py-8 gap-8 px-12" style="--wails-draggable: drag">
+    <img v-if="!isDarwin" class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
 
     <div
       @dblclick="WindowToggleMaximise"
@@ -93,7 +88,11 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       />
     </div>
 
-    <div class="ml-auto flex items-center gap-4" style="--wails-draggable: disabled">
+    <div
+      v-if="!isDarwin"
+      class="ml-auto flex items-center gap-4"
+      style="--wails-draggable: disabled"
+    >
       <Button @click.stop="pinWindow" type="text" :icon="isPinned ? 'pinFill' : 'pin'" />
       <Button @click.stop="WindowMinimise" icon="minimize" type="text" />
       <Button
