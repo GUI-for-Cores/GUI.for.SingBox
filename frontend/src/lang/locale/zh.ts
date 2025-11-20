@@ -656,6 +656,7 @@ export default {
     rollingRelease: '启用滚动发行',
     debugOutline: '显示界面轮廓',
     debugNoAnimation: '禁用动画',
+    debugBorder: '显示窗口边框',
     startup: {
       name: '自启动',
       delay: '延迟(秒)',

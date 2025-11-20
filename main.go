@@ -34,7 +34,7 @@ func main() {
 		DisableResize:    false,
 		Menu:             app.AppMenu,
 		Title:            bridge.Env.AppName,
-		Frameless:        bridge.Env.OS == "windows",
+		Frameless:        bridge.Env.OS != "darwin",
 		Width:            bridge.Config.Width,
 		Height:           bridge.Config.Height,
 		StartHidden:      bridge.Config.StartHidden,

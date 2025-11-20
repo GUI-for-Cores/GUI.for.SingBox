@@ -249,11 +249,7 @@ func loadConfig() {
 	}
 
 	if Config.Height == 0 {
-		if Env.OS == "linux" {
-			Config.Height = 510
-		} else {
-			Config.Height = 540
-		}
+		Config.Height = 540
 	}
 
 	Config.StartHidden = Env.FromTaskSch && Config.WindowStartState == int(options.Minimised)

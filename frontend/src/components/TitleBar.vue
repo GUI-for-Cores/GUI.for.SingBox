@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, h, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 import {
   WindowSetAlwaysOnTop,
@@ -24,21 +24,7 @@ const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 const appStore = useAppStore()
 
-const isWindows = envStore.env.os === 'windows'
 const isDarwin = envStore.env.os === 'darwin'
-
-const TitleBar = defineComponent((_, { slots }) => {
-  if (!isWindows && !isDarwin) return () => ''
-  return () =>
-    h(
-      'div',
-      {
-        class: 'flex items-center py-8 gap-8 px-12',
-        style: '--wails-draggable: drag',
-      },
-      [isWindows && slots.logo?.(), slots.title?.(), isWindows && slots.actions?.()],
-    )
-})
 
 const pinWindow = () => {
   isPinned.value = !isPinned.value
@@ -81,48 +67,47 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <template>
-  <TitleBar v-menu="menus">
-    <template #logo>
-      <img class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
-    </template>
+  <div
+    v-if="!isDarwin"
+    v-menu="menus"
+    class="flex items-center py-8 gap-8 px-12"
+    style="--wails-draggable: drag"
+  >
+    <img class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
 
-    <template #title>
-      <div
-        @dblclick="WindowToggleMaximise"
-        :class="isDarwin ? 'justify-center py-4 text-12' : 'text-14'"
-        :style="{
-          color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
-        }"
-        class="font-bold w-full h-full flex items-center"
-      >
-        {{ APP_TITLE }} {{ APP_VERSION }}
-        <CustomAction :actions="appStore.customActions.title_bar" />
-        <Icon
-          v-if="kernelApiStore.starting || kernelApiStore.stopping || kernelApiStore.restarting"
-          :size="14"
-          icon="loading"
-          class="rotation mx-4"
-        />
-      </div>
-    </template>
+    <div
+      @dblclick="WindowToggleMaximise"
+      :class="isDarwin ? 'justify-center py-4 text-12' : 'text-14'"
+      :style="{
+        color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
+      }"
+      class="font-bold w-full h-full flex items-center"
+    >
+      {{ APP_TITLE }} {{ APP_VERSION }}
+      <CustomAction :actions="appStore.customActions.title_bar" />
+      <Icon
+        v-if="kernelApiStore.starting || kernelApiStore.stopping || kernelApiStore.restarting"
+        :size="14"
+        icon="loading"
+        class="rotation mx-4"
+      />
+    </div>
 
-    <template #actions>
-      <div class="ml-auto flex items-center gap-4" style="--wails-draggable: disabled">
-        <Button @click.stop="pinWindow" type="text" :icon="isPinned ? 'pinFill' : 'pin'" />
-        <Button @click.stop="WindowMinimise" icon="minimize" type="text" />
-        <Button
-          @click.stop="WindowToggleMaximise"
-          :icon="isMaximised ? 'maximize2' : 'maximize'"
-          type="text"
-        />
-        <Button
-          @click.stop="closeWindow"
-          :class="{ 'hover:!bg-red': appSettingsStore.app.exitOnClose }"
-          :loading="appStore.isAppExiting"
-          icon="close"
-          type="text"
-        />
-      </div>
-    </template>
-  </TitleBar>
+    <div class="ml-auto flex items-center gap-4" style="--wails-draggable: disabled">
+      <Button @click.stop="pinWindow" type="text" :icon="isPinned ? 'pinFill' : 'pin'" />
+      <Button @click.stop="WindowMinimise" icon="minimize" type="text" />
+      <Button
+        @click.stop="WindowToggleMaximise"
+        :icon="isMaximised ? 'maximize2' : 'maximize'"
+        type="text"
+      />
+      <Button
+        @click.stop="closeWindow"
+        :class="{ 'hover:!bg-red': appSettingsStore.app.exitOnClose }"
+        :loading="appStore.isAppExiting"
+        icon="close"
+        type="text"
+      />
+    </div>
+  </div>
 </template>

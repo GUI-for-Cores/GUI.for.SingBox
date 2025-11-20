@@ -93,6 +93,7 @@ export interface AppSettings {
   rollingRelease: boolean
   debugOutline: boolean
   debugNoAnimation: boolean
+  debugBorder: boolean
   pages: string[]
 }
 
