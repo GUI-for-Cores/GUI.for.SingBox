@@ -5,13 +5,13 @@ import { useI18n } from 'vue-i18n'
 import {
   Download,
   HttpGet,
-  BrowserOpenURL,
   MoveFile,
   UnzipZIPFile,
   MakeDir,
   RemoveFile,
   AbsolutePath,
   HttpCancel,
+  OpenDir,
 } from '@/bridge'
 import {
   APP_TITLE,
@@ -126,7 +126,7 @@ export const useAppStore = defineStore('app', () => {
       } else {
         await UnzipZIPFile(downloadCacheFile, 'data')
         alert('common.success', 'about.updateSuccessfulReplace')
-        BrowserOpenURL(await AbsolutePath('data'))
+        await OpenDir('data')
       }
 
       await RemoveFile(downloadCacheFile)

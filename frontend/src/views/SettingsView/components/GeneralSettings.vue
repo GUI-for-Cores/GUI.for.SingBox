@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { BrowserOpenURL, WriteFile, RemoveFile, AbsolutePath, MakeDir } from '@/bridge'
+import { BrowserOpenURL, WriteFile, RemoveFile, AbsolutePath, MakeDir, OpenDir } from '@/bridge'
 import { DefaultFontFamily, LocalesFilePath } from '@/constant/app'
 import { Theme, WindowStartState, Color, WebviewGpuPolicy } from '@/enums/app'
 import routes from '@/router/routes'
@@ -115,13 +115,12 @@ const onPermChange = async (v: boolean) => {
 }
 
 const handleOpenFolder = async () => {
-  BrowserOpenURL(envStore.env.basePath)
+  await OpenDir(envStore.env.basePath)
 }
 
 const handleOpenLocalesFolder = async () => {
   await MakeDir(LocalesFilePath)
-  const path = await AbsolutePath(LocalesFilePath)
-  BrowserOpenURL(path)
+  await OpenDir(LocalesFilePath)
 }
 
 const checkSchtask = async () => {

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { BrowserOpenURL } from '@/bridge'
+import { OpenURI } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
@@ -37,7 +37,7 @@ const menuList: Menu[] = [
     label: 'common.openFile',
     handler: async (id: string) => {
       const plugin = pluginsStore.getPluginById(id)
-      BrowserOpenURL(envStore.env.basePath + '/' + plugin!.path)
+      await OpenURI(envStore.env.basePath + '/' + plugin!.path)
     },
   },
 ]
