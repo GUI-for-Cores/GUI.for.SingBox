@@ -87,7 +87,7 @@ export const usePluginsStore = defineStore('plugins', () => {
     list && (pluginHub.value = JSON.parse(list))
 
     for (const plugin of plugins.value) {
-      const { id, triggers, path, context, hasUI, tags } = plugin
+      const { id, triggers, path } = plugin
       const code = await ignoredError(ReadFile, path)
       if (code) {
         PluginsCache[id] = { plugin, code }
@@ -95,31 +95,7 @@ export const usePluginsStore = defineStore('plugins', () => {
           PluginsTriggerMap[trigger].observers.push(id)
         })
       }
-
-      if (!context) {
-        plugin.context = {
-          profiles: {},
-          subscriptions: {},
-          rulesets: {},
-          plugins: {},
-          scheduledtasks: {},
-        }
-      }
-
-      if (hasUI === undefined) {
-        plugin.hasUI = false
-      }
-
-      if (tags === undefined) {
-        plugin.tags = []
-      }
     }
-
-    pluginHub.value.forEach((plugin) => {
-      if (plugin.tags === undefined) {
-        plugin.tags = []
-      }
-    })
   }
 
   const getPluginMetadata = (plugin: Plugin) => {

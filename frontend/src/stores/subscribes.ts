@@ -27,40 +27,6 @@ export const useSubscribesStore = defineStore('subscribes', () => {
   const setupSubscribes = async () => {
     const data = await ignoredError(ReadFile, SubscribesFilePath)
     data && (subscribes.value = parse(data))
-
-    let needSync = false
-    subscribes.value.forEach((sub) => {
-      if (!sub.script) {
-        sub.script = DefaultSubscribeScript
-        needSync = true
-      }
-      if (!sub.requestMethod) {
-        sub.requestMethod = RequestMethod.Get
-        needSync = true
-      }
-      if (!sub.requestTimeout) {
-        sub.requestTimeout = 15
-        needSync = true
-      }
-      if (!sub.header) {
-        sub.header = {
-          request: {},
-          response: {},
-        }
-        // @ts-expect-error(Deprecated `userAgent`)
-        if (sub.userAgent) {
-          // @ts-expect-error(Deprecated `userAgent`)
-          sub.header.request['User-Agent'] = sub.userAgent
-          // @ts-expect-error(Deprecated `userAgent`)
-          delete sub.userAgent
-        }
-        needSync = true
-      }
-    })
-
-    if (needSync) {
-      await saveSubscribes()
-    }
   }
 
   const saveSubscribes = () => {

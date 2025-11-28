@@ -2,17 +2,10 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { parse } from 'yaml'
 
-import { ReadFile, WriteFile, ReadDir, MoveFile } from '@/bridge'
+import { ReadFile, WriteFile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAppSettingsStore } from '@/stores'
-import {
-  ignoredError,
-  transformProfileV189To190,
-  transformProfileV194,
-  alert,
-  eventBus,
-  stringifyNoFolding,
-} from '@/utils'
+import { ignoredError, eventBus, stringifyNoFolding } from '@/utils'
 
 export const useProfilesStore = defineStore('profiles', () => {
   const appSettingsStore = useAppSettingsStore()
@@ -23,78 +16,6 @@ export const useProfilesStore = defineStore('profiles', () => {
   const setupProfiles = async () => {
     const data = await ignoredError(ReadFile, ProfilesFilePath)
     data && (profiles.value = parse(data))
-
-    let needsDiskSync = false
-    profiles.value.forEach((profile, index) => {
-      if (!(profile as any).route) {
-        profiles.value[index] = transformProfileV189To190(profile)
-        needsDiskSync = true
-      }
-    })
-
-    const dirs = await ReadDir('data/.cache')
-    const backupProfiles = dirs.find((file) => file.name === 'profiles-backup.yaml')
-    if (backupProfiles) {
-      const txt = await ReadFile('data/.cache/profiles-backup.yaml')
-      const oldProfiles = parse(txt)
-      for (const p of oldProfiles) {
-        profiles.value.push(transformProfileV189To190(p))
-        needsDiskSync = true
-      }
-      await MoveFile('data/.cache/profiles-backup.yaml', 'data/.cache/profiles-backup.yaml.done')
-    }
-
-    if (needsDiskSync) {
-      // Remove duplicates
-      profiles.value = profiles.value.reduce((p, c) => {
-        const x = p.find((item) => item.id === c.id)
-        if (!x) {
-          return p.concat([c])
-        } else {
-          return p
-        }
-      }, [] as IProfile[])
-
-      await saveProfiles()
-      alert('Tip', 'The old profiles have been upgraded. Please adjust manually if necessary.')
-    }
-
-    needsDiskSync = false
-    profiles.value.forEach((profile, index) => {
-      // Fix missing invert field
-      profile.dns.rules.forEach((rule) => {
-        if (typeof rule.invert === 'undefined') {
-          rule.invert = false
-        }
-        if (typeof rule.enable === 'undefined') {
-          rule.enable = true
-        }
-      })
-      profile.route.rules.forEach((rule) => {
-        if (typeof rule.enable === 'undefined') {
-          rule.enable = true
-        }
-      })
-      // @ts-expect-error(Deprecated)
-      if (profile.dns.fakeip) {
-        needsDiskSync = true
-        profiles.value[index] = transformProfileV194(profile)
-      }
-      profile.inbounds.forEach((inbound) => {
-        if (inbound.tun && !inbound.tun.route_exclude_address) {
-          inbound.tun.route_exclude_address = []
-          needsDiskSync = true
-        }
-      })
-      if (!profile.mixin.format) {
-        profile.mixin.format = 'json'
-        needsDiskSync = true
-      }
-    })
-
-    if (needsDiskSync) {
-      await saveProfiles()
-    }
   }
 
   const saveProfiles = () => {

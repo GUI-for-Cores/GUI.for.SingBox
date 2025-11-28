@@ -9,7 +9,6 @@ import {
   UnzipZIPFile,
   MakeDir,
   RemoveFile,
-  AbsolutePath,
   HttpCancel,
   OpenDir,
 } from '@/bridge'

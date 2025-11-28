@@ -598,19 +598,5 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     onMemory: createCoreWSHandlerRegister(websocketHandlers.memory),
     onTraffic: createCoreWSHandlerRegister(websocketHandlers.traffic),
     onConnections: createCoreWSHandlerRegister(websocketHandlers.connections),
-
-    // Deprecated
-    startKernel: (...args: any[]) => {
-      console.warn('[Deprecated] "startKernel" is deprecated. Please use "startCore" instead.')
-      startCore(...args)
-    },
-    stopKernel: () => {
-      console.warn('[Deprecated] "stopKernel" is deprecated. Please use "stopCore" instead.')
-      stopCore()
-    },
-    restartKernel: (...args: any[]) => {
-      console.warn('[Deprecated] "restartKernel" is deprecated. Please use "restartCore" instead.')
-      restartCore(...args)
-    },
   }
 })

@@ -121,11 +121,3 @@ export const UnzipTarGZFile = async (path: string, output: string) => {
   }
   return data
 }
-
-export const Writefile = WriteFile
-export const Readfile = ReadFile
-export const Movefile = MoveFile
-export const Removefile = RemoveFile
-export const Copyfile = CopyFile
-export const Makedir = MakeDir
-export const Readdir = ReadDir

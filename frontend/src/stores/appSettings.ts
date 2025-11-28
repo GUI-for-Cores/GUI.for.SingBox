@@ -20,7 +20,7 @@ import {
   UserFilePath,
   LocalesFilePath,
 } from '@/constant/app'
-import { CorePidFilePath, DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
+import { DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
 import {
   Theme,
   WindowStartState,
@@ -140,58 +140,6 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
 
     await loadLocales(false, false)
 
-    if ((app.value.kernel.branch as any) === 'latest') {
-      app.value.kernel.branch = Branch.Alpha
-    }
-    if (app.value.kernel.controllerCloseMode === undefined) {
-      app.value.kernel.controllerCloseMode = ControllerCloseMode.All
-    }
-    if (app.value.kernel.controllerSensitivity === undefined) {
-      app.value.kernel.controllerSensitivity = DefaultControllerSensitivity
-    }
-    if (app.value.addGroupToMenu === undefined) {
-      app.value.addGroupToMenu = false
-    }
-    if (app.value.kernel.concurrencyLimit === undefined) {
-      app.value.kernel.concurrencyLimit = DefaultConcurrencyLimit
-    }
-    // @ts-expect-error(Deprecated)
-    if (app.value['font-family'] !== undefined) {
-      // @ts-expect-error(Deprecated)
-      app.value.fontFamily = app.value['font-family']
-      // @ts-expect-error(Deprecated)
-      delete app.value['font-family']
-    }
-
-    if (typeof app.value.connections.visibility['metadata.destinationIP'] === 'undefined') {
-      app.value.connections.visibility['metadata.destinationIP'] = false
-      app.value.connections.order.push('metadata.destinationIP')
-      app.value.connections.order = app.value.connections.order.filter(
-        (field) =>
-          !['metadata.process', 'metadata.sniffHost', 'metadata.remoteDestination'].includes(field),
-      )
-    }
-
-    if (!app.value.kernel.main) {
-      app.value.kernel.main = DefaultCoreConfig()
-      app.value.kernel.alpha = DefaultCoreConfig()
-    }
-
-    if (!app.value.kernel.cardColumns) {
-      app.value.kernel.cardColumns = DefaultCardColumns
-    }
-    // @ts-expect-error(Deprecated)
-    if (app.value.kernel.running !== undefined) {
-      // @ts-expect-error(Deprecated)
-      await WriteFile(CorePidFilePath, String(app.value.kernel.pid))
-      // @ts-expect-error(Deprecated)
-      delete app.value.kernel.running
-      // @ts-expect-error(Deprecated)
-      delete app.value.kernel.pid
-    }
-    if (app.value.kernel.realMemoryUsage === undefined) {
-      app.value.kernel.realMemoryUsage = false
-    }
     if (!app.value.proxyBypassList) {
       app.value.proxyBypassList = await GetSystemProxyBypass()
     }
