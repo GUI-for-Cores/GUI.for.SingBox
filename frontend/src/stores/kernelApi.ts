@@ -555,7 +555,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
   watch(needRestart, (v) => {
     if (v && appSettingsStore.app.autoRestartKernel) {
-      restartCore()
+      restartCore(undefined, false)
     }
   })
 
