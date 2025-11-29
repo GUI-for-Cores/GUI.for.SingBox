@@ -5,7 +5,7 @@ import { parse } from 'yaml'
 import { ReadFile, WriteFile } from '@/bridge'
 import { ProfilesFilePath } from '@/constant/app'
 import { useAppSettingsStore } from '@/stores'
-import { ignoredError, eventBus, stringifyNoFolding } from '@/utils'
+import { ignoredError, eventBus, stringifyNoFolding, migrateProfiles } from '@/utils'
 
 export const useProfilesStore = defineStore('profiles', () => {
   const appSettingsStore = useAppSettingsStore()
@@ -16,6 +16,8 @@ export const useProfilesStore = defineStore('profiles', () => {
   const setupProfiles = async () => {
     const data = await ignoredError(ReadFile, ProfilesFilePath)
     data && (profiles.value = parse(data))
+
+    await migrateProfiles(profiles.value, saveProfiles)
   }
 
   const saveProfiles = () => {
