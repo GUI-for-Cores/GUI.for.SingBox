@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { Cron } from 'croner'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { View } from '@/enums/app'
 import { useAppSettingsStore, useScheduledTasksStore } from '@/stores'
-import { debounce, formatRelativeTime, formatDate, message } from '@/utils'
+import { debounce, formatRelativeTime, formatDate, message, alert } from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
@@ -18,6 +19,19 @@ const menuList: Menu[] = [
     label: 'scheduledtasks.run',
     handler: (id: string) => {
       scheduledTasksStore.runScheduledTask(id)
+    },
+  },
+  {
+    label: 'scheduledtasks.next',
+    handler: (id: string) => {
+      const task = scheduledTasksStore.getScheduledTaskById(id)
+      if (task) {
+        const list = new Cron(task.cron).nextRuns(99).map((v, i) => {
+          const index = (i + 1).toString().padStart(2, '0')
+          return index + ' - '.repeat(14) + formatDate(v.getTime(), 'YYYY/MM/DD HH:mm:ss')
+        })
+        alert('Next Run Time', list.join('\n'))
+      }
     },
   },
   {

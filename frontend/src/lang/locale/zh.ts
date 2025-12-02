@@ -585,6 +585,7 @@ export default {
     empty: '计划任务列表为空，请先{action}计划任务。',
     run: '立即运行',
     log: '查看日志',
+    next: '下次运行时间',
   },
   settings: {
     personalization: '个性化',

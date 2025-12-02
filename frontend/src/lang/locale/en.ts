@@ -586,6 +586,7 @@ export default {
     empty: 'The scheduled task list is empty. Please{action}a scheduled task first.',
     run: 'Run now',
     log: 'View log',
+    next: 'Next Run Time',
   },
   settings: {
     personalization: 'Personalization',

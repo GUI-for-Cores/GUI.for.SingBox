@@ -1,3 +1,4 @@
+import { Cron } from 'croner'
 import { parse } from 'yaml'
 
 export const isValidBase64 = (str: string) => {
@@ -67,3 +68,12 @@ export const isValidJson = (str: string) => {
 }
 
 export const isNumber = (v: any) => typeof v === 'number'
+
+export const isValidCron = (pattern: string) => {
+  try {
+    const instance = new Cron(pattern, { paused: true })
+    return { ok: true, reason: null, instance: instance }
+  } catch (error: any) {
+    return { ok: false, reason: error.message || error, instance: null }
+  }
+}
