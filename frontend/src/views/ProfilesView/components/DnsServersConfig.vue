@@ -4,24 +4,19 @@ import { useI18n } from 'vue-i18n'
 
 import { DraggableOptions } from '@/constant/app'
 import { DnsServerTypeOptions } from '@/constant/kernel'
-import { DefaultDnsServer, DefaultFakeIPDnsRule } from '@/constant/profile'
-import { RuleAction, RuleType, Strategy, DnsServer } from '@/enums/kernel'
+import { DefaultDnsServer } from '@/constant/profile'
+import { DnsServer } from '@/enums/kernel'
 import { useBool } from '@/hooks'
-import { sampleID, deepClone, generateDnsServerURL, message, confirm } from '@/utils'
+import { deepClone, generateDnsServerURL } from '@/utils'
 
 import Tag from '@/components/Tag/index.vue'
 
 interface Props {
   outboundOptions: { label: string; value: string }[]
   serversOptions: { label: string; value: string }[]
-  rules: IDNSRule[]
 }
 
 const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  (e: 'addRule', rule: IDNSRule): void
-}>()
 
 const model = defineModel<IDNSServer[]>({ required: true })
 
@@ -73,33 +68,6 @@ const handleAddEnd = () => {
   } else {
     model.value.unshift(fields.value)
   }
-  onAddEnd(fields.value)
-}
-
-const onAddEnd = async (server: IDNSServer) => {
-  if (server.type !== DnsServer.FakeIP) return
-  if (props.serversOptions.find((v) => v.value === DnsServer.FakeIP)) return
-  const fakeip_rule = props.rules.find(
-    (v) => v.type === RuleType.Inline && v.payload.includes('__is_fake_ip'),
-  )
-  if (fakeip_rule) return
-
-  if (!(await confirm('Tip', 'kernel.dns.rules.addRules').catch(() => 0))) {
-    return
-  }
-  emit('addRule', {
-    id: sampleID(),
-    type: RuleType.Inline,
-    enable: true,
-    payload: JSON.stringify(DefaultFakeIPDnsRule(), null, 2),
-    action: RuleAction.Route,
-    invert: false,
-    server: server.id,
-    strategy: Strategy.Default,
-    disable_cache: false,
-    client_subnet: '',
-  })
-  message.success('common.success')
 }
 
 const handleEdit = (index: number) => {

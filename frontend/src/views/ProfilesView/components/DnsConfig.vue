@@ -41,8 +41,6 @@ const handleAdd = () => {
   handlerMap[activeKey.value]?.()
 }
 
-const onAddRule = (rule: IDNSRule) => model.value.rules.push(rule)
-
 defineExpose({ handleAdd })
 </script>
 
@@ -79,8 +77,6 @@ defineExpose({ handleAdd })
         v-model="model.servers"
         :outbound-options="outboundOptions"
         :servers-options="serversOptions"
-        :rules="model.rules"
-        @add-rule="onAddRule"
         ref="serversConfigRef"
       />
     </template>

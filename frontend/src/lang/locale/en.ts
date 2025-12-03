@@ -294,7 +294,6 @@ export default {
         payload: 'Payload',
         action: 'Action',
         server: 'Server',
-        addRules: 'Add FakeIP DNS rules',
       },
     },
     mode: 'Mode',

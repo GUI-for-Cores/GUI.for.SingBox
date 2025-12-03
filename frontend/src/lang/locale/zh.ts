@@ -294,7 +294,6 @@ export default {
         payload: '载荷',
         action: '规则动作',
         server: '目标DNS服务器的标签',
-        addRules: '添加 FakeIP DNS 规则',
       },
     },
     mode: '工作模式',
