@@ -2,9 +2,8 @@
 import { ref, inject, computed, useTemplateRef, type Ref, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import * as Defaults from '@/constant/profile'
 import { useProfilesStore } from '@/stores'
-import { deepClone, generateConfig, message, sampleID, alert } from '@/utils'
+import { deepClone, generateConfig, message, alert } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 import Dropdown from '@/components/Dropdown/index.vue'
@@ -37,11 +36,14 @@ const props = withDefaults(defineProps<Props>(), {
   step: Step.Name,
 })
 
-const loading = ref(false)
+const { t } = useI18n()
 const inboundsRef = useTemplateRef('inboundsRef')
 const outboundsRef = useTemplateRef('outboundsRef')
 const routeRef = useTemplateRef('routeRef')
 const dnsRef = useTemplateRef('dnsRef')
+const profilesStore = useProfilesStore()
+
+const loading = ref(false)
 const currentStep = ref(props.step)
 
 const stepItems = [
@@ -54,18 +56,7 @@ const stepItems = [
   { title: 'profile.step.mixin-script' },
 ] as const
 
-const profile = ref<IProfile>({
-  id: sampleID(),
-  name: '',
-  log: Defaults.DefaultLog(),
-  experimental: Defaults.DefaultExperimental(),
-  inbounds: Defaults.DefaultInbounds(),
-  outbounds: Defaults.DefaultOutbounds(),
-  route: Defaults.DefaultRoute(),
-  dns: Defaults.DefaultDns(),
-  mixin: Defaults.DefaultMixin(),
-  script: Defaults.DefaultScript(),
-})
+const profile = ref<IProfile>(profilesStore.getProfileTemplate())
 
 const inboundOptions = computed(() =>
   profile.value.inbounds.map((v) => ({ label: v.tag, value: v.id })),
@@ -98,9 +89,6 @@ const mixinAndScriptConfig = computed({
     profile.value.script = script
   },
 })
-
-const { t } = useI18n()
-const profilesStore = useProfilesStore()
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any

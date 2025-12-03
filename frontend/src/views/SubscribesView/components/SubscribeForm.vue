@@ -2,12 +2,10 @@
 import { ref, inject, computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { DefaultSubscribeScript, RequestMethodOptions } from '@/constant/app'
-import { DefaultExcludeProtocols } from '@/constant/kernel'
-import { RequestMethod } from '@/enums/app'
+import { RequestMethodOptions } from '@/constant/app'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
-import { deepClone, sampleID, message } from '@/utils'
+import { deepClone, message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
@@ -19,47 +17,20 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const loading = ref(false)
-
-const sub = ref<Subscription>({
-  id: sampleID(),
-  name: '',
-  upload: 0,
-  download: 0,
-  total: 0,
-  expire: 0,
-  updateTime: 0,
-  type: 'Http',
-  url: '',
-  website: '',
-  path: `data/subscribes/${sampleID()}.json`,
-  include: '',
-  exclude: '',
-  includeProtocol: '',
-  excludeProtocol: DefaultExcludeProtocols,
-  proxyPrefix: '',
-  disabled: false,
-  inSecure: false,
-  requestMethod: RequestMethod.Get,
-  requestTimeout: 15,
-  header: {
-    request: {},
-    response: {},
-  },
-  proxies: [],
-  script: DefaultSubscribeScript,
-})
-
-const isManual = computed(() => sub.value.type === 'Manual')
-const isRemote = computed(() => sub.value.type === 'Http')
-
 const { t } = useI18n()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
 
-const handleCancel = inject('cancel') as any
+const loading = ref(false)
+const sub = ref<Subscription>(subscribeStore.getSubscribeTemplate())
 
-const handleSubmit = async () => {
+const isManual = computed(() => sub.value.type === 'Manual')
+const isRemote = computed(() => sub.value.type === 'Http')
+
+const handleCancel = inject('cancel') as any
+const handleSubmit = inject('submit') as any
+
+const handleSave = async () => {
   loading.value = true
 
   try {
@@ -68,7 +39,7 @@ const handleSubmit = async () => {
     } else {
       await subscribeStore.addSubscribe(sub.value)
     }
-    handleCancel()
+    await handleSubmit()
   } catch (error: any) {
     console.error(error)
     message.error(error)
@@ -101,7 +72,7 @@ const modalSlots = {
         type: 'primary',
         loading: loading.value,
         disabled: !sub.value.name || !sub.value.path || (!sub.value.url && !isManual.value),
-        onClick: handleSubmit,
+        onClick: handleSave,
       },
       () => t('common.save'),
     ),
