@@ -285,3 +285,21 @@ export const stringifyNoFolding = (content: any) => {
   // Disable string folding
   return stringify(content, { lineWidth: 0, minContentWidth: 0 })
 }
+
+const regexCache = new Map()
+
+export const buildSmartRegExp = (pattern: string, flags = '') => {
+  const key = pattern + '::' + flags
+  if (regexCache.has(key)) return regexCache.get(key)
+
+  let r
+  try {
+    r = new RegExp(pattern, flags)
+  } catch {
+    const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    r = new RegExp(escaped, flags)
+  }
+
+  regexCache.set(key, r)
+  return r
+}

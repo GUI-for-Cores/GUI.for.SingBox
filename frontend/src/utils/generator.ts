@@ -19,7 +19,7 @@ import {
   useRulesetsStore,
   useSubscribesStore,
 } from '@/stores'
-import { deepAssign, deepClone, APP_TITLE } from '@/utils'
+import { deepAssign, deepClone, APP_TITLE, buildSmartRegExp } from '@/utils'
 
 const _generateRule = (rule: IRule | IDNSRule, rule_set: IRuleSet[], inbounds: IInbound[]) => {
   const getInbound = (id: string) => inbounds.find((v) => v.id === id)?.tag
@@ -99,12 +99,12 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
   const builtInProxiesSet = new Set<string>()
 
   const createTagMatcher = (include: string, exclude: string) => {
-    const includeRegex = include ? new RegExp(include) : null
-    const excludeRegex = exclude ? new RegExp(exclude) : null
+    const includeRegex = include ? buildSmartRegExp(include) : null
+    const excludeRegex = exclude ? buildSmartRegExp(exclude) : null
     return (tag: string) => {
       const flag1 = includeRegex ? includeRegex.test(tag) : true
-      const flag2 = excludeRegex ? !excludeRegex.test(tag) : true
-      return flag1 && flag2
+      const flag2 = excludeRegex ? excludeRegex.test(tag) : false
+      return flag1 && !flag2
     }
   }
 

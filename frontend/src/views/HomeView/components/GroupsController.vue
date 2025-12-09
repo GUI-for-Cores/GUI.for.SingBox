@@ -13,7 +13,14 @@ import {
 import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { ignoredError, sleep, handleUseProxy, message, createAsyncPool } from '@/utils'
+import {
+  ignoredError,
+  sleep,
+  handleUseProxy,
+  message,
+  createAsyncPool,
+  buildSmartRegExp,
+} from '@/utils'
 
 const expandedSet = ref<Set<string>>(new Set())
 const loadingSet = ref<Set<string>>(new Set())
@@ -42,12 +49,7 @@ const groups = computed(() => {
             proxies[proxy]?.all ||
             alive
           const keywords = filterKeywordsMap.value[group.name]
-          let condition2 = false
-          try {
-            condition2 = keywords ? new RegExp(keywords, 'i').test(proxy) : true
-          } catch {
-            condition2 = keywords ? proxy.includes(keywords) : true
-          }
+          const condition2 = keywords ? buildSmartRegExp(keywords, 'i').test(proxy) : true
           return condition1 && condition2
         })
         .map((proxy) => {

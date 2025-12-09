@@ -17,6 +17,7 @@ import {
   omitArray,
   asyncPool,
   eventBus,
+  buildSmartRegExp,
 } from '@/utils'
 
 import type { Subscription } from '@/types/app'
@@ -134,12 +135,17 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (s.type !== 'Manual') {
-      proxies = proxies.filter((v: any) => {
-        const flag1 = s.include ? new RegExp(s.include).test(v.tag) : true
-        const flag2 = s.exclude ? !new RegExp(s.exclude).test(v.tag) : true
-        const flag3 = s.includeProtocol ? new RegExp(s.includeProtocol).test(v.type) : true
-        const flag4 = s.excludeProtocol ? !new RegExp(s.excludeProtocol).test(v.type) : true
-        return flag1 && flag2 && flag3 && flag4
+      const r1 = s.include && buildSmartRegExp(s.include)
+      const r2 = s.exclude && buildSmartRegExp(s.exclude)
+      const r3 = s.includeProtocol && buildSmartRegExp(s.includeProtocol)
+      const r4 = s.excludeProtocol && buildSmartRegExp(s.excludeProtocol)
+
+      proxies = proxies.filter((v) => {
+        const flag1 = r1 ? r1.test(v.tag) : true
+        const flag2 = r2 ? r2.test(v.tag) : false
+        const flag3 = r3 ? r3.test(v.type) : true
+        const flag4 = r4 ? r4.test(v.type) : false
+        return flag1 && !flag2 && flag3 && !flag4
       })
 
       if (s.proxyPrefix) {
