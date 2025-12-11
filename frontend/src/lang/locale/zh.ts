@@ -347,7 +347,7 @@ export default {
       settings: '内核设置',
       settingsTips: '暂时生效，持久化请修改配置文件',
       updateGEO: '更新 GEO',
-      needPort: '请先设置代理端口',
+      needPort: '请先添加一个Mixed/Http/Socks入站',
       needTun: '请先添加一个TUN入站',
     },
     controller: {
