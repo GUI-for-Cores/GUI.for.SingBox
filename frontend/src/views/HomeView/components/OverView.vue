@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ProcessMemory } from '@/bridge'
+import { ProcessMemory, UpdateTray } from '@/bridge'
 import { ModeOptions } from '@/constant/kernel'
 import { useEnvStore, useAppStore, useKernelApiStore, useAppSettingsStore } from '@/stores'
 import { formatBytes, handleChangeMode, message } from '@/utils'
@@ -131,6 +131,7 @@ const unregisterTrafficHandler = kernelApiStore.onTraffic((data) => {
   const { up, down } = data
   statistics.value.upload = up
   statistics.value.download = down
+  
 
   trafficHistory.value[0].push(up)
   trafficHistory.value[1].push(down)
@@ -145,6 +146,13 @@ const unregisterConnectionsHandler = kernelApiStore.onConnections((data) => {
   statistics.value.downloadTotal = data.downloadTotal
   statistics.value.uploadTotal = data.uploadTotal
   statistics.value.connections = data.connections || []
+})
+
+watch(
+  [() => statistics.value.upload, () => statistics.value.download],
+  ([newUpload, newDownload], [oldUpload, oldDownload]) => {
+    const tray = {title: `↑: ${formatBytes(newUpload || 0)} ↓: ${formatBytes(newDownload || 0)}`}
+    UpdateTray(tray)
 })
 
 onUnmounted(() => {
