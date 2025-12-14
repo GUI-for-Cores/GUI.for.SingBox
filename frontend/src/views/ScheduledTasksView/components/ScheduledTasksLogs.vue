@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useLogsStore, useScheduledTasksStore } from '@/stores'
-import { formatDate } from '@/utils'
+import { buildSmartRegExp, formatDate } from '@/utils'
 
 import type { Column } from '@/components/Table/index.vue'
 
@@ -49,6 +49,7 @@ const columns: Column[] = [
   },
   {
     title: 'scheduledtasks.result',
+    align: 'center',
     key: 'result',
   },
 ]
@@ -65,7 +66,7 @@ const pluginsOptions = computed(() =>
 const filteredLogs = computed(() => {
   return logsStore.scheduledtasksLogs.filter((v) => {
     const p = plugin.value ? v.name === plugin.value : true
-    const k = v.result.some((vv) => (vv ? vv.toString().includes(keywords.value) : true))
+    const k = buildSmartRegExp(keywords.value, 'i').test(JSON.stringify(v.result))
     return p && k
   })
 })
@@ -100,6 +101,15 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
 
     <Empty v-if="filteredLogs.length === 0" />
 
-    <Table v-else :columns="columns" :data-source="filteredLogs" sort="start" class="mt-8" />
+    <Table v-else :columns="columns" :data-source="filteredLogs" sort="start" class="mt-8">
+      <template #result="{ record }">
+        <div class="flex flex-col gap-8 text-left">
+          <div v-for="item in record.result" :key="item">
+            <span :style="{ color: item.ok ? 'greenyellow' : 'red' }">●</span>
+            {{ item.result }}
+          </div>
+        </div>
+      </template>
+    </Table>
   </div>
 </template>

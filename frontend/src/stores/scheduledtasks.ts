@@ -33,30 +33,41 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
     const logsStore = useLogsStore()
 
     task.lastTime = Date.now()
-    editScheduledTask(id, task)
 
     const startTime = Date.now()
     const result = await getTaskFn(task)()
 
-    task.notification && Notify(task.name, result.join('\n'))
+    if (task.notification) {
+      const successes = result.filter((v) => v.ok).length
+      const failures = result.length - successes
+      const details = result.flatMap((v) => v.result).join('\n')
+      const content = `Successes: ${successes}; Failures: ${failures}. \n\n${details}`
+      Notify(task.name, content)
+    }
 
     logsStore.recordScheduledTasksLog({
       name: task.name,
       startTime,
       endTime: Date.now(),
-      result,
+      result: result,
     })
+
+    await editScheduledTask(id, task)
   }
 
-  const withOutput = (list: string[], fn: (id: string) => Promise<string>) => {
+  const withOutput = <T>(list: string[], fn: (id: string) => Promise<T>) => {
     return async () => {
-      const output: string[] = []
+      const output: { ok: boolean; result: T }[] = []
       for (const id of list) {
         try {
-          const res = await fn(id)
-          output.push(res)
+          const result = await fn(id)
+          if (Array.isArray(result)) {
+            output.push(...result)
+          } else {
+            output.push({ ok: true, result })
+          }
         } catch (error: any) {
-          output.push(error.message || error)
+          output.push({ ok: false, result: error.message || error })
         }
       }
       return output
@@ -76,6 +87,18 @@ export const useScheduledTasksStore = defineStore('scheduledtasks', () => {
       case ScheduledTasksType.UpdatePlugin: {
         const pluginsStores = usePluginsStore()
         return withOutput(task.plugins, pluginsStores.updatePlugin)
+      }
+      case ScheduledTasksType.UpdateAllSubscription: {
+        const subscribesStore = useSubscribesStore()
+        return withOutput(['0'], () => subscribesStore.updateSubscribes())
+      }
+      case ScheduledTasksType.UpdateAllRuleset: {
+        const rulesetsStore = useRulesetsStore()
+        return withOutput(['1'], () => rulesetsStore.updateRulesets())
+      }
+      case ScheduledTasksType.UpdateAllPlugin: {
+        const pluginsStores = usePluginsStore()
+        return withOutput(['2'], () => pluginsStores.updatePlugins())
       }
       case ScheduledTasksType.RunPlugin: {
         const pluginsStores = usePluginsStore()

@@ -169,16 +169,22 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     let needSave = false
 
     const update = async (r: RuleSet) => {
+      const result = { ok: true, id: r.id, name: r.tag, result: '' }
       try {
         r.updating = true
         await _doUpdateRuleset(r)
         needSave = true
+        result.result = `Rule-Set [${r.tag}] updated successfully.`
+      } catch (error: any) {
+        result.ok = false
+        result.result = `Failed to update rule-set [${r.tag}]. Reason: ${error.message || error}`
       } finally {
         r.updating = false
       }
+      return result
     }
 
-    await asyncPool(
+    const result = await asyncPool(
       5,
       rulesets.value.filter((v) => !v.disabled),
       update,
@@ -187,6 +193,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
     if (needSave) await saveRulesets()
 
     eventBus.emit('rulesetsChange', undefined)
+
+    return result.flatMap((v) => (v.ok && v.value) || [])
   }
 
   const rulesetHubLoading = ref(false)

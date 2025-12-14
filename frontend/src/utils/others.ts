@@ -82,20 +82,20 @@ export const getValue = <T = unknown>(obj: unknown, expr: string): T | undefined
   }, obj) as T
 }
 
-type IteratorFn<T> = (item: T, array: T[]) => Promise<any>
+type IteratorFn<T, K> = (item: T, array: T[]) => Promise<K>
 type PoolController = { pause: () => void; resume: () => void; cancel: () => void }
 interface RunPoolOptions {
   shouldPause?: () => Promise<void>
   shouldCancel?: () => boolean
 }
 
-async function runPool<T>(
+async function runPool<T, K>(
   poolLimit: number,
   array: T[],
-  iteratorFn: IteratorFn<T>,
+  iteratorFn: IteratorFn<T, K>,
   options: RunPoolOptions = {},
 ) {
-  const results: Promise<any>[] = []
+  const results: Promise<{ ok: true; value: K } | { ok: false; error: Error }>[] = []
   const activePromises = new Set<Promise<any>>()
   const { shouldPause, shouldCancel } = options
 
@@ -110,8 +110,8 @@ async function runPool<T>(
 
     const promise = Promise.resolve()
       .then(() => iteratorFn(item, array))
-      .then((value) => ({ ok: true, value }))
-      .catch((error) => ({ ok: false, error }))
+      .then<{ ok: true; value: K }>((value) => ({ ok: true, value }))
+      .catch<{ ok: false; error: Error }>((error) => ({ ok: false, error }))
 
     results.push(promise)
 
@@ -126,15 +126,22 @@ async function runPool<T>(
     }
   }
 
-  const settled = await Promise.all(results)
-  return settled.filter((r) => r.ok).map((r) => r.value)
+  return await Promise.all(results)
 }
 
-export const asyncPool = <T>(poolLimit: number, array: T[], iteratorFn: IteratorFn<T>) => {
+export const asyncPool = <T, K = any>(
+  poolLimit: number,
+  array: T[],
+  iteratorFn: IteratorFn<T, K>,
+) => {
   return runPool(poolLimit, array, iteratorFn)
 }
 
-export const createAsyncPool = <T>(poolLimit: number, array: T[], iteratorFn: IteratorFn<T>) => {
+export const createAsyncPool = <T, K>(
+  poolLimit: number,
+  array: T[],
+  iteratorFn: IteratorFn<T, K>,
+) => {
   let paused = false
   let cancelled = false
   let resumeResolve: (() => void) | null = null
@@ -286,11 +293,11 @@ export const stringifyNoFolding = (content: any) => {
   return stringify(content, { lineWidth: 0, minContentWidth: 0 })
 }
 
-const regexCache = new Map()
+const regexCache = new Map<string, RegExp>()
 
 export const buildSmartRegExp = (pattern: string, flags = '') => {
   const key = pattern + '::' + flags
-  if (regexCache.has(key)) return regexCache.get(key)
+  if (regexCache.has(key)) return regexCache.get(key)!
 
   let r
   try {

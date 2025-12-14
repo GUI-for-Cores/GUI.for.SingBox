@@ -172,8 +172,12 @@ defineExpose({ modalSlots })
       </div>
     </div>
     <div class="form-item">
-      <div class="mr-8">{{ t('scheduledtask.type') }}</div>
-      <Radio v-model="task.type" :options="ScheduledTaskOptions" />
+      <div>{{ t('scheduledtask.type') }}</div>
+      <Radio v-model="task.type" :options="ScheduledTaskOptions.slice(5)" />
+    </div>
+    <div class="form-item">
+      <div></div>
+      <Radio v-model="task.type" :options="ScheduledTaskOptions.slice(0, 5)" />
     </div>
     <div class="form-item">
       {{ t('scheduledtask.notification') }}

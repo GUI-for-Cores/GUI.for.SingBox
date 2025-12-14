@@ -264,22 +264,30 @@ export const usePluginsStore = defineStore('plugins', () => {
     let needSave = false
 
     const update = async (plugin: Plugin) => {
+      const result = { ok: true, id: plugin.id, name: plugin.name, result: '' }
       try {
         plugin.updating = true
         await _doUpdatePlugin(plugin)
         needSave = true
+        result.result = `Plugin [${plugin.name}] updated successfully.`
+      } catch (error: any) {
+        result.ok = false
+        result.result = `Failed to update plugin [${plugin.name}]. Reason: ${error.message || error}`
       } finally {
         plugin.updating = false
       }
+      return result
     }
 
-    await asyncPool(
+    const result = await asyncPool(
       5,
       plugins.value.filter((v) => !v.disabled),
       update,
     )
 
     if (needSave) await savePlugins()
+
+    return result.flatMap((v) => (v.ok && v.value) || [])
   }
 
   const pluginHubLoading = ref(false)

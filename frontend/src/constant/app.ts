@@ -103,6 +103,12 @@ export const ScheduledTaskOptions = [
   { label: 'scheduledtask.update::plugin', value: ScheduledTasksType.UpdatePlugin },
   { label: 'scheduledtask.run::plugin', value: ScheduledTasksType.RunPlugin },
   { label: 'scheduledtask.run::script', value: ScheduledTasksType.RunScript },
+  {
+    label: 'scheduledtask.update::all::subscription',
+    value: ScheduledTasksType.UpdateAllSubscription,
+  },
+  { label: 'scheduledtask.update::all::ruleset', value: ScheduledTasksType.UpdateAllRuleset },
+  { label: 'scheduledtask.update::all::plugin', value: ScheduledTasksType.UpdateAllPlugin },
 ]
 
 export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subscription) => {\n  return { proxies, subscription }\n}`

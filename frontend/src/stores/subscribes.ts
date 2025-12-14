@@ -195,9 +195,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       s.updating = true
       await _doUpdateSub(s)
       await saveSubscribes()
-    } catch (error) {
-      console.error('updateSubscribe: ', s.name, error)
-      throw error
+    } catch (error: any) {
+      throw `Failed to update subscription [${s.name}]. Reason: ${error.message || error}`
     } finally {
       s.updating = false
     }
@@ -211,16 +210,22 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     let needSave = false
 
     const update = async (s: Subscription) => {
+      const result = { ok: true, id: s.id, name: s.name, result: '' }
       try {
         s.updating = true
         await _doUpdateSub(s)
         needSave = true
+        result.result = `Subscription [${s.name}] updated successfully.`
+      } catch (error: any) {
+        result.ok = false
+        result.result = `Failed to update subscription [${s.name}]. Reason: ${error.message || error}`
       } finally {
         s.updating = false
       }
+      return result
     }
 
-    await asyncPool(
+    const result = await asyncPool(
       5,
       subscribes.value.filter((v) => !v.disabled),
       update,
@@ -229,6 +234,8 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     if (needSave) await saveSubscribes()
 
     eventBus.emit('subscriptionsChange', undefined)
+
+    return result.flatMap((v) => (v.ok && v.value) || [])
   }
 
   const getSubscribeById = (id: string) => subscribes.value.find((v) => v.id === id)

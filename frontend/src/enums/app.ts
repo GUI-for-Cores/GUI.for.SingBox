@@ -49,6 +49,9 @@ export enum ScheduledTasksType {
   UpdateSubscription = 'update::subscription',
   UpdateRuleset = 'update::ruleset',
   UpdatePlugin = 'update::plugin',
+  UpdateAllSubscription = 'update::all::subscription',
+  UpdateAllRuleset = 'update::all::ruleset',
+  UpdateAllPlugin = 'update::all::plugin',
   RunPlugin = 'run::plugin',
   RunScript = 'run::script',
 }
