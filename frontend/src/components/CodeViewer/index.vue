@@ -125,8 +125,13 @@ watch(
   },
 )
 
-onMounted(() => setTimeout(() => initEditor(), inject(IS_IN_MODAL, false) ? 100 : 0))
-onUnmounted(() => (editorView || mergeView).destroy())
+let timer: number
+onMounted(() => (timer = setTimeout(() => initEditor(), inject(IS_IN_MODAL, false) ? 100 : 0)))
+onUnmounted(() => {
+  clearTimeout(timer)
+  const view = editorView || mergeView
+  view?.destroy()
+})
 
 const initEditor = () => {
   domRef.value!.innerHTML = ''
