@@ -80,8 +80,8 @@ export const useCoreBranch = (isAlpha = false) => {
 
       const release = isAlpha ? body.find((v: any) => v.prerelease === true) : body
       if (!release) throw 'Not Found'
-      const { assets, name } = release
-      const assetName = getKernelAssetFileName(name)
+      const { assets, tag_name } = release
+      const assetName = getKernelAssetFileName(tag_name.replace('v', ''))
       const asset = assets.find((v: any) => v.name === assetName)
       if (!asset) throw 'Asset Not Found:' + assetName
       if (asset.uploader.type !== 'Bot') {
@@ -167,8 +167,8 @@ export const useCoreBranch = (isAlpha = false) => {
       })
       const release = isAlpha ? body.find((v: any) => v.prerelease === true) : body
       if (!release) throw 'Not Found'
-      const { name, tag_name } = release
-      return (name || tag_name).replace('v', '') as string
+      const { tag_name } = release
+      return tag_name.replace('v', '') as string
     } catch (error: any) {
       console.log(error)
       showTips && message.error(error)
