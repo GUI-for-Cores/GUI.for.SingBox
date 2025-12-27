@@ -35,10 +35,19 @@ const toggle = () => {
   <div
     @click="toggle"
     v-tips.slow="label"
-    :class="[size, border, model ? 'on' : 'off', disabled ? 'disabled' : '']"
-    class="gui-switch relative cursor-pointer h-24 inline-flex items-center rounded-full text-12"
+    :class="[
+      size,
+      border,
+      model ? 'on' : 'off',
+      disabled ? 'disabled' : '',
+      border === 'square' ? 'rounded-4' : 'rounded-full',
+    ]"
+    class="gui-switch relative cursor-pointer h-24 inline-flex items-center text-12"
   >
-    <div class="dot absolute h-18 w-18 rounded-full duration-200"></div>
+    <div
+      :class="[border === 'square' ? 'rounded-4' : 'rounded-full']"
+      class="dot absolute h-18 w-18 duration-200"
+    ></div>
 
     <div v-if="$slots.default || label" class="slot line-clamp-1 break-all">
       <span v-if="label">{{ t(label) }}</span>
@@ -64,10 +73,8 @@ const toggle = () => {
 }
 
 .square {
-  border-radius: 4px;
   .dot {
     width: 4px;
-    border-radius: 2px;
   }
 }
 

@@ -23,7 +23,7 @@ const circleStyle = computed(() => {
     props.status
   ]
   const radius = props.radius * 2 + 'px'
-  const percent = props.percent >= 100 ? 101 : props.percent || 0
+  const percent = Math.min(props.percent || 0, 100)
   const mask = `radial-gradient(transparent ${props.radius * 0.6}px, #fff 0px)`
   const bg = `conic-gradient(${color} 0%, ${color} ${percent}%, var(--progress-bg) ${percent}%, var(--progress-bg) 100%)`
   return {
@@ -38,7 +38,11 @@ const circleStyle = computed(() => {
 
 <template>
   <div v-if="type === 'line'" class="gui-progress-line h-10 rounded-8 overflow-hidden">
-    <div :style="innerStyle" :class="status" class="inner h-full rounded-8 duration-200"></div>
+    <div
+      :style="innerStyle"
+      :class="props.status"
+      class="inner h-full rounded-8 duration-200"
+    ></div>
   </div>
   <div
     v-if="type === 'circle'"
