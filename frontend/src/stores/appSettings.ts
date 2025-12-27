@@ -47,6 +47,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     lang: Lang.EN,
     theme: Theme.Auto,
     color: Color.Default,
+    primaryColor: '#000',
+    secondaryColor: '#545454',
     fontFamily: DefaultFontFamily,
     profilesView: View.Grid,
     subscribesView: View.Grid,
@@ -172,7 +174,12 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
           ? Theme.Dark
           : Theme.Light
         : settings.theme
-    const { primary, secondary } = Colors[settings.color]
+    let primary, secondary
+    if (settings.color === Color.Custom) {
+      ;({ primaryColor: primary, secondaryColor: secondary } = settings)
+    } else {
+      ;({ primary, secondary } = Colors[settings.color] ?? { primary: '', secondary: '' })
+    }
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
     document.body.style.fontFamily = settings.fontFamily

@@ -32,12 +32,9 @@ export enum ControllerCloseMode {
 
 export enum Color {
   Default = 'default',
-  Orange = 'orange',
-  Pink = 'pink',
-  Red = 'red',
-  Skyblue = 'skyblue',
   Green = 'green',
   Purple = 'purple',
+  Custom = 'custom',
 }
 
 export enum Branch {

@@ -36,22 +36,6 @@ export const Colors = {
     primary: 'rgb(0, 89, 214)',
     secondary: 'rgb(5, 62, 142)',
   },
-  [Color.Orange]: {
-    primary: 'orange',
-    secondary: '#ab7207',
-  },
-  [Color.Pink]: {
-    primary: 'pink',
-    secondary: '#f1768b',
-  },
-  [Color.Red]: {
-    primary: 'red',
-    secondary: '#9e0404',
-  },
-  [Color.Skyblue]: {
-    primary: 'skyblue',
-    secondary: '#0ca4e2',
-  },
   [Color.Green]: {
     primary: 'green',
     secondary: '#025f02',
@@ -59,6 +43,10 @@ export const Colors = {
   [Color.Purple]: {
     primary: 'purple',
     secondary: '#6a0f9c',
+  },
+  [Color.Custom]: {
+    primary: '#000',
+    secondary: '#000',
   },
 }
 
@@ -102,28 +90,16 @@ export const ColorOptions = [
     value: Color.Default,
   },
   {
-    label: 'settings.color.orange',
-    value: Color.Orange,
-  },
-  {
-    label: 'settings.color.pink',
-    value: Color.Pink,
-  },
-  {
-    label: 'settings.color.red',
-    value: Color.Red,
-  },
-  {
-    label: 'settings.color.skyblue',
-    value: Color.Skyblue,
-  },
-  {
     label: 'settings.color.green',
     value: Color.Green,
   },
   {
     label: 'settings.color.purple',
     value: Color.Purple,
+  },
+  {
+    label: 'settings.color.custom',
+    value: Color.Custom,
   },
 ]
 

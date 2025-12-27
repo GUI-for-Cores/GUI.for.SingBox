@@ -6,6 +6,7 @@ declare module 'vue' {
     Card: (typeof import('./Card/index.vue'))['default']
     CheckBox: (typeof import('./CheckBox/index.vue'))['default']
     CodeViewer: (typeof import('./CodeViewer/index.vue'))['default']
+    ColorPicker: (typeof import('./ColorPicker/index.vue'))['default']
     Confirm: (typeof import('./Confirm/index.vue'))['default']
     CustomAction: (typeof import('./CustomAction/index.vue'))['default']
     Divider: (typeof import('./Divider/index.vue'))['default']

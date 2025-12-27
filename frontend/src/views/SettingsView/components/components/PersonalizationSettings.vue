@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { BrowserOpenURL, MakeDir, OpenDir } from '@/bridge'
 import { ColorOptions, DefaultFontFamily, LocalesFilePath, ThemeOptions } from '@/constant/app'
+import { Color } from '@/enums/app'
 import routes from '@/router/routes'
 import { useAppSettingsStore } from '@/stores'
 import { APP_LOCALES_URL } from '@/utils'
@@ -39,7 +40,21 @@ const handleOpenLocalesFolder = async () => {
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.color.name') }}</div>
-      <Radio v-model="appSettings.app.color" :options="ColorOptions" />
+      <div class="flex items-center">
+        <div v-if="appSettings.app.color === Color.Custom" class="flex items-center mr-4">
+          <ColorPicker v-model="appSettings.app.primaryColor">
+            <template #suffix="{ pick }">
+              <div @click="pick" class="text-12">{{ $t('settings.color.primary') }}</div>
+            </template>
+          </ColorPicker>
+          <ColorPicker v-model="appSettings.app.secondaryColor">
+            <template #suffix="{ pick }">
+              <div @click="pick" class="text-12">{{ $t('settings.color.secondary') }}</div>
+            </template>
+          </ColorPicker>
+        </div>
+        <Radio v-model="appSettings.app.color" :options="ColorOptions" />
+      </div>
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="flex items-center text-16 font-bold">
