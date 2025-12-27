@@ -309,8 +309,6 @@ export default {
     rulesets: '规则集',
     plugins: '插件',
     settings: '设置',
-    debug: '调试',
-    components: '组件预览',
     about: '关于',
     profiles: '配置',
     kernel: '内核',
@@ -594,7 +592,7 @@ export default {
     behavior: '行为',
     systemProxy: '系统代理',
     advanced: '高级',
-    debug: '调试',
+    features: '特性',
     general: '通用',
     theme: {
       name: '主题',
@@ -658,6 +656,7 @@ export default {
     rollingRelease: '启用滚动发行',
     debugOutline: '显示界面轮廓',
     debugNoAnimation: '禁用动画',
+    debugNoRounded: '禁用圆角',
     debugBorder: '显示窗口边框',
     startup: {
       name: '自启动',

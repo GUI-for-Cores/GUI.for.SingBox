@@ -10,6 +10,19 @@ body[debug-no-animation='true'] {
   }
 }
 
+body[debug-no-rounded='true'] {
+  .rounded-2,
+  .rounded-4,
+  .rounded-6,
+  .rounded-8,
+  .rounded-16,
+  .rounded-32,
+  .rounded-9999,
+  .rounded-full {
+    border-radius: 0;
+  }
+}
+
 body[debug-border='true'] {
   box-shadow: inset 0 0 1px var(--color);
 }

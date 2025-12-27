@@ -309,8 +309,6 @@ export default {
     rulesets: 'Rulesets',
     plugins: 'Plugins',
     settings: 'Settings',
-    debug: 'Debug',
-    components: 'Components',
     about: 'About',
     profiles: 'Profiles',
     kernel: 'Kernel',
@@ -595,7 +593,7 @@ export default {
     behavior: 'Behavior',
     systemProxy: 'System Proxy',
     advanced: 'Advanced',
-    debug: 'Debug',
+    features: 'Features',
     general: 'General',
     theme: {
       name: 'Theme',
@@ -658,7 +656,8 @@ export default {
     multipleInstance: 'Allow multiple app instances',
     rollingRelease: 'Enable Rolling Release',
     debugOutline: 'Show interface outline',
-    debugNoAnimation: 'Disable Animation',
+    debugNoAnimation: 'Disable animations',
+    debugNoRounded: 'Disable rounded corners',
     debugBorder: 'Show window border',
     startup: {
       name: 'Run at startup',
