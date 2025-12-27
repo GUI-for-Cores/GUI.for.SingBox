@@ -177,7 +177,7 @@ provide(IS_IN_MODAL, true)
             <slot name="title">
               <div v-if="title" class="font-bold">{{ t(title) }}</div>
             </slot>
-            <div class="ml-auto">
+            <div class="ml-auto" style="--wails-draggable: false">
               <slot name="toolbar"></slot>
               <!-- <Button v-if="toolbar.minimize" @click="toggleMinimize" icon="minimize" type="text" /> -->
               <Button v-if="toolbar.maximize" @click="toggleMaximize" type="text">
