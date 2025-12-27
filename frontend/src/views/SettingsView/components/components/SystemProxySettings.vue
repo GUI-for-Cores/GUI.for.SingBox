@@ -1,12 +1,7 @@
 <script lang="ts" setup>
 import { useAppSettingsStore } from '@/stores'
-import { APP_TITLE, APP_VERSION } from '@/utils'
 
 const appSettings = useAppSettingsStore()
-
-const handleClearUserAgent = () => {
-  appSettings.app.userAgent = ''
-}
 </script>
 
 <template>
@@ -17,7 +12,7 @@ const handleClearUserAgent = () => {
       <div class="text-16 font-bold">{{ $t('settings.autoSetSystemProxy') }}</div>
       <Switch v-model="appSettings.app.autoSetSystemProxy" />
     </div>
-    <div class="px-8 py-12 flex items-center justify-between">
+    <div class="px-8 pt-12 pb-8 flex flex-col gap-12">
       <div class="text-16 font-bold">
         {{ $t('settings.proxyBypassList') }}
         <span class="font-normal text-12">({{ $t('settings.proxyBypassListTips') }})</span>
@@ -28,25 +23,6 @@ const handleClearUserAgent = () => {
         lang="yaml"
         class="min-w-256"
       />
-    </div>
-    <div class="px-8 py-12 flex items-center justify-between">
-      <div class="text-16 font-bold">{{ $t('settings.userAgent.name') }}</div>
-      <Input
-        v-model.lazy="appSettings.app.userAgent"
-        :placeholder="APP_TITLE + '/' + APP_VERSION"
-        editable
-        class="text-14"
-      >
-        <template #suffix>
-          <Button
-            @click="handleClearUserAgent"
-            v-tips="'settings.userAgent.reset'"
-            type="text"
-            size="small"
-            icon="reset"
-          />
-        </template>
-      </Input>
     </div>
   </Card>
 </template>

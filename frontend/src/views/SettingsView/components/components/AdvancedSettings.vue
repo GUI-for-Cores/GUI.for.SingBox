@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { OpenDir } from '@/bridge'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
+import { APP_TITLE, APP_VERSION } from '@/utils'
 
 const appSettings = useAppSettingsStore()
 const envStore = useEnvStore()
@@ -11,6 +12,10 @@ const handleOpenFolder = async () => {
 
 const handleClearApiToken = () => {
   appSettings.app.githubApiToken = ''
+}
+
+const handleClearUserAgent = () => {
+  appSettings.app.userAgent = ''
 }
 </script>
 
@@ -51,6 +56,25 @@ const handleClearApiToken = () => {
         <template #suffix>
           <Button
             @click="handleClearApiToken"
+            v-tips="'settings.userAgent.reset'"
+            type="text"
+            size="small"
+            icon="reset"
+          />
+        </template>
+      </Input>
+    </div>
+    <div class="px-8 py-12 flex items-center justify-between">
+      <div class="text-16 font-bold">{{ $t('settings.userAgent.name') }}</div>
+      <Input
+        v-model.lazy="appSettings.app.userAgent"
+        :placeholder="APP_TITLE + '/' + APP_VERSION"
+        editable
+        class="text-14"
+      >
+        <template #suffix>
+          <Button
+            @click="handleClearUserAgent"
             v-tips="'settings.userAgent.reset'"
             type="text"
             size="small"
