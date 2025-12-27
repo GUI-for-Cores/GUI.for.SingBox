@@ -1,6 +1,7 @@
 import { ExitApp, RestartApp, WindowReloadApp } from '@/bridge'
-import { Color, PluginTrigger, PluginTriggerEvent, Theme } from '@/enums/app'
-import { ClashMode } from '@/enums/kernel'
+import { ColorOptions, ThemeOptions } from '@/constant/app'
+import { ModeOptions } from '@/constant/kernel'
+import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
 import useI18n from '@/lang'
 import {
   useAppSettingsStore,
@@ -92,23 +93,11 @@ export const getCommands = () => {
         {
           label: 'kernel.mode',
           cmd: 'Kernel Mode',
-          children: [
-            {
-              label: 'kernel.global',
-              cmd: 'Global',
-              handler: () => handleChangeMode(ClashMode.Global),
-            },
-            {
-              label: 'kernel.rule',
-              cmd: 'Rule',
-              handler: () => handleChangeMode(ClashMode.Rule),
-            },
-            {
-              label: 'kernel.direct',
-              cmd: 'Direct',
-              handler: () => handleChangeMode(ClashMode.Direct),
-            },
-          ],
+          children: ModeOptions.map((mode) => ({
+            label: mode.label,
+            cmd: mode.value,
+            handler: () => handleChangeMode(mode.value),
+          })),
         },
       ],
     },
@@ -154,64 +143,20 @@ export const getCommands = () => {
         {
           label: 'settings.theme.name',
           cmd: 'Theme',
-          children: [
-            {
-              label: 'settings.theme.light',
-              cmd: 'Light',
-              handler: () => (appSettings.app.theme = Theme.Light),
-            },
-            {
-              label: 'settings.theme.dark',
-              cmd: 'Dark',
-              handler: () => (appSettings.app.theme = Theme.Dark),
-            },
-            {
-              label: 'settings.theme.auto',
-              cmd: 'Auto',
-              handler: () => (appSettings.app.theme = Theme.Auto),
-            },
-          ],
+          children: ThemeOptions.map((theme) => ({
+            label: theme.label,
+            cmd: theme.value,
+            handler: () => (appSettings.app.theme = theme.value),
+          })),
         },
         {
           label: 'settings.color.name',
           cmd: 'Color',
-          children: [
-            {
-              label: 'settings.color.default',
-              cmd: 'Default',
-              handler: () => (appSettings.app.color = Color.Default),
-            },
-            {
-              label: 'settings.color.orange',
-              cmd: 'Orange',
-              handler: () => (appSettings.app.color = Color.Orange),
-            },
-            {
-              label: 'settings.color.pink',
-              cmd: 'Pink',
-              handler: () => (appSettings.app.color = Color.Pink),
-            },
-            {
-              label: 'settings.color.red',
-              cmd: 'Red',
-              handler: () => (appSettings.app.color = Color.Red),
-            },
-            {
-              label: 'settings.color.skyblue',
-              cmd: 'Skyblue',
-              handler: () => (appSettings.app.color = Color.Skyblue),
-            },
-            {
-              label: 'settings.color.green',
-              cmd: 'Green',
-              handler: () => (appSettings.app.color = Color.Green),
-            },
-            {
-              label: 'settings.color.purple',
-              cmd: 'Purple',
-              handler: () => (appSettings.app.color = Color.Purple),
-            },
-          ],
+          children: ColorOptions.map((color) => ({
+            label: color.label,
+            cmd: color.value,
+            handler: () => (appSettings.app.color = color.value),
+          })),
         },
         {
           label: 'titlebar.reload',

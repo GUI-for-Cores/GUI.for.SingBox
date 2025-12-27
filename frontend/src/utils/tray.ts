@@ -7,8 +7,8 @@ import {
   UpdateTrayMenus,
   ShowMainWindow,
 } from '@/bridge'
-import { Theme, Color } from '@/enums/app'
-import { ClashMode } from '@/enums/kernel'
+import { ColorOptions, ThemeOptions } from '@/constant/app'
+import { ModeOptions } from '@/constant/kernel'
 import i18n from '@/lang'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore } from '@/stores'
 import {
@@ -172,26 +172,12 @@ const getTrayMenus = () => {
       type: 'item',
       text: 'kernel.mode',
       hidden: !kernelApiStore.running,
-      children: [
-        {
-          type: 'item',
-          text: 'kernel.global',
-          checked: kernelApiStore.config.mode === ClashMode.Global,
-          event: () => handleChangeMode(ClashMode.Global),
-        },
-        {
-          type: 'item',
-          text: 'kernel.rule',
-          checked: kernelApiStore.config.mode === ClashMode.Rule,
-          event: () => handleChangeMode(ClashMode.Rule),
-        },
-        {
-          type: 'item',
-          text: 'kernel.direct',
-          checked: kernelApiStore.config.mode === ClashMode.Direct,
-          event: () => handleChangeMode(ClashMode.Direct),
-        },
-      ],
+      children: ModeOptions.map((mode) => ({
+        type: 'item',
+        text: mode.label,
+        checked: kernelApiStore.config.mode === mode.value,
+        event: () => handleChangeMode(mode.value),
+      })),
     },
     {
       type: 'item',
@@ -272,74 +258,22 @@ const getTrayMenus = () => {
         {
           type: 'item',
           text: 'settings.theme.name',
-          children: [
-            {
-              type: 'item',
-              text: 'settings.theme.dark',
-              checked: appSettings.app.theme === Theme.Dark,
-              event: () => (appSettings.app.theme = Theme.Dark),
-            },
-            {
-              type: 'item',
-              text: 'settings.theme.light',
-              checked: appSettings.app.theme === Theme.Light,
-              event: () => (appSettings.app.theme = Theme.Light),
-            },
-            {
-              type: 'item',
-              text: 'settings.theme.auto',
-              checked: appSettings.app.theme === Theme.Auto,
-              event: () => (appSettings.app.theme = Theme.Auto),
-            },
-          ],
+          children: ThemeOptions.map((theme) => ({
+            type: 'item',
+            text: theme.label,
+            checked: appSettings.app.theme === theme.value,
+            event: () => (appSettings.app.theme = theme.value),
+          })),
         },
         {
           type: 'item',
           text: 'settings.color.name',
-          children: [
-            {
-              type: 'item',
-              text: 'settings.color.default',
-              checked: appSettings.app.color === Color.Default,
-              event: () => (appSettings.app.color = Color.Default),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.orange',
-              checked: appSettings.app.color === Color.Orange,
-              event: () => (appSettings.app.color = Color.Orange),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.pink',
-              checked: appSettings.app.color === Color.Pink,
-              event: () => (appSettings.app.color = Color.Pink),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.red',
-              checked: appSettings.app.color === Color.Red,
-              event: () => (appSettings.app.color = Color.Red),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.skyblue',
-              checked: appSettings.app.color === Color.Skyblue,
-              event: () => (appSettings.app.color = Color.Skyblue),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.green',
-              checked: appSettings.app.color === Color.Green,
-              event: () => (appSettings.app.color = Color.Green),
-            },
-            {
-              type: 'item',
-              text: 'settings.color.purple',
-              checked: appSettings.app.color === Color.Purple,
-              event: () => (appSettings.app.color = Color.Purple),
-            },
-          ],
+          children: ColorOptions.map((color) => ({
+            type: 'item',
+            text: color.label,
+            checked: appSettings.app.color === color.value,
+            event: () => (appSettings.app.color = color.value),
+          })),
         },
         {
           type: 'item',

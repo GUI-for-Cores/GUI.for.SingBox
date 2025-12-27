@@ -4,7 +4,10 @@ import {
   PluginTrigger,
   RequestMethod,
   ScheduledTasksType,
+  Theme,
   View,
+  WebviewGpuPolicy,
+  WindowStartState,
 } from '@/enums/app'
 
 export const LocalesFilePath = 'data/locales'
@@ -76,6 +79,63 @@ export const RequestMethodOptions = [
   { label: RequestMethod.Put, value: RequestMethod.Put },
   { label: RequestMethod.Head, value: RequestMethod.Head },
   { label: RequestMethod.Patch, value: RequestMethod.Patch },
+]
+
+export const ThemeOptions = [
+  {
+    label: 'settings.theme.dark',
+    value: Theme.Dark,
+  },
+  {
+    label: 'settings.theme.light',
+    value: Theme.Light,
+  },
+  {
+    label: 'settings.theme.auto',
+    value: Theme.Auto,
+  },
+]
+
+export const ColorOptions = [
+  {
+    label: 'settings.color.default',
+    value: Color.Default,
+  },
+  {
+    label: 'settings.color.orange',
+    value: Color.Orange,
+  },
+  {
+    label: 'settings.color.pink',
+    value: Color.Pink,
+  },
+  {
+    label: 'settings.color.red',
+    value: Color.Red,
+  },
+  {
+    label: 'settings.color.skyblue',
+    value: Color.Skyblue,
+  },
+  {
+    label: 'settings.color.green',
+    value: Color.Green,
+  },
+  {
+    label: 'settings.color.purple',
+    value: Color.Purple,
+  },
+]
+
+export const WindowStateOptions = [
+  { label: 'settings.windowState.normal', value: WindowStartState.Normal },
+  { label: 'settings.windowState.minimised', value: WindowStartState.Minimised },
+]
+
+export const WebviewGpuPolicyOptions = [
+  { label: 'settings.webviewGpuPolicy.always', value: WebviewGpuPolicy.Always },
+  { label: 'settings.webviewGpuPolicy.onDemand', value: WebviewGpuPolicy.OnDemand },
+  { label: 'settings.webviewGpuPolicy.never', value: WebviewGpuPolicy.Never },
 ]
 
 // vue-draggable-plus config
