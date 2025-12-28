@@ -53,7 +53,7 @@ export const getCommands = () => {
   const rawCommands: Command[] = [
     {
       label: 'tray.kernel',
-      cmd: 'Kernel',
+      cmd: 'Core',
       children: [
         {
           label: 'tray.startKernel',
@@ -92,7 +92,7 @@ export const getCommands = () => {
         },
         {
           label: 'kernel.mode',
-          cmd: 'Kernel Mode',
+          cmd: 'Core Mode',
           children: ModeOptions.map((mode) => ({
             label: mode.label,
             cmd: mode.value,

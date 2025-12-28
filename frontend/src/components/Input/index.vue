@@ -113,7 +113,7 @@ defineExpose({
     class="gui-input inline-flex items-center rounded-4 cursor-pointer px-4"
   >
     <div v-if="$slots.prefix" class="flex items-center shrink-0">
-      <slot name="prefix"></slot>
+      <slot name="prefix" v-bind="{ showInput }"></slot>
     </div>
     <Icon v-if="disabled" icon="forbidden" class="shrink-0" />
     <div
@@ -159,7 +159,7 @@ defineExpose({
       />
     </template>
     <div v-if="$slots.suffix" class="flex items-center shrink-0">
-      <slot name="suffix"></slot>
+      <slot name="suffix" v-bind="{ showInput }"></slot>
     </div>
   </div>
 </template>

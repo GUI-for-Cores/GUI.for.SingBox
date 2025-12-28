@@ -12,6 +12,7 @@ import {
   HttpCancel,
   OpenDir,
 } from '@/bridge'
+import { RollingReleaseDirectory } from '@/constant/app'
 import {
   APP_TITLE,
   APP_VERSION,
@@ -129,8 +130,7 @@ export const useAppStore = defineStore('app', () => {
       }
 
       await RemoveFile(downloadCacheFile)
-      await ignoredError(RemoveFile, 'data/rolling-release')
-      await ignoredError(RemoveFile, 'data/rolling-release-alpha')
+      await ignoredError(RemoveFile, RollingReleaseDirectory)
     } catch (error: any) {
       console.log(error)
       message.error(error.message || error, 5_000)

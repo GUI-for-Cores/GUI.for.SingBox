@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { OpenDir } from '@/bridge'
+import { MakeDir, OpenDir } from '@/bridge'
+import { RollingReleaseDirectory } from '@/constant/app'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import { APP_TITLE, APP_VERSION } from '@/utils'
 
@@ -8,6 +9,11 @@ const envStore = useEnvStore()
 
 const handleOpenFolder = async () => {
   await OpenDir(envStore.env.basePath)
+}
+
+const handleOpenRollingReleaseFolder = async () => {
+  await MakeDir(RollingReleaseDirectory)
+  await OpenDir(RollingReleaseDirectory)
 }
 
 const handleClearApiToken = () => {
@@ -34,7 +40,10 @@ const handleClearUserAgent = () => {
         {{ $t('settings.rollingRelease') }}
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
       </div>
-      <Switch v-model="appSettings.app.rollingRelease" />
+      <div class="flex items-center gap-4">
+        <Button @click="handleOpenRollingReleaseFolder" type="primary" icon="folder" size="small" />
+        <Switch v-model="appSettings.app.rollingRelease" />
+      </div>
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.realMemoryUsage') }}</div>
@@ -65,7 +74,10 @@ const handleClearUserAgent = () => {
       </Input>
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
-      <div class="text-16 font-bold">{{ $t('settings.userAgent.name') }}</div>
+      <div class="text-16 font-bold">
+        {{ $t('settings.userAgent.name') }}
+        <span class="font-normal text-12">({{ $t('settings.userAgent.tips') }})</span>
+      </div>
       <Input
         v-model.lazy="appSettings.app.userAgent"
         :placeholder="APP_TITLE + '/' + APP_VERSION"
@@ -82,6 +94,13 @@ const handleClearUserAgent = () => {
           />
         </template>
       </Input>
+    </div>
+    <div class="px-8 py-12 flex items-center justify-between">
+      <div class="text-16 font-bold">
+        {{ $t('settings.multipleInstance') }}
+        <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
+      </div>
+      <Switch v-model="appSettings.app.multipleInstance" />
     </div>
   </Card>
 </template>

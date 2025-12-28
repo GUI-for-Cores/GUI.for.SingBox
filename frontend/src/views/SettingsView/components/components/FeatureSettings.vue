@@ -11,7 +11,7 @@ const appSettings = useAppSettingsStore()
       <div class="text-16 font-bold">{{ $t('settings.debugOutline') }}</div>
       <Switch v-model="appSettings.app.debugOutline" />
     </div>
-    <div class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="['linux']" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.debugBorder') }}</div>
       <Switch v-model="appSettings.app.debugBorder" />
     </div>

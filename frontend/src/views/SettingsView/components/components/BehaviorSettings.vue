@@ -47,11 +47,14 @@ const onTaskSchChange = async (v: boolean) => {
 }
 
 const onStartupDelayChange = async (delay: number) => {
-  try {
-    await createSchTask(delay)
-  } catch (error: any) {
-    console.error(error)
-    message.error(error)
+  if (appSettings.app.startupDelay !== delay) {
+    try {
+      await createSchTask(delay)
+      appSettings.app.startupDelay = delay
+    } catch (error: any) {
+      console.error(error)
+      message.error(error)
+    }
   }
 }
 
@@ -85,14 +88,14 @@ if (envStore.env.os === 'windows') {
   <div class="px-8 py-12 text-18 font-bold">{{ $t('settings.behavior') }}</div>
 
   <Card>
-    <div v-if="envStore.env.os === 'windows'" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="['windows']" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.admin') }}
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
       </div>
       <Switch v-model="isAdmin" @change="onPermChange" />
     </div>
-    <div v-if="envStore.env.os === 'windows'" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="['windows']" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
         <span class="font-normal text-12">({{ $t('settings.needAdmin') }})</span>
@@ -108,7 +111,8 @@ if (envStore.env.os === 'windows') {
       </div>
     </div>
     <div
-      v-if="envStore.env.os === 'windows' && isTaskScheduled"
+      v-if="isTaskScheduled"
+      v-platform="['windows']"
       class="px-8 py-12 flex items-center justify-between"
     >
       <div class="text-16 font-bold">
@@ -116,15 +120,15 @@ if (envStore.env.os === 'windows') {
         <span class="font-normal text-12">({{ $t('settings.needAdmin') }})</span>
       </div>
       <Input
-        v-model="appSettings.app.startupDelay"
+        :model-value="appSettings.app.startupDelay"
         @submit="onStartupDelayChange"
         :min="10"
         :max="180"
         editable
         type="number"
       >
-        <template #suffix>
-          <span class="ml-4">{{ $t('settings.startup.delay') }}</span>
+        <template #suffix="{ showInput }">
+          <span @click="showInput" class="ml-4">{{ $t('settings.startup.delay') }}</span>
         </template>
       </Input>
     </div>
@@ -140,7 +144,7 @@ if (envStore.env.os === 'windows') {
       <div class="text-16 font-bold">{{ $t('settings.closeKernelOnExit') }}</div>
       <Switch v-model="appSettings.app.closeKernelOnExit" />
     </div>
-    <div v-if="envStore.env.os === 'linux'" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="['linux']" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.webviewGpuPolicy.name') }}
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
@@ -154,13 +158,6 @@ if (envStore.env.os === 'windows') {
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.addGroupToMenu') }}</div>
       <Switch v-model="appSettings.app.addGroupToMenu" />
-    </div>
-    <div class="px-8 py-12 flex items-center justify-between">
-      <div class="text-16 font-bold">
-        {{ $t('settings.multipleInstance') }}
-        <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
-      </div>
-      <Switch v-model="appSettings.app.multipleInstance" />
     </div>
   </Card>
 </template>
