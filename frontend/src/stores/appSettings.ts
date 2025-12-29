@@ -184,10 +184,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     document.documentElement.style.setProperty('--primary-color', primary)
     document.documentElement.style.setProperty('--secondary-color', secondary)
     document.body.style.fontFamily = settings.fontFamily
-    document.body.setAttribute('debug-outline', String(settings.debugOutline))
-    document.body.setAttribute('debug-no-animation', String(settings.debugNoAnimation))
-    document.body.setAttribute('debug-no-rounded', String(settings.debugNoRounded))
-    document.body.setAttribute('debug-border', String(settings.debugBorder))
+    document.body.setAttribute('feature-outline', String(settings.debugOutline))
+    document.body.setAttribute('feature-no-animation', String(settings.debugNoAnimation))
+    document.body.setAttribute('feature-no-rounded', String(settings.debugNoRounded))
+    document.body.setAttribute('feature-border', String(settings.debugBorder))
   }
 
   watch(

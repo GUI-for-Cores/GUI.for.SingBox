@@ -1,16 +1,16 @@
-body[debug-outline='true'] {
+body[feature-outline='true'] {
   * {
     outline: 1px solid var(--color);
   }
 }
 
-body[debug-no-animation='true'] {
+body[feature-no-animation='true'] {
   * {
     transition: none !important;
   }
 }
 
-body[debug-no-rounded='true'] {
+body[feature-no-rounded='true'] {
   .rounded-2,
   .rounded-4,
   .rounded-6,
@@ -21,9 +21,15 @@ body[debug-no-rounded='true'] {
   .rounded-full {
     border-radius: 0;
   }
+  ::-webkit-scrollbar-track {
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0;
+  }
 }
 
-body[debug-border='true'] {
+body[feature-border='true'] {
   box-shadow: inset 0 0 1px var(--color);
 }
 

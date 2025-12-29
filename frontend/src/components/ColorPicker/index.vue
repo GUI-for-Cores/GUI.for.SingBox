@@ -20,7 +20,7 @@ const pick = () => {
 <template>
   <div
     :class="{ 'pl-8': $slots.prefix, 'pr-8': $slots.suffix }"
-    class="gui-color-picker rounded-full inline-flex items-center overflow-hidden"
+    class="gui-color-picker rounded-full inline-flex items-center overflow-hidden cursor-pointer duration-200"
   >
     <div v-if="$slots.prefix" class="flex items-center line-clamp-1 break-all">
       <slot name="prefix" v-bind="{ pick }"></slot>
@@ -43,6 +43,10 @@ const pick = () => {
   color: var(--color);
   border: 1px solid var(--primary-color);
   background: var(--color-picker-bg);
+
+  &:hover {
+    color: var(--primary-color);
+  }
 }
 
 input::-webkit-color-swatch-wrapper {
@@ -52,7 +56,13 @@ input::-webkit-color-swatch-wrapper {
 }
 
 input::-webkit-color-swatch {
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
+}
+
+body[feature-no-rounded='true'] {
+  input::-webkit-color-swatch {
+    border-radius: 0;
+  }
 }
 </style>

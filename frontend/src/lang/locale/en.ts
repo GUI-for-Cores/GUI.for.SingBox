@@ -322,7 +322,6 @@ export default {
     quickStart: 'Quick Start',
     noProfile: 'Welcome to the {0}, click the button to get started.',
     initSuccessful: 'Initialization successful',
-    initFailed: 'Failed to update the subscription, you need to manually update the subscription',
     overview: {
       expandAll: 'Expand All',
       collapseAll: 'Collapse All',
@@ -655,7 +654,7 @@ export default {
     addGroupToMenu: 'Add proxy group to tray menu',
     multipleInstance: 'Allow multiple app instances',
     rollingRelease: 'Enable Rolling Release',
-    debugOutline: 'Show interface outline',
+    debugOutline: 'Show component outlines',
     debugNoAnimation: 'Disable animations',
     debugNoRounded: 'Disable rounded corners',
     debugBorder: 'Show window border',
