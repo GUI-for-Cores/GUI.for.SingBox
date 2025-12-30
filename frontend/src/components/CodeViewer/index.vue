@@ -14,7 +14,7 @@ import * as parserBabel from 'prettier/parser-babel'
 import * as parserYaml from 'prettier/parser-yaml'
 import estreePlugin from 'prettier/plugins/estree'
 import * as prettier from 'prettier/standalone'
-import { watch, onUnmounted, onMounted, useTemplateRef, ref, inject } from 'vue'
+import { watch, onUnmounted, onMounted, useTemplateRef, inject } from 'vue'
 
 import { Theme } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
@@ -40,8 +40,6 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
 })
 
-const model = ref(props.modelValue)
-
 const { promise: editorReady, resolve: markEditorReady } = Promise.withResolvers()
 let internalUpdate = true
 
@@ -52,7 +50,6 @@ watch(
     const view = editorView || mergeView?.b
     if (view && val != view.state.doc.toString()) {
       internalUpdate = false
-      model.value = val
       view.dispatch({
         changes: {
           from: 0,
@@ -71,7 +68,6 @@ const domRef = useTemplateRef('domRef')
 const appSettings = useAppSettingsStore()
 
 const onChange = debounce((content: string) => {
-  model.value = content
   if (internalUpdate) {
     emit('update:modelValue', content)
     emit('change', content)
@@ -167,15 +163,13 @@ const initEditor = () => {
       ? [{ javascript, json, yaml }[props.lang]()]
       : []),
     EditorView.updateListener.of((update) => {
-      if (update.docChanged && !update.view.composing) {
-        onChange(update.state.doc.toString())
-      }
+      update.docChanged && onChange(update.state.doc.toString())
     }),
   ]
 
   if (props.mode === 'editor') {
     editorView = new EditorView({
-      doc: model.value,
+      doc: props.modelValue,
       parent: domRef.value!,
       extensions: [...extensions, EditorView.editable.of(props.editable)],
     })
@@ -183,11 +177,11 @@ const initEditor = () => {
     mergeView = new MergeView({
       parent: domRef.value!,
       a: {
-        doc: model.value,
+        doc: props.modelValue,
         extensions: [...extensions, EditorView.editable.of(false)],
       },
       b: {
-        doc: model.value,
+        doc: props.modelValue,
         extensions: [...extensions, EditorView.editable.of(props.editable)],
       },
     })
