@@ -519,7 +519,7 @@ export default {
     version: '版本号',
     description: '描述',
     url: '远程地址',
-    install: '需要安装',
+    install: '是否需要安装',
     installed: '已安装',
     path: '保存路径',
     type: '类型',

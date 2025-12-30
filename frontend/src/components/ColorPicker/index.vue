@@ -1,7 +1,15 @@
 <script lang="ts" setup>
 import { useTemplateRef } from 'vue'
 
-const model = defineModel<string>({ default: '#000' })
+interface Props {
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+})
+
+const model = defineModel<string>({ default: '#000000' })
 
 const emit = defineEmits(['change'])
 
@@ -13,14 +21,20 @@ const onChange = (v: Event) => {
 }
 
 const pick = () => {
-  inputRef.value?.click()
+  !props.disabled && inputRef.value?.click()
 }
 </script>
 
 <template>
   <div
-    :class="{ 'pl-8': $slots.prefix, 'pr-8': $slots.suffix }"
-    class="gui-color-picker rounded-full inline-flex items-center overflow-hidden cursor-pointer duration-200"
+    @click="pick"
+    :class="{
+      'pl-8': $slots.prefix,
+      'pr-8': $slots.suffix,
+      'cursor-not-allowed': disabled,
+      'cursor-pointer': !disabled,
+    }"
+    class="gui-color-picker rounded-full inline-flex items-center overflow-hidden duration-200"
   >
     <div v-if="$slots.prefix" class="flex items-center line-clamp-1 break-all">
       <slot name="prefix" v-bind="{ pick }"></slot>
@@ -29,6 +43,7 @@ const pick = () => {
       ref="inputRef"
       v-model="model"
       @change="(e) => onChange(e)"
+      :class="{ 'pointer-events-none': disabled }"
       type="color"
       class="w-26 h-28 flex justify-center items-center border-0 bg-transparent cursor-pointer"
     />

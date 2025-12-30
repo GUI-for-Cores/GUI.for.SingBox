@@ -115,6 +115,7 @@ export interface PluginConfiguration {
     | 'Select'
     | 'MultipleSelect'
     | 'Switch'
+    | 'ColorPicker'
     | ''
   value: any
   options: any[]

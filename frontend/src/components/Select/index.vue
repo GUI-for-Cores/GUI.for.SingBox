@@ -48,7 +48,7 @@ const displayLabel = computed(() => {
     if (selected.length === 0) {
       return props.placeholder ?? 'common.none'
     }
-    return selected.map((item) => optionsValueLabelMapping.value[item] ?? item).join('、')
+    return selected.map((item) => t(optionsValueLabelMapping.value[item] ?? item)).join('、')
   }
   const label = props.options.find((v) => v.value === model.value)?.label ?? (model.value as string)
   return (label || props.placeholder) ?? 'common.none'

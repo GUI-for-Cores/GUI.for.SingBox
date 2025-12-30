@@ -43,13 +43,13 @@ const handleOpenLocalesFolder = async () => {
       <div class="flex items-center">
         <div v-if="appSettings.app.color === Color.Custom" class="flex items-center mr-4">
           <ColorPicker v-model="appSettings.app.primaryColor">
-            <template #suffix="{ pick }">
-              <div @click="pick" class="text-12">{{ $t('settings.color.primary') }}</div>
+            <template #suffix>
+              <div class="text-12">{{ $t('settings.color.primary') }}</div>
             </template>
           </ColorPicker>
           <ColorPicker v-model="appSettings.app.secondaryColor">
-            <template #suffix="{ pick }">
-              <div @click="pick" class="text-12">{{ $t('settings.color.secondary') }}</div>
+            <template #suffix>
+              <div class="text-12">{{ $t('settings.color.secondary') }}</div>
             </template>
           </ColorPicker>
         </div>
