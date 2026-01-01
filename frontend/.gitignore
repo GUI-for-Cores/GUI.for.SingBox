@@ -31,3 +31,4 @@ coverage
 *.tsbuildinfo
 
 package.json.md5
+.eslintcache

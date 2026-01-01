@@ -6,12 +6,11 @@
   "scripts": {
     "dev": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
-    "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
+    "lint:oxlint": "oxlint . --fix",
+    "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write src/"
   },
   "dependencies": {

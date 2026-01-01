@@ -8,14 +8,18 @@ import pluginVue from 'eslint-plugin-vue'
 export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ['**/*.{ts,vue}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**', '**/wailsjs/**']),
+  globalIgnores(['**/dist/**', '**/wailsjs/**']),
 
-  pluginVue.configs['flat/essential'],
+  ...pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
+
   ...pluginOxlint.configs['flat/recommended'],
+
+  skipFormatting,
+
   {
     plugins: { import: importPlugin },
     rules: {
@@ -55,7 +59,7 @@ export default defineConfigWithVueTs(
   {
     rules: {
       '@typescript-eslint/no-explicit-any': ['off'],
-      '@typescript-eslint/no-unused-expressions': ['off'],
+      'vue/no-v-html': ['off'],
       'vue/multi-word-component-names': [
         'error',
         {
@@ -64,5 +68,4 @@ export default defineConfigWithVueTs(
       ],
     },
   },
-  skipFormatting,
 )
