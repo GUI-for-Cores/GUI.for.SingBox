@@ -7,7 +7,7 @@ interface Props {
   pageSize?: number
 }
 
-const model = defineModel('current', { default: 1 })
+const model = defineModel<number>('current', { default: 1 })
 const props = withDefaults(defineProps<Props>(), { size: 'default', pageSize: 9 })
 
 const pageNum = computed(() => Math.ceil(props.total / props.pageSize))
@@ -44,18 +44,18 @@ const handleJump = (page: number | 'prev' | 'next') => {
 
 <template>
   <div>
-    <Button @click="handlePrev" icon="arrowLeft" type="text" :size="size" />
+    <Button icon="arrowLeft" type="text" :size="size" @click="handlePrev" />
     <Button v-if="pages.length === 0" type="text" :size="size"> ... </Button>
     <Button
       v-for="item in pages"
       :key="item"
-      @click="handleJump(item)"
       :type="item === model ? 'primary' : 'text'"
       :size="size"
       class="min-w-32"
+      @click="handleJump(item)"
     >
       {{ item === 'prev' || item === 'next' ? '...' : item }}
     </Button>
-    <Button @click="handleNext" icon="arrowRight" type="text" :size="size" />
+    <Button icon="arrowRight" type="text" :size="size" @click="handleNext" />
   </div>
 </template>

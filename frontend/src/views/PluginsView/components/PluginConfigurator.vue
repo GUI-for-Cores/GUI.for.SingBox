@@ -105,5 +105,5 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <PluginConfigItem ref="pluginConfigRef" :plugin="props.plugin" v-model="settings" />
+  <PluginConfigItem ref="pluginConfigRef" v-model="settings" :plugin="props.plugin" />
 </template>

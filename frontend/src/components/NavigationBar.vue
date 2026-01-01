@@ -20,8 +20,8 @@ const routes = computed(() =>
 <template>
   <div class="flex items-center justify-center">
     <div v-for="r in routes" :key="r.path">
-      <RouterLink :to="r.path" custom #default="{ navigate, isActive }">
-        <Button @click="navigate" :type="isActive ? 'link' : 'text'" :icon="r.meta && r.meta.icon">
+      <RouterLink v-slot="{ navigate, isActive }" :to="r.path" custom>
+        <Button :type="isActive ? 'link' : 'text'" :icon="r.meta && r.meta.icon" @click="navigate">
           {{ (r.meta && t(r.meta.name)) || r.name }}
         </Button>
       </RouterLink>

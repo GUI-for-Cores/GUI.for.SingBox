@@ -41,7 +41,7 @@ const appStore = useAppStore()
     </template>
 
     <template #extra>
-      <Button @click="appStore.showAbout = true" type="text">
+      <Button type="text" @click="appStore.showAbout = true">
         {{ t('router.about') }}
       </Button>
     </template>

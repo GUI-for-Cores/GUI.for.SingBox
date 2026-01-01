@@ -53,17 +53,17 @@ const [showMore, toggleMore] = useBool(false)
         <Input v-model="model.experimental.clash_api.secret" editable>
           <template #suffix>
             <Button
-              @click="() => (model.experimental.clash_api.secret = generateSecureKey())"
               type="text"
               size="small"
               icon="refresh"
+              @click="() => (model.experimental.clash_api.secret = generateSecureKey())"
             />
           </template>
         </Input>
       </div>
     </div>
     <Divider>
-      <Button @click="toggleMore" type="text" size="small">{{ t('common.more') }}</Button>
+      <Button type="text" size="small" @click="toggleMore">{{ t('common.more') }}</Button>
     </Divider>
     <div v-show="showMore">
       <div class="form-item">

@@ -157,49 +157,49 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex items-center rounded-8 px-8 py-4" style="background-color: var(--card-bg)">
-      <Button @click="handleShowSettings" type="text" size="small" icon="settings" />
+      <Button type="text" size="small" icon="settings" @click="handleShowSettings" />
       <Switch
         v-model="envStore.systemProxy"
-        @change="onSystemProxySwitchChange"
         size="small"
         border="square"
         class="ml-4"
+        @change="onSystemProxySwitchChange"
       >
         {{ t('home.overview.systemProxy') }}
       </Switch>
       <Switch
         v-model="kernelApiStore.config.tun.enable"
-        @change="onTunSwitchChange"
         size="small"
         border="square"
         class="ml-8"
+        @change="onTunSwitchChange"
       >
         {{ t('home.overview.tunMode') }}
       </Switch>
       <CustomAction :actions="appStore.customActions.core_state" />
       <Button
-        @click="handleShowApiLogs"
         v-tips="'home.overview.viewlog'"
         type="text"
         size="small"
         icon="log"
         class="ml-auto"
+        @click="handleShowApiLogs"
       />
       <Button
-        @click="handleRestartKernel"
         v-tips="'home.overview.restart'"
         :loading="kernelApiStore.restarting"
         type="text"
         size="small"
         icon="restart"
+        @click="handleRestartKernel"
       />
       <Button
-        @click="handleStopKernel"
         v-tips="'home.overview.stop'"
         :loading="kernelApiStore.stopping"
         type="text"
         size="small"
         icon="stop"
+        @click="handleStopKernel"
       />
     </div>
     <div class="flex mt-20 gap-12">
@@ -214,18 +214,18 @@ onUnmounted(() => {
         </div>
       </Card>
       <Card
-        @click="handleShowApiConnections"
         :title="t('home.overview.connections')"
         class="flex-1 cursor-pointer"
+        @click="handleShowApiConnections"
       >
         <div class="py-8 text-12">
           {{ statistics.connections.length }}
         </div>
       </Card>
       <Card
-        @click="handleToggleRealMemoryUsage"
         :title="t('home.overview.memory')"
         class="flex-1 cursor-pointer"
+        @click="handleToggleRealMemoryUsage"
       >
         <div class="py-8 text-12">
           {{ formatBytes(statistics.inuse) }}
@@ -254,9 +254,9 @@ onUnmounted(() => {
             v-for="mode in ModeOptions"
             :key="mode.value"
             :selected="kernelApiStore.config.mode === mode.value"
-            @click="handleChangeMode(mode.value as any)"
             :title="t(mode.label)"
             class="cursor-pointer"
+            @click="handleChangeMode(mode.value as any)"
           >
             <div class="text-12 py-2">{{ t(mode.desc) }}</div>
           </Card>

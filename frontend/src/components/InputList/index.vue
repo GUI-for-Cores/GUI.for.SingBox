@@ -19,6 +19,7 @@ interface Item {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
+  placeholder: '',
   autofocus: true,
 })
 
@@ -93,18 +94,18 @@ const emitUpdate = () => {
           <div class="flex items-center py-4 break-all">
             <span class="mr-auto">{{ item.value }}</span>
             <Button
-              @click="handleEdit(item)"
               icon="edit"
               :icon-size="12"
               size="small"
               type="text"
+              @click="handleEdit(item)"
             />
             <Button
-              @click="handleDel(item)"
               icon="close"
               :icon-size="12"
               size="small"
               type="text"
+              @click="handleDel(item)"
             />
           </div>
         </Card>
@@ -115,14 +116,14 @@ const emitUpdate = () => {
       ref="inputRef"
       v-model="inputVal"
       :placeholder="placeholder"
-      @keydown.enter="handleAdd"
       type="text"
       clearable
       :autofocus="autofocus"
       class="mt-4 w-full"
+      @keydown.enter="handleAdd"
     >
       <template #suffix>
-        <Button @click="handleAdd" :icon="editItem ? 'edit' : 'add'" size="small" type="primary" />
+        <Button :icon="editItem ? 'edit' : 'add'" size="small" type="primary" @click="handleAdd" />
       </template>
     </Input>
   </div>

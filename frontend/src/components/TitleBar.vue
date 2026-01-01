@@ -71,12 +71,12 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
     <img v-if="!isDarwin" class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
 
     <div
-      @dblclick="WindowToggleMaximise"
       :class="isDarwin ? 'justify-center py-4 text-12' : 'text-14'"
       :style="{
         color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
       }"
       class="font-bold w-full h-full flex items-center"
+      @dblclick="WindowToggleMaximise"
     >
       {{ APP_TITLE }} {{ APP_VERSION }}
       <CustomAction :actions="appStore.customActions.title_bar" />
@@ -93,19 +93,19 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       class="ml-auto flex items-center gap-4"
       style="--wails-draggable: disabled"
     >
-      <Button @click.stop="pinWindow" type="text" :icon="isPinned ? 'pinFill' : 'pin'" />
-      <Button @click.stop="WindowMinimise" icon="minimize" type="text" />
+      <Button type="text" :icon="isPinned ? 'pinFill' : 'pin'" @click.stop="pinWindow" />
+      <Button icon="minimize" type="text" @click.stop="WindowMinimise" />
       <Button
-        @click.stop="WindowToggleMaximise"
         :icon="isMaximised ? 'maximize2' : 'maximize'"
         type="text"
+        @click.stop="WindowToggleMaximise"
       />
       <Button
-        @click.stop="closeWindow"
         :class="{ 'hover:!bg-red': appSettingsStore.app.exitOnClose }"
         :loading="appStore.isAppExiting"
         icon="close"
         type="text"
+        @click.stop="closeWindow"
       />
     </div>
   </div>

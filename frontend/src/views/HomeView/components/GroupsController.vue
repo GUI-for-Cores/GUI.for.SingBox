@@ -211,30 +211,30 @@ onActivated(() => {
       <Switch v-model="appSettings.app.kernel.unAvailable" label="home.controller.unAvailable" />
       <Switch v-model="appSettings.app.kernel.cardMode" label="home.controller.cardMode" />
       <Switch v-model="appSettings.app.kernel.sortByDelay" label="home.controller.sortBy" />
-      <Button @click="toggleMoreSettings" type="primary" size="small"> ... </Button>
+      <Button type="primary" size="small" @click="toggleMoreSettings"> ... </Button>
       <div class="ml-auto flex items-center">
-        <Button @click="expandAll" v-tips="'home.overview.expandAll'" type="text" icon="expand" />
+        <Button v-tips="'home.overview.expandAll'" type="text" icon="expand" @click="expandAll" />
         <Button
-          @click="collapseAll"
           v-tips="'home.overview.collapseAll'"
           type="text"
           icon="collapse"
+          @click="collapseAll"
         />
         <Button
-          @click="handleRefresh"
           v-tips="'home.overview.refresh'"
           :loading="loading"
           icon="refresh"
           type="text"
+          @click="handleRefresh"
         />
       </div>
     </div>
   </div>
   <div v-for="group in groups" :key="group.name" class="m-8">
     <div
-      @click="toggleExpanded(group.name)"
       class="sticky z-2 flex gap-8 items-center p-8 rounded-8 backdrop-blur-sm"
       style="top: 52px; background-color: var(--card-bg)"
+      @click="toggleExpanded(group.name)"
     >
       <div class="text-14 flex items-center gap-2 text-nowrap overflow-hidden">
         <span class="font-bold text-18">{{ group.name }}</span>
@@ -244,12 +244,12 @@ onActivated(() => {
         <span> :: </span>
         <template v-for="(chain, index) in group.chains" :key="chain">
           <span v-if="index !== 0" style="color: gray"> / </span>
-          <Button @click.stop="locateGroup(group, chain)" type="text" size="small">
+          <Button type="text" size="small" @click.stop="locateGroup(group, chain)">
             {{ chain }}
           </Button>
         </template>
       </div>
-      <div @click.stop class="ml-auto flex items-center">
+      <div class="ml-auto flex items-center" @click.stop>
         <Input
           v-model="filterKeywordsMap[group.name]"
           :placeholder="t('common.keywords')"
@@ -265,13 +265,13 @@ onActivated(() => {
           </template>
         </Input>
         <Button
-          @click="handleGroupDelay(group.name)"
           v-tips="'home.overview.delayTest'"
           :loading="isLoading(group.name)"
           icon="speedTest"
           type="text"
+          @click="handleGroupDelay(group.name)"
         />
-        <Button @click="toggleExpanded(group.name)" type="text">
+        <Button type="text" @click="toggleExpanded(group.name)">
           <Icon
             :class="{ 'action-expand-expanded': isExpanded(group.name) }"
             class="action-expand origin-center duration-200"
@@ -290,19 +290,19 @@ onActivated(() => {
         >
           <Card
             v-for="proxy in group.all"
+            :key="proxy.name"
             :title="proxy.name"
             :selected="proxy.name === group.now"
-            :key="proxy.name"
-            @click="useProxyWithCatchError(group, proxy)"
             class="cursor-pointer"
+            @click="useProxyWithCatchError(group, proxy)"
           >
             <Button
-              @click.stop="handleProxyDelay(proxy.name)"
               :style="{ color: delayColor(proxy.delay) }"
               :loading="isLoading(proxy.name)"
               type="text"
               size="small"
               style="margin-left: -2px; padding-left: 2px"
+              @click.stop="handleProxyDelay(proxy.name)"
             >
               <div class="text-12">
                 {{ proxy.delay && proxy.delay + 'ms' }}
@@ -314,12 +314,12 @@ onActivated(() => {
         <div v-else class="grid grid-cols-32 gap-8">
           <div
             v-for="proxy in group.all"
-            v-tips.fast="proxy.name"
-            @click="useProxyWithCatchError(group, proxy)"
             :key="proxy.name"
+            v-tips.fast="proxy.name"
             :style="{ background: delayColor(proxy.delay) }"
             :class="proxy.name === group.now ? 'rounded-full shadow' : ''"
             class="w-12 h-12 rounded-4 flex items-center justify-center"
+            @click="useProxyWithCatchError(group, proxy)"
           >
             <Icon v-if="isLoading(proxy.name)" icon="loading" :size="12" class="rotation" />
           </div>
@@ -336,7 +336,7 @@ onActivated(() => {
     title="common.more"
   >
     <template #action>
-      <Button @click="handleResetMoreSettings" type="text" class="mr-auto">
+      <Button type="text" class="mr-auto" @click="handleResetMoreSettings">
         {{ t('common.reset') }}
       </Button>
     </template>

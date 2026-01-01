@@ -91,9 +91,9 @@ onUnmounted(() => document.removeEventListener('click', onClick))
         <Button
           v-else
           :key="menu.label"
-          @click="handleClick(menu)"
           type="text"
           size="small"
+          @click="handleClick(menu)"
           @mouseenter="secondaryMenu = menu.children"
         >
           <div class="text-nowrap">

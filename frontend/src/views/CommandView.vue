@@ -127,15 +127,15 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         <Card
           :title="c.label"
           :selected="index === selected"
-          @click="handleExecCommand(index)"
           class="mt-4"
           style="font-size: 12px"
+          @click="handleExecCommand(index)"
         >
           <div>{{ c.desc }}</div>
           <div>{{ c.cmd }}</div>
         </Card>
       </div>
-      <div class="p-4 text-12" v-show="hitCommand.length === 0">
+      <div v-show="hitCommand.length === 0" class="p-4 text-12">
         {{ t('commands.noMatching') }}
       </div>
     </div>

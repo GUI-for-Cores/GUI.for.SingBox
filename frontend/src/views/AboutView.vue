@@ -27,47 +27,47 @@ appStore.checkForUpdates()
     <div class="flex items-center pb-8 my-4">
       <Button
         v-if="appStore.restartable"
-        @click="handleRestartApp"
         icon="restartApp"
         size="small"
         type="primary"
+        @click="handleRestartApp"
       >
         {{ t('about.restart') }}
       </Button>
       <template v-else>
         <Button
-          @click="appStore.checkForUpdates(true)"
           :loading="appStore.checkForUpdatesLoading"
           type="link"
           size="small"
+          @click="appStore.checkForUpdates(true)"
         >
           Bridge: {{ envStore.env.appVersion }} - UI: {{ APP_VERSION }}
         </Button>
         <Button
           v-if="appStore.updatable"
-          @click="appStore.downloadApp"
           :loading="appStore.downloading"
           size="small"
+          @click="appStore.downloadApp"
         >
           {{ t('about.new') }}: {{ appStore.remoteVersion }}
         </Button>
       </template>
     </div>
     <div
-      @click="BrowserOpenURL(PROJECT_URL)"
       class="text-12 underline flex items-center cursor-pointer"
+      @click="BrowserOpenURL(PROJECT_URL)"
     >
       <Icon icon="github" />GitHub
     </div>
     <div
-      @click="BrowserOpenURL(TG_GROUP)"
       class="text-12 underline flex items-center cursor-pointer"
+      @click="BrowserOpenURL(TG_GROUP)"
     >
       <Icon icon="telegram" />Telegram Group
     </div>
     <div
-      @click="BrowserOpenURL(TG_CHANNEL)"
       class="text-12 underline flex items-center cursor-pointer"
+      @click="BrowserOpenURL(TG_CHANNEL)"
     >
       <Icon icon="telegram" />Telegram Channel
     </div>

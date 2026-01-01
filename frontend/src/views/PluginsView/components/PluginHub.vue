@@ -87,10 +87,10 @@ if (pluginsStore.pluginHub.length === 0) {
     <div v-else class="flex flex-col h-full">
       <div class="flex items-center gap-8">
         <Button
-          @click="toggleTagsVisible"
           icon="settings3"
           size="small"
           :icon-color="tagsVisible ? 'var(--primary-color)' : ''"
+          @click="toggleTagsVisible"
         />
         <Input
           v-model="keywords"
@@ -104,27 +104,27 @@ if (pluginsStore.pluginHub.length === 0) {
             <Tag
               v-for="tag in tags"
               :key="tag"
-              @close="onTagClose(tag)"
-              @click="onTagClose(tag)"
               color="cyan"
               size="small"
               closeable
+              @close="onTagClose(tag)"
+              @click="onTagClose(tag)"
             >
               {{ tag }}
             </Tag>
           </template>
         </Input>
-        <Button @click="handleUpdatePluginHub" icon="refresh" size="small">
+        <Button icon="refresh" size="small" @click="handleUpdatePluginHub">
           {{ t('plugins.update') }}
         </Button>
       </div>
       <div v-if="tagsVisible" class="flex flex-wrap gap-2 mt-8">
         <Tag
           v-for="tag in allTags"
-          @click="toggleChecked(tag.name)"
-          :color="tags.has(tag.name) ? 'primary' : 'default'"
           :key="tag.name"
+          :color="tags.has(tag.name) ? 'primary' : 'default'"
           class="cursor-pointer"
+          @click="toggleChecked(tag.name)"
         >
           {{ `${tag.name}(${tag.count})` }}
         </Tag>
@@ -142,7 +142,7 @@ if (pluginsStore.pluginHub.length === 0) {
               <Button v-if="isAlreadyAdded(plugin.id)" type="text" size="small">
                 {{ t('common.added') }}
               </Button>
-              <Button v-else @click="handleAddPlugin(plugin)" type="link" size="small">
+              <Button v-else type="link" size="small" @click="handleAddPlugin(plugin)">
                 {{ t('common.add') }}
               </Button>
             </div>

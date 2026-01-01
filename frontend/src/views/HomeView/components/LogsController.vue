@@ -118,13 +118,13 @@ onUnmounted(() => {
         class="ml-8 flex-1"
       />
       <Button
-        @click="togglePause"
         :icon="pause ? 'play' : 'pause'"
         type="text"
         size="small"
         class="ml-8"
+        @click="togglePause"
       />
-      <Button @click="handleClear" v-tips="'common.clear'" icon="clear" size="small" type="text" />
+      <Button v-tips="'common.clear'" icon="clear" size="small" type="text" @click="handleClear" />
     </div>
 
     <Empty v-if="filteredLogs.length === 0" />
@@ -132,8 +132,8 @@ onUnmounted(() => {
     <div v-else class="mt-8 overflow-y-auto">
       <div
         v-for="log in filteredLogs"
-        v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(log) }))"
         :key="log.payload"
+        v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(log) }))"
         class="log select-text text-12 py-2 px-4 my-4"
       >
         <span class="type inline-block text-center">{{ log.type }}</span> {{ log.payload }}

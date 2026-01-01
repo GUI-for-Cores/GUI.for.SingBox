@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  options: { label: string; value: string | number | boolean }[]
+  options?: { label: string; value: string | number | boolean }[]
   size?: 'default' | 'small'
 }
 
@@ -33,9 +33,9 @@ const handleSelect = (val: string | number | boolean) => {
       v-for="o in options"
       :key="o.value.toString()"
       v-tips.slow="o.label"
-      @click="handleSelect(o.value)"
       :class="{ active: o.value === model }"
       class="gui-radio-button cursor-pointer px-12 py-6 duration-200 line-clamp-1 break-all"
+      @click="handleSelect(o.value)"
     >
       {{ t(o.label) }}
     </div>

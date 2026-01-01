@@ -131,34 +131,34 @@ watch(() => props.series, updateChart, { deep: true })
       <circle
         :cx="width / 2 - 40"
         :fill="strokeColors[0]"
-        @click="toggleUpload"
         r="3"
         cy="10"
         class="text-10 cursor-pointer"
+        @click="toggleUpload"
       />
       <circle
         :cx="width / 2 + 20"
         :fill="strokeColors[1]"
-        @click="toggleDownload"
         r="3"
         cy="10"
         class="text-10 cursor-pointer"
+        @click="toggleDownload"
       />
       <text
         :x="width / 2 - 34"
         :fill="strokeColors[0]"
-        @click="toggleUpload"
         y="14"
         class="text-10 cursor-pointer"
+        @click="toggleUpload"
       >
         {{ legend[0] }}
       </text>
       <text
         :x="width / 2 + 28"
         :fill="strokeColors[1]"
-        @click="toggleDownload"
         y="14"
         class="text-10 cursor-pointer"
+        @click="toggleDownload"
       >
         {{ legend[1] }}
       </text>

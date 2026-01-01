@@ -42,8 +42,8 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
       <Button
         v-for="tab in items"
         :key="tab.key"
-        @click="handleChange(tab.key)"
         :type="isActive(tab) ? 'link' : 'text'"
+        @click="handleChange(tab.key)"
       >
         {{ t(tab.tab) }}
       </Button>

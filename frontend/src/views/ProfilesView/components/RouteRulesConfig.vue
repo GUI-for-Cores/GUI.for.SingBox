@@ -166,14 +166,14 @@ const renderRule = (rule: IRule) => {
 <template>
   <Empty v-if="model.length === 0 || (model.length === 1 && !isInsertionPointMissing)">
     <template #description>
-      <Button @click="handleAdd" icon="add" type="primary" size="small">
+      <Button icon="add" type="primary" size="small" @click="handleAdd">
         {{ t('common.add') }}
       </Button>
     </template>
   </Empty>
 
   <Divider v-if="isInsertionPointMissing">
-    <Button @click="handleAddInsertionPoint" type="text" size="small">
+    <Button type="text" size="small" @click="handleAddInsertionPoint">
       {{ t('kernel.addInsertionPoint') }}
     </Button>
   </Divider>
@@ -182,7 +182,7 @@ const renderRule = (rule: IRule) => {
     <Card v-for="(rule, index) in model" :key="rule.id" class="mb-2">
       <div v-if="rule.type === RuleType.InsertionPoint" class="text-center font-bold">
         <Divider class="cursor-move">
-          <Button @click="handleAdd" icon="add" type="text" size="small">
+          <Button icon="add" type="text" size="small" @click="handleAdd">
             {{ t('kernel.insertionPoint') }}
           </Button>
         </Divider>
@@ -192,9 +192,9 @@ const renderRule = (rule: IRule) => {
         <div class="font-bold">
           <span
             v-if="hasLost(rule)"
-            @click="showLost"
             class="cursor-pointer"
             :style="{ color: 'rgb(200, 193, 11)' }"
+            @click="showLost"
           >
             [ ! ]
           </span>
@@ -203,13 +203,13 @@ const renderRule = (rule: IRule) => {
         <div class="ml-auto">
           <Button
             v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
-            @click="handleClearRuleset(rule)"
             type="text"
+            @click="handleClearRuleset(rule)"
           >
             {{ t('common.clear') }}
           </Button>
-          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-          <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+          <Button icon="edit" type="text" size="small" @click="handleEdit(index)" />
+          <Button icon="delete" type="text" size="small" @click="handleDelete(index)" />
         </div>
       </div>
     </Card>
@@ -333,11 +333,11 @@ const renderRule = (rule: IRule) => {
           <Card
             v-for="ruleset in ruleSet"
             :key="ruleset.tag"
-            :title="ruleset.tag"
-            @click="handleUse(ruleset)"
-            :selected="fields.payload.includes(ruleset.id)"
             v-tips="ruleset.type"
+            :title="ruleset.tag"
+            :selected="fields.payload.includes(ruleset.id)"
             class="ruleset"
+            @click="handleUse(ruleset)"
           >
             <div class="text-12">
               {{ ruleset.type }}

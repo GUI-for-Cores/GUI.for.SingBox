@@ -10,6 +10,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   color: 'default',
   closable: false,
+  size: 'default',
 })
 
 const emit = defineEmits(['close'])
@@ -30,10 +31,10 @@ const handleClose = () => {
     <slot></slot>
     <Icon
       v-if="closeable"
-      @click="handleClose"
       :size="size === 'small' ? 12 : 14"
       icon="close"
       class="ml-2"
+      @click="handleClose"
     />
   </div>
 </template>

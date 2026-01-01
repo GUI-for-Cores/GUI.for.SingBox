@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), { size: 16, color: 'var(--color)' })
 </script>
 
 <template>
-  <div v-bind="$attrs" class="flex">
+  <div v-bind="$attrs" class="inline-flex">
     <Component
       :is="IconsMap[icon] || IconsMap['error']"
       :width="size + 'px'"

@@ -149,10 +149,10 @@ onUnmounted(() => {
 <template>
   <div
     ref="domRef"
+    class="gui-dropdown relative inline-flex flex-col items-center"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
     @click="onClick"
-    class="gui-dropdown relative inline-flex flex-col items-center"
   >
     <slot v-bind="{ open, close, toggle }"></slot>
     <Transition name="overlay">

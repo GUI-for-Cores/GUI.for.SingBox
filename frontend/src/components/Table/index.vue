@@ -26,6 +26,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   menu: () => [],
+  sort: undefined,
 })
 
 const sortField = ref(props.sort)
@@ -82,7 +83,6 @@ const renderCell = (column: Column, record: Recordable) => {
             class="px-4 py-8 whitespace-nowrap cursor-pointer"
           >
             <div
-              @click="handleChangeSortField(column.key)"
               :style="{
                 justifyContent: { left: 'flext-start', center: 'center', right: 'flex-end' }[
                   column.align || 'left'
@@ -90,6 +90,7 @@ const renderCell = (column: Column, record: Recordable) => {
                 minWidth: column.minWidth || 'auto',
               }"
               class="flex items-center"
+              @click="handleChangeSortField(column.key)"
             >
               {{ t(column.title) }}
               <div v-if="sortField === column.key && sortFunc">
@@ -102,8 +103,8 @@ const renderCell = (column: Column, record: Recordable) => {
       <tbody>
         <tr
           v-for="record in tableData"
-          v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(record) }))"
           :key="record.id"
+          v-menu="menu.map((v) => ({ ...v, handler: () => v.handler?.(record) }))"
           class="transition duration-200"
         >
           <td

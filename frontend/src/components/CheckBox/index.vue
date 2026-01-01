@@ -54,9 +54,9 @@ const handleSelect = (val: string) => {
     <div
       v-for="o in props.options"
       :key="o.value"
-      @click="handleSelect(o.value)"
       :class="{ active: isActive(o.value) }"
       class="gui-checkbox-button cursor-pointer px-12 py-6 transition duration-200 line-clamp-1 break-all"
+      @click="handleSelect(o.value)"
     >
       {{ t(o.label) }}
     </div>

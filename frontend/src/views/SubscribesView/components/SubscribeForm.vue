@@ -117,7 +117,7 @@ defineExpose({ modalSlots })
       </div>
     </div>
     <Divider v-if="!isManual">
-      <Button @click="toggleShowMore" type="text" size="small">
+      <Button type="text" size="small" @click="toggleShowMore">
         {{ t('common.more') }}
       </Button>
     </Divider>

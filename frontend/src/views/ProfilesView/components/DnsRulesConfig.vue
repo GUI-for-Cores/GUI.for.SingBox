@@ -167,14 +167,14 @@ const renderRule = (rule: IDNSRule) => {
 <template>
   <Empty v-if="model.length === 0 || (model.length === 1 && !isInsertionPointMissing)">
     <template #description>
-      <Button @click="handleAdd" icon="add" type="primary" size="small">
+      <Button icon="add" type="primary" size="small" @click="handleAdd">
         {{ t('common.add') }}
       </Button>
     </template>
   </Empty>
 
   <Divider v-if="isInsertionPointMissing">
-    <Button @click="handleAddInsertionPoint" type="text" size="small">
+    <Button type="text" size="small" @click="handleAddInsertionPoint">
       {{ t('kernel.addInsertionPoint') }}
     </Button>
   </Divider>
@@ -183,7 +183,7 @@ const renderRule = (rule: IDNSRule) => {
     <Card v-for="(rule, index) in model" :key="rule.id" class="mb-2">
       <div v-if="rule.type === RuleType.InsertionPoint" class="text-center font-bold">
         <Divider class="cursor-move">
-          <Button @click="handleAdd" icon="add" type="text" size="small">
+          <Button icon="add" type="text" size="small" @click="handleAdd">
             {{ t('kernel.insertionPoint') }}
           </Button>
         </Divider>
@@ -191,20 +191,20 @@ const renderRule = (rule: IDNSRule) => {
       <div v-else class="flex items-center py-2 gap-8">
         <Switch v-model="rule.enable" border="square" size="small" />
         <div class="font-bold">
-          <span v-if="hasLost(rule)" @click="showLost" class="warn cursor-pointer"> [ ! ] </span>
+          <span v-if="hasLost(rule)" class="warn cursor-pointer" @click="showLost"> [ ! ] </span>
           {{ renderRule(rule) }}
         </div>
         <div class="ml-auto">
           <Button
             v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
-            @click="handleClearRuleset(rule)"
             size="small"
             type="text"
+            @click="handleClearRuleset(rule)"
           >
             {{ t('common.clear') }}
           </Button>
-          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-          <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
+          <Button icon="edit" type="text" size="small" @click="handleEdit(index)" />
+          <Button icon="delete" type="text" size="small" @click="handleDeleteRule(index)" />
         </div>
       </div>
     </Card>
@@ -311,11 +311,11 @@ const renderRule = (rule: IDNSRule) => {
         <Card
           v-for="ruleset in ruleSet"
           :key="ruleset.tag"
-          :title="ruleset.tag"
-          @click="handleUse(ruleset)"
-          :selected="fields.payload.includes(ruleset.id)"
           v-tips="ruleset.type"
+          :title="ruleset.tag"
+          :selected="fields.payload.includes(ruleset.id)"
           class="text-12 line-clamp-1"
+          @click="handleUse(ruleset)"
         >
           {{ ruleset.type }}
           {{ ruleset.type === RulesetType.Inline ? RulesetFormat.Source : ruleset.format }}

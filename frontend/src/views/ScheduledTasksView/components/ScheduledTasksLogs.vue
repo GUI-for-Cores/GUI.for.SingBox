@@ -90,12 +90,12 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
         class="ml-8 flex-1"
       />
       <Button
-        @click="clearLogs"
         v-tips="'common.clear'"
         icon="clear"
         size="small"
         type="text"
         class="ml-8"
+        @click="clearLogs"
       />
     </div>
 

@@ -97,7 +97,7 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
           class="flex items-center mt-12"
         >
           <template #action>
-            <Button @click="handleShowTaskForm()" type="link">{{ t('common.add') }}</Button>
+            <Button type="link" @click="handleShowTaskForm()">{{ t('common.add') }}</Button>
           </template>
         </I18nT>
       </template>
@@ -110,10 +110,10 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
       :options="ViewOptions"
       class="mr-auto"
     />
-    <Button @click="handleShowTaskLogs()" type="text">
+    <Button type="text" @click="handleShowTaskLogs()">
       {{ t('scheduledtasks.logs') }}
     </Button>
-    <Button @click="handleShowTaskForm()" type="primary" icon="add" class="ml-16">
+    <Button type="primary" icon="add" class="ml-16" @click="handleShowTaskForm()">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -128,9 +128,9 @@ const onSortUpdate = debounce(scheduledTasksStore.saveScheduledTasks, 1000)
     <Card
       v-for="s in scheduledTasksStore.scheduledtasks"
       :key="s.id"
+      v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
       :title="s.name"
       :disabled="s.disabled"
-      v-menu="menuList.map((v) => ({ ...v, handler: () => v.handler?.(s.id) }))"
       class="grid-list-item"
     >
       <template v-if="appSettingsStore.app.scheduledtasksView === View.Grid" #extra>

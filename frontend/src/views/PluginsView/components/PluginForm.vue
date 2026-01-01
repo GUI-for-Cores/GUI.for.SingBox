@@ -250,7 +250,7 @@ defineExpose({ modalSlots })
       </div>
     </div>
     <Divider>
-      <Button @click="toggleShowMore" type="text" size="small">
+      <Button type="text" size="small" @click="toggleShowMore">
         {{ t('common.more') }}
       </Button>
     </Divider>
@@ -302,7 +302,7 @@ defineExpose({ modalSlots })
               <div class="ml-8">{{ index + 1 }}.</div>
             </template>
             <template #extra>
-              <Button @click="handleDelParam(index)" size="small" type="text">
+              <Button size="small" type="text" @click="handleDelParam(index)">
                 {{ t('common.delete') }}
               </Button>
             </template>
@@ -347,7 +347,7 @@ defineExpose({ modalSlots })
           </Card>
           <Card v-else :title="t('plugin.selectComponent')">
             <template #extra>
-              <Button @click="handleDelParam(index)" size="small" type="text">
+              <Button size="small" type="text" @click="handleDelParam(index)">
                 {{ t('common.delete') }}
               </Button>
             </template>
@@ -365,7 +365,7 @@ defineExpose({ modalSlots })
       </div>
 
       <div :class="plugin.configuration.length !== 0 ? 'mt-8' : ''" class="mx-8">
-        <Button @click="handleAddParam" type="primary" icon="add" class="w-full" />
+        <Button type="primary" icon="add" class="w-full" @click="handleAddParam" />
       </div>
     </div>
   </div>

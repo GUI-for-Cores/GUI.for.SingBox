@@ -54,12 +54,12 @@ const onInterfaceChange = createValueWatcher(
           v-model="kernelApiStore.config['mixed-port']"
           :min="0"
           :max="65535"
-          @submit="onMixedPortSubmit"
           type="number"
           :border="false"
           editable
           auto-size
           class="w-full"
+          @submit="onMixedPortSubmit"
         />
       </Card>
       <Card :title="t('kernel.inbounds.httpPort')">
@@ -67,12 +67,12 @@ const onInterfaceChange = createValueWatcher(
           v-model="kernelApiStore.config.port"
           :min="0"
           :max="65535"
-          @submit="onPortSubmit"
           type="number"
           :border="false"
           editable
           auto-size
           class="w-full"
+          @submit="onPortSubmit"
         />
       </Card>
       <Card :title="t('kernel.inbounds.socksPort')">
@@ -80,12 +80,12 @@ const onInterfaceChange = createValueWatcher(
           v-model="kernelApiStore.config['socks-port']"
           :min="0"
           :max="65535"
-          @submit="onSocksPortSubmit"
           type="number"
           editable
           :border="false"
           auto-size
           class="w-full"
+          @submit="onSocksPortSubmit"
         />
       </Card>
       <Card :title="t('kernel.allow-lan')">
@@ -103,11 +103,11 @@ const onInterfaceChange = createValueWatcher(
       <Card :title="t('kernel.inbounds.tun.interface_name')">
         <Input
           v-model="kernelApiStore.config.tun.device"
-          @submit="onTunDeviceSubmit"
           editable
           :border="false"
           auto-size
           class="w-full"
+          @submit="onTunDeviceSubmit"
         />
       </Card>
       <Card :title="t('kernel.route.default_interface')">

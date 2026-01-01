@@ -33,5 +33,5 @@ GetInterfaces().then((res) => {
 </script>
 
 <template>
-  <Select v-model="model" v-bind="$attrs" @change="onChange" :options="options" :border="border" />
+  <Select v-model="model" v-bind="$attrs" :options="options" :border="border" @change="onChange" />
 </template>

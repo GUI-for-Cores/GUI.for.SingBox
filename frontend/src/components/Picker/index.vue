@@ -19,7 +19,7 @@ export type PickerItem<T> = {
 interface Props<T, K> {
   type: K
   title: string
-  options: PickerItem<T>[]
+  options?: PickerItem<T>[]
   initialValue?: T[]
 }
 
@@ -92,9 +92,9 @@ const handleSelectAll = () => {
         <div
           v-for="(o, i) in options"
           :key="i"
-          @click="handleSelect(o)"
           :style="{ background: o.background }"
           class="item my-4 py-8 px-8 break-all"
+          @click="handleSelect(o)"
         >
           <div class="flex items-center justify-between leading-relaxed">
             <div class="font-bold">{{ t(o.label) }}</div>
@@ -111,14 +111,14 @@ const handleSelectAll = () => {
       </div>
 
       <div class="form-action gap-4">
-        <Button v-if="type === 'multi'" @click="handleSelectAll" type="text" size="small">
+        <Button v-if="type === 'multi'" type="text" size="small" @click="handleSelectAll">
           {{ t('common.selectAll') }}
         </Button>
         <Button type="text" size="small" class="mr-auto">
           {{ selected.size }} / {{ options.length }}
         </Button>
-        <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
-        <Button @click="handleConfirm" size="small" type="primary">
+        <Button size="small" @click="handleCancel">{{ t('common.cancel') }}</Button>
+        <Button size="small" type="primary" @click="handleConfirm">
           {{ t('common.confirm') }}
         </Button>
       </div>

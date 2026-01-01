@@ -174,7 +174,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       <template #description>
         <I18nT keypath="subscribes.empty" tag="div" scope="global" class="flex items-center mt-12">
           <template #action>
-            <Button @click="handleShowSubForm()" type="link">{{ t('common.add') }}</Button>
+            <Button type="link" @click="handleShowSubForm()">{{ t('common.add') }}</Button>
           </template>
         </I18nT>
         <div class="flex items-center">
@@ -188,13 +188,13 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
     <Radio v-model="appSettingsStore.app.subscribesView" :options="ViewOptions" class="mr-auto" />
     <CustomAction :actions="appStore.customActions.subscriptions_header" />
     <Button
-      @click="handleUpdateSubs"
       :disabled="noUpdateNeeded"
       :type="noUpdateNeeded ? 'text' : 'link'"
+      @click="handleUpdateSubs"
     >
       {{ t('common.updateAll') }}
     </Button>
-    <Button @click="handleShowSubForm()" type="primary" icon="add" class="ml-16">
+    <Button type="primary" icon="add" class="ml-16" @click="handleShowSubForm()">
       {{ t('common.add') }}
     </Button>
   </div>
@@ -206,9 +206,9 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
     <Card
       v-for="s in subscribeStore.subscribes"
       :key="s.id"
+      v-menu="generateMenus(s)"
       :title="s.name"
       :disabled="s.disabled"
-      v-menu="generateMenus(s)"
       class="grid-list-item"
     >
       <template #title-prefix>
@@ -223,8 +223,8 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
           v-tips="'subscribe.website'"
           :size="14"
           icon="link2"
-          @click="BrowserOpenURL(s.website)"
           class="mx-4 cursor-pointer shrink-0"
+          @click="BrowserOpenURL(s.website)"
         />
       </template>
 

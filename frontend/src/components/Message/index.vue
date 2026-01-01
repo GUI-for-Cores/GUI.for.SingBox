@@ -34,12 +34,12 @@ const icon = computed(() => iconMap[props.icon] as any)
       <Icon class="shrink-0" :icon="icon" />
       <div class="text-14 pl-12 break-all">{{ t(content) }}</div>
       <Button
-        @click="$emit('close')"
         icon="close"
         :icon-size="10"
         type="text"
         size="small"
         class="close px-4 invisible"
+        @click="$emit('close')"
       />
     </div>
   </Transition>

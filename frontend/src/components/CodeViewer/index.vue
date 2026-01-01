@@ -38,6 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   lang: 'json',
   mode: 'editor',
   placeholder: '',
+  plugin: undefined,
 })
 
 const { promise: editorReady, resolve: markEditorReady } = Promise.withResolvers()

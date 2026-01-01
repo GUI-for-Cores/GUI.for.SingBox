@@ -74,20 +74,20 @@ defineExpose({ handleAdd })
     </template>
     <template #servers>
       <DnsServersConfig
+        ref="serversConfigRef"
         v-model="model.servers"
         :outbound-options="outboundOptions"
         :servers-options="serversOptions"
-        ref="serversConfigRef"
       />
     </template>
     <template #rules>
       <DnsRulesConfig
+        ref="rulesConfigRef"
         v-model="model.rules"
         :inbound-options="inboundOptions"
         :outbound-options="outboundOptions"
         :servers-options="serversOptions"
         :rule-set="ruleSet"
-        ref="rulesConfigRef"
       />
     </template>
   </Tabs>

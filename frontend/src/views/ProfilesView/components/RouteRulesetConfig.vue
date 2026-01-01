@@ -68,7 +68,7 @@ const handleUse = (ruleset: any) => {
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
-      <Button @click="handleAdd" icon="add" type="primary" size="small">
+      <Button icon="add" type="primary" size="small" @click="handleAdd">
         {{ t('common.add') }}
       </Button>
     </template>
@@ -80,9 +80,9 @@ const handleUse = (ruleset: any) => {
         <div class="font-bold">
           <span
             v-if="hasLost(ruleset)"
-            @click="showLost"
             class="cursor-pointer"
             :style="{ color: 'rgb(200, 193, 11)' }"
+            @click="showLost"
           >
             [ ! ]
           </span>
@@ -101,8 +101,8 @@ const handleUse = (ruleset: any) => {
           </template>
         </div>
         <div class="ml-auto">
-          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-          <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+          <Button icon="edit" type="text" size="small" @click="handleEdit(index)" />
+          <Button icon="delete" type="text" size="small" @click="handleDelete(index)" />
         </div>
       </div>
     </Card>
@@ -134,10 +134,10 @@ const handleUse = (ruleset: any) => {
           <Card
             v-for="ruleset in rulesetsStore.rulesets"
             :key="ruleset.tag"
-            :title="ruleset.tag"
-            @click="handleUse(ruleset)"
-            :selected="fields.path === ruleset.id"
             v-tips="ruleset.path"
+            :title="ruleset.tag"
+            :selected="fields.path === ruleset.id"
+            @click="handleUse(ruleset)"
           >
             <div class="text-12">
               {{ ruleset.path }}

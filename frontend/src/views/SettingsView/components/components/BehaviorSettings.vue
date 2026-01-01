@@ -107,7 +107,7 @@ if (envStore.env.os === 'windows') {
           :options="WindowStateOptions"
           type="number"
         />
-        <Switch v-model="isTaskScheduled" @change="onTaskSchChange" class="ml-16" />
+        <Switch v-model="isTaskScheduled" class="ml-16" @change="onTaskSchChange" />
       </div>
     </div>
     <div
@@ -121,14 +121,14 @@ if (envStore.env.os === 'windows') {
       </div>
       <Input
         :model-value="appSettings.app.startupDelay"
-        @submit="onStartupDelayChange"
         :min="10"
         :max="180"
         editable
         type="number"
+        @submit="onStartupDelayChange"
       >
         <template #suffix="{ showInput }">
-          <span @click="showInput" class="ml-4">{{ $t('settings.startup.delay') }}</span>
+          <span class="ml-4" @click="showInput">{{ $t('settings.startup.delay') }}</span>
         </template>
       </Input>
     </div>

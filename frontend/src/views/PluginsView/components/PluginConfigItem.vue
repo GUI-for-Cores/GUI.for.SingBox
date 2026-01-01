@@ -81,23 +81,23 @@ defineExpose({ reset: handleResetAll })
     >
       <template v-if="model[conf.key] !== undefined" #extra>
         <Button
-          @click="handleReset(conf.key)"
+          v-tips="'settings.plugin.resetSetting'"
           :icon-size="12"
           icon="clear"
           type="text"
           size="small"
-          v-tips="'settings.plugin.resetSetting'"
+          @click="handleReset(conf.key)"
         />
       </template>
       <div class="mb-8 text-12">{{ conf.description }}</div>
       <Component
-        :modelValue="model[conf.key] ?? conf.value"
-        @change="(val: any) => onChange(conf.key, conf.value, val)"
         :is="conf.component"
+        :model-value="model[conf.key] ?? conf.value"
         :options="getOptions(conf.options)"
         :autofocus="false"
         editable
         lang="yaml"
+        @change="(val: any) => onChange(conf.key, conf.value, val)"
       />
     </Card>
   </div>

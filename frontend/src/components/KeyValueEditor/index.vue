@@ -53,21 +53,21 @@ const emitUpdate = () => {
     <div v-for="(entry, i) in entries" :key="i" class="flex items-center mb-4">
       <Input
         v-model="entry[0]"
-        @submit="emitUpdate"
         :placeholder="placeholder[0]"
         auto-size
         class="flex-1"
+        @submit="emitUpdate"
       />
-      <Button @click="handleDel(i)" type="text" :icon-size="12" icon="close" />
+      <Button type="text" :icon-size="12" icon="close" @click="handleDel(i)" />
       <Input
         v-model="entry[1]"
-        @submit="emitUpdate"
         :placeholder="placeholder[1]"
         auto-size
         class="flex-1"
+        @submit="emitUpdate"
       />
     </div>
-    <Button @click="handleAdd" type="primary" icon="add" />
+    <Button type="primary" icon="add" @click="handleAdd" />
   </div>
 </template>
 

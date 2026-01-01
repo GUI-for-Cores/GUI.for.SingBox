@@ -36,7 +36,7 @@ const handleOpenLocalesFolder = async () => {
   <Card>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.theme.name') }}</div>
-      <Radio v-model="appSettings.app.theme" @click="onThemeClick" :options="ThemeOptions" />
+      <Radio v-model="appSettings.app.theme" :options="ThemeOptions" @click="onThemeClick" />
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.color.name') }}</div>
@@ -59,14 +59,14 @@ const handleOpenLocalesFolder = async () => {
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="flex items-center text-16 font-bold">
         <div class="mr-4">{{ $t('settings.lang.name') }}</div>
-        <Button @click="BrowserOpenURL(APP_LOCALES_URL)" type="text" icon="link2" />
-        <Button @click="handleOpenLocalesFolder" type="text" icon="folder" />
+        <Button type="text" icon="link2" @click="BrowserOpenURL(APP_LOCALES_URL)" />
+        <Button type="text" icon="folder" @click="handleOpenLocalesFolder" />
         <Button
-          @click="appSettings.loadLocales()"
-          :loading="appSettings.localesLoading"
           v-tips="'settings.lang.load'"
+          :loading="appSettings.localesLoading"
           type="text"
           icon="refresh"
+          @click="appSettings.loadLocales()"
         />
       </div>
       <Radio v-model="appSettings.app.lang" :options="appSettings.locales" />
@@ -76,11 +76,11 @@ const handleOpenLocalesFolder = async () => {
       <Input v-model="appSettings.app.fontFamily" editable class="text-14">
         <template #suffix>
           <Button
-            @click="resetFontFamily"
             v-tips="'settings.resetFont'"
             type="text"
             size="small"
             icon="reset"
+            @click="resetFontFamily"
           />
         </template>
       </Input>

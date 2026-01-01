@@ -157,10 +157,10 @@ const handleCancel = () => {
         v-html="content"
       ></div>
       <div class="form-action gap-4">
-        <Button v-if="cancel" @click="handleCancel" size="small">
+        <Button v-if="cancel" size="small" @click="handleCancel">
           {{ t(options.cancelText || 'common.cancel') }}
         </Button>
-        <Button @click="handleConfirm" size="small" type="primary">
+        <Button size="small" type="primary" @click="handleConfirm">
           {{ t(options.okText || 'common.confirm') }}
         </Button>
       </div>

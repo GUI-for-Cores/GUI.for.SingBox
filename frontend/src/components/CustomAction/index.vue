@@ -43,9 +43,9 @@ watch(
 </script>
 <template>
   <component
+    :is="action.component"
     v-for="action in computedActions"
     :key="action.id"
-    :is="action.component"
     v-memo="action.id"
     v-bind="resolveDynamicField(action.componentProps)"
   >

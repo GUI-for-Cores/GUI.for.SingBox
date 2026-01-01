@@ -14,6 +14,9 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   type: 'normal',
   size: 'default',
+  iconSize: undefined,
+  iconColor: undefined,
+  icon: undefined,
   loading: false,
   disabled: false,
 })

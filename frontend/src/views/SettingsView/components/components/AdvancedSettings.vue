@@ -31,7 +31,7 @@ const handleClearUserAgent = () => {
   <Card>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.appFolder.name') }}</div>
-      <Button @click="handleOpenFolder" type="primary" icon="folder">
+      <Button type="primary" icon="folder" @click="handleOpenFolder">
         <span class="ml-8">{{ $t('settings.appFolder.open') }}</span>
       </Button>
     </div>
@@ -41,7 +41,7 @@ const handleClearUserAgent = () => {
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
       </div>
       <div class="flex items-center gap-4">
-        <Button @click="handleOpenRollingReleaseFolder" type="primary" icon="folder" size="small" />
+        <Button type="primary" icon="folder" size="small" @click="handleOpenRollingReleaseFolder" />
         <Switch v-model="appSettings.app.rollingRelease" />
       </div>
     </div>
@@ -64,11 +64,11 @@ const handleClearUserAgent = () => {
       <Input v-model.lazy="appSettings.app.githubApiToken" editable class="text-14">
         <template #suffix>
           <Button
-            @click="handleClearApiToken"
             v-tips="'settings.userAgent.reset'"
             type="text"
             size="small"
             icon="reset"
+            @click="handleClearApiToken"
           />
         </template>
       </Input>
@@ -86,11 +86,11 @@ const handleClearUserAgent = () => {
       >
         <template #suffix>
           <Button
-            @click="handleClearUserAgent"
             v-tips="'settings.userAgent.reset'"
             type="text"
             size="small"
             icon="reset"
+            @click="handleClearUserAgent"
           />
         </template>
       </Input>

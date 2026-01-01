@@ -96,7 +96,7 @@ const renderServer = (server: IDNSServer) => {
 <template>
   <Empty v-if="model.length === 0">
     <template #description>
-      <Button @click="handleAdd" icon="add" type="primary" size="small">
+      <Button icon="add" type="primary" size="small" @click="handleAdd">
         {{ t('common.add') }}
       </Button>
     </template>
@@ -107,8 +107,8 @@ const renderServer = (server: IDNSServer) => {
       <div class="flex items-center py-2">
         <component :is="renderServer(server)" />
         <div class="ml-auto">
-          <Button @click="handleEdit(index)" icon="edit" type="text" size="small" />
-          <Button @click="handleDeleteRule(index)" icon="delete" type="text" size="small" />
+          <Button icon="edit" type="text" size="small" @click="handleEdit(index)" />
+          <Button icon="delete" type="text" size="small" @click="handleDeleteRule(index)" />
         </div>
       </div>
     </Card>
@@ -180,10 +180,10 @@ const renderServer = (server: IDNSServer) => {
           <Input v-model="fields.inet4_range" placeholder="198.18.0.0/15" clearable>
             <template #suffix>
               <Button
-                @click="fields.inet4_range = '198.18.0.0/15'"
                 size="small"
                 type="text"
                 icon="reset"
+                @click="fields.inet4_range = '198.18.0.0/15'"
               />
             </template>
           </Input>
@@ -193,10 +193,10 @@ const renderServer = (server: IDNSServer) => {
           <Input v-model="fields.inet6_range" placeholder="fc00::/18" clearable>
             <template #suffix>
               <Button
-                @click="fields.inet6_range = 'fc00::/18'"
                 size="small"
                 type="text"
                 icon="reset"
+                @click="fields.inet6_range = 'fc00::/18'"
               />
             </template>
           </Input>

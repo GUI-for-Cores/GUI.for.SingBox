@@ -95,7 +95,7 @@ defineExpose({ handleAdd })
         <Icon icon="drag" class="drag cursor-move" />
       </template>
       <template #extra>
-        <Button @click="handleDelete(index)" icon="delete" type="text" size="small" />
+        <Button icon="delete" type="text" size="small" @click="handleDelete(index)" />
       </template>
       <div class="form-item">
         {{ t('kernel.inbounds.enable') }}

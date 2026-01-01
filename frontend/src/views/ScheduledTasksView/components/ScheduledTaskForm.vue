@@ -163,8 +163,8 @@ defineExpose({ modalSlots })
       <div class="min-w-[75%]">
         <Input v-model="task.cron" :placeholder="t('scheduledtask.cronTips')" class="w-full">
           <template #suffix>
-            <Button @click="handleValidate" type="primary" size="small">Validate</Button>
-            <Button @click="handleViewNextRuns" type="primary" size="small" class="ml-4">
+            <Button type="primary" size="small" @click="handleValidate">Validate</Button>
+            <Button type="primary" size="small" class="ml-4" @click="handleViewNextRuns">
               Next Run Time
             </Button>
           </template>
@@ -238,8 +238,8 @@ defineExpose({ modalSlots })
       <div class="grid grid-cols-3 gap-8">
         <Card
           v-for="p in pluginsStore.plugins"
-          v-tips="p.description"
           :key="p.id"
+          v-tips="p.description"
           :title="p.name"
           :selected="task.plugins.includes(p.id)"
           @click="handleUse(task.plugins, p.id)"

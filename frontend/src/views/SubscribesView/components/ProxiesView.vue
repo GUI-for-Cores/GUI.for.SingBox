@@ -222,7 +222,7 @@ defineExpose({ modalSlots })
         size="small"
         class="mx-8 flex-1"
       />
-      <Button @click="handleAdd" type="primary" size="small">
+      <Button type="primary" size="small" @click="handleAdd">
         {{ t('subscribes.proxies.add') }}
       </Button>
     </div>
@@ -237,8 +237,8 @@ defineExpose({ modalSlots })
       <Card
         v-for="proxy in filteredProxies"
         :key="proxy.tag"
-        :title="proxy.tag"
         v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(proxy) }))"
+        :title="proxy.tag"
       >
         <div class="text-12">
           {{ proxy.type }}

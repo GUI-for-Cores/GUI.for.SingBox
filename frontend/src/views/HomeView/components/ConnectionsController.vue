@@ -300,29 +300,29 @@ onUnmounted(() => {
       />
       <Input v-model="keywords" clearable size="small" placeholder="Search" class="ml-8 flex-1" />
       <Button
-        @click="togglePause"
         :icon="isPause ? 'play' : 'pause'"
         size="small"
         type="text"
         class="ml-8"
+        @click="togglePause"
       />
       <Button
         v-if="isActive"
-        @click="handleCloseAll"
         v-tips="'home.connections.closeAll'"
         icon="close"
         size="small"
         type="text"
+        @click="handleCloseAll"
       />
       <Button
         v-else
-        @click="handleClearClosedConns"
         v-tips="'common.clear'"
         icon="clear"
         size="small"
         type="text"
+        @click="handleClearClosedConns"
       />
-      <Button @click="toggleSettings" icon="settings" size="small" type="text" />
+      <Button icon="settings" size="small" type="text" @click="toggleSettings" />
     </div>
     <Table
       class="flex-1 mt-8"
@@ -354,7 +354,7 @@ onUnmounted(() => {
     title="home.connections.sort"
   >
     <template #action>
-      <Button @click="handleResetConnections" type="text" class="mr-auto">
+      <Button type="text" class="mr-auto" @click="handleResetConnections">
         {{ t('common.reset') }}
       </Button>
     </template>

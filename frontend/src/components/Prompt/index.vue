@@ -42,16 +42,16 @@ const handleCancel = () => {
       <Input
         v-model="value"
         v-bind="props.props"
-        @keydown.enter="handleSubmit"
         :type="props.props.type || type"
         autofocus
         clearable
         size="small"
         class="w-full"
+        @keydown.enter="handleSubmit"
       />
       <div class="form-action gap-4">
-        <Button @click="handleCancel" size="small">{{ t('common.cancel') }}</Button>
-        <Button @click="handleSubmit" size="small" type="primary">
+        <Button size="small" @click="handleCancel">{{ t('common.cancel') }}</Button>
+        <Button size="small" type="primary" @click="handleSubmit">
           {{ t('common.confirm') }}
         </Button>
       </div>

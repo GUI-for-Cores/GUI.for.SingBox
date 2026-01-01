@@ -68,19 +68,19 @@ defineExpose({ handleAdd })
     </template>
     <template #rule_set>
       <RouteRulesetConfig
+        ref="rulesetConfigRef"
         v-model="model.rule_set"
         :outbound-options="outboundOptions"
-        ref="rulesetConfigRef"
       />
     </template>
     <template #rules>
       <RouteRulesConfig
+        ref="rulesConfigRef"
         v-model="model.rules"
         :inbound-options="inboundOptions"
         :outbound-options="outboundOptions"
         :server-options="serverOptions"
         :rule-set="model.rule_set"
-        ref="rulesConfigRef"
       />
     </template>
   </Tabs>

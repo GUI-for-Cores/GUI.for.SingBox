@@ -59,13 +59,13 @@ const onFormatChange = (val: 'json' | 'yaml', old: 'json' | 'yaml') => {
         {{ t('profile.mixinSettings.format') }}
         <Radio
           v-model="model.mixin.format"
-          @change="onFormatChange"
           :options="MixinFormatOptions"
+          @change="onFormatChange"
         />
       </div>
       <CodeViewer
-        v-model="model.mixin.config"
         :key="MixinEditorKey"
+        v-model="model.mixin.config"
         :lang="model.mixin.format"
         editable
       />

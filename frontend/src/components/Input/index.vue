@@ -24,11 +24,14 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   autoSize: false,
+  placeholder: undefined,
   type: 'text',
   lang: 'javascript',
   size: 'default',
   editable: false,
   autofocus: false,
+  min: undefined,
+  max: undefined,
   clearable: false,
   disabled: false,
   border: true,
@@ -118,8 +121,8 @@ defineExpose({
     <Icon v-if="disabled" icon="forbidden" class="shrink-0" />
     <div
       v-if="editable && !showEdit"
-      @click="showInput"
       class="w-full overflow-hidden whitespace-nowrap text-ellipsis"
+      @click="showInput"
     >
       <slot name="editable" v-bind="{ value: modelValue }">
         {{ modelValue || t(placeholder || 'common.none') }}
@@ -128,34 +131,34 @@ defineExpose({
     <template v-else>
       <CodeViewer
         v-if="type === 'code'"
-        @change="(value: string) => onInput({ target: { value } })"
         :value="modelValue"
         :lang="lang"
         :editable="!disabled"
         :placeholder="placeholder"
         class="code w-full overflow-y-auto"
+        @change="(value: string) => onInput({ target: { value } })"
       />
       <input
         v-else
+        ref="inputRef"
         :value="modelValue"
         :placeholder="placeholder"
         :type="type"
         :disabled="disabled"
+        autocomplete="off"
+        class="flex-1 inline-block py-6 outline-none border-0 bg-transparent w-0"
         @input="onInput"
         @blur="onSubmit"
         @keydown.enter="inputRef?.blur"
         @keydown.esc.stop.prevent="inputRef?.blur"
-        autocomplete="off"
-        ref="inputRef"
-        class="flex-1 inline-block py-6 outline-none border-0 bg-transparent w-0"
       />
       <Button
         v-if="innerClearable"
-        @click="handleClear"
         :icon-size="12"
         icon="clear2"
         type="text"
         size="small"
+        @click="handleClear"
       />
     </template>
     <div v-if="$slots.suffix" class="flex items-center shrink-0">

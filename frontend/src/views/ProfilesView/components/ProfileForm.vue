@@ -248,27 +248,27 @@ defineExpose({ modalSlots })
       <GeneralConfig v-model="generalConfig" :outbound-options="outboundOptions" />
     </div>
     <div v-show="currentStep === Step.Inbounds">
-      <InboundsConfig v-model="profile.inbounds" ref="inboundsRef" />
+      <InboundsConfig ref="inboundsRef" v-model="profile.inbounds" />
     </div>
     <div v-show="currentStep === Step.Outbounds">
-      <OutboundsConfig v-model="profile.outbounds" ref="outboundsRef" />
+      <OutboundsConfig ref="outboundsRef" v-model="profile.outbounds" />
     </div>
     <div v-show="currentStep === Step.Route">
       <RouteConfig
+        ref="routeRef"
         v-model="profile.route"
         :inbound-options="inboundOptions"
         :outbound-options="outboundOptions"
         :server-options="serverOptions"
-        ref="routeRef"
       />
     </div>
     <div v-show="currentStep === Step.Dns">
       <DnsConfig
+        ref="dnsRef"
         v-model="profile.dns"
         :inbound-options="inboundOptions"
         :outbound-options="outboundOptions"
         :rule-set="profile.route.rule_set"
-        ref="dnsRef"
       />
     </div>
     <div v-show="currentStep === Step.MixinScript">

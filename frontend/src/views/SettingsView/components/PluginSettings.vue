@@ -51,14 +51,14 @@ const plugins = computed(() =>
             <template #overlay="{ close }">
               <div class="flex flex-col gap-4 min-w-64 p-4">
                 <Button
+                  type="text"
+                  size="small"
                   @click="
                     () => {
                       handleResetAll()
                       close()
                     }
                   "
-                  type="text"
-                  size="small"
                 >
                   {{ $t('settings.plugin.resetSettings') }}
                 </Button>

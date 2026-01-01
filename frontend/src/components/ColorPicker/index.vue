@@ -27,7 +27,6 @@ const pick = () => {
 
 <template>
   <div
-    @click="pick"
     :class="{
       'pl-8': $slots.prefix,
       'pr-8': $slots.suffix,
@@ -35,6 +34,7 @@ const pick = () => {
       'cursor-pointer': !disabled,
     }"
     class="gui-color-picker rounded-full inline-flex items-center overflow-hidden duration-200"
+    @click="pick"
   >
     <div v-if="$slots.prefix" class="flex items-center line-clamp-1 break-all">
       <slot name="prefix" v-bind="{ pick }"></slot>
@@ -42,10 +42,10 @@ const pick = () => {
     <input
       ref="inputRef"
       v-model="model"
-      @change="(e) => onChange(e)"
       :class="{ 'pointer-events-none': disabled }"
       type="color"
       class="w-26 h-28 flex justify-center items-center border-0 bg-transparent cursor-pointer"
+      @change="(e) => onChange(e)"
     />
     <div v-if="$slots.suffix" class="flex items-center line-clamp-1 break-all">
       <slot name="suffix" v-bind="{ pick }"></slot>

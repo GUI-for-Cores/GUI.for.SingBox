@@ -13,6 +13,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   size: 'default',
   border: 'default',
+  label: '',
   disabled: false,
 })
 
@@ -33,7 +34,6 @@ const toggle = () => {
 
 <template>
   <div
-    @click="toggle"
     v-tips.slow="label"
     :class="[
       size,
@@ -43,6 +43,7 @@ const toggle = () => {
       { 'cursor-not-allowed': disabled },
     ]"
     class="gui-switch relative cursor-pointer h-24 inline-flex items-center text-12 duration-200"
+    @click="toggle"
   >
     <div
       :class="[border === 'square' ? 'rounded-4' : 'rounded-full']"
