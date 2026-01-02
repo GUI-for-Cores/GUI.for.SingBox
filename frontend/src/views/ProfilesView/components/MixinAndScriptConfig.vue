@@ -28,8 +28,6 @@ const MixinFormatOptions = [
   { label: 'YAML', value: 'yaml' },
 ]
 
-const MixinEditorKey = ref(0)
-
 const onFormatChange = (val: 'json' | 'yaml', old: 'json' | 'yaml') => {
   try {
     const config = parse(model.value.mixin.config)
@@ -40,7 +38,6 @@ const onFormatChange = (val: 'json' | 'yaml', old: 'json' | 'yaml') => {
         model.value.mixin.config = stringify(config)
       }
     }
-    MixinEditorKey.value += 1
   } catch (e: any) {
     model.value.mixin.format = old
     message.error(e.message || e)
@@ -63,12 +60,7 @@ const onFormatChange = (val: 'json' | 'yaml', old: 'json' | 'yaml') => {
           @change="onFormatChange"
         />
       </div>
-      <CodeViewer
-        :key="MixinEditorKey"
-        v-model="model.mixin.config"
-        :lang="model.mixin.format"
-        editable
-      />
+      <CodeViewer v-model="model.mixin.config" :lang="model.mixin.format" editable />
     </template>
     <template #script>
       <CodeViewer v-model="model.script.code" lang="javascript" editable />
