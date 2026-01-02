@@ -1,5 +1,5 @@
 import { Request } from '@/api/request'
-import { WebSockets } from '@/api/websockets'
+import { WebSockets } from '@/api/websocket'
 import { useProfilesStore } from '@/stores'
 import { setIntervalImmediately } from '@/utils'
 
@@ -28,13 +28,13 @@ export enum Api {
 const setupCoreApi = (protocol: 'http' | 'ws') => {
   const { currentProfile: profile } = useProfilesStore()
 
-  let base = 'http://127.0.0.1:20123'
+  let base = `${protocol}://127.0.0.1:20123`
   let bearer = ''
 
   if (profile) {
     const controller = profile.experimental.clash_api.external_controller || '127.0.0.1:20123'
     const [, port = 20123] = controller.split(':')
-    base = `http://127.0.0.1:${port}`
+    base = `${protocol}://127.0.0.1:${port}`
     bearer = profile.experimental.clash_api.secret
   }
 
