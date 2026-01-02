@@ -12,7 +12,7 @@ type RequestOptions = {
   base?: string
   bearer?: string
   timeout?: number
-  responseType?: keyof typeof ResponseType
+  responseType?: ResponseType
   beforeRequest?: () => void
 }
 
