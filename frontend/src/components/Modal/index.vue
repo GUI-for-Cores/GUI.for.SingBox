@@ -177,7 +177,7 @@ provide(IS_IN_MODAL, true)
             v-if="title || slots.title || slots.toolbar"
             class="flex items-center p-16"
             style="--wails-draggable: drag"
-            @dblclick="toggleMaximize"
+            @dblclick.self="toggleMaximize"
           >
             <slot name="title">
               <div v-if="title" class="font-bold">{{ t(title) }}</div>
