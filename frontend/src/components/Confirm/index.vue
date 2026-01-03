@@ -153,9 +153,16 @@ const handleCancel = () => {
     <div class="gui-confirm flex flex-col p-8 rounded-8 shadow">
       <div class="font-bold break-all px-4 py-8">{{ t(title) }}</div>
       <div
+        v-if="options.type === 'markdown'"
         class="flex-1 overflow-y-auto text-12 leading-relaxed p-6 break-all whitespace-pre-wrap select-text"
         v-html="content"
       ></div>
+      <div
+        v-else
+        class="flex-1 overflow-y-auto text-12 leading-relaxed p-6 break-all whitespace-pre-wrap select-text"
+      >
+        {{ content }}
+      </div>
       <div class="form-action gap-4">
         <Button v-if="cancel" size="small" @click="handleCancel">
           {{ t(options.cancelText || 'common.cancel') }}
