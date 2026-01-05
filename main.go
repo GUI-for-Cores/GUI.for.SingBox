@@ -53,7 +53,7 @@ func main() {
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
 				Title:   bridge.Env.AppName,
-				Message: "© 2025 GUI.for.Cores",
+				Message: "© 2026 GUI.for.Cores",
 				Icon:    icon,
 			},
 		},
