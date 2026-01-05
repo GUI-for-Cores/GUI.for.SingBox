@@ -8,7 +8,7 @@ import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
 import {
   ignoredError,
-  updateTrayMenus,
+  updateTrayAndMenus,
   isNumber,
   omitArray,
   deepClone,
@@ -512,7 +512,7 @@ export const usePluginsStore = defineStore('plugins', () => {
 
   watch([_watchMenus, _watchDisabled], () => {
     if (appSettingsStore.app.addPluginToMenu) {
-      updateTrayMenus()
+      updateTrayAndMenus()
     }
   })
 

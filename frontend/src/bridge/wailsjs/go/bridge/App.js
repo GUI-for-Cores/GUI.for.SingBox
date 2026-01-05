@@ -138,6 +138,10 @@ export function UpdateTray(arg1) {
   return window['go']['bridge']['App']['UpdateTray'](arg1);
 }
 
+export function UpdateTrayAndMenus(arg1, arg2) {
+  return window['go']['bridge']['App']['UpdateTrayAndMenus'](arg1, arg2);
+}
+
 export function UpdateTrayMenus(arg1) {
   return window['go']['bridge']['App']['UpdateTrayMenus'](arg1);
 }

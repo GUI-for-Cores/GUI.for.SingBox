@@ -70,6 +70,8 @@ export function UnzipZIPFile(arg1:string,arg2:string):Promise<bridge.FlagResult>
 
 export function UpdateTray(arg1:bridge.TrayContent):Promise<void>;
 
+export function UpdateTrayAndMenus(arg1:bridge.TrayContent,arg2:Array<bridge.MenuItem>):Promise<void>;
+
 export function UpdateTrayMenus(arg1:Array<bridge.MenuItem>):Promise<void>;
 
 export function Upload(arg1:string,arg2:string,arg3:string,arg4:Record<string, string>,arg5:string,arg6:bridge.RequestOptions):Promise<bridge.HTTPResult>;

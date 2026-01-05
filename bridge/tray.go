@@ -29,14 +29,26 @@ func CreateTray(a *App, icon []byte) (trayStart, trayEnd func()) {
 	}, nil)
 }
 
+func (a *App) UpdateTray(tray TrayContent) {
+	log.Printf("UpdateTray")
+	updateTray(a, tray)
+}
+
 func (a *App) UpdateTrayMenus(menus []MenuItem) {
 	log.Printf("UpdateTrayMenus")
+	updateTrayMenus(a, menus)
+}
 
-	systray.ResetMenu()
+func (a *App) UpdateTrayAndMenus(tray TrayContent, menus []MenuItem) {
+	log.Printf("UpdateTrayAndMenus")
+	updateTray(a, tray)
+	updateTrayMenus(a, menus)
+}
 
-	for _, menu := range menus {
-		createMenuItem(menu, a, nil)
-	}
+func (a *App) ExitApp() {
+	systray.Quit()
+	runtime.Quit(a.Ctx)
+	os.Exit(0)
 }
 
 func addClickMenuItem(title, tooltip string, action func()) *systray.MenuItem {
@@ -72,7 +84,7 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 	}
 }
 
-func (a *App) UpdateTray(tray TrayContent) {
+func updateTray(a *App, tray TrayContent) {
 	if tray.Icon != "" {
 		ico, err := os.ReadFile(GetPath(tray.Icon))
 		if err == nil {
@@ -88,8 +100,10 @@ func (a *App) UpdateTray(tray TrayContent) {
 	}
 }
 
-func (a *App) ExitApp() {
-	systray.Quit()
-	runtime.Quit(a.Ctx)
-	os.Exit(0)
+func updateTrayMenus(a *App, menus []MenuItem) {
+	systray.ResetMenu()
+
+	for _, menu := range menus {
+		createMenuItem(menu, a, nil)
+	}
 }

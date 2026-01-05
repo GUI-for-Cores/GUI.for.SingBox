@@ -82,9 +82,9 @@ type AppConfig struct {
 }
 
 type TrayContent struct {
-	Icon    string `json:"icon"`
-	Title   string `json:"title"`
-	Tooltip string `json:"tooltip"`
+	Icon    string `json:"icon,omitempty"`
+	Title   string `json:"title,omitempty"`
+	Tooltip string `json:"tooltip,omitempty"`
 }
 
 type WriteTracker struct {

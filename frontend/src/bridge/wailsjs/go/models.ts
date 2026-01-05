@@ -185,9 +185,9 @@ export namespace bridge {
 	    }
 	}
 	export class TrayContent {
-	    icon: string;
-	    title: string;
-	    tooltip: string;
+	    icon?: string;
+	    title?: string;
+	    tooltip?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new TrayContent(source);

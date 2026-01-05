@@ -6,6 +6,7 @@ import {
   UpdateTray,
   UpdateTrayMenus,
   ShowMainWindow,
+  UpdateTrayAndMenus,
 } from '@/bridge'
 import { ColorOptions, ThemeOptions } from '@/constant/app'
 import { ModeOptions } from '@/constant/kernel'
@@ -313,7 +314,7 @@ const getTrayMenus = () => {
   return trayMenus
 }
 
-export const updateTrayMenus = debounce(async () => {
+export const updateTrayAndMenus = debounce(async () => {
   const trayMenus = getTrayMenus()
   const trayIcons = getTrayIcons()
   const pluginsStore = usePluginsStore()
@@ -325,6 +326,5 @@ export const updateTrayMenus = debounce(async () => {
 
   const [finalTray, finalMenus] = await pluginsStore.onTrayUpdateTrigger(tray, trayMenus)
 
-  await UpdateTray(finalTray)
-  await UpdateTrayMenus(generateUniqueEventsForMenu(finalMenus) as any)
+  await UpdateTrayAndMenus(finalTray, generateUniqueEventsForMenu(finalMenus) as any)
 }, 500)

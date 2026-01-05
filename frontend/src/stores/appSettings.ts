@@ -32,7 +32,7 @@ import {
   Branch,
 } from '@/enums/app'
 import i18n, { loadLocaleMessages, reloadLocale } from '@/lang'
-import { debounce, updateTrayMenus, ignoredError, sleep, GetSystemProxyBypass } from '@/utils'
+import { debounce, updateTrayAndMenus, ignoredError, sleep, GetSystemProxyBypass } from '@/utils'
 
 import { useEnvStore } from './env'
 
@@ -229,7 +229,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       () => app.value.lang,
       () => app.value.addPluginToMenu,
     ],
-    updateTrayMenus,
+    updateTrayAndMenus,
   )
 
   watch(themeMode, setAppTheme, { immediate: true })
