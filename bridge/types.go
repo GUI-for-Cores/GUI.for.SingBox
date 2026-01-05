@@ -34,6 +34,7 @@ type RequestOptions struct {
 }
 
 type ExecOptions struct {
+	PidFile           string
 	StopOutputKeyword string
 	Convert           bool
 	Env               map[string]string

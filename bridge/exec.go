@@ -53,9 +53,14 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	log.Printf("ExecBackground: %s %s %s %s %v", path, args, outEvent, endEvent, options)
 
 	exePath := GetPath(path)
+	pidPath := ""
 
 	if _, err := os.Stat(exePath); os.IsNotExist(err) {
 		exePath = path
+	}
+
+	if options.PidFile != "" {
+		pidPath = GetPath(options.PidFile)
 	}
 
 	cmd := exec.Command(exePath, args...)
@@ -76,6 +81,17 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 
 	if err := cmd.Start(); err != nil {
 		return FlagResult{false, err.Error()}
+	}
+
+	pid := strconv.Itoa(cmd.Process.Pid)
+
+	if pidPath != "" {
+		err := os.WriteFile(pidPath, []byte(pid), os.ModePerm)
+		if err != nil {
+			_ = SendExitSignal(cmd.Process)
+			_ = waitForProcessExitWithTimeout(cmd.Process, 10)
+			return FlagResult{false, err.Error()}
+		}
 	}
 
 	if outEvent != "" {
@@ -106,13 +122,14 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	if endEvent != "" {
 		go func() {
 			cmd.Wait()
+			if pidPath != "" {
+				_ = os.Remove(pidPath)
+			}
 			runtime.EventsEmit(a.Ctx, endEvent)
 		}()
 	}
 
-	pid := cmd.Process.Pid
-
-	return FlagResult{true, strconv.Itoa(pid)}
+	return FlagResult{true, pid}
 }
 
 func (a *App) ProcessInfo(pid int32) FlagResult {

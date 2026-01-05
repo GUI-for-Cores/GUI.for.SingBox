@@ -12,7 +12,7 @@ import {
   connectWebsocket,
   disconnectWebsocket,
 } from '@/api/kernel'
-import { ProcessInfo, KillProcess, ExecBackground, ReadFile, WriteFile, RemoveFile } from '@/bridge'
+import { ProcessInfo, KillProcess, ExecBackground, ReadFile, RemoveFile } from '@/bridge'
 import {
   CoreConfigFilePath,
   CorePidFilePath,
@@ -262,14 +262,16 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
           onCoreStopped()
           reject(output)
         },
-        { StopOutputKeyword: CoreStopOutputKeyword, Env: getKernelRuntimeEnv(isAlpha) },
+        {
+          PidFile: CorePidFilePath,
+          StopOutputKeyword: CoreStopOutputKeyword,
+          Env: getKernelRuntimeEnv(isAlpha),
+        },
       ).catch((e) => reject(e))
     })
   }
 
   const onCoreStarted = async (pid: number) => {
-    await WriteFile(CorePidFilePath, String(pid))
-
     corePid.value = pid
     running.value = true
     needRestart.value = false
@@ -288,7 +290,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const onCoreStopped = async () => {
-    await RemoveFile(CorePidFilePath)
+    if (!isCoreStartedByThisInstance) {
+      await RemoveFile(CorePidFilePath)
+    }
 
     corePid.value = -1
     running.value = false
