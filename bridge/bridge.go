@@ -27,7 +27,7 @@ var Env = &EnvResult{
 	FromTaskSch: false,
 	WebviewPath: "",
 	AppName:     "",
-	AppVersion:  "v1.17.0",
+	AppVersion:  "v1.18.0",
 	BasePath:    "",
 	OS:          sysruntime.GOOS,
 	ARCH:        sysruntime.GOARCH,
