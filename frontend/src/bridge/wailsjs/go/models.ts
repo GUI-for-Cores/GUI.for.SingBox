@@ -165,8 +165,10 @@ export namespace bridge {
 	    Key: string;
 	    StaticPath: string;
 	    StaticRoute: string;
+	    StaticHeaders: Record<string, string>;
 	    UploadPath: string;
 	    UploadRoute: string;
+	    UploadHeaders: Record<string, string>;
 	    MaxUploadSize: number;
 	
 	    static createFrom(source: any = {}) {
@@ -179,8 +181,10 @@ export namespace bridge {
 	        this.Key = source["Key"];
 	        this.StaticPath = source["StaticPath"];
 	        this.StaticRoute = source["StaticRoute"];
+	        this.StaticHeaders = source["StaticHeaders"];
 	        this.UploadPath = source["UploadPath"];
 	        this.UploadRoute = source["UploadRoute"];
+	        this.UploadHeaders = source["UploadHeaders"];
 	        this.MaxUploadSize = source["MaxUploadSize"];
 	    }
 	}

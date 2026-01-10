@@ -54,8 +54,10 @@ type ServerOptions struct {
 	Key           string
 	StaticPath    string
 	StaticRoute   string
+	StaticHeaders map[string]string
 	UploadPath    string
 	UploadRoute   string
+	UploadHeaders map[string]string
 	MaxUploadSize int64
 }
 

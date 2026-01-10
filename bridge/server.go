@@ -36,8 +36,11 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 
 	if options.StaticPath != "" && options.StaticRoute != "" {
 		static := GetPath(options.StaticPath)
-		fs := http.FileServer(http.Dir(static))
-		mux.Handle(options.StaticRoute, http.StripPrefix(options.StaticRoute, fs))
+		fs := http.StripPrefix(options.StaticRoute, http.FileServer(http.Dir(static)))
+
+		mux.HandleFunc(options.StaticRoute, func(w http.ResponseWriter, r *http.Request) {
+			handleFileDownload(w, r, fs, options.StaticHeaders)
+		})
 	}
 
 	if options.UploadPath != "" && options.UploadRoute != "" {
@@ -52,7 +55,7 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 		}
 
 		mux.HandleFunc(options.UploadRoute, func(w http.ResponseWriter, r *http.Request) {
-			handleFileUpload(w, r, uploadPath, maxUploadSize)
+			handleFileUpload(w, r, uploadPath, maxUploadSize, options.UploadHeaders)
 		})
 	}
 
@@ -198,14 +201,41 @@ func buildResponse(data []any) ResponseData {
 	return resp
 }
 
-func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string, maxUploadSize int64) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+func handleFileDownload(w http.ResponseWriter, r *http.Request, fs http.Handler, headers map[string]string) {
+	for key, value := range headers {
+		w.Header().Set(key, value)
+	}
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
 		return
+	}
+	fs.ServeHTTP(w, r)
+}
+
+func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string, maxUploadSize int64, headers map[string]string) {
+	for key, value := range headers {
+		w.Header().Set(key, value)
+	}
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	if r.Method != http.MethodPost && r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 
+	contentType := r.Header.Get("Content-Type")
+
+	if strings.HasPrefix(contentType, "multipart/form-data") {
+		handleMultipartUpload(w, r, uploadPath)
+	} else {
+		handleRawUpload(w, r, uploadPath)
+	}
+}
+
+func handleMultipartUpload(w http.ResponseWriter, r *http.Request, uploadPath string) {
 	reader, err := r.MultipartReader()
 	if err != nil {
 		http.Error(w, "Invalid multipart form: "+err.Error(), http.StatusBadRequest)
@@ -226,7 +256,7 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string,
 			continue
 		}
 
-		dst, err := os.Create(uploadPath + "/" + filepath.Base(part.FileName()))
+		dst, err := os.Create(filepath.Join(uploadPath, filepath.Base(part.FileName())))
 		if err != nil {
 			http.Error(w, "Error creating file: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -241,6 +271,28 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string,
 
 		dst.Close()
 		part.Close()
+	}
+
+	w.Write([]byte("File uploaded successfully"))
+}
+
+func handleRawUpload(w http.ResponseWriter, r *http.Request, uploadPath string) {
+	name := r.Header.Get("X-Filename")
+	if name == "" {
+		http.Error(w, "Missing X-Filename", 400)
+		return
+	}
+
+	dst, err := os.Create(filepath.Join(uploadPath, filepath.Base(name)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, r.Body); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Write([]byte("File uploaded successfully"))

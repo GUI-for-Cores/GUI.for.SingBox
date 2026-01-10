@@ -21,8 +21,10 @@ interface ServerOptions {
   Key?: string
   StaticPath?: string
   StaticRoute?: string
+  StaticHeaders?: Recordable
   UploadPath?: string
   UploadRoute?: string
+  UploadHeaders?: Recordable
   MaxUploadSize?: number
 }
 
@@ -49,8 +51,10 @@ export const StartServer = async (
     Key: '',
     StaticPath: '', // default: /static
     StaticRoute: '/static/',
+    StaticHeaders: {},
     UploadPath: '', // default: /upload
     UploadRoute: '/upload',
+    UploadHeaders: {},
     MaxUploadSize: 50 * 1024 * 1024, // 50MB
     ...options,
   }
