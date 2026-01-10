@@ -21,7 +21,7 @@ const (
 )
 
 func (a *App) WriteFile(path string, content string, options IOOptions) FlagResult {
-	log.Printf("WriteFile [%s]: %s", options.Mode, path)
+	log.Printf("WriteFile [%s %s]: %s", options.Mode, options.Range, path)
 
 	fullPath := GetPath(path)
 
@@ -44,7 +44,41 @@ func (a *App) WriteFile(path string, content string, options IOOptions) FlagResu
 		return FlagResult{false, "Unsupported IO mode: " + options.Mode}
 	}
 
-	if err := os.WriteFile(fullPath, data, 0644); err != nil {
+	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	fileSize := stat.Size()
+
+	var start, end int64
+
+	if options.Range == "" {
+		start = 0
+		end = int64(len(data)) - 1
+
+		if err := file.Truncate(0); err != nil {
+			return FlagResult{false, err.Error()}
+		}
+	} else {
+		start, end, err = ParseRange(options.Range, fileSize)
+		if err != nil {
+			return FlagResult{false, err.Error()}
+		}
+
+		writeLength := int64(len(data))
+		if writeLength != end-start+1 {
+			return FlagResult{false, "data length does not match range length"}
+		}
+	}
+
+	_, err = file.WriteAt(data, start)
+	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
@@ -52,20 +86,41 @@ func (a *App) WriteFile(path string, content string, options IOOptions) FlagResu
 }
 
 func (a *App) ReadFile(path string, options IOOptions) FlagResult {
-	log.Printf("ReadFile [%s]: %s", options.Mode, path)
+	log.Printf("ReadFile [%s %s]: %s", options.Mode, options.Range, path)
 
 	fullPath := GetPath(path)
 
-	data, err := os.ReadFile(fullPath)
+	file, err := os.Open(fullPath)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	fileSize := stat.Size()
+
+	start, end, err := ParseRange(options.Range, fileSize)
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
 
+	length := end - start + 1
+	buf := make([]byte, length)
+
+	n, err := file.ReadAt(buf, start)
+	if err != nil && err != io.EOF {
+		return FlagResult{false, err.Error()}
+	}
+	buf = buf[:n]
+
 	switch options.Mode {
 	case Text:
-		return FlagResult{true, string(data)}
+		return FlagResult{true, string(buf)}
 	case Binary:
-		return FlagResult{true, base64.StdEncoding.EncodeToString(data)}
+		return FlagResult{true, base64.StdEncoding.EncodeToString(buf)}
 	default:
 		return FlagResult{false, "Unsupported IO mode: " + options.Mode}
 	}

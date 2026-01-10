@@ -72,6 +72,7 @@ export namespace bridge {
 	}
 	export class IOOptions {
 	    Mode: string;
+	    Range: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new IOOptions(source);
@@ -80,6 +81,7 @@ export namespace bridge {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Mode = source["Mode"];
+	        this.Range = source["Range"];
 	    }
 	}
 	export class MenuItem {

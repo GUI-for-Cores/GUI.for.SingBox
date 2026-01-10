@@ -2,10 +2,11 @@ import * as App from '@wails/go/bridge/App'
 
 interface IOOptions {
   Mode?: 'Binary' | 'Text'
+  Range?: string
 }
 
 export const WriteFile = async (path: string, content: string, options: IOOptions = {}) => {
-  const { flag, data } = await App.WriteFile(path, content, { Mode: 'Text', ...options })
+  const { flag, data } = await App.WriteFile(path, content, { Mode: 'Text', Range: '', ...options })
   if (!flag) {
     throw data
   }
@@ -13,7 +14,7 @@ export const WriteFile = async (path: string, content: string, options: IOOption
 }
 
 export const ReadFile = async (path: string, options: IOOptions = {}) => {
-  const { flag, data } = await App.ReadFile(path, { Mode: 'Text', ...options })
+  const { flag, data } = await App.ReadFile(path, { Mode: 'Text', Range: '', ...options })
   if (!flag) {
     throw data
   }
