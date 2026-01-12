@@ -59,7 +59,7 @@ const handleOpenLocalesFolder = async () => {
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="flex items-center text-16 font-bold">
         <div class="mr-4">{{ $t('settings.lang.name') }}</div>
-        <Button type="text" icon="link2" @click="BrowserOpenURL(APP_LOCALES_URL)" />
+        <Button type="text" icon="link" @click="BrowserOpenURL(APP_LOCALES_URL)" />
         <Button type="text" icon="folder" @click="handleOpenLocalesFolder" />
         <Button
           v-tips="'settings.lang.load'"

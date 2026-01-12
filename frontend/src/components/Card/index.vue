@@ -37,7 +37,7 @@ const hasTitle = computed(() => {
     </div>
     <Icon
       v-if="selected"
-      :size="32"
+      :size="24"
       icon="selected"
       color="var(--primary-color)"
       class="absolute right-8 bottom-4"

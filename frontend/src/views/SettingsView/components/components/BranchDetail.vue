@@ -11,7 +11,7 @@ interface Props {
   isAlpha: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), { isAlpha: false })
+const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits(['config'])
 
@@ -91,7 +91,7 @@ const handleClearCoreCache = async () => {
     />
     <Button
       v-tips="'settings.kernel.openTip'"
-      icon="folder2"
+      icon="folder"
       type="text"
       size="small"
       @click="openFileLocation"

@@ -1,6 +1,5 @@
 const icons = [
   'link',
-  'link2',
   'loading',
   'selected',
   'disabled',
@@ -24,7 +23,6 @@ const icons = [
   'error',
   'reset',
   'folder',
-  'folder2',
   'restartApp',
   'log',
   'settings',
@@ -59,6 +57,8 @@ const icons = [
   'preview',
   'rollback',
   'sparkle',
+  'backward',
+  'forward',
 ] as const
 
 export default icons

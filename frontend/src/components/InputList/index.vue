@@ -95,14 +95,14 @@ const emitUpdate = () => {
             <span class="mr-auto">{{ item.value }}</span>
             <Button
               icon="edit"
-              :icon-size="12"
+              :icon-size="14"
               size="small"
               type="text"
               @click="handleEdit(item)"
             />
             <Button
               icon="close"
-              :icon-size="12"
+              :icon-size="14"
               size="small"
               type="text"
               @click="handleDel(item)"

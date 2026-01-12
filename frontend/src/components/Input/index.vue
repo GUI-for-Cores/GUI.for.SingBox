@@ -152,14 +152,7 @@ defineExpose({
         @keydown.enter="inputRef?.blur"
         @keydown.esc.stop.prevent="inputRef?.blur"
       />
-      <Button
-        v-if="innerClearable"
-        :icon-size="12"
-        icon="clear2"
-        type="text"
-        size="small"
-        @click="handleClear"
-      />
+      <Button v-if="innerClearable" icon="clear2" type="text" size="small" @click="handleClear" />
     </template>
     <div v-if="$slots.suffix" class="flex items-center shrink-0">
       <slot name="suffix" v-bind="{ showInput }"></slot>
