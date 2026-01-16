@@ -76,6 +76,31 @@ export const GrantTUNPermission = async (path: string) => {
   }
 }
 
+export const RunWithPowerShell = async (
+  path: string,
+  args: string[] = [],
+  options: { admin?: boolean; hidden?: boolean; wait?: boolean },
+) => {
+  const { admin = false, hidden = false, wait = true, ...others } = options
+  const psArgs: string[] = []
+  let command = `Start-Process -FilePath "${path}"`
+  if (args.length > 0) {
+    const argList = args.map((a) => `"${a.replace(/"/g, '""')}"`).join(',')
+    command += ` -ArgumentList ${argList}`
+  }
+  if (admin) {
+    command += ' -Verb RunAs'
+  }
+  if (hidden) {
+    command += ' -WindowStyle Hidden'
+  }
+  if (wait) {
+    command += ' -Wait'
+  }
+  psArgs.push('-NoProfile', '-Command', command)
+  await Exec('powershell', psArgs, { Convert: true, ...others })
+}
+
 // SystemProxy Helper
 export const SetSystemProxy = async (
   enable: boolean,
@@ -533,11 +558,16 @@ export const QuerySchTask = async (taskName: string) => {
 }
 
 export const CreateSchTask = async (taskName: string, xmlPath: string) => {
-  await Exec('SchTasks', ['/Create', '/F', '/TN', taskName, '/XML', xmlPath], { Convert: true })
+  const fn = useEnvStore().env.isPrivileged ? Exec : RunWithPowerShell
+  await fn('SchTasks', ['/Create', '/F', '/TN', taskName, '/XML', xmlPath], {
+    admin: true,
+    hidden: true,
+  })
 }
 
 export const DeleteSchTask = async (taskName: string) => {
-  await Exec('SchTasks', ['/Delete', '/F', '/TN', taskName], { Convert: true })
+  const fn = useEnvStore().env.isPrivileged ? Exec : RunWithPowerShell
+  await fn('SchTasks', ['/Delete', '/F', '/TN', taskName], { admin: true, hidden: true })
 }
 
 // Others

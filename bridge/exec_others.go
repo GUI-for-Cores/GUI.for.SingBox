@@ -35,3 +35,7 @@ func IsProcessAlive(p *os.Process) (bool, error) {
 	}
 	return false, fmt.Errorf("failed to check process %d: %w", p.Pid, err)
 }
+
+func IsPrivileged() (bool, error) {
+	return os.Geteuid() == 0, nil
+}

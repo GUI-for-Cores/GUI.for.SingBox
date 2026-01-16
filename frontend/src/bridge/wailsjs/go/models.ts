@@ -6,6 +6,7 @@ export namespace bridge {
 	    basePath: string;
 	    os: string;
 	    arch: string;
+	    isPrivileged: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new EnvResult(source);
@@ -18,6 +19,7 @@ export namespace bridge {
 	        this.basePath = source["basePath"];
 	        this.os = source["os"];
 	        this.arch = source["arch"];
+	        this.isPrivileged = source["isPrivileged"];
 	    }
 	}
 	export class ExecOptions {

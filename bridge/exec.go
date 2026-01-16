@@ -35,15 +35,16 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 	}
 
 	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return FlagResult{false, err.Error()}
-	}
 
 	var output string
 	if options.Convert {
 		output = ConvertByte2String(out)
 	} else {
 		output = string(out)
+	}
+
+	if err != nil {
+		return FlagResult{false, string(output)}
 	}
 
 	return FlagResult{true, output}

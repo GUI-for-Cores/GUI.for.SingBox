@@ -14,14 +14,15 @@ type App struct {
 }
 
 type EnvResult struct {
-	IsStartup   bool   `json:"-"`
-	FromTaskSch bool   `json:"-"`
-	WebviewPath string `json:"-"`
-	AppName     string `json:"appName"`
-	AppVersion  string `json:"appVersion"`
-	BasePath    string `json:"basePath"`
-	OS          string `json:"os"`
-	ARCH        string `json:"arch"`
+	IsStartup    bool   `json:"-"`
+	FromTaskSch  bool   `json:"-"`
+	WebviewPath  string `json:"-"`
+	AppName      string `json:"appName"`
+	AppVersion   string `json:"appVersion"`
+	BasePath     string `json:"basePath"`
+	OS           string `json:"os"`
+	ARCH         string `json:"arch"`
+	IsPrivileged bool   `json:"isPrivileged"`
 }
 
 type RequestOptions struct {

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"unsafe"
 
 	"golang.org/x/sys/windows"
 )
@@ -14,8 +15,10 @@ import (
 const ATTACH_PARENT_PROCESS uintptr = ^uintptr(0)
 
 var (
+	modAdvapi32 = windows.NewLazySystemDLL("advapi32.dll")
 	modKernel32 = windows.NewLazySystemDLL("kernel32.dll")
 
+	procCheckTokenMembership     = modAdvapi32.NewProc("CheckTokenMembership")
 	procFreeConsole              = modKernel32.NewProc("FreeConsole")
 	procAttachConsole            = modKernel32.NewProc("AttachConsole")
 	procSetConsoleCtrlHandler    = modKernel32.NewProc("SetConsoleCtrlHandler")
@@ -75,4 +78,21 @@ func IsProcessAlive(p *os.Process) (bool, error) {
 	default:
 		return false, fmt.Errorf("unexpected WaitForSingleObject status: %d", s)
 	}
+}
+
+func IsPrivileged() (bool, error) {
+	var sid *windows.SID
+	sid, err := windows.CreateWellKnownSid(windows.WinBuiltinAdministratorsSid)
+	if err != nil {
+		return false, err
+	}
+
+	var isMember int32
+
+	ret, _, err := procCheckTokenMembership.Call(0, uintptr(unsafe.Pointer(sid)), uintptr(unsafe.Pointer(&isMember)))
+	if ret == 0 {
+		return false, err
+	}
+
+	return isMember != 0, nil
 }

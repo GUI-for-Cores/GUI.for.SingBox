@@ -23,14 +23,15 @@ import (
 var Config = &AppConfig{}
 
 var Env = &EnvResult{
-	IsStartup:   true,
-	FromTaskSch: false,
-	WebviewPath: "",
-	AppName:     "",
-	AppVersion:  "v1.18.0",
-	BasePath:    "",
-	OS:          sysruntime.GOOS,
-	ARCH:        sysruntime.GOARCH,
+	IsStartup:    true,
+	FromTaskSch:  false,
+	WebviewPath:  "",
+	AppName:      "",
+	AppVersion:   "v1.18.0",
+	BasePath:     "",
+	OS:           sysruntime.GOOS,
+	ARCH:         sysruntime.GOARCH,
+	IsPrivileged: false,
 }
 
 // NewApp creates a new App application struct
@@ -51,6 +52,10 @@ func CreateApp(fs embed.FS) *App {
 
 	if slices.Contains(os.Args, "tasksch") {
 		Env.FromTaskSch = true
+	}
+
+	if priv, err := IsPrivileged(); err == nil {
+		Env.IsPrivileged = priv
 	}
 
 	app := NewApp()
@@ -96,11 +101,12 @@ func (a *App) RestartApp() FlagResult {
 
 func (a *App) GetEnv() EnvResult {
 	return EnvResult{
-		AppName:    Env.AppName,
-		AppVersion: Env.AppVersion,
-		BasePath:   Env.BasePath,
-		OS:         Env.OS,
-		ARCH:       Env.ARCH,
+		AppName:      Env.AppName,
+		AppVersion:   Env.AppVersion,
+		BasePath:     Env.BasePath,
+		OS:           Env.OS,
+		ARCH:         Env.ARCH,
+		IsPrivileged: Env.IsPrivileged,
 	}
 }
 
