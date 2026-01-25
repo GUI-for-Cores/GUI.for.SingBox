@@ -16,9 +16,9 @@ export default defineConfigWithVueTs(
   ...pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
 
-  ...pluginOxlint.configs['flat/recommended'],
-
   skipFormatting,
+
+  ...pluginOxlint.configs['flat/recommended'],
 
   {
     plugins: { import: importPlugin },

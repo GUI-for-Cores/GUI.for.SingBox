@@ -9,5 +9,5 @@
     "source.fixAll.prettier": "explicit"
   },
   "editor.formatOnSave": false,
-  "editor.defaultFormatter": "prettier.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

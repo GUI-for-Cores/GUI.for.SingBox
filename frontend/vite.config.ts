@@ -8,6 +8,7 @@ export default defineConfig({
   base: './',
   plugins: [vue()],
   resolve: {
+    extensions: ['.ts', '.js'],
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@wails': fileURLToPath(new URL('./src/bridge/wailsjs', import.meta.url)),
