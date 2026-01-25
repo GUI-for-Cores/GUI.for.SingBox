@@ -2,6 +2,7 @@
 import { ref, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import logo from '@/assets/logo'
 import { ControllerCloseMode } from '@/enums/app'
 import { useAppSettingsStore, useProfilesStore, useKernelApiStore } from '@/stores'
 import { APP_TITLE, debounce, message } from '@/utils'
@@ -88,7 +89,7 @@ watch(showController, (v) => {
       v-if="(!kernelApiStore.running && !kernelApiStore.stopping) || kernelApiStore.starting"
       class="w-full h-[90%] flex flex-col items-center justify-center"
     >
-      <img src="@/assets/logo.png" draggable="false" class="w-128 mb-16" />
+      <img :src="logo" draggable="false" class="w-128 mb-16" />
 
       <template v-if="profilesStore.profiles.length === 0">
         <p>{{ t('home.noProfile', [APP_TITLE]) }}</p>

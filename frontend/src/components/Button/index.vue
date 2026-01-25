@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { IconType } from '@/components/Icon/index.vue'
+import { type IconName } from '@/components/Icon/icons'
 
 interface Props {
   type?: 'primary' | 'normal' | 'link' | 'text'
   size?: 'default' | 'small' | 'large'
   iconSize?: number
   iconColor?: string
-  icon?: IconType
+  icon?: IconName
   loading?: boolean
   disabled?: boolean
 }

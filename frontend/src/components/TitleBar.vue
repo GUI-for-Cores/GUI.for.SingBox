@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 
+import logo from '@/assets/logo'
 import {
   WindowSetAlwaysOnTop,
   WindowHide,
@@ -68,7 +69,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 
 <template>
   <div v-menu="menus" class="flex items-center py-8 gap-8 px-12" style="--wails-draggable: drag">
-    <img v-if="!isDarwin" class="w-24 h-24" draggable="false" src="@/assets/logo.png" />
+    <img v-if="!isDarwin" class="w-24 h-24" draggable="false" :src="logo" />
 
     <div
       :class="isDarwin ? 'justify-center py-4 text-12' : 'text-14'"
