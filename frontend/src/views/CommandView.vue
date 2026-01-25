@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useAppSettingsStore, usePluginsStore } from '@/stores'
+import { useAppSettingsStore, useAppStore, usePluginsStore } from '@/stores'
 import { debounce, message } from '@/utils'
 import { getCommands } from '@/utils/command'
 
@@ -27,6 +27,7 @@ const hitCommand = computed(() =>
 )
 
 const { t } = useI18n()
+const appStore = useAppStore()
 const appSettings = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
 
@@ -89,7 +90,7 @@ const updateCommands = debounce(() => {
   commands.value = getCommands()
 }, 200)
 
-watch([() => appSettings.app.lang, pluginsStore.plugins, () => appSettings.locales], updateCommands)
+watch([() => appSettings.app.lang, pluginsStore.plugins, () => appStore.locales], updateCommands)
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))

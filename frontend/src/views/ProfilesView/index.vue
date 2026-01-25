@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { ClipboardSetText } from '@/bridge'
@@ -16,9 +17,9 @@ import { debounce, deepClone, generateConfig, message, sampleID, alert } from '@
 
 import { useModal } from '@/components/Modal'
 
-import ProfileForm from './components/ProfileForm.vue'
-
 import type { Menu } from '@/types/app'
+
+const ProfileForm = defineAsyncComponent(() => import('./components/ProfileForm.vue'))
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})

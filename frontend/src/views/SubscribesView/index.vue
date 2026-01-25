@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { BrowserOpenURL, ClipboardSetText, RemoveFile } from '@/bridge'
@@ -17,12 +17,12 @@ import {
 
 import { useModal } from '@/components/Modal'
 
-import ProxiesEditor from './components/ProxiesEditor.vue'
-import ProxiesView from './components/ProxiesView.vue'
-import SubscribeForm from './components/SubscribeForm.vue'
-import SubscribeScript from './components/SubscribeScript.vue'
-
 import type { Menu, Subscription } from '@/types/app'
+
+const ProxiesEditor = defineAsyncComponent(() => import('./components/ProxiesEditor.vue'))
+const ProxiesView = defineAsyncComponent(() => import('./components/ProxiesView.vue'))
+const SubscribeForm = defineAsyncComponent(() => import('./components/SubscribeForm.vue'))
+const SubscribeScript = defineAsyncComponent(() => import('./components/SubscribeScript.vue'))
 
 const menuList: Menu[] = [
   {

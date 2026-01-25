@@ -3,7 +3,7 @@ import { BrowserOpenURL, MakeDir, OpenDir } from '@/bridge'
 import { ColorOptions, DefaultFontFamily, LocalesFilePath, ThemeOptions } from '@/constant/app'
 import { Color } from '@/enums/app'
 import routes from '@/router/routes'
-import { useAppSettingsStore } from '@/stores'
+import { useAppSettingsStore, useAppStore } from '@/stores'
 import { APP_LOCALES_URL } from '@/utils'
 
 const pages = routes.flatMap((route) => {
@@ -14,6 +14,7 @@ const pages = routes.flatMap((route) => {
   }
 })
 
+const appStore = useAppStore()
 const appSettings = useAppSettingsStore()
 
 const resetFontFamily = () => {
@@ -63,13 +64,13 @@ const handleOpenLocalesFolder = async () => {
         <Button type="text" icon="folder" @click="handleOpenLocalesFolder" />
         <Button
           v-tips="'settings.lang.load'"
-          :loading="appSettings.localesLoading"
+          :loading="appStore.localesLoading"
           type="text"
           icon="refresh"
-          @click="appSettings.loadLocales()"
+          @click="appStore.loadLocales()"
         />
       </div>
-      <Radio v-model="appSettings.app.lang" :options="appSettings.locales" />
+      <Radio v-model="appSettings.app.lang" :options="appStore.locales" />
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.fontFamily') }}</div>

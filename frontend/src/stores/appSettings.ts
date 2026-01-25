@@ -3,7 +3,6 @@ import { ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
 import {
-  ReadDir,
   ReadFile,
   WriteFile,
   WindowSetSystemDefaultTheme,
@@ -18,7 +17,6 @@ import {
   DefaultFontFamily,
   DefaultTestURL,
   UserFilePath,
-  LocalesFilePath,
 } from '@/constant/app'
 import { DefaultConnections, DefaultCoreConfig } from '@/constant/kernel'
 import {
@@ -31,17 +29,23 @@ import {
   ControllerCloseMode,
   Branch,
 } from '@/enums/app'
-import i18n, { loadLocaleMessages, reloadLocale } from '@/lang'
-import { debounce, updateTrayAndMenus, ignoredError, sleep, GetSystemProxyBypass } from '@/utils'
-
-import { useEnvStore } from './env'
+import i18n, { loadLocale } from '@/lang'
+import { useAppStore, useEnvStore } from '@/stores'
+import {
+  debounce,
+  updateTrayAndMenus,
+  ignoredError,
+  GetSystemProxyBypass,
+  deepClone,
+} from '@/utils'
 
 import type { AppSettings } from '@/types/app'
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
-  const themeMode = ref<Theme.Dark | Theme.Light>(Theme.Light)
-
+  const appStore = useAppStore()
   const envStore = useEnvStore()
+
+  let latestUserSettings: string
 
   const app = ref<AppSettings>({
     lang: Lang.EN,
@@ -81,8 +85,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       concurrencyLimit: DefaultConcurrencyLimit,
       controllerCloseMode: ControllerCloseMode.All,
       controllerSensitivity: DefaultControllerSensitivity,
-      main: DefaultCoreConfig(),
-      alpha: DefaultCoreConfig(),
+      main: undefined as any,
+      alpha: undefined as any,
     },
     pluginSettings: {},
     githubApiToken: '',
@@ -101,60 +105,102 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     WriteFile(UserFilePath, config)
   }, 500)
 
-  const localesLoading = ref(false)
-  const locales = ref<{ label: string; value: string }[]>([])
-  const loadLocales = async (delay = true, reload = true) => {
-    localesLoading.value = true
-    locales.value = [
-      {
-        label: 'settings.lang.zh',
-        value: Lang.ZH,
-      },
-      {
-        label: 'settings.lang.en',
-        value: Lang.EN,
-      },
-    ]
-    const dirs = await ignoredError(ReadDir, LocalesFilePath)
-    if (dirs) {
-      const files = dirs.flatMap((file) => {
-        if (file.isDir) return []
-        const [name, ext] = file.name.split('.')
-        return name && ext === 'json' ? { label: name, value: name } : []
-      })
-      locales.value.push(...files)
-    }
-    reload && (await reloadLocale())
-    delay && (await sleep(200))
-    localesLoading.value = false
-  }
-
-  let latestUserSettings: string
-
   const setupAppSettings = async () => {
     const data = await ignoredError(ReadFile, UserFilePath)
+    let settings: AppSettings
     if (data) {
-      const settings = parse(data)
-      latestUserSettings = stringify(settings)
-      app.value = Object.assign(app.value, settings)
+      settings = parse(data)
     } else {
-      latestUserSettings = ''
+      settings = deepClone(app.value)
     }
 
-    await loadLocales(false, false)
+    await appStore.loadLocales(false, false)
 
-    if (!app.value.proxyBypassList) {
-      app.value.proxyBypassList = await GetSystemProxyBypass()
+    if (!settings.kernel.main) {
+      settings.kernel.main = DefaultCoreConfig()
+      settings.kernel.alpha = DefaultCoreConfig()
     }
+    if (!settings.proxyBypassList) {
+      settings.proxyBypassList = await GetSystemProxyBypass()
+    }
+
+    app.value = settings
+    latestUserSettings = stringify(app.value)
   }
 
+  const applyAppSettings = {
+    theme(theme: Theme) {
+      const isAuto = theme === Theme.Auto
+      if (isAuto) {
+        themeMode.value = mediaQueryList.matches ? Theme.Dark : Theme.Light
+      } else {
+        themeMode.value = theme
+      }
+    },
+    lang(lang: string) {
+      i18n.global.locale.value = lang
+      if (!i18n.global.availableLocales.includes(lang)) {
+        loadLocale(lang)
+      }
+    },
+    color(color: Color, primary: string, secondary: string) {
+      if (color !== Color.Custom) {
+        ;({ primary, secondary } = Colors[color] ?? { primary, secondary })
+      }
+      document.documentElement.style.setProperty('--primary-color', primary)
+      document.documentElement.style.setProperty('--secondary-color', secondary)
+    },
+    feature(outline: boolean, noAnimation: boolean, noRounded: boolean, border: boolean) {
+      document.body.setAttribute('feature-outline', String(outline))
+      document.body.setAttribute('feature-no-animation', String(noAnimation))
+      document.body.setAttribute('feature-no-rounded', String(noRounded))
+      document.body.setAttribute('feature-border', String(border))
+    },
+    fontFamily(fontFamily: string) {
+      document.body.style.fontFamily = fontFamily
+    },
+    windowSize(width: number, height: number) {
+      app.value.width = width
+      app.value.height = height
+    },
+    systemProxyBypass() {
+      if (envStore.systemProxy) {
+        envStore.setSystemProxy()
+      }
+    },
+  }
+
+  /* Apply AppSettings */
+  const onAppSettingsChange = (settings: AppSettings) => {
+    applyAppSettings.theme(settings.theme)
+    applyAppSettings.color(settings.color, settings.primaryColor, settings.secondaryColor)
+    applyAppSettings.lang(settings.lang)
+    applyAppSettings.fontFamily(settings.fontFamily)
+    applyAppSettings.feature(
+      settings.debugOutline,
+      settings.debugNoAnimation,
+      settings.debugNoRounded,
+      settings.debugBorder,
+    )
+    const lastModifiedSettings = stringify(settings)
+    if (latestUserSettings !== lastModifiedSettings) {
+      saveAppSettings(lastModifiedSettings).then(() => {
+        latestUserSettings = lastModifiedSettings
+      })
+    } else {
+      saveAppSettings.cancel()
+    }
+  }
+  watch(app, onAppSettingsChange, { deep: true })
+
+  /* Apply AppTheme */
+  const themeMode = ref<Theme.Light | Theme.Dark>(Theme.Light)
   const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
   mediaQueryList.addEventListener('change', ({ matches }) => {
     if (app.value.theme === Theme.Auto) {
       themeMode.value = matches ? Theme.Dark : Theme.Light
     }
   })
-
   const setAppTheme = (theme: Theme.Dark | Theme.Light) => {
     if (document.startViewTransition) {
       document.startViewTransition(() => {
@@ -165,66 +211,24 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     WindowSetSystemDefaultTheme()
   }
+  watch(themeMode, setAppTheme, { immediate: true })
 
-  const updateAppSettings = (settings: AppSettings) => {
-    loadLocaleMessages(settings.lang)
-    i18n.global.locale.value = settings.lang
-    themeMode.value =
-      settings.theme === Theme.Auto
-        ? mediaQueryList.matches
-          ? Theme.Dark
-          : Theme.Light
-        : settings.theme
-    let primary, secondary
-    if (settings.color === Color.Custom) {
-      ;({ primaryColor: primary, secondaryColor: secondary } = settings)
-    } else {
-      ;({ primary, secondary } = Colors[settings.color] ?? { primary: '', secondary: '' })
+  /* Apply WindowSize */
+  const onWindowSizeChange = debounce(async () => {
+    const [isMinimised, isMaximised] = await Promise.all([WindowIsMinimised(), WindowIsMaximised()])
+    if (!isMinimised && !isMaximised) {
+      const w = document.documentElement.clientWidth
+      const h = document.documentElement.clientHeight
+      applyAppSettings.windowSize(w, h)
     }
-    document.documentElement.style.setProperty('--primary-color', primary)
-    document.documentElement.style.setProperty('--secondary-color', secondary)
-    document.body.style.fontFamily = settings.fontFamily
-    document.body.setAttribute('feature-outline', String(settings.debugOutline))
-    document.body.setAttribute('feature-no-animation', String(settings.debugNoAnimation))
-    document.body.setAttribute('feature-no-rounded', String(settings.debugNoRounded))
-    document.body.setAttribute('feature-border', String(settings.debugBorder))
-  }
+  }, 1000)
+  window.addEventListener('resize', onWindowSizeChange)
 
-  watch(
-    app,
-    (settings) => {
-      updateAppSettings(settings)
-
-      const lastModifiedSettings = stringify(settings)
-      if (latestUserSettings !== undefined && latestUserSettings !== lastModifiedSettings) {
-        saveAppSettings(lastModifiedSettings).then(() => {
-          latestUserSettings = lastModifiedSettings
-        })
-      } else {
-        saveAppSettings.cancel()
-      }
-    },
-    { deep: true, immediate: true },
-  )
-
-  window.addEventListener(
-    'resize',
-    debounce(async () => {
-      const [isMinimised, isMaximised] = await Promise.all([
-        WindowIsMinimised(),
-        WindowIsMaximised(),
-      ])
-      if (!isMinimised && !isMaximised) {
-        app.value.width = document.documentElement.clientWidth
-        app.value.height = document.documentElement.clientHeight
-      }
-    }, 1000),
-  )
-
+  /* Apply TrayAndMenus */
   watch(
     [
       themeMode,
-      locales,
+      appStore.locales,
       () => app.value.color,
       () => app.value.lang,
       () => app.value.addPluginToMenu,
@@ -232,11 +236,11 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     updateTrayAndMenus,
   )
 
-  watch(themeMode, setAppTheme, { immediate: true })
+  /* Apply SystemProxyBypass */
+  const setSystemProxyBypass = debounce(() => {
+    applyAppSettings.systemProxyBypass()
+  }, 3000)
+  watch(() => app.value.proxyBypassList, setSystemProxyBypass)
 
-  const setSystemProxy = debounce(() => envStore.systemProxy && envStore.setSystemProxy(), 3000)
-
-  watch(() => app.value.proxyBypassList, setSystemProxy)
-
-  return { setupAppSettings, app, themeMode, locales, localesLoading, loadLocales }
+  return { setupAppSettings, app, themeMode }
 })

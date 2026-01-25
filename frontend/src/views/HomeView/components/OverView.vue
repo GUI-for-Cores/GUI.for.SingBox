@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ProcessMemory } from '@/bridge'
@@ -9,9 +9,9 @@ import { formatBytes, handleChangeMode, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
-import CommonController from './CommonController.vue'
-import ConnectionsController from './ConnectionsController.vue'
-import LogsController from './LogsController.vue'
+const CommonController = defineAsyncComponent(() => import('./CommonController.vue'))
+const ConnectionsController = defineAsyncComponent(() => import('./ConnectionsController.vue'))
+const LogsController = defineAsyncComponent(() => import('./LogsController.vue'))
 
 const trafficHistory = ref<[number[], number[]]>([[], []])
 const statistics = ref({

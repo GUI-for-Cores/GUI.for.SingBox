@@ -16,8 +16,7 @@ export default defineConfig({
     },
   },
   build: {
-    assetsInlineLimit: 100 * 1024, // 100KB
+    cssCodeSplit: false,
     chunkSizeWarningLimit: 4096, // 4MB
-    // __ROLLUP_MANUAL_CHUNKS__
   },
 })

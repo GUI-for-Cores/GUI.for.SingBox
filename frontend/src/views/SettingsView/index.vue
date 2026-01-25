@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAppStore } from '@/stores'
 
-import CoreSettings from './components/CoreSettings.vue'
-import GeneralSettings from './components/GeneralSettings.vue'
-import PluginSettings from './components/PluginSettings.vue'
+const CoreSettings = defineAsyncComponent(() => import('./components/CoreSettings.vue'))
+const GeneralSettings = defineAsyncComponent(() => import('./components/GeneralSettings.vue'))
+const PluginSettings = defineAsyncComponent(() => import('./components/PluginSettings.vue'))
 
 const settings = [
   { key: 'general', tab: 'settings.general' },

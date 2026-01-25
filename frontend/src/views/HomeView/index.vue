@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, useTemplateRef } from 'vue'
+import { ref, watch, useTemplateRef, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import logo from '@/assets/logo'
@@ -9,10 +9,10 @@ import { APP_TITLE, debounce, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
-import GroupsController from './components/GroupsController.vue'
-import KernelLogs from './components/KernelLogs.vue'
-import OverView from './components/OverView.vue'
-import QuickStart from './components/QuickStart.vue'
+const OverView = defineAsyncComponent(() => import('./components/OverView.vue'))
+const QuickStart = defineAsyncComponent(() => import('./components/QuickStart.vue'))
+const KernelLogs = defineAsyncComponent(() => import('./components/KernelLogs.vue'))
+const GroupsController = defineAsyncComponent(() => import('./components/GroupsController.vue'))
 
 const showController = ref(false)
 const controllerRef = useTemplateRef('controllerRef')

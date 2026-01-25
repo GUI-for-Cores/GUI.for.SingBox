@@ -1,18 +1,10 @@
 import { type RouteRecordRaw } from 'vue-router'
 
-import HomeView from '@/views/HomeView/index.vue'
-import PluginsView from '@/views/PluginsView/index.vue'
-import ProfilesView from '@/views/ProfilesView/index.vue'
-import RulesetsView from '@/views/RulesetsView/index.vue'
-import ScheduledTasksView from '@/views/ScheduledTasksView/index.vue'
-import SettingsView from '@/views/SettingsView/index.vue'
-import SubscribesView from '@/views/SubscribesView/index.vue'
-
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Overview',
-    component: HomeView,
+    component: () => import('@/views/HomeView/index.vue'),
     meta: {
       name: 'router.overview',
       icon: 'overview',
@@ -21,7 +13,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/profiles',
     name: 'Profiles',
-    component: ProfilesView,
+    component: () => import('@/views/ProfilesView/index.vue'),
     meta: {
       name: 'router.profiles',
       icon: 'profiles',
@@ -30,7 +22,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/subscriptions',
     name: 'Subscriptions',
-    component: SubscribesView,
+    component: () => import('@/views/SubscribesView/index.vue'),
     meta: {
       name: 'router.subscriptions',
       icon: 'subscriptions',
@@ -39,7 +31,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/rulesets',
     name: 'Rulesets',
-    component: RulesetsView,
+    component: () => import('@/views/RulesetsView/index.vue'),
     meta: {
       name: 'router.rulesets',
       icon: 'rulesets',
@@ -48,7 +40,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/plugins',
     name: 'Plugins',
-    component: PluginsView,
+    component: () => import('@/views/PluginsView/index.vue'),
     meta: {
       name: 'router.plugins',
       icon: 'plugins',
@@ -57,7 +49,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/scheduledtasks',
     name: 'ScheduledTasks',
-    component: ScheduledTasksView,
+    component: () => import('@/views/ScheduledTasksView/index.vue'),
     meta: {
       name: 'router.scheduledtasks',
       icon: 'scheduledTasks',
@@ -66,7 +58,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/settings',
     name: 'Settings',
-    component: SettingsView,
+    component: () => import('@/views/SettingsView/index.vue'),
     meta: {
       name: 'router.settings',
       icon: 'settings2',

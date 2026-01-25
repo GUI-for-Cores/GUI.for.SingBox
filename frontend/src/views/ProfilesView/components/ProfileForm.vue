@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, computed, useTemplateRef, type Ref, h } from 'vue'
+import { ref, inject, computed, useTemplateRef, type Ref, h, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useProfilesStore } from '@/stores'
@@ -7,13 +7,6 @@ import { deepClone, generateConfig, message, alert } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 import Dropdown from '@/components/Dropdown/index.vue'
-
-import DnsConfig from './DnsConfig.vue'
-import GeneralConfig from './GeneralConfig.vue'
-import InboundsConfig from './InboundsConfig.vue'
-import MixinAndScript from './MixinAndScriptConfig.vue'
-import OutboundsConfig from './OutboundsConfig.vue'
-import RouteConfig from './RouteConfig.vue'
 
 interface Props {
   id?: string
@@ -35,6 +28,13 @@ const props = withDefaults(defineProps<Props>(), {
   isUpdate: false,
   step: Step.Name,
 })
+
+const DnsConfig = defineAsyncComponent(() => import('./DnsConfig.vue'))
+const GeneralConfig = defineAsyncComponent(() => import('./GeneralConfig.vue'))
+const InboundsConfig = defineAsyncComponent(() => import('./InboundsConfig.vue'))
+const MixinAndScript = defineAsyncComponent(() => import('./MixinAndScriptConfig.vue'))
+const OutboundsConfig = defineAsyncComponent(() => import('./OutboundsConfig.vue'))
+const RouteConfig = defineAsyncComponent(() => import('./RouteConfig.vue'))
 
 const { t } = useI18n()
 const inboundsRef = useTemplateRef('inboundsRef')
@@ -235,7 +235,7 @@ defineExpose({ modalSlots })
 
 <template>
   <div>
-    <div v-show="currentStep === Step.Name">
+    <div v-if="currentStep === Step.Name">
       <Input
         v-model="profile.name"
         autofocus
@@ -244,16 +244,16 @@ defineExpose({ modalSlots })
         class="w-full"
       />
     </div>
-    <div v-show="currentStep === Step.General">
+    <div v-if="currentStep === Step.General">
       <GeneralConfig v-model="generalConfig" :outbound-options="outboundOptions" />
     </div>
-    <div v-show="currentStep === Step.Inbounds">
+    <div v-if="currentStep === Step.Inbounds">
       <InboundsConfig ref="inboundsRef" v-model="profile.inbounds" />
     </div>
-    <div v-show="currentStep === Step.Outbounds">
+    <div v-if="currentStep === Step.Outbounds">
       <OutboundsConfig ref="outboundsRef" v-model="profile.outbounds" />
     </div>
-    <div v-show="currentStep === Step.Route">
+    <div v-if="currentStep === Step.Route">
       <RouteConfig
         ref="routeRef"
         v-model="profile.route"
@@ -262,7 +262,7 @@ defineExpose({ modalSlots })
         :server-options="serverOptions"
       />
     </div>
-    <div v-show="currentStep === Step.Dns">
+    <div v-if="currentStep === Step.Dns">
       <DnsConfig
         ref="dnsRef"
         v-model="profile.dns"
@@ -271,7 +271,7 @@ defineExpose({ modalSlots })
         :rule-set="profile.route.rule_set"
       />
     </div>
-    <div v-show="currentStep === Step.MixinScript">
+    <div v-if="currentStep === Step.MixinScript">
       <MixinAndScript v-model="mixinAndScriptConfig" />
     </div>
   </div>

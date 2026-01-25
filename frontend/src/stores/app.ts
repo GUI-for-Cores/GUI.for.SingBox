@@ -11,8 +11,10 @@ import {
   RemoveFile,
   HttpCancel,
   OpenDir,
+  ReadDir,
 } from '@/bridge'
-import { RollingReleaseDirectory } from '@/constant/app'
+import { LanguageOptions, LocalesFilePath, RollingReleaseDirectory } from '@/constant/app'
+import { loadLocale } from '@/lang'
 import {
   APP_TITLE,
   APP_VERSION,
@@ -22,6 +24,7 @@ import {
   message,
   alert,
   sampleID,
+  sleep,
 } from '@/utils'
 
 import { useEnvStore } from './env'
@@ -50,6 +53,24 @@ export const useAppStore = defineStore('app', () => {
   /* Modal Stack */
   const modalStack: (() => void)[] = []
   const modalZIndexCounter = 999
+
+
+  /* i18n */
+  const localesLoading = ref(false)
+  const locales = ref<{ label: string; value: string }[]>([])
+  const loadLocales = async (delay = true, reload = true) => {
+    localesLoading.value = true
+    const dirs = await ReadDir(LocalesFilePath).catch(() => [])
+    const localLanguage = dirs.flatMap((file) => {
+      if (file.isDir) return []
+      const [name, ext] = file.name.split('.')
+      return name && ext === 'json' ? { label: name, value: name } : []
+    })
+    locales.value = [...LanguageOptions, ...localLanguage]
+    reload && (await loadLocale())
+    delay && (await sleep(200))
+    localesLoading.value = false
+  }
 
   /* Actions */
   const customActions = ref({
@@ -190,5 +211,8 @@ export const useAppStore = defineStore('app', () => {
     customActions,
     addCustomActions,
     removeCustomActions,
+    localesLoading,
+    locales,
+    loadLocales,
   }
 })

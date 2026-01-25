@@ -129,11 +129,11 @@ export const getCommands = () => {
               label: 'settings.lang.load',
               cmd: 'Load language files',
               handler: async () => {
-                await appSettings.loadLocales()
+                await appStore.loadLocales()
                 message.success('common.success')
               },
             },
-            ...appSettings.locales.map((v) => ({
+            ...appStore.locales.map((v) => ({
               label: v.label,
               cmd: v.value,
               handler: () => (appSettings.app.lang = v.value),
@@ -213,7 +213,6 @@ export const getCommands = () => {
         },
       ],
     },
-
     {
       label: 'tray.plugins',
       cmd: 'Plugins',

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
+
 import { useModal } from '@/components/Modal'
 
-import BranchDetail from './components/BranchDetail.vue'
-import CoreConfiguration from './components/CoreConfig.vue'
-import SwitchBranch from './components/SwitchBranch.vue'
+const BranchDetail = defineAsyncComponent(() => import('./components/BranchDetail.vue'))
+const CoreConfiguration = defineAsyncComponent(() => import('./components/CoreConfig.vue'))
+const SwitchBranch = defineAsyncComponent(() => import('./components/SwitchBranch.vue'))
 
 const [ConfigModal, modalApi] = useModal({})
 

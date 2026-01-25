@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Cron } from 'croner'
+import { defineAsyncComponent } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { DraggableOptions, ViewOptions } from '@/constant/app'
@@ -9,10 +10,10 @@ import { debounce, formatRelativeTime, formatDate, message, alert } from '@/util
 
 import { useModal } from '@/components/Modal'
 
-import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
-import ScheduledTasksLogs from './components/ScheduledTasksLogs.vue'
-
 import type { Menu, ScheduledTask } from '@/types/app'
+
+const ScheduledTaskForm = defineAsyncComponent(() => import('./components/ScheduledTaskForm.vue'))
+const ScheduledTasksLogs = defineAsyncComponent(() => import('./components/ScheduledTasksLogs.vue'))
 
 const menuList: Menu[] = [
   {

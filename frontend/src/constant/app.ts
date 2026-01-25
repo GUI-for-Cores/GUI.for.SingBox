@@ -1,6 +1,7 @@
 import {
   Color,
   ControllerCloseMode,
+  Lang,
   PluginTrigger,
   RequestMethod,
   ScheduledTasksType,
@@ -51,6 +52,11 @@ export const Colors = {
     secondary: '#000',
   },
 }
+
+export const LanguageOptions = [
+  { label: 'settings.lang.zh', value: Lang.ZH },
+  { label: 'settings.lang.en', value: Lang.EN },
+]
 
 export const ViewOptions = [
   { label: 'common.grid', value: View.Grid },
