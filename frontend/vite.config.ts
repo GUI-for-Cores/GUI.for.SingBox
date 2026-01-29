@@ -18,5 +18,18 @@ export default defineConfig({
   build: {
     cssCodeSplit: false,
     chunkSizeWarningLimit: 4096, // 4MB
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: 'vue', test: /node_modules\/vue/ },
+            { name: 'codemirror', test: /node_modules\/@codemirror/ },
+            { name: 'prettier', test: /node_modules\/prettier/ },
+            { name: 'vendor', test: /node_modules/ },
+            { name: 'index' },
+          ],
+        },
+      },
+    },
   },
 })

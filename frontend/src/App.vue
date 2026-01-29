@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
 
 import { EventsOn, WindowHide, IsStartup } from '@/bridge'
-import { NavigationBar, TitleBar } from '@/components'
+import { NavigationBar, TitleBar, SplashView, AboutView, CommandView } from '@/components'
 import * as Stores from '@/stores'
 import { exitApp, sampleID, sleep, message } from '@/utils'
-import SplashView from '@/views/SplashView.vue'
-
-const AboutView = defineAsyncComponent(() => import('@/views/AboutView.vue'))
-const CommandView = defineAsyncComponent(() => import('@/views/CommandView.vue'))
 
 const loading = ref(true)
 const percent = ref(0)
