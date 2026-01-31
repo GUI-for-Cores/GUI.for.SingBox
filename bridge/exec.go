@@ -38,13 +38,16 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 
 	var output string
 	if options.Convert {
-		output = ConvertByte2String(out)
+		output = strings.TrimSpace(ConvertByte2String(out))
 	} else {
-		output = string(out)
+		output = strings.TrimSpace(string(out))
 	}
 
 	if err != nil {
-		return FlagResult{false, string(output)}
+		if output == "" {
+			output = err.Error()
+		}
+		return FlagResult{false, output}
 	}
 
 	return FlagResult{true, output}
