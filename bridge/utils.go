@@ -120,28 +120,28 @@ func ParseRange(s string, size int64) (start int64, end int64, err error) {
 
 func RollingRelease(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		url := r.URL.Path
+		isIndex := url == "/"
+
+		if isIndex {
+			w.Header().Set("Cache-Control", "no-cache")
+		} else {
+			w.Header().Set("Cache-Control", "max-age=31536000, immutable")
+		}
+
 		if !Config.RollingRelease {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		url := r.URL.Path
-		isIndex := false
-		if url == "/" {
+		if isIndex {
 			url = "/index.html"
-			isIndex = true
 		}
 
 		filePath := GetPath("data/rolling-release" + url)
 		if _, err := os.Stat(filePath); err != nil {
 			next.ServeHTTP(w, r)
 			return
-		}
-
-		if isIndex {
-			w.Header().Set("Cache-Control", "no-cache")
-		} else {
-			w.Header().Set("Cache-Control", "max-age=31536000, immutable")
 		}
 
 		http.ServeFile(w, r, filePath)
