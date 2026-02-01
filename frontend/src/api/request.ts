@@ -37,11 +37,9 @@ export class Request {
   ) => {
     this.beforeRequest()
 
-    const controller = new AbortController()
-
     const init: RequestInit = {
       method: options.method,
-      signal: controller.signal,
+      signal: AbortSignal.timeout(this.timeout),
     }
 
     if (this.base) {
@@ -62,11 +60,7 @@ export class Request {
       init.body = JSON.stringify(options.body || {})
     }
 
-    const id = setTimeout(() => controller.abort(), this.timeout)
-
     const res = await fetch(url, init)
-
-    clearTimeout(id)
 
     if (res.status === 204) {
       return null as T
