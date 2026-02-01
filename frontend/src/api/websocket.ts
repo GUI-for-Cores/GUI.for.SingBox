@@ -20,7 +20,7 @@ export class WebSockets {
   public createWS(urls: URLType[]) {
     this.beforeConnect()
 
-    const wsMap: Record<string, { ready: boolean; close: () => void; open: () => void }> = {}
+    const wsMap: Recordable<{ close: () => void; open: () => void; isManualClose: boolean }> = {}
 
     urls.forEach(({ name, url, params = {}, cb }) => {
       Object.assign(params, { token: this.bearer })
@@ -29,20 +29,27 @@ export class WebSockets {
 
       query && (url += '?' + query)
 
+      let ws: WebSocket | null = null
+
       const open = () => {
-        if (!wsMap[name]!.ready) return
-        const ws = new WebSocket(this.base + url)
+        ws = new WebSocket(this.base + url)
         ws.onmessage = (e) => cb(JSON.parse(e.data))
-        ws.onerror = () => (wsMap[name]!.ready = true)
-        ws.onclose = () => (wsMap[name]!.ready = true)
-        wsMap[name]!.close = () => {
-          ws.close()
-          wsMap[name]!.ready = true
+        ws.onclose = () => {
+          setTimeout(() => {
+            if (!wsMap[name]!.isManualClose) {
+              setTimeout(open, 3000)
+            }
+          }, 1000)
         }
-        wsMap[name]!.ready = false
       }
 
-      wsMap[name] = { ready: true, open, close: () => (wsMap[name]!.ready = false) }
+      const close = () => {
+        wsMap[name]!.isManualClose = true
+        ws?.close()
+        ws = null
+      }
+
+      wsMap[name] = { open, close, isManualClose: false }
     })
 
     return {

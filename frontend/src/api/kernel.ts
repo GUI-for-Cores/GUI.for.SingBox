@@ -1,7 +1,6 @@
 import { Request } from '@/api/request'
 import { WebSockets } from '@/api/websocket'
 import { useProfilesStore } from '@/stores'
-import { setIntervalImmediately } from '@/utils'
 
 import type {
   CoreApiConfig,
@@ -13,7 +12,7 @@ import type {
   CoreApiConnectionsData,
 } from '@/types/kernel'
 
-type WsInstance = { setup?: () => void; cleanup?: () => void; timer?: number }
+type WsInstance = { setup?: () => void; cleanup?: () => void }
 
 export enum Api {
   Configs = '/configs',
@@ -50,8 +49,8 @@ const setupCoreApi = (protocol: 'http' | 'ws') => {
 const request = new Request({ beforeRequest: () => setupCoreApi('http'), timeout: 60 * 1000 })
 const websocket = new WebSockets({ beforeConnect: () => setupCoreApi('ws') })
 
-const longLivedWS: WsInstance = { setup: undefined, cleanup: undefined, timer: -1 }
-const shortLivedWS: WsInstance = { setup: undefined, cleanup: undefined, timer: -1 }
+const longLivedWS: WsInstance = { setup: undefined, cleanup: undefined }
+const shortLivedWS: WsInstance = { setup: undefined, cleanup: undefined }
 
 const websocketHandlers = {
   logs: [] as ((data: CoreApiLogsData) => void)[],
@@ -96,7 +95,7 @@ export const onMemory = createCoreWSHandlerRegister(websocketHandlers.memory)
 export const onTraffic = createCoreWSHandlerRegister(websocketHandlers.traffic)
 export const onConnections = createCoreWSHandlerRegister(websocketHandlers.connections)
 export const connectWebsocket = () => {
-  const { connect: connectLongLived, disconnect: disconnectLongLived } = websocket.createWS([
+  ;({ connect: longLivedWS.setup, disconnect: longLivedWS.cleanup } = websocket.createWS([
     {
       name: Api.Memory,
       url: Api.Memory,
@@ -112,33 +111,15 @@ export const connectWebsocket = () => {
       url: Api.Connections,
       cb: (data) => websocketHandlers.connections.forEach((cb) => cb(data)),
     },
-  ])
-
-  const { connect: connectShortLived, disconnect: disconnectShortLived } = websocket.createWS([
+  ]))
+  ;({ connect: shortLivedWS.setup, disconnect: shortLivedWS.cleanup } = websocket.createWS([
     {
       name: Api.Logs,
       url: Api.Logs,
       params: { level: 'debug' },
       cb: (data) => websocketHandlers.logs.forEach((cb) => cb(data)),
     },
-  ])
-
-  longLivedWS.setup = () => {
-    longLivedWS.timer = setIntervalImmediately(connectLongLived, 30_000)
-  }
-  longLivedWS.cleanup = () => {
-    clearInterval(longLivedWS.timer)
-    disconnectLongLived()
-  }
-
-  shortLivedWS.setup = () => {
-    shortLivedWS.timer = setIntervalImmediately(connectShortLived, 30_000)
-  }
-  shortLivedWS.cleanup = () => {
-    clearInterval(shortLivedWS.timer)
-    disconnectShortLived()
-  }
-
+  ]))
   longLivedWS.setup()
 }
 export const disconnectWebsocket = () => {
