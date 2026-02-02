@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 type TabItemType = {
   key: string
   tab: string
+  component?: Component
 }
 
 interface Props {
@@ -24,12 +25,21 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits(['update:activeKey'])
 
 const { t } = useI18n()
+const slots = useSlots()
 
 const isTop = computed(() => props.tabPosition === 'top')
 
 const handleChange = (key: string) => emits('update:activeKey', key)
 
 const isActive = ({ key }: TabItemType) => key === props.activeKey
+
+// NOTE:
+// - component tabs are cached via KeepAlive
+// - slot tabs are rendered as functional components and NOT cached
+const currentComponent = computed(() => {
+  const comp = props.items.find((i) => i.key === props.activeKey)?.component
+  return comp ?? slots[props.activeKey]
+})
 </script>
 
 <template>
@@ -51,7 +61,9 @@ const isActive = ({ key }: TabItemType) => key === props.activeKey
     </div>
 
     <div class="flex flex-col overflow-y-auto" :style="{ width: isTop ? 'auto' : contentWidth }">
-      <slot :name="activeKey"></slot>
+      <KeepAlive>
+        <component :is="currentComponent" />
+      </KeepAlive>
     </div>
   </div>
 </template>
