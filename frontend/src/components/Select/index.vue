@@ -151,6 +151,9 @@ const handleClear = () => {
 
     <template #overlay="{ close }">
       <div class="flex flex-col gap-4 min-w-64 p-4">
+        <slot v-if="options.length === 0" name="empty">
+          <Empty :icon-size="42" />
+        </slot>
         <Button
           v-for="o in options"
           :key="o.value"
