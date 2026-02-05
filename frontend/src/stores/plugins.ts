@@ -104,7 +104,23 @@ export const usePluginsStore = defineStore('plugins', () => {
       configuration[key] = value
     }
     Object.assign(configuration, appSettingsStore.app.pluginSettings[plugin.id] ?? {})
-    return deepClone({ ...plugin, ...configuration })
+    const metadata = deepClone({ ...plugin, ...configuration })
+    const proxy = new Proxy(metadata, {
+      get(target, p, receiver) {
+        return Reflect.get(target, p, receiver)
+      },
+      set(target, p, newValue, receiver) {
+        if (p === 'status') {
+          plugin.status = newValue
+          editPlugin(plugin.id, plugin)
+          Reflect.set(target, p, newValue, receiver)
+          return true
+        }
+        console.warn(`[${plugin.name}] Property "${String(p)}" is read-only.`)
+        return false
+      },
+    })
+    return proxy
   }
 
   const isPluginUnavailable = (
