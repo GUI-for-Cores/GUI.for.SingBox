@@ -45,7 +45,6 @@ require (
 	github.com/sergeymakinen/go-ico v1.0.0 // indirect
 	github.com/shoenig/go-m1cpu v0.1.7 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c // indirect
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.8 // indirect
@@ -59,4 +58,4 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
-replace github.com/energye/systray => github.com/Ayideyia/systray v1.0.1
+replace github.com/energye/systray => github.com/GUI-for-Cores/systray v1.0.0
