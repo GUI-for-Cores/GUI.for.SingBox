@@ -119,6 +119,7 @@ func ParseRange(s string, size int64) (start int64, end int64, err error) {
 }
 
 func RollingRelease(next http.Handler) http.Handler {
+	isDevVersion := strings.Contains(Env.AppVersion, "dev")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.Path
 		isIndex := url == "/"
@@ -129,7 +130,7 @@ func RollingRelease(next http.Handler) http.Handler {
 			w.Header().Set("Cache-Control", "max-age=31536000, immutable")
 		}
 
-		if !Config.RollingRelease {
+		if isDevVersion || !Config.RollingRelease {
 			next.ServeHTTP(w, r)
 			return
 		}

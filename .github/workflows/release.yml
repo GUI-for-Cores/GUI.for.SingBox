@@ -170,6 +170,6 @@ jobs:
           name: ${{ github.ref_name }}
           files: release-assets/**/*.zip
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, 'dev') }}
           body: |
             Auto-generated release from GitHub Actions.
