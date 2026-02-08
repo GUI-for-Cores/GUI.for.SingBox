@@ -3,6 +3,7 @@ package bridge
 import (
 	"context"
 	"net/http"
+	"sync/atomic"
 
 	"github.com/wailsapp/wails/v2/pkg/menu"
 )
@@ -14,15 +15,16 @@ type App struct {
 }
 
 type EnvResult struct {
-	IsStartup    bool   `json:"-"`
-	FromTaskSch  bool   `json:"-"`
-	WebviewPath  string `json:"-"`
-	AppName      string `json:"appName"`
-	AppVersion   string `json:"appVersion"`
-	BasePath     string `json:"basePath"`
-	OS           string `json:"os"`
-	ARCH         string `json:"arch"`
-	IsPrivileged bool   `json:"isPrivileged"`
+	IsStartup    bool        `json:"-"`
+	PreventExit  atomic.Bool `json:"-"`
+	FromTaskSch  bool        `json:"-"`
+	WebviewPath  string      `json:"-"`
+	AppName      string      `json:"appName"`
+	AppVersion   string      `json:"appVersion"`
+	BasePath     string      `json:"basePath"`
+	OS           string      `json:"os"`
+	ARCH         string      `json:"arch"`
+	IsPrivileged bool        `json:"isPrivileged"`
 }
 
 type RequestOptions struct {

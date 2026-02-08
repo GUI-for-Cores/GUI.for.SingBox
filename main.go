@@ -23,9 +23,7 @@ var assets embed.FS
 var icon []byte
 
 func main() {
-	app := bridge.CreateApp(assets)
-
-	trayStart, _ := bridge.CreateTray(app, icon)
+	app := bridge.CreateApp(assets, icon)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -81,9 +79,11 @@ func main() {
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
-			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
+			if bridge.Env.PreventExit.Load() {
+				return false
+			}
 			runtime.EventsEmit(ctx, "onBeforeExitApp")
 			return true
 		},
