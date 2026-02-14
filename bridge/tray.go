@@ -8,6 +8,32 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+func CreateTray(a *App, icon []byte) (trayStart, trayEnd func()) {
+	return systray.RunWithExternalLoop(func() {
+		systray.SetIcon(icon)
+		systray.SetTooltip("GUI.for.Cores")
+
+		systray.SetOnRClick(func(menu systray.IMenu) { menu.ShowMenu() })
+		systray.SetOnClick(func(menu systray.IMenu) {
+			if Env.OS == "darwin" {
+				menu.ShowMenu()
+			} else {
+				a.ShowMainWindow()
+			}
+		})
+
+		addClickMenuItem := func(title, tooltip string, action func()) {
+			m := systray.AddMenuItem(title, tooltip)
+			m.Click(action)
+		}
+
+		// Ensure the tray is still available if rolling-release fails
+		addClickMenuItem("Show", "Show", func() { a.ShowMainWindow() })
+		addClickMenuItem("Restart", "Restart", func() { a.RestartApp() })
+		addClickMenuItem("Exit", "Exit", func() { a.ExitApp() })
+	}, nil)
+}
+
 func (a *App) UpdateTray(tray TrayContent) {
 	log.Printf("UpdateTray")
 	updateTray(a, tray)
