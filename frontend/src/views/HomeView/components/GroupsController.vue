@@ -8,6 +8,7 @@ import {
   DefaultCardColumns,
   DefaultConcurrencyLimit,
   DefaultControllerSensitivity,
+  DefaultTestTimeout,
   DefaultTestURL,
 } from '@/constant/app'
 import { ControllerCloseMode } from '@/enums/app'
@@ -112,6 +113,7 @@ const handleGroupDelay = async (group: string) => {
         const { delay = 0 } = await getProxyDelay(
           encodeURIComponent(proxy),
           appSettings.app.kernel.testUrl || DefaultTestURL,
+          appSettings.app.kernel.testTimeout || DefaultTestTimeout,
         )
         success += 1
         _proxy && _proxy.history.push({ delay })
@@ -153,6 +155,7 @@ const handleProxyDelay = async (proxy: string) => {
     const { delay = 0 } = await getProxyDelay(
       encodeURIComponent(proxy),
       appSettings.app.kernel.testUrl || DefaultTestURL,
+      appSettings.app.kernel.testTimeout || DefaultTestTimeout,
     )
     const _proxy = kernelApiStore.proxies[proxy]
     _proxy && _proxy.history.push({ delay })
@@ -189,6 +192,7 @@ const delayColor = (delay = 0) => {
 
 const handleResetMoreSettings = () => {
   appSettings.app.kernel.testUrl = DefaultTestURL
+  appSettings.app.kernel.testTimeout = DefaultTestTimeout
   appSettings.app.kernel.concurrencyLimit = DefaultConcurrencyLimit
   appSettings.app.kernel.controllerCloseMode = ControllerCloseMode.All
   appSettings.app.kernel.controllerSensitivity = DefaultControllerSensitivity
@@ -346,6 +350,17 @@ onActivated(() => {
       <Input
         v-model="appSettings.app.kernel.testUrl"
         :placeholder="DefaultTestURL"
+        editable
+        clearable
+      />
+    </div>
+
+    <div class="form-item">
+      {{ t('home.controller.timeout') }}
+      <Input
+        v-model="appSettings.app.kernel.testTimeout"
+        :placeholder="String(DefaultTestTimeout)"
+        type="number"
         editable
         clearable
       />

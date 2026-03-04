@@ -160,6 +160,8 @@ export const DefaultSubscribeScript = `const onSubscribe = async (proxies, subsc
 
 export const DefaultTestURL = 'https://www.gstatic.com/generate_204'
 
+export const DefaultTestTimeout = 5000
+
 export const DefaultConcurrencyLimit = 20
 
 export const DefaultCardColumns = 5

@@ -95,10 +95,10 @@ export const deleteConnection = (id: string) => request.delete<null>(Api.Connect
 export const useProxy = (group: string, proxy: string) => {
   return request.put<null>(Api.Proxies + '/' + group, { name: proxy })
 }
-export const getProxyDelay = (proxy: string, url: string) => {
+export const getProxyDelay = (proxy: string, url: string, timeout: number) => {
   return request.get<Record<string, number>>(Api.ProxyDelay.replace('{0}', proxy), {
     url,
-    timeout: 5000,
+    timeout,
   })
 }
 

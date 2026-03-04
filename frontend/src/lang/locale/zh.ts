@@ -354,6 +354,7 @@ export default {
       cardMode: '卡片模式',
       sortBy: '按延迟排序',
       delay: '延迟测试URL',
+      timeout: '延迟测试超时时间(ms)',
       concurrencyLimit: '延迟测试并发数量',
       cardColumns: '卡片展示列数',
       sensitivity: '控制器滚动灵敏度',
