@@ -159,6 +159,7 @@ defineExpose({ modalSlots })
       <div class="min-w-[75%]">
         <Input
           v-model="ruleset.url"
+          allow-paste
           :placeholder="
             ruleset.type === 'Http'
               ? 'http(s)://'

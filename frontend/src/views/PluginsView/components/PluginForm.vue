@@ -229,6 +229,7 @@ defineExpose({ modalSlots })
         <Input
           v-model="plugin.url"
           :placeholder="plugin.type === 'Http' ? 'http(s)://' : 'data/local/plugin-{filename}.js'"
+          allow-paste
           class="w-full"
         />
       </div>
