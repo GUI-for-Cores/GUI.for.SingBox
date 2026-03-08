@@ -25,6 +25,7 @@ export namespace bridge {
 	export class ExecOptions {
 	    PidFile: string;
 	    StopOutputKeyword: string;
+	    WorkingDirectory: string;
 	    Convert: boolean;
 	    Env: Record<string, string>;
 	
@@ -36,6 +37,7 @@ export namespace bridge {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PidFile = source["PidFile"];
 	        this.StopOutputKeyword = source["StopOutputKeyword"];
+	        this.WorkingDirectory = source["WorkingDirectory"];
 	        this.Convert = source["Convert"];
 	        this.Env = source["Env"];
 	    }

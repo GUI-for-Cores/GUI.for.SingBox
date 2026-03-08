@@ -28,6 +28,7 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 	cmd := exec.Command(exePath, args...)
 	SetCmdWindowHidden(cmd)
 
+	cmd.Dir = options.WorkingDirectory
 	cmd.Env = os.Environ()
 
 	for key, value := range options.Env {
@@ -70,6 +71,7 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	cmd := exec.Command(exePath, args...)
 	SetCmdWindowHidden(cmd)
 
+	cmd.Dir = options.WorkingDirectory
 	cmd.Env = os.Environ()
 
 	for key, value := range options.Env {
