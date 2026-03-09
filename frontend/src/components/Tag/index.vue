@@ -2,15 +2,17 @@
 import { ref } from 'vue'
 
 interface Props {
-  color?: 'cyan' | 'green' | 'red' | 'default' | 'primary'
+  color?: 'cyan' | 'green' | 'red' | 'default' | 'primary' | 'orange' | 'gold' | 'blue' | 'purple'
   size?: 'small' | 'default'
   closeable?: boolean
+  bordered?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   color: 'default',
   closable: false,
   size: 'default',
+  bordered: true,
 })
 
 const emit = defineEmits(['close'])
@@ -25,7 +27,7 @@ const handleClose = () => {
 <template>
   <div
     v-if="show"
-    :class="['color-' + color, 'size-' + size]"
+    :class="['color-' + color, 'size-' + size, { 'border-0': !bordered }]"
     class="gui-tag px-8 mx-4 rounded-6 inline-block text-12 whitespace-nowrap inline-flex items-center"
   >
     <slot></slot>
@@ -64,6 +66,26 @@ const handleClose = () => {
   color: var(--btn-primary-color);
   background-color: var(--primary-color);
   border: 1px solid var(--secondary-color);
+}
+.color-orange {
+  color: #d46b08;
+  background-color: #fff7e6;
+  border: 1px solid #d46b08;
+}
+.color-gold {
+  color: #d48806;
+  background-color: #fffbe6;
+  border: 1px solid #d48806;
+}
+.color-blue {
+  color: #0958d9;
+  background-color: #e6f4ff;
+  border: 1px solid #0958d9;
+}
+.color-purple {
+  color: #531dab;
+  background-color: #f9f0ff;
+  border: 1px solid #531dab;
 }
 
 .size-small {

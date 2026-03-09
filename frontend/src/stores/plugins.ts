@@ -384,6 +384,9 @@ export const usePluginsStore = defineStore('plugins', () => {
     if (!plugin.id.startsWith('plugin-')) return false
     return !findPluginInHubById(plugin.id)
   }
+  const isDevVersion = (plugin: Plugin) => {
+    return plugin.version.startsWith('v0')
+  }
   const hasNewPluginVersion = (plugin: Plugin) => {
     const p = findPluginInHubById(plugin.id)
     if (!p) return false
@@ -637,5 +640,6 @@ export const usePluginsStore = defineStore('plugins', () => {
     hasNewPluginVersion,
     findPluginInHubById,
     isDeprecated,
+    isDevVersion,
   }
 })

@@ -212,7 +212,7 @@ const onSortUpdate = debounce(subscribeStore.saveSubscribes, 1000)
       class="grid-list-item"
     >
       <template #title-prefix>
-        <Tag v-if="s.updating" color="cyan">
+        <Tag v-if="s.updating" color="cyan" size="small">
           {{ t('subscribe.updating') }}
         </Tag>
       </template>

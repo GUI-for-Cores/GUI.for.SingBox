@@ -281,7 +281,10 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
       class="grid-list-item"
     >
       <template #title-prefix>
-        <Tag v-if="pluginsStore.isDeprecated(p)" color="red"> {{ t('plugins.deprecated') }} </Tag>
+        <Tag v-if="pluginsStore.isDevVersion(p)" color="purple" size="small">Dev</Tag>
+        <Tag v-if="pluginsStore.isDeprecated(p)" color="red" size="small">
+          {{ t('plugins.deprecated') }}
+        </Tag>
         <Tag
           v-if="pluginsStore.hasNewPluginVersion(p)"
           size="small"
@@ -300,7 +303,7 @@ const onSortUpdate = debounce(pluginsStore.savePlugins, 1000)
         >
           ●
         </div>
-        <Tag v-if="p.updating" color="cyan">
+        <Tag v-if="p.updating" color="cyan" size="small">
           {{ t('plugins.updating') }}
         </Tag>
       </template>

@@ -237,6 +237,7 @@ const onSortUpdate = debounce(profilesStore.saveProfiles, 1000)
         <Tag
           v-if="isCreatedBySubscription(p.id)"
           color="primary"
+          size="small"
           style="margin-left: 0"
           @click="showAuto"
         >

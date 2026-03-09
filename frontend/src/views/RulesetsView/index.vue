@@ -191,7 +191,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       class="grid-list-item"
     >
       <template #title-prefix>
-        <Tag v-if="r.updating" color="cyan">
+        <Tag v-if="r.updating" color="cyan" size="small">
           {{ t('ruleset.updating') }}
         </Tag>
       </template>
