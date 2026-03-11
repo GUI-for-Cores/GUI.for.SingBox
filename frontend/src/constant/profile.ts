@@ -77,7 +77,7 @@ export const DefaultExperimental = (): IExperimental => ({
   },
 })
 
-export const DefaultInboundSocks = (): IInbound['socks'] => ({
+export const DefaultInboundSocks = (): NonNullable<IInbound['socks']> => ({
   listen: {
     listen: '127.0.0.1',
     listen_port: 20120,
@@ -88,7 +88,7 @@ export const DefaultInboundSocks = (): IInbound['socks'] => ({
   users: [],
 })
 
-export const DefaultInboundHttp = (): IInbound['http'] => ({
+export const DefaultInboundHttp = (): NonNullable<IInbound['http']> => ({
   listen: {
     listen: '127.0.0.1',
     listen_port: 20121,
@@ -99,7 +99,7 @@ export const DefaultInboundHttp = (): IInbound['http'] => ({
   users: [],
 })
 
-export const DefaultInboundMixed = (): IInbound['mixed'] => ({
+export const DefaultInboundMixed = (): NonNullable<IInbound['mixed']> => ({
   listen: {
     listen: '127.0.0.1',
     listen_port: 20122,
@@ -110,7 +110,7 @@ export const DefaultInboundMixed = (): IInbound['mixed'] => ({
   users: [],
 })
 
-export const DefaultInboundTun = (): IInbound['tun'] => ({
+export const DefaultInboundTun = (): NonNullable<IInbound['tun']> => ({
   interface_name: '',
   address: ['172.18.0.1/30', 'fdfe:dcba:9876::1/126'],
   mtu: 0,

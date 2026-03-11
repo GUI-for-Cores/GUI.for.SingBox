@@ -12,6 +12,7 @@ import {
   RuleType,
   Strategy,
 } from '@/enums/kernel'
+import { Branch } from '@/enums/app'
 import {
   useAppSettingsStore,
   usePluginsStore,
@@ -372,10 +373,26 @@ export const generateDnsServerURL = (dnsServer: IDNSServer) => {
 
 const _adaptToStableBranch = (_: Recordable) => {}
 
-export const generateConfig = async (originalProfile: IProfile, adaptToStableCore?: boolean) => {
+type GenerateConfigOptions = {
+  enableStableCompatibility?: boolean
+  enablePluginProcessing?: boolean
+}
+
+export const generateConfig = async (
+  originalProfile: IProfile,
+  options: GenerateConfigOptions = {},
+) => {
+  if (typeof options === 'boolean') {
+    options = { enableStableCompatibility: options }
+  }
+  const appSettings = useAppSettingsStore()
+  const isMainBranch = appSettings.app.kernel.branch === Branch.Main
+
+  const { enableStableCompatibility = isMainBranch, enablePluginProcessing = true } = options
+
   const profile = deepClone(originalProfile)
   // step 1
-  const config: Recordable<any> = {
+  let config: Recordable = {
     log: profile.log,
     experimental: generateExperimental(profile.experimental, profile.outbounds),
     inbounds: generateInbounds(profile.inbounds),
@@ -385,22 +402,22 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
   }
 
   // adapt to stable branch
-  const appSettings = useAppSettingsStore()
-  const isStableBranch = appSettings.app.kernel.branch === 'main'
-  if ((isStableBranch && adaptToStableCore === undefined) || adaptToStableCore) {
+  if (enableStableCompatibility) {
     _adaptToStableBranch(config)
   }
 
   // step 2
-  const pluginsStore = usePluginsStore()
-  const _config = await pluginsStore.onGenerateTrigger(config, originalProfile)
+  if (enablePluginProcessing) {
+    const pluginsStore = usePluginsStore()
+    config = await pluginsStore.onGenerateTrigger(config, originalProfile)
+  }
 
   // step 3
   const { priority, config: mixin } = originalProfile.mixin
   if (priority === 'mixin') {
-    deepAssign(_config, parse(mixin))
+    deepAssign(config, parse(mixin))
   } else if (priority === 'gui') {
-    deepAssign(_config, deepAssign(parse(mixin), _config))
+    deepAssign(config, deepAssign(parse(mixin), config))
   }
 
   // step 4
@@ -408,9 +425,9 @@ export const generateConfig = async (originalProfile: IProfile, adaptToStableCor
     'config',
     `${originalProfile.script.code}; return await onGenerate(config)`,
   )
-  let result
+  let result: Recordable
   try {
-    result = await fn(_config)
+    result = await fn(config)
   } catch (error: any) {
     throw error.message || error
   }

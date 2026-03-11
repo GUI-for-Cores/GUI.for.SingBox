@@ -20,6 +20,7 @@ import { useModal } from '@/components/Modal'
 import type { Menu } from '@/types/app'
 
 const ProfileForm = defineAsyncComponent(() => import('./components/ProfileForm.vue'))
+const ProfileEditor = defineAsyncComponent(() => import('./components/ProfileEditor.vue'))
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
@@ -100,6 +101,14 @@ const secondaryMenusList: Menu[] = [
       } catch (error: any) {
         message.error(error.message || error)
       }
+    },
+  },
+  {
+    label: 'Manual Edit (Beta)',
+    handler: async (id: string) => {
+      const profile = profilesStore.getProfileById(id)!
+      modalApi.setProps({ title: profile.name, width: '90', height: '90' })
+      modalApi.setContent(ProfileEditor, { profile }).open()
     },
   },
 ]
