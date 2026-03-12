@@ -12,27 +12,25 @@ import { deepAssign, sampleID } from './others'
 import { useProfilesStore } from '@/stores'
 
 const supportedRuleTypes = [
-  'inbound',
-  'network',
-  'protocol',
-  'domain',
-  'domain_suffix',
-  'domain_keyword',
-  'domain_regex',
-  'source_ip_cidr',
-  'ip_cidr',
-  'source_port',
-  'source_port_range',
-  'port',
-  'port_range',
-  'process_name',
-  'process_path',
-  'process_path_regex',
-  'rule_set',
-  'ip_is_private',
-  'clash_mode',
-  'outbound',
-  'inline',
+  RouteRuleType.Inbound,
+  RouteRuleType.Network,
+  RouteRuleType.Protocol,
+  RouteRuleType.Domain,
+  RouteRuleType.DomainSuffix,
+  RouteRuleType.DomainKeyword,
+  RouteRuleType.DomainRegex,
+  RouteRuleType.SourceIPCidr,
+  RouteRuleType.IPCidr,
+  RouteRuleType.SourcePort,
+  RouteRuleType.SourcePortRange,
+  RouteRuleType.Port,
+  RouteRuleType.PortRange,
+  RouteRuleType.ProcessName,
+  RouteRuleType.ProcessPath,
+  RouteRuleType.ProcessPathRegex,
+  RouteRuleType.RuleSet,
+  RouteRuleType.IpIsPrivate,
+  RouteRuleType.ClashMode,
 ]
 
 const buildTagIdMapping = (prefix: string, arr?: Recordable[]): Recordable<string> => {
@@ -40,19 +38,31 @@ const buildTagIdMapping = (prefix: string, arr?: Recordable[]): Recordable<strin
   return arr.reduce((p, c, i) => ((p[c.tag] = prefix + i), p), {})
 }
 
-export const restoreProfile = (config: Recordable, name = sampleID()) => {
+type RestoreProfileOptions = {
+  extraOutboundsIds?: Recordable
+}
+
+export const restoreProfile = (
+  config: Recordable,
+  name = sampleID(),
+  options: RestoreProfileOptions = {},
+) => {
   const template = useProfilesStore().getProfileTemplate()
+
+  const { extraOutboundsIds } = options
 
   const InboundsIds = buildTagIdMapping('in-', config.inbounds)
   const OutboundsIds = buildTagIdMapping('out-', config.outbounds)
   const RouteRuleSetIds = buildTagIdMapping('ruleset-', config.route?.rule_set)
   const DnsServersIds = buildTagIdMapping('dns-', config.dns?.servers)
 
+  extraOutboundsIds && deepAssign(OutboundsIds, extraOutboundsIds)
+
   const profile: IProfile = {
     id: sampleID(),
     name,
     log: deepAssign(Defaults.DefaultLog(), config.log),
-    experimental: deepAssign(Defaults.DefaultExperimental(), config.experimental),
+    experimental: restoreExperimental(config.experimental, OutboundsIds),
     inbounds: restoreInbounds(config.inbounds || [], InboundsIds),
     outbounds: restoreOutbounds(config.outbounds || [], OutboundsIds),
     route: {
@@ -68,10 +78,10 @@ export const restoreProfile = (config: Recordable, name = sampleID()) => {
         config.route?.auto_detect_interface ?? template.route.auto_detect_interface,
       find_process: config.route?.find_process ?? template.route.find_process,
       default_interface: config.route?.default_interface ?? template.route.default_interface,
-      final: config.route?.final ?? template.route.final,
+      final: OutboundsIds[config.route?.final] ?? template.route.final,
       default_domain_resolver: {
         server:
-          config.route?.default_domain_resolver?.server ??
+          DnsServersIds[config.route?.default_domain_resolver?.server] ??
           template.route.default_domain_resolver.server,
         client_subnet:
           config.route?.default_domain_resolver?.client_subnet ??
@@ -93,6 +103,14 @@ export const restoreProfile = (config: Recordable, name = sampleID()) => {
   }
 
   return profile
+}
+
+const restoreExperimental = (raw: Recordable, OutboundsIds: Recordable): IExperimental => {
+  const template = Defaults.DefaultExperimental()
+  const experimental = deepAssign(template, raw)
+  experimental.clash_api.external_ui_download_detour =
+    OutboundsIds[template.clash_api.external_ui_download_detour]
+  return experimental
 }
 
 const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): IInbound[] => {
@@ -218,7 +236,13 @@ const restoreRouteRules = (
 
     rule.id = 'rule-' + i
     rule.action = raw.action
-    rule.type = (supportedRuleTypes.find((key) => key in raw) as RuleType) || RouteRuleType.Inline
+
+    const hits = supportedRuleTypes.filter((key) => key in raw)
+    if (hits.length === 1) {
+      rule.type = hits[0] as any
+    } else {
+      rule.type = RouteRuleType.Inline
+    }
 
     if (rule.type === RouteRuleType.Inline) {
       rule.payload = JSON.stringify(
@@ -246,7 +270,7 @@ const restoreRouteRules = (
       rule.outbound = OutboundsIds[raw.outbound]
     } else if (RuleAction.Sniff === raw.action) {
       if ('sniffer' in raw) {
-        rule.sniffer = raw.sniffer
+        rule.sniffer = Array.isArray(raw.sniffer) ? raw.sniffer : [raw.sniffer]
       }
     } else if (RuleAction.Resolve === raw.action) {
       if ('strategy' in raw) {
@@ -351,8 +375,14 @@ const restoreDnsRules = (
     if (!raw.action) return []
     const rule = Defaults.DefaultDnsRule()
     rule.id = 'rule-' + i
-    rule.type = (supportedRuleTypes.find((key) => key in raw) as RuleType) || RouteRuleType.Inline
     rule.action = raw.action
+
+    const hits = supportedRuleTypes.filter((key) => key in raw)
+    if (hits.length === 1) {
+      rule.type = hits[0] as any
+    } else {
+      rule.type = RouteRuleType.Inline
+    }
 
     if (rule.type === RouteRuleType.Inline) {
       rule.payload = JSON.stringify(

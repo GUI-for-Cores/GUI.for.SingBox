@@ -6,6 +6,7 @@ import { generateConfig, message, restoreProfile } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 import { useProfilesStore } from '@/stores'
+import { Outbound } from '@/enums/kernel'
 
 interface Props {
   profile: IProfile
@@ -25,7 +26,18 @@ const handleSubmit = inject('submit') as any
 const handleSave = async () => {
   loading.value = true
   try {
-    const newProfile = restoreProfile(JSON.parse(profileText.value))
+    const outboundsIds = props.profile.outbounds.reduce((p, c) => {
+      if ([Outbound.Selector, Outbound.Urltest].includes(c.type as any)) {
+        c.outbounds.forEach((o) => {
+          p[o.tag] = o.id
+        })
+      }
+      return p
+    }, {} as Recordable)
+    const newProfile = restoreProfile(JSON.parse(profileText.value), props.profile.name, {
+      extraOutboundsIds: outboundsIds,
+    })
+    newProfile.id = props.profile.id
     newProfile.mixin = props.profile.mixin
     newProfile.script = props.profile.script
     await profilesStore.editProfile(props.profile.id, newProfile)
