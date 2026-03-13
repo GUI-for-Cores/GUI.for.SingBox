@@ -50,7 +50,12 @@ const handleSave = async () => {
 }
 
 onMounted(() => {
-  generateConfig(props.profile, { enablePluginProcessing: false }).then((text) => {
+  generateConfig(props.profile, {
+    enableStableConfigCompat: false,
+    enablePluginProcessing: false,
+    enableMixinProcessing: false,
+    enableScriptProcessing: false,
+  }).then((text) => {
     profileText.value = JSON.stringify(text, null, 2)
   })
 })

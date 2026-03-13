@@ -293,22 +293,14 @@ const renderRule = (rule: IRule) => {
       </template>
       <template v-else-if="fields.action === RuleAction.Sniff">
         <div class="form-item">
-          <div>
-            {{ t('kernel.route.rules.sniffer.name') }}
-            <Switch :model-value="fields.sniffer.length === 0" disabled>All</Switch>
-          </div>
-          <div class="flex flex-col gap-4 items-end">
-            <CheckBox
-              v-model="fields.sniffer"
-              :options="RuleSnifferOptions.slice(0, 5)"
-              class="ml-4"
-            />
-            <CheckBox
-              v-model="fields.sniffer"
-              :options="RuleSnifferOptions.slice(5)"
-              class="ml-4"
-            />
-          </div>
+          {{ t('kernel.route.rules.sniffer.name') }}
+          <Select
+            v-model="fields.sniffer"
+            multiple
+            clearable
+            :options="RuleSnifferOptions"
+            placeholder="All"
+          />
         </div>
       </template>
       <template v-else-if="fields.action === RuleAction.Resolve">

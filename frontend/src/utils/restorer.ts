@@ -9,7 +9,7 @@ import {
 } from '@/enums/kernel'
 
 import { deepAssign, sampleID } from './others'
-import { useProfilesStore } from '@/stores'
+import { useProfilesStore, useRulesetsStore } from '@/stores'
 
 const supportedRuleTypes = [
   RouteRuleType.Inbound,
@@ -115,6 +115,7 @@ const restoreExperimental = (raw: Recordable, OutboundsIds: Recordable): IExperi
 
 const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): IInbound[] => {
   return inbounds.flatMap((raw) => {
+    if (![Inbound.Mixed, Inbound.Http, Inbound.Socks, Inbound.Tun].includes(raw.type)) return []
     const inbound: IInbound = {
       id: InboundsIds[raw.tag],
       tag: raw.tag,
@@ -153,19 +154,19 @@ const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): IInbo
 }
 
 const restoreOutbounds = (outbounds: Recordable[], OutboundsIds: Recordable): IOutbound[] => {
-  return outbounds.flatMap((outbound) => {
-    if (![Outbound.Selector, Outbound.Urltest].includes(outbound.type)) {
+  return outbounds.flatMap((raw) => {
+    if (![Outbound.Selector, Outbound.Urltest].includes(raw.type)) {
       return []
     }
-    const extra = Defaults.DefaultOutbound()
-    extra.id = OutboundsIds[outbound.tag]
-    extra.tag = outbound.tag
-    extra.type = outbound.type
-    if ([Outbound.Selector, Outbound.Urltest].includes(outbound.type)) {
-      if ('interrupt_exist_connections' in outbound) {
-        extra.interrupt_exist_connections = outbound.interrupt_exist_connections
+    const outbound = Defaults.DefaultOutbound()
+    outbound.id = OutboundsIds[raw.tag]
+    outbound.tag = raw.tag
+    outbound.type = raw.type
+    if ([Outbound.Selector, Outbound.Urltest].includes(raw.type)) {
+      if ('interrupt_exist_connections' in raw) {
+        outbound.interrupt_exist_connections = raw.interrupt_exist_connections
       }
-      extra.outbounds = outbound.outbounds?.flatMap((tag: string) => {
+      outbound.outbounds = raw.outbounds?.flatMap((tag: string) => {
         if (!OutboundsIds[tag]) return []
         const isBuiltIn = [Outbound.Direct, Outbound.Block].includes(tag as Outbound)
         return {
@@ -175,18 +176,18 @@ const restoreOutbounds = (outbounds: Recordable[], OutboundsIds: Recordable): IO
         }
       })
     }
-    if (Outbound.Urltest === outbound.type) {
-      if ('url' in outbound) {
-        extra.url = outbound.url
+    if (Outbound.Urltest === raw.type) {
+      if ('url' in raw) {
+        outbound.url = raw.url
       }
-      if ('interval' in outbound) {
-        extra.interval = outbound.interval
+      if ('interval' in raw) {
+        outbound.interval = raw.interval
       }
-      if ('tolerance' in outbound) {
-        extra.tolerance = outbound.tolerance
+      if ('tolerance' in raw) {
+        outbound.tolerance = raw.tolerance
       }
     }
-    return extra
+    return outbound
   })
 }
 
@@ -195,6 +196,7 @@ const restoreRouteRuleset = (
   RouteRuleSetIds: Recordable,
   OutboundsIds: Recordable,
 ): IRuleSet[] => {
+  const rulesetsStore = useRulesetsStore()
   return rulesets.flatMap((raw) => {
     const ruleset = Defaults.DefaultRouteRuleset()
     ruleset.id = RouteRuleSetIds[raw.tag]
@@ -207,9 +209,20 @@ const restoreRouteRuleset = (
       }
     } else if (raw.type === RulesetType.Local) {
       if ('path' in raw) {
-        ruleset.path = raw.path
+        const r = rulesetsStore.rulesets.find((v) => v.path === raw.path.replace('../', 'data/'))
+        if (r) {
+          ruleset.path = r.id
+        } else {
+          ruleset.path = raw.path
+        }
+      }
+      if ('format' in raw) {
+        ruleset.format = raw.format
       }
     } else if (raw.type === RulesetType.Remote) {
+      if ('format' in raw) {
+        ruleset.format = raw.format
+      }
       if ('url' in raw) {
         ruleset.url = raw.url
       }
@@ -263,11 +276,26 @@ const restoreRouteRules = (
     } else if (rule.type === RouteRuleType.RuleSet) {
       rule.payload = raw[rule.type].map((tag: string) => RouteRuleSetIds[tag]).join(',')
     } else {
-      rule.payload = raw[rule.type]
+      rule.payload = String(raw[rule.type])
     }
 
     if (RuleAction.Route === raw.action) {
       rule.outbound = OutboundsIds[raw.outbound]
+    } else if (RuleAction.Reject === raw.action) {
+      if ('method' in raw) {
+        rule.outbound = raw.method
+      }
+    } else if (RuleAction.RouteOptions === raw.action) {
+      rule.outbound = JSON.stringify(
+        {
+          ...raw,
+          action: undefined,
+          invert: undefined,
+          ...supportedRuleTypes.reduce((p, c) => ((p[c] = undefined), p), {} as Recordable),
+        },
+        null,
+        2,
+      )
     } else if (RuleAction.Sniff === raw.action) {
       if ('sniffer' in raw) {
         rule.sniffer = Array.isArray(raw.sniffer) ? raw.sniffer : [raw.sniffer]
@@ -343,10 +371,12 @@ const restoreDnsServers = (
         server.hosts_path = raw.path
       }
       if ('predefined' in raw) {
-        server.predefined = Object.entries<string[] | string>(raw.predefined).map(
-          ([key, value]) => ({
-            [key]: Array.isArray(value) ? value.join(',') : value,
-          }),
+        server.predefined = Object.entries<string[] | string>(raw.predefined).reduce(
+          (p, [key, value]) => {
+            p[key] = Array.isArray(value) ? value.join(',') : value
+            return p
+          },
+          {} as Recordable,
         )
       }
     } else if (DnsServer.Dhcp === server.type) {
@@ -413,6 +443,22 @@ const restoreDnsRules = (
       if ('strategy' in raw) {
         rule.strategy = raw.strategy
       }
+    } else if (RuleAction.Reject === raw.action) {
+      if ('method' in raw) {
+        rule.server = raw.method
+      }
+    } else if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(raw.action)) {
+      rule.server = JSON.stringify(
+        {
+          ...raw,
+          action: undefined,
+          invert: undefined,
+          disable_cache: undefined,
+          ...supportedRuleTypes.reduce((p, c) => ((p[c] = undefined), p), {} as Recordable),
+        },
+        null,
+        2,
+      )
     }
     if ([RuleAction.Route, RuleAction.RouteOptions].includes(raw.action)) {
       if ('disable_cache' in raw) {

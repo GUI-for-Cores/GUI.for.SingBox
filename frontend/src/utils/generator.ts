@@ -374,8 +374,10 @@ export const generateDnsServerURL = (dnsServer: IDNSServer) => {
 const _adaptToStableBranch = (_: Recordable) => {}
 
 type GenerateConfigOptions = {
-  enableStableCompatibility?: boolean
+  enableStableConfigCompat?: boolean
   enablePluginProcessing?: boolean
+  enableMixinProcessing?: boolean
+  enableScriptProcessing?: boolean
 }
 
 export const generateConfig = async (
@@ -383,12 +385,17 @@ export const generateConfig = async (
   options: GenerateConfigOptions = {},
 ) => {
   if (typeof options === 'boolean') {
-    options = { enableStableCompatibility: options }
+    options = { enableStableConfigCompat: options }
   }
   const appSettings = useAppSettingsStore()
   const isMainBranch = appSettings.app.kernel.branch === Branch.Main
 
-  const { enableStableCompatibility = isMainBranch, enablePluginProcessing = true } = options
+  const {
+    enableStableConfigCompat = isMainBranch,
+    enablePluginProcessing = true,
+    enableMixinProcessing = true,
+    enableScriptProcessing = true,
+  } = options
 
   const profile = deepClone(originalProfile)
   // step 1
@@ -402,7 +409,7 @@ export const generateConfig = async (
   }
 
   // adapt to stable branch
-  if (enableStableCompatibility) {
+  if (enableStableConfigCompat) {
     _adaptToStableBranch(config)
   }
 
@@ -413,30 +420,33 @@ export const generateConfig = async (
   }
 
   // step 3
-  const { priority, config: mixin } = originalProfile.mixin
-  if (priority === 'mixin') {
-    deepAssign(config, parse(mixin))
-  } else if (priority === 'gui') {
-    deepAssign(config, deepAssign(parse(mixin), config))
+  if (enableMixinProcessing) {
+    const { priority, config: mixin } = originalProfile.mixin
+    if (priority === 'mixin') {
+      deepAssign(config, parse(mixin))
+    } else if (priority === 'gui') {
+      deepAssign(config, deepAssign(parse(mixin), config))
+    }
   }
 
   // step 4
-  const fn = new window.AsyncFunction(
-    'config',
-    `${originalProfile.script.code}; return await onGenerate(config)`,
-  )
-  let result: Recordable
-  try {
-    result = await fn(config)
-  } catch (error: any) {
-    throw error.message || error
+  if (enableScriptProcessing) {
+    const fn = new window.AsyncFunction(
+      'config',
+      `${originalProfile.script.code}; return await onGenerate(config)`,
+    )
+    try {
+      config = await fn(config)
+    } catch (error: any) {
+      throw error.message || error
+    }
+
+    if (typeof config !== 'object') {
+      throw 'Wrong result'
+    }
   }
 
-  if (typeof result !== 'object') {
-    throw 'Wrong result'
-  }
-
-  return result
+  return config
 }
 
 export const generateConfigFile = async (
