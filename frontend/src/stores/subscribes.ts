@@ -184,7 +184,10 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       return { id, tag, type }
     })
 
-    await WriteFile(s.path, JSON.stringify(_proxies, null, 2))
+    if (s.type === 'Http' || (s.type === 'File' && s.url !== s.path)) {
+      proxies = omitArray(_proxies, ['__id__', '__tmp__id__'])
+      await WriteFile(s.path, JSON.stringify(proxies, null, 2))
+    }
   }
 
   const updateSubscribe = async (id: string) => {
