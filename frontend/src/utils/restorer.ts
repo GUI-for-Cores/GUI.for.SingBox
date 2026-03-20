@@ -248,7 +248,7 @@ const restoreRouteRules = (
     const rule = Defaults.DefaultRouteRule()
 
     rule.id = 'rule-' + i
-    rule.action = raw.action
+    rule.action = raw.action || RuleAction.Route
 
     const hits = supportedRuleTypes.filter((key) => key in raw)
     if (hits.length === 1) {
@@ -402,10 +402,9 @@ const restoreDnsRules = (
   DnsServersIds: Recordable,
 ): IDNSRule[] => {
   return rules.flatMap((raw: Recordable, i) => {
-    if (!raw.action) return []
     const rule = Defaults.DefaultDnsRule()
     rule.id = 'rule-' + i
-    rule.action = raw.action
+    rule.action = raw.action || RuleAction.Route
 
     const hits = supportedRuleTypes.filter((key) => key in raw)
     if (hits.length === 1) {
