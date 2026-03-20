@@ -300,7 +300,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
 
     destroyWebsocket()
 
-    if (appSettingsStore.app.autoSetSystemProxy) {
+    await envStore.updateSystemProxyStatus()
+    if (envStore.systemProxy) {
       await envStore.clearSystemProxy()
     }
     await pluginsStore.onCoreStoppedTrigger()

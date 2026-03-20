@@ -641,7 +641,7 @@ export default {
     needAdmin: '需要管理员权限',
     exitOnClose: '关闭窗口时退出程序',
     closeKernelOnExit: '程序退出时关闭核心',
-    autoSetSystemProxy: '自动配置/清除系统代理',
+    autoSetSystemProxy: '自动配置系统代理',
     proxyBypassList: '不使用代理的地址',
     proxyBypassListTips: '分号分隔',
     autoStartKernel: '程序启动时开启核心',
