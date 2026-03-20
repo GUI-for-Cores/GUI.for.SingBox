@@ -31,7 +31,7 @@ import {
 } from '@/utils'
 
 const StableUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases/latest'
-const AlphaUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases?per_page=2'
+const AlphaUrl = 'https://api.github.com/repos/SagerNet/sing-box/releases?per_page=3'
 
 const StablePage = 'https://github.com/SagerNet/sing-box/releases/latest'
 const AlphaPage = 'https://github.com/SagerNet/sing-box/releases'
