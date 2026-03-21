@@ -85,7 +85,7 @@ export const useAppStore = defineStore('app', () => {
   ) => {
     if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
     const _actions = Array.isArray(actions) ? actions : [actions]
-    _actions.forEach((action) => (action.id = sampleID()))
+    _actions.forEach((action) => !action.id && (action.id = sampleID()))
     customActions.value[target].push(..._actions)
     const remove = () => {
       customActions.value[target] = customActions.value[target].filter(
