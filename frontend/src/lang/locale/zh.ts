@@ -472,6 +472,7 @@ export default {
     outbounds: '出站',
     dnsServers: 'DNS服务器',
     dnsRules: 'DNS规则',
+    editSourceFile: '编辑配置(源文件)',
   },
   ruleset: {
     manual: '手动管理',

@@ -473,6 +473,7 @@ export default {
     outbounds: 'Outbounds',
     dnsServers: 'DNS Servers',
     dnsRules: 'DNS Rules',
+    editSourceFile: 'Edit Configuration (Source File)',
   },
   ruleset: {
     manual: 'MANUAL',

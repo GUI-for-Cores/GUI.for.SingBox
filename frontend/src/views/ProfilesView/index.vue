@@ -104,7 +104,7 @@ const secondaryMenusList: Menu[] = [
     },
   },
   {
-    label: 'Manual Edit (Beta)',
+    label: 'profiles.editSourceFile',
     handler: async (id: string) => {
       const profile = profilesStore.getProfileById(id)!
       modalApi.setProps({ title: profile.name, width: '90', height: '90' })

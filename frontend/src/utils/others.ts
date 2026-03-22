@@ -338,6 +338,16 @@ export const stringifyNoFolding = (content: any) => {
   return stringify(content, { lineWidth: 0, minContentWidth: 0 })
 }
 
+export const createTextMatcher = (include: string, exclude: string) => {
+  const includeRegex = include ? buildSmartRegExp(include) : null
+  const excludeRegex = exclude ? buildSmartRegExp(exclude) : null
+  return (text: string) => {
+    const flag1 = includeRegex ? includeRegex.test(text) : true
+    const flag2 = excludeRegex ? excludeRegex.test(text) : false
+    return flag1 && !flag2
+  }
+}
+
 const regexCache = new Map<string, RegExp>()
 
 export const buildSmartRegExp = (pattern: string, flags = '') => {

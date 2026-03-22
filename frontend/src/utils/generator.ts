@@ -19,7 +19,7 @@ import {
   useRulesetsStore,
   useSubscribesStore,
 } from '@/stores'
-import { deepAssign, deepClone, APP_TITLE, buildSmartRegExp } from '@/utils'
+import { deepAssign, deepClone, APP_TITLE, createTextMatcher } from '@/utils'
 
 const _generateRule = (rule: IRule | IDNSRule, rule_set: IRuleSet[], inbounds: IInbound[]) => {
   const getInbound = (id: string) => inbounds.find((v) => v.id === id)?.tag
@@ -98,16 +98,6 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
   const proxiesSet = new Set<any>()
   const builtInProxiesSet = new Set<string>()
 
-  const createTagMatcher = (include: string, exclude: string) => {
-    const includeRegex = include ? buildSmartRegExp(include) : null
-    const excludeRegex = exclude ? buildSmartRegExp(exclude) : null
-    return (tag: string) => {
-      const flag1 = includeRegex ? includeRegex.test(tag) : true
-      const flag2 = excludeRegex ? excludeRegex.test(tag) : false
-      return flag1 && !flag2
-    }
-  }
-
   const subscribesStore = useSubscribesStore()
 
   for (const outbound of outbounds) {
@@ -123,7 +113,7 @@ const generateOutbounds = async (outbounds: IOutbound[]) => {
     if (outbound.type === Outbound.Selector || outbound.type === Outbound.Urltest) {
       _outbound.interrupt_exist_connections = outbound.interrupt_exist_connections
       _outbound.outbounds = []
-      const isTagMatching = createTagMatcher(outbound.include, outbound.exclude)
+      const isTagMatching = createTextMatcher(outbound.include, outbound.exclude)
       for (const proxy of outbound.outbounds) {
         if (proxy.type === 'Built-in') {
           if ([Outbound.Direct, Outbound.Block].includes(proxy.id as Outbound)) {
