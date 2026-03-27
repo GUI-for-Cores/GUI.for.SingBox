@@ -186,9 +186,7 @@ export const getGitHubApiAuthorization = () => {
 }
 
 // System ScheduledTask Helper
-export const getTaskSchXmlString = async (delay = 30) => {
-  const { appPath } = useEnvStore().env
-
+export const getTaskSchXmlString = (appPath: string, delay = 30) => {
   const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
@@ -234,7 +232,6 @@ export const getTaskSchXmlString = async (delay = 30) => {
   </Actions>
 </Task>
 `
-
   return xml
 }
 

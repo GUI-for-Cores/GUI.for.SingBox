@@ -1,27 +1,25 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import { WriteFile, RemoveFile, AbsolutePath, ExitApp } from '@/bridge'
+import { ExitApp } from '@/bridge'
 import { WebviewGpuPolicyOptions, WindowStateOptions } from '@/constant/app'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import {
-  APP_TITLE,
-  getTaskSchXmlString,
   confirm,
   message,
-  QuerySchTask,
-  CreateSchTask,
-  DeleteSchTask,
   CheckPermissions,
   SwitchPermissions,
   RunWithPowerShell,
+  IsAutoStartEnabled,
+  EnableAutoStart,
+  DisableAutoStart,
 } from '@/utils'
 
 const appSettings = useAppSettingsStore()
 const envStore = useEnvStore()
 
 const isAdmin = ref(false)
-const isTaskScheduled = ref(false)
+const isAutoStart = ref(false)
 
 const restartApp = async (admin = false) => {
   if (admin) {
@@ -46,14 +44,11 @@ const onPermChange = async (v: boolean) => {
 }
 
 const onTaskSchChange = async (v: boolean) => {
-  isTaskScheduled.value = !v
+  isAutoStart.value = !v
+
   try {
-    if (v) {
-      await createSchTask(appSettings.app.startupDelay)
-    } else {
-      await DeleteSchTask(APP_TITLE)
-    }
-    isTaskScheduled.value = v
+    await (v ? EnableAutoStart(appSettings.app.startupDelay) : DisableAutoStart())
+    isAutoStart.value = v
   } catch (error: any) {
     console.error(error)
     message.error(error)
@@ -63,7 +58,7 @@ const onTaskSchChange = async (v: boolean) => {
 const onStartupDelayChange = async (delay: number) => {
   if (appSettings.app.startupDelay !== delay) {
     try {
-      await createSchTask(delay)
+      await EnableAutoStart(delay)
       appSettings.app.startupDelay = delay
     } catch (error: any) {
       console.error(error)
@@ -72,26 +67,11 @@ const onStartupDelayChange = async (delay: number) => {
   }
 }
 
-const checkSchtask = async () => {
-  try {
-    await QuerySchTask(APP_TITLE)
-    isTaskScheduled.value = true
-  } catch {
-    isTaskScheduled.value = false
-  }
-}
-
-const createSchTask = async (delay = 30) => {
-  const xmlPath = 'data/.cache/tasksch.xml'
-  const xmlContent = await getTaskSchXmlString(delay)
-  await WriteFile(xmlPath, xmlContent)
-  await CreateSchTask(APP_TITLE, await AbsolutePath(xmlPath))
-  await RemoveFile(xmlPath)
-}
+IsAutoStartEnabled().then((res) => {
+  isAutoStart.value = res
+})
 
 if (envStore.env.os === 'windows') {
-  checkSchtask()
-
   CheckPermissions().then((admin) => {
     isAdmin.value = admin
   })
@@ -119,23 +99,25 @@ if (envStore.env.os === 'windows') {
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
     </div>
-    <div v-platform="['windows']" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="['windows', 'darwin']" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
-        <span class="font-normal text-12">({{ $t('settings.needAdmin') }})</span>
+        <span v-platform="['windows']" class="font-normal text-12">
+          ({{ $t('settings.needAdmin') }})
+        </span>
       </div>
       <div class="flex items-center">
         <Radio
-          v-if="isTaskScheduled"
+          v-if="isAutoStart"
           v-model="appSettings.app.windowStartState"
           :options="WindowStateOptions"
           type="number"
         />
-        <Switch v-model="isTaskScheduled" class="ml-16" @change="onTaskSchChange" />
+        <Switch v-model="isAutoStart" class="ml-16" @change="onTaskSchChange" />
       </div>
     </div>
     <div
-      v-if="isTaskScheduled"
+      v-if="isAutoStart"
       v-platform="['windows']"
       class="px-8 py-12 flex items-center justify-between"
     >

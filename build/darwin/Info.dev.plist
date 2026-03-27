@@ -63,6 +63,18 @@
         <dict>
             <key>NSAllowsLocalNetworking</key>
             <true/>
+            <key>NSExceptionDomains</key>
+            <dict>
+                <key>wails.localhost</key>
+                <dict>
+                    <key>NSIncludesSubdomains</key>
+                    <true/>
+                    <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                    <true/>
+                    <key>NSExceptionRequiresForwardSecrecy</key>
+                    <false/>
+                </dict>
+            </dict>
         </dict>
     </dict>
 </plist>

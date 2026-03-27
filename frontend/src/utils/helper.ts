@@ -12,7 +12,7 @@ import {
   usePluginsStore,
   useRulesetsStore,
 } from '@/stores'
-import { ignoredError, message, confirm } from '@/utils'
+import { ignoredError, message, confirm, APP_TITLE, getTaskSchXmlString } from '@/utils'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -351,25 +351,33 @@ export const GetSystemProxy = async () => {
   const { os } = useEnvStore().env
   try {
     if (os === 'windows') {
-      const out1 = await Exec('reg', [
-        'query',
-        'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
-        '/v',
-        'ProxyEnable',
-        '/t',
-        'REG_DWORD',
-      ])
+      const out1 = await Exec(
+        'reg',
+        [
+          'query',
+          'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
+          '/v',
+          'ProxyEnable',
+          '/t',
+          'REG_DWORD',
+        ],
+        { Convert: true },
+      )
 
       if (/REG_DWORD\s+0x0/.test(out1)) return ''
 
-      const out2 = await Exec('reg', [
-        'query',
-        'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
-        '/v',
-        'ProxyServer',
-        '/t',
-        'REG_SZ',
-      ])
+      const out2 = await Exec(
+        'reg',
+        [
+          'query',
+          'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings',
+          '/v',
+          'ProxyServer',
+          '/t',
+          'REG_SZ',
+        ],
+        { Convert: true },
+      )
 
       const regex = /ProxyServer\s+REG_SZ\s+(\S+)/
       const match = out2.match(regex)
@@ -553,21 +561,62 @@ export const GetSystemOrKernelProxy = async () => {
   return proxy_cache.proxyPromise
 }
 
-export const QuerySchTask = async (taskName: string) => {
-  await Exec('Schtasks', ['/Query', '/TN', taskName, '/XML'], { Convert: true })
+// Auto-start
+export const IsAutoStartEnabled = async () => {
+  const { os } = useEnvStore().env
+  let isAutoStart = false
+  if (os === 'windows') {
+    isAutoStart = await Exec('Schtasks', ['/Query', '/TN', APP_TITLE, '/XML'], { Convert: true })
+      .then(() => true)
+      .catch(() => false)
+  } else if (os === 'darwin') {
+    isAutoStart = await Exec('osascript', [
+      '-e',
+      `tell application "System Events" to get exists login item "${APP_TITLE}"`,
+    ])
+      .then((res) => res.includes('true'))
+      .catch(() => false)
+  } else if (os === 'linux') {
+    // TODO
+  }
+  return isAutoStart
 }
 
-export const CreateSchTask = async (taskName: string, xmlPath: string) => {
-  const fn = useEnvStore().env.isPrivileged ? Exec : RunWithPowerShell
-  await fn('SchTasks', ['/Create', '/F', '/TN', taskName, '/XML', xmlPath], {
-    admin: true,
-    hidden: true,
-  })
+export const EnableAutoStart = async (delay = 10) => {
+  const { os, appPath, basePath, isPrivileged } = useEnvStore().env
+  if (os === 'windows') {
+    const xmlPath = await AbsolutePath('data/.cache/tasksch.xml')
+    const xmlContent = getTaskSchXmlString(appPath, delay)
+    await WriteFile(xmlPath, xmlContent)
+    const fn = isPrivileged ? Exec : RunWithPowerShell
+    await fn('SchTasks', ['/Create', '/F', '/TN', APP_TITLE, '/XML', xmlPath], {
+      admin: true,
+      hidden: true,
+    })
+  } else if (os === 'darwin') {
+    const path = basePath.replace('/Contents/MacOS', '')
+    await Exec('osascript', [
+      '-e',
+      `tell application "System Events" to make login item at end with properties {name:"${APP_TITLE}", path:"${path}"}`,
+    ])
+  } else if (os === 'linux') {
+    // TODO
+  }
 }
 
-export const DeleteSchTask = async (taskName: string) => {
-  const fn = useEnvStore().env.isPrivileged ? Exec : RunWithPowerShell
-  await fn('SchTasks', ['/Delete', '/F', '/TN', taskName], { admin: true, hidden: true })
+export const DisableAutoStart = async () => {
+  const { os, isPrivileged } = useEnvStore().env
+  if (os === 'windows') {
+    const fn = isPrivileged ? Exec : RunWithPowerShell
+    await fn('SchTasks', ['/Delete', '/F', '/TN', APP_TITLE], { admin: true, hidden: true })
+  } else if (os === 'darwin') {
+    await Exec('osascript', [
+      '-e',
+      `tell application "System Events" to delete login item "${APP_TITLE}"`,
+    ])
+  } else if (os === 'linux') {
+    // TODO
+  }
 }
 
 // Others
