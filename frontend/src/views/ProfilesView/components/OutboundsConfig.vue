@@ -198,7 +198,8 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
   <div v-draggable="[model, DraggableOptions]">
     <Card v-for="(outbound, index) in model" :key="outbound.id" class="mb-2">
       <div class="flex items-center py-2">
-        <div class="font-bold" style="min-width: 90px">
+        <div class="font-bold flex items-center" style="min-width: 90px">
+          <img v-if="outbound.icon" :src="outbound.icon" class="w-18 h-18 mr-4" />
           <span
             v-if="hasLost(outbound)"
             class="cursor-pointer"
@@ -279,6 +280,13 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
       <div class="form-item">
         {{ t('kernel.outbounds.exclude') }}
         <Input v-model="fields.exclude" placeholder="keywords1|keywords2" />
+      </div>
+      <div class="form-item">
+        <div class="flex items-center gap-8">
+          {{ t('kernel.outbounds.icon') }}
+          <img v-if="fields.icon" :src="fields.icon" class="w-18 h-18" />
+        </div>
+        <Input v-model="fields.icon" clearable placeholder="https://" />
       </div>
     </template>
     <template v-if="Outbound.Direct === fields.type || Outbound.Block === fields.type">

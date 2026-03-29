@@ -13,7 +13,7 @@ import {
 } from '@/constant/app'
 import { ControllerCloseMode } from '@/enums/app'
 import { useBool } from '@/hooks'
-import { useAppSettingsStore, useKernelApiStore } from '@/stores'
+import { useAppSettingsStore, useKernelApiStore, useProfilesStore } from '@/stores'
 import {
   ignoredError,
   sleep,
@@ -33,9 +33,14 @@ const { t } = useI18n()
 const [showMoreSettings, toggleMoreSettings] = useBool(false)
 const appSettings = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
+const profilesStore = useProfilesStore()
 
 const groups = computed(() => {
   const { proxies } = kernelApiStore
+  const iconMapping = (profilesStore.currentProfile?.outbounds || []).reduce((p, c) => {
+    p[c.tag] = c.icon
+    return p
+  }, {} as Recordable<string>)
   return Object.values(proxies)
     .filter((v) => ['Selector', 'URLTest'].includes(v.type) && v.name !== 'GLOBAL')
     .concat(proxies.GLOBAL || [])
@@ -71,7 +76,7 @@ const groups = computed(() => {
         tmp.now && chains.push(tmp.now)
         tmp = proxies[tmp.now]
       }
-      return { ...group, all, chains }
+      return { ...group, all, chains, icon: iconMapping[group.name] }
     })
 })
 
@@ -241,6 +246,7 @@ onActivated(() => {
       @click="toggleExpanded(group.name)"
     >
       <div class="text-14 flex items-center gap-2 text-nowrap overflow-hidden">
+        <img v-if="group.icon" :src="group.icon" class="w-24 h-24 mr-4" draggable="false" />
         <span class="font-bold text-18">{{ group.name }}</span>
         <span class="mx-8">
           {{ group.type }}

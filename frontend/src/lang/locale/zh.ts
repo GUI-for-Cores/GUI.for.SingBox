@@ -141,6 +141,7 @@ export default {
       subscriptions: '订阅',
       include: '包含',
       exclude: '排除',
+      icon: '图标',
     },
     route: {
       tab: {

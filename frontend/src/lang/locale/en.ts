@@ -141,6 +141,7 @@ export default {
       subscriptions: 'Subscriptions',
       include: 'Include',
       exclude: 'Exclude',
+      icon: 'Icon',
     },
     route: {
       tab: {
