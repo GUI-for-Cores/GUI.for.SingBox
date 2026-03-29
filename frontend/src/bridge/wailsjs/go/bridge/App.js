@@ -34,8 +34,8 @@ export function FileExists(arg1) {
   return window['go']['bridge']['App']['FileExists'](arg1);
 }
 
-export function GetEnv() {
-  return window['go']['bridge']['App']['GetEnv']();
+export function GetEnv(arg1) {
+  return window['go']['bridge']['App']['GetEnv'](arg1);
 }
 
 export function GetInterfaces() {

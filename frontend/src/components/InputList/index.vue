@@ -20,7 +20,7 @@ interface Item {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
   placeholder: '',
-  autofocus: true,
+  autofocus: false,
 })
 
 const emit = defineEmits(['change', 'update:modelValue'])

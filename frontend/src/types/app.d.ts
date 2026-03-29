@@ -14,6 +14,16 @@ import type {
   RequestMethod,
 } from '@/enums/app'
 
+export interface AppEnv {
+  appName: string
+  appVersion: string
+  basePath: string
+  appPath: string
+  os: string
+  arch: string
+  isPrivileged: boolean
+}
+
 export interface TrayContent {
   icon?: string
   title?: string

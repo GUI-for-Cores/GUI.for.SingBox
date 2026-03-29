@@ -18,7 +18,7 @@ export function ExitApp():Promise<void>;
 
 export function FileExists(arg1:string):Promise<bridge.FlagResult>;
 
-export function GetEnv():Promise<bridge.EnvResult>;
+export function GetEnv(arg1:string):Promise<any>;
 
 export function GetInterfaces():Promise<bridge.FlagResult>;
 
