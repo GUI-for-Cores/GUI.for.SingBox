@@ -270,9 +270,13 @@ subscribesStore.subscribes.forEach(async ({ id, name, proxies }) => {
     </div>
     <template v-if="Outbound.Selector === fields.type || Outbound.Urltest === fields.type">
       <div class="form-item">
+        {{ t('kernel.outbounds.hidden') }}
+        <Switch v-model="fields.hidden" />
+      </div>
+      <!-- <div class="form-item">
         {{ t('kernel.outbounds.interrupt_exist_connections') }}
         <Switch v-model="fields.interrupt_exist_connections" />
-      </div>
+      </div> -->
       <div class="form-item">
         {{ t('kernel.outbounds.include') }}
         <Input v-model="fields.include" placeholder="keywords1|keywords2" />

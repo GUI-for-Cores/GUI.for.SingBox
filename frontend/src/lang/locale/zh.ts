@@ -142,6 +142,7 @@ export default {
       include: '包含',
       exclude: '排除',
       icon: '图标',
+      hidden: '隐藏',
     },
     route: {
       tab: {

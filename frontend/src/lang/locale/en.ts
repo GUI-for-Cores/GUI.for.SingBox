@@ -142,6 +142,7 @@ export default {
       include: 'Include',
       exclude: 'Exclude',
       icon: 'Icon',
+      hidden: 'Hidden',
     },
     route: {
       tab: {

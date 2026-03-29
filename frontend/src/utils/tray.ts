@@ -15,6 +15,7 @@ import {
   useEnvStore,
   usePluginsStore,
   useAppStore,
+  useProfilesStore,
 } from '@/stores'
 import {
   debounce,
@@ -81,6 +82,7 @@ const getTrayMenus = () => {
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
   const pluginsStore = usePluginsStore()
+  const profilesStore = useProfilesStore()
 
   let pluginMenus: MenuItem[] = []
   let pluginMenusHidden = !appSettings.app.addPluginToMenu
@@ -91,8 +93,16 @@ const getTrayMenus = () => {
   if (!groupMenusHidden) {
     const { proxies } = kernelApiStore
     if (!proxies) return []
+    const hiddenList = (profilesStore.currentProfile?.outbounds || []).flatMap((v) =>
+      v.hidden ? v.tag : [],
+    )
     groupMenus = Object.values(proxies)
-      .filter((v) => ['Selector', 'URLTest'].includes(v.type) && v.name !== 'GLOBAL')
+      .filter(
+        (v) =>
+          ['Selector', 'URLTest'].includes(v.type) &&
+          v.name !== 'GLOBAL' &&
+          !hiddenList.includes(v.name),
+      )
       .concat(proxies.GLOBAL || [])
       .map((group) => {
         const all = (group.all || [])

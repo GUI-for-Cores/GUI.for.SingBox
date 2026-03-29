@@ -108,6 +108,7 @@ interface IOutbound {
   include: string
   exclude: string
   icon: string
+  hidden: boolean
 }
 
 type RuleType =
