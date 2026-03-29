@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { RemoveFile, WriteFile, OpenURI } from '@/bridge'
@@ -14,9 +14,9 @@ import { useModal } from '@/components/Modal'
 
 import type { Menu } from '@/types/app'
 
-const RulesetForm = defineAsyncComponent(() => import('./components/RulesetForm.vue'))
-const RulesetHub = defineAsyncComponent(() => import('./components/RulesetHub.vue'))
-const RulesetView = defineAsyncComponent(() => import('./components/RulesetView.vue'))
+import RulesetForm from './components/RulesetForm.vue'
+import RulesetHub from './components/RulesetHub.vue'
+import RulesetView from './components/RulesetView.vue'
 
 const sourceMenuList: Menu[] = [
   {

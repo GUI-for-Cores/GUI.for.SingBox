@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
 import { OpenURI } from '@/bridge'
@@ -13,11 +13,11 @@ import { useModal } from '@/components/Modal'
 
 import type { Menu, Plugin } from '@/types/app'
 
-const PluginChangelog = defineAsyncComponent(() => import('./components/PluginChangelog.vue'))
-const PluginConfigurator = defineAsyncComponent(() => import('./components/PluginConfigurator.vue'))
-const PluginForm = defineAsyncComponent(() => import('./components/PluginForm.vue'))
-const PluginHub = defineAsyncComponent(() => import('./components/PluginHub.vue'))
-const PluginView = defineAsyncComponent(() => import('./components/PluginView.vue'))
+import PluginChangelog from './components/PluginChangelog.vue'
+import PluginConfigurator from './components/PluginConfigurator.vue'
+import PluginForm from './components/PluginForm.vue'
+import PluginHub from './components/PluginHub.vue'
+import PluginView from './components/PluginView.vue'
 
 const menuList: Menu[] = [
   {

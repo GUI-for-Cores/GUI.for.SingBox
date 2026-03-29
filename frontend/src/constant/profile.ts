@@ -20,7 +20,7 @@ const { t } = i18n.global
 
 const DefaultOutboundIds = {
   Select: 'outbound-select',
-  Urltest: 'outbound-urlte',
+  Urltest: 'outbound-urltest',
   Direct: 'outbound-direct',
   Block: 'outbound-block',
   Fallback: 'outbound-fallback',

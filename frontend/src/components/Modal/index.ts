@@ -1,4 +1,12 @@
-import { ref, defineComponent, h, computed, type VNode, type ComponentPublicInstance } from 'vue'
+import {
+  ref,
+  defineComponent,
+  h,
+  computed,
+  type VNode,
+  type ComponentPublicInstance,
+  type Component,
+} from 'vue'
 
 import Modal from './index.vue'
 
@@ -24,7 +32,7 @@ export const useModal = (options: Partial<ModalProps>, contents: ModalSlots = {}
         open: open.value,
         'onUpdate:open': (val: boolean) => (open.value = val),
       }))
-      return () => h(Modal, mergedProps.value, { ...slots.value, ...ctx.slots })
+      return () => h(Modal as Component, mergedProps.value, { ...slots.value, ...ctx.slots })
     },
   })
 

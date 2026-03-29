@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, computed, useTemplateRef, type Ref, h, defineAsyncComponent } from 'vue'
+import { ref, inject, computed, useTemplateRef, type Ref, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useProfilesStore } from '@/stores'
@@ -29,12 +29,12 @@ const props = withDefaults(defineProps<Props>(), {
   step: Step.Name,
 })
 
-const DnsConfig = defineAsyncComponent(() => import('./DnsConfig.vue'))
-const GeneralConfig = defineAsyncComponent(() => import('./GeneralConfig.vue'))
-const InboundsConfig = defineAsyncComponent(() => import('./InboundsConfig.vue'))
-const MixinAndScript = defineAsyncComponent(() => import('./MixinAndScriptConfig.vue'))
-const OutboundsConfig = defineAsyncComponent(() => import('./OutboundsConfig.vue'))
-const RouteConfig = defineAsyncComponent(() => import('./RouteConfig.vue'))
+import DnsConfig from './DnsConfig.vue'
+import GeneralConfig from './GeneralConfig.vue'
+import InboundsConfig from './InboundsConfig.vue'
+import MixinAndScript from './MixinAndScriptConfig.vue'
+import OutboundsConfig from './OutboundsConfig.vue'
+import RouteConfig from './RouteConfig.vue'
 
 const { t } = useI18n()
 const inboundsRef = useTemplateRef('inboundsRef')
