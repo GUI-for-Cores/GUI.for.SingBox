@@ -32,8 +32,6 @@ export function MakeDir(arg1:string):Promise<bridge.FlagResult>;
 
 export function MoveFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
-export function Notify(arg1:string,arg2:string,arg3:string,arg4:bridge.NotifyOptions):Promise<bridge.FlagResult>;
-
 export function OpenDir(arg1:string):Promise<bridge.FlagResult>;
 
 export function OpenMMDB(arg1:string,arg2:string):Promise<bridge.FlagResult>;

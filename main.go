@@ -81,11 +81,13 @@ func main() {
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
+			runtime.InitializeNotifications(ctx)
 			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
 			if !bridge.Env.PreventExit {
 				trayEnd()
+				runtime.CleanupNotifications(ctx)
 				return false
 			}
 			runtime.EventsEmit(ctx, "onBeforeExitApp")

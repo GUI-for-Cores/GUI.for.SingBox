@@ -15,6 +15,7 @@ import { alert, deepClone, formatDate, isValidCron, message, sampleID } from '@/
 import Button from '@/components/Button/index.vue'
 
 import type { ScheduledTask } from '@/types/app'
+import { IsNotificationAvailable, RequestNotificationAuthorization } from '@/bridge'
 
 interface Props {
   id?: string
@@ -117,6 +118,20 @@ const handleViewNextRuns = () => {
   alert('Next Run Time', list.join('\n'))
 }
 
+const onNotificationChange = async (v: boolean) => {
+  if (v) {
+    try {
+      if (!(await IsNotificationAvailable())) {
+        throw 'Notifications not available on this platform'
+      }
+      await RequestNotificationAuthorization()
+    } catch (error: any) {
+      task.value.notification = false
+      message.warn(error)
+    }
+  }
+}
+
 if (props.id) {
   const s = scheduledTasksStore.getScheduledTaskById(props.id)
   if (s) {
@@ -181,7 +196,7 @@ defineExpose({ modalSlots })
     </div>
     <div class="form-item">
       {{ t('scheduledtask.notification') }}
-      <Switch v-model="task.notification" />
+      <Switch v-model="task.notification" @change="onNotificationChange" />
     </div>
 
     <div v-if="task.type === ScheduledTasksType.UpdateSubscription">
