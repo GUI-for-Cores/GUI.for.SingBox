@@ -14,6 +14,7 @@ import {
   EnableAutoStart,
   DisableAutoStart,
 } from '@/utils'
+import { OS } from '@/enums/app'
 
 const appSettings = useAppSettingsStore()
 const envStore = useEnvStore()
@@ -71,7 +72,7 @@ IsAutoStartEnabled().then((res) => {
   isAutoStart.value = res
 })
 
-if (envStore.env.os === 'windows') {
+if (envStore.env.os === OS.Windows) {
   CheckPermissions().then((admin) => {
     isAdmin.value = admin
   })
@@ -82,7 +83,7 @@ if (envStore.env.os === 'windows') {
   <div class="px-8 py-12 text-18 font-bold">{{ $t('settings.behavior') }}</div>
 
   <Card>
-    <div v-platform="['windows']" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="[OS.Windows]" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.admin') }}
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>
@@ -99,10 +100,10 @@ if (envStore.env.os === 'windows') {
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
     </div>
-    <div v-platform="['windows', 'darwin']" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="[OS.Windows, OS.Darwin]" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
-        <span v-platform="['windows']" class="font-normal text-12">
+        <span v-platform="[OS.Windows]" class="font-normal text-12">
           ({{ $t('settings.needAdmin') }})
         </span>
       </div>
@@ -118,7 +119,7 @@ if (envStore.env.os === 'windows') {
     </div>
     <div
       v-if="isAutoStart"
-      v-platform="['windows']"
+      v-platform="[OS.Windows]"
       class="px-8 py-12 flex items-center justify-between"
     >
       <div class="text-16 font-bold">
@@ -150,7 +151,7 @@ if (envStore.env.os === 'windows') {
       <div class="text-16 font-bold">{{ $t('settings.closeKernelOnExit') }}</div>
       <Switch v-model="appSettings.app.closeKernelOnExit" />
     </div>
-    <div v-platform="['linux']" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="[OS.Linux]" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.webviewGpuPolicy.name') }}
         <span class="font-normal text-12">({{ $t('settings.needRestart') }})</span>

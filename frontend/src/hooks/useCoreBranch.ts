@@ -17,7 +17,7 @@ import {
   OpenDir,
 } from '@/bridge'
 import { CoreWorkingDirectory } from '@/constant/kernel'
-import { Branch } from '@/enums/app'
+import { Branch, OS } from '@/enums/app'
 import { useAppSettingsStore, useEnvStore, useKernelApiStore } from '@/stores'
 import {
   getGitHubApiAuthorization,
@@ -65,7 +65,7 @@ export const useCoreBranch = (isAlpha = false) => {
     () => remoteVersion.value && localVersion.value !== remoteVersion.value,
   )
 
-  const grantable = computed(() => localVersion.value && envStore.env.os !== 'windows')
+  const grantable = computed(() => localVersion.value && envStore.env.os !== OS.Windows)
 
   const CoreFilePath = `${CoreWorkingDirectory}/${getKernelFileName(isAlpha)}`
   const CoreBakFilePath = `${CoreFilePath}.bak`

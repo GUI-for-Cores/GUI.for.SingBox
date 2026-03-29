@@ -1,3 +1,9 @@
+export enum OS {
+  Windows = 'windows',
+  Linux = 'linux',
+  Darwin = 'darwin',
+}
+
 export enum WindowStartState {
   Normal = 0,
   Minimised = 2,

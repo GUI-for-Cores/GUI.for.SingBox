@@ -15,6 +15,7 @@ import { useAppSettingsStore, useKernelApiStore, useEnvStore, useAppStore } from
 import { APP_TITLE, APP_VERSION, debounce, exitApp, reloadApp } from '@/utils'
 
 import type { Menu } from '@/types/app'
+import { OS } from '@/enums/app'
 
 const isPinned = ref(false)
 const isMaximised = ref(false)
@@ -24,7 +25,7 @@ const kernelApiStore = useKernelApiStore()
 const envStore = useEnvStore()
 const appStore = useAppStore()
 
-const isDarwin = envStore.env.os === 'darwin'
+const isDarwin = envStore.env.os === OS.Darwin
 
 const pinWindow = () => {
   isPinned.value = !isPinned.value

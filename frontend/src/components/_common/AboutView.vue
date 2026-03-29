@@ -2,9 +2,18 @@
 import { useI18n } from 'vue-i18n'
 
 import logo from '@/assets/logo'
-import { RestartApp, BrowserOpenURL } from '@/bridge'
+import { RestartApp, BrowserOpenURL, ExitApp } from '@/bridge'
 import { useAppStore, useEnvStore } from '@/stores'
-import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, message } from '@/utils'
+import {
+  APP_TITLE,
+  APP_VERSION,
+  PROJECT_URL,
+  TG_GROUP,
+  TG_CHANNEL,
+  message,
+  RunWithOsaScript,
+} from '@/utils'
+import { OS } from '@/enums/app'
 
 const { t } = useI18n()
 const envStore = useEnvStore()
@@ -12,7 +21,14 @@ const appStore = useAppStore()
 
 const handleRestartApp = async () => {
   try {
-    await RestartApp()
+    if (envStore.env.os === OS.Darwin) {
+      RunWithOsaScript('open', [envStore.env.basePath.replace('/Contents/MacOS', '')], {
+        wait: false,
+      })
+      await ExitApp()
+    } else {
+      await RestartApp()
+    }
   } catch (error: any) {
     message.error(error)
   }

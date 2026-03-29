@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { OS } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
 const appSettings = useAppSettingsStore()
 </script>
@@ -11,7 +12,7 @@ const appSettings = useAppSettingsStore()
       <div class="text-16 font-bold">{{ $t('settings.debugOutline') }}</div>
       <Switch v-model="appSettings.app.debugOutline" />
     </div>
-    <div v-platform="['linux']" class="px-8 py-12 flex items-center justify-between">
+    <div v-platform="[OS.Linux]" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.debugBorder') }}</div>
       <Switch v-model="appSettings.app.debugBorder" />
     </div>

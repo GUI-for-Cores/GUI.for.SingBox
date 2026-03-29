@@ -27,6 +27,7 @@ import {
 } from '@/utils'
 
 import type { MenuItem } from '@/types/app'
+import { OS } from '@/enums/app'
 
 const getTrayIcons = () => {
   const envStore = useEnvStore()
@@ -34,8 +35,8 @@ const getTrayIcons = () => {
   const kernelApiStore = useKernelApiStore()
 
   const themeMode = appSettings.themeMode
-  const ext = envStore.env.os === 'linux' ? '.png' : '.ico'
-  const folder = envStore.env.os === 'linux' ? 'imgs' : 'icons'
+  const ext = envStore.env.os === OS.Linux ? '.png' : '.ico'
+  const folder = envStore.env.os === OS.Linux ? 'imgs' : 'icons'
   let icon = `data/.cache/${folder}/tray_normal_${themeMode}${ext}`
 
   if (kernelApiStore.running) {
@@ -177,12 +178,12 @@ const getTrayMenus = () => {
     {
       type: 'item',
       text: 'tray.showMainWindow',
-      hidden: envStore.env.os === 'windows',
+      hidden: envStore.env.os === OS.Windows,
       event: ShowMainWindow,
     },
     {
       type: 'separator',
-      hidden: envStore.env.os === 'windows',
+      hidden: envStore.env.os === OS.Windows,
     },
     {
       type: 'item',
@@ -334,7 +335,7 @@ export const updateTrayAndMenus = debounce(async () => {
   const trayIcons = getTrayIcons()
   const pluginsStore = usePluginsStore()
 
-  const isDarwin = useEnvStore().env.os === 'darwin'
+  const isDarwin = useEnvStore().env.os === OS.Darwin
   const title = isDarwin ? '' : APP_TITLE
 
   const tray = { icon: trayIcons, title, tooltip: APP_TITLE + ' ' + APP_VERSION }
