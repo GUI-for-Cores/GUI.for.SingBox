@@ -267,7 +267,7 @@ async function setLinuxSystemProxy(
   const httpEnabled = enabled && ['mixed', 'http'].includes(proxyType)
   const socksEnabled = enabled && ['mixed', 'socks'].includes(proxyType)
 
-  const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+  const desktop = await GetEnv('XDG_CURRENT_DESKTOP')
   if (desktop.includes('KDE')) {
     const p1 = ignoredError(Exec, 'kwriteconfig5', [
       '--file',
@@ -440,7 +440,7 @@ export const GetSystemProxy = async () => {
     }
 
     if (os === OS.Linux) {
-      const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+      const desktop = await GetEnv('XDG_CURRENT_DESKTOP')
       if (desktop.includes('KDE')) {
         const out = await Exec('kreadconfig5', [
           '--file',
@@ -532,7 +532,7 @@ export const GetSystemProxyBypass = async () => {
   }
 
   if (os === OS.Linux) {
-    const desktop = (await Exec('sh', ['-c', 'echo $XDG_CURRENT_DESKTOP'])).trim()
+    const desktop = await GetEnv('XDG_CURRENT_DESKTOP')
     if (desktop.includes('KDE')) {
       const out = await ignoredError(Exec, 'kreadconfig5', [
         '--file',
