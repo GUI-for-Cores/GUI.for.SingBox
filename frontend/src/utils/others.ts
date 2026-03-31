@@ -1,7 +1,8 @@
 import { stringify } from 'yaml'
 
-import { useAppSettingsStore, useEnvStore } from '@/stores'
+import { useAppSettingsStore } from '@/stores'
 import { APP_TITLE, APP_VERSION } from '@/utils'
+import { OS } from '@/enums/app'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
@@ -185,9 +186,9 @@ export const getGitHubApiAuthorization = () => {
   return appSettings.app.githubApiToken ? `Bearer ${appSettings.app.githubApiToken}` : ''
 }
 
-// System ScheduledTask Helper
-export const getTaskSchXmlString = (appPath: string, delay = 30) => {
-  const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
+export const getAutoStartConfiguration = (os: OS, appPath: string, delay = 30) => {
+  if (os === OS.Windows) {
+    const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
     <Description>${APP_TITLE} at startup</Description>
@@ -230,9 +231,17 @@ export const getTaskSchXmlString = (appPath: string, delay = 30) => {
       <Arguments>tasksch</Arguments>
     </Exec>
   </Actions>
-</Task>
-`
-  return xml
+</Task>`
+    return xml
+  }
+  if (os === OS.Linux) {
+    const desktop = `[Desktop Entry]
+Type=Application
+Exec=${appPath} tasksch
+Name=${APP_TITLE}`
+    return desktop
+  }
+  throw new Error('Not Implemented')
 }
 
 export const setIntervalImmediately = (func: () => void, interval: number) => {

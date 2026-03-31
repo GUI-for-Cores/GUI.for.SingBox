@@ -100,7 +100,7 @@ if (envStore.env.os === OS.Windows) {
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
     </div>
-    <div v-platform="[OS.Windows, OS.Darwin]" class="px-8 py-12 flex items-center justify-between">
+    <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
         <span v-platform="[OS.Windows]" class="font-normal text-12">

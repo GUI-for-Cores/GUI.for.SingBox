@@ -1,5 +1,15 @@
 import { deleteConnection, getConnections, useProxy } from '@/api/kernel'
-import { AbsolutePath, Exec, ExitApp, ReadFile, WindowReloadApp, WriteFile } from '@/bridge'
+import {
+  AbsolutePath,
+  Exec,
+  ExitApp,
+  FileExists,
+  GetEnv,
+  ReadFile,
+  RemoveFile,
+  WindowReloadApp,
+  WriteFile,
+} from '@/bridge'
 import { CoreWorkingDirectory } from '@/constant/kernel'
 import { OS } from '@/enums/app'
 import { RulesetFormat } from '@/enums/kernel'
@@ -13,7 +23,7 @@ import {
   usePluginsStore,
   useRulesetsStore,
 } from '@/stores'
-import { ignoredError, message, confirm, APP_TITLE, getTaskSchXmlString } from '@/utils'
+import { ignoredError, message, confirm, APP_TITLE, getAutoStartConfiguration } from '@/utils'
 
 // Permissions Helper
 export const SwitchPermissions = async (enable: boolean) => {
@@ -597,7 +607,8 @@ export const IsAutoStartEnabled = async () => {
       .then((res) => res.includes('true'))
       .catch(() => false)
   } else if (os === OS.Linux) {
-    // TODO
+    const home = await GetEnv('HOME')
+    isAutoStart = await FileExists(`${home}/.config/autostart/${APP_TITLE}.desktop`)
   }
   return isAutoStart
 }
@@ -606,7 +617,7 @@ export const EnableAutoStart = async (delay = 10) => {
   const { os, appPath, basePath, isPrivileged } = useEnvStore().env
   if (os === OS.Windows) {
     const xmlPath = await AbsolutePath('data/.cache/tasksch.xml')
-    const xmlContent = getTaskSchXmlString(appPath, delay)
+    const xmlContent = getAutoStartConfiguration(os, appPath, delay)
     await WriteFile(xmlPath, xmlContent)
     const fn = isPrivileged ? Exec : RunWithPowerShell
     await fn('SchTasks', ['/Create', '/F', '/TN', APP_TITLE, '/XML', xmlPath], {
@@ -620,7 +631,9 @@ export const EnableAutoStart = async (delay = 10) => {
       `tell application "System Events" to make login item at end with properties {name:"${APP_TITLE}", path:"${path}"}`,
     ])
   } else if (os === OS.Linux) {
-    // TODO
+    const desktopContent = getAutoStartConfiguration(os, appPath, delay)
+    const home = await GetEnv('HOME')
+    await WriteFile(`${home}/.config/autostart/${APP_TITLE}.desktop`, desktopContent)
   }
 }
 
@@ -635,7 +648,8 @@ export const DisableAutoStart = async () => {
       `tell application "System Events" to delete login item "${APP_TITLE}"`,
     ])
   } else if (os === OS.Linux) {
-    // TODO
+    const home = await GetEnv('HOME')
+    await RemoveFile(`${home}/.config/autostart/${APP_TITLE}.desktop`)
   }
 }
 
