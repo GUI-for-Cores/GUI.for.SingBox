@@ -16,7 +16,6 @@ const handleUseBranch = async (branch: Branch) => {
 
   try {
     await kernelApiStore.restartCore()
-    message.success('common.success')
   } catch (error: any) {
     message.error(error)
   }

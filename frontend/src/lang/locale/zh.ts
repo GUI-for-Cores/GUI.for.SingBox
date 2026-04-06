@@ -677,7 +677,7 @@ export default {
       linkTip: '在GitHub上查看发布版本',
       local: '本地',
       remote: '远程',
-      update: '更新',
+      update: '立即更新',
       restart: '重启核心',
       risk: '该版本非GitHub自动构建，有安全风险。',
       stillDownload: '仍要下载',
