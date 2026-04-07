@@ -241,6 +241,27 @@ Exec=${appPath} tasksch
 Name=${APP_TITLE}`
     return desktop
   }
+  if (os === OS.Darwin) {
+    const plist = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>${APP_TITLE}</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/open</string>
+        <string>${appPath}</string>
+        <string>--args</string>
+        <string>tasksch</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>`
+    return plist
+  }
   throw new Error('Not Implemented')
 }
 
