@@ -154,8 +154,6 @@ export interface Plugin {
   }
   configuration: PluginConfiguration[]
   disabled: boolean
-  install: boolean
-  installed: boolean
   status: number // 0: Normal 1: Running 2: Stopped
   // Not Config
   updating?: boolean

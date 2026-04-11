@@ -60,6 +60,8 @@ export enum ScheduledTasksType {
 }
 
 export enum PluginTrigger {
+  OnEnabled = 'on::enabled',
+  OnDisabled = 'on::disabled',
   OnManual = 'on::manual',
   OnSubscribe = 'on::subscribe',
   OnGenerate = 'on::generate',
@@ -75,6 +77,9 @@ export enum PluginTrigger {
 }
 
 export enum PluginTriggerEvent {
+  OnEnabled = 'onEnabled',
+  OnDisabled = 'onDisabled',
+  OnDispose = 'onDispose',
   OnInstall = 'onInstall',
   OnUninstall = 'onUninstall',
   OnManual = 'onRun',
