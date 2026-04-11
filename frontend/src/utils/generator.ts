@@ -59,7 +59,10 @@ const generateExperimental = (experimental: IExperimental, outbounds: IOutbound[
       ...experimental.clash_api,
       external_ui_download_detour: getOutbound(experimental.clash_api.external_ui_download_detour),
     },
-    cache_file: experimental.cache_file,
+    cache_file: {
+      ...experimental.cache_file,
+      store_rdrc: undefined,
+    },
   }
 }
 
@@ -317,7 +320,7 @@ const generateDns = (
         if (rule.action === RuleAction.Route) {
           extra.server = getDnsServer(rule.server)
           if (rule.strategy !== Strategy.Default) {
-            extra.strategy = rule.strategy
+            // extra.strategy = rule.strategy
           }
         }
       }
