@@ -110,7 +110,7 @@ const onSystemProxySwitchChange = async (enable: boolean) => {
 
 let latestCoreMemoryUsageTime: number
 const getCoreMemoryUsage = async (fallback: number) => {
-  if (latestCoreMemoryUsageTime && Date.now() - latestCoreMemoryUsageTime < 3_000) {
+  if (latestCoreMemoryUsageTime && Date.now() - latestCoreMemoryUsageTime < 30_000) {
     return fallback
   }
   const useage = await ProcessMemory(kernelApiStore.pid).catch(() => fallback)
