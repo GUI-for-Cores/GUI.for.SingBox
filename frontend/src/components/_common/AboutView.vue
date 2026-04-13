@@ -22,7 +22,7 @@ const appStore = useAppStore()
 const handleRestartApp = async () => {
   try {
     if (envStore.env.os === OS.Darwin) {
-      RunWithOsaScript('open', [envStore.env.basePath.replace('/Contents/MacOS', '')], {
+      RunWithOsaScript('open', [envStore.env.appPath], {
         wait: false,
       })
       await ExitApp()
