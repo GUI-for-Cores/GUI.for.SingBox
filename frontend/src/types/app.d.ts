@@ -62,6 +62,7 @@ export interface AppSettings {
   scheduledtasksView: View
   windowStartState: WindowStartState
   webviewGpuPolicy: WebviewGpuPolicy
+  contentProtection: true
   width: number
   height: number
   exitOnClose: boolean

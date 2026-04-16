@@ -658,6 +658,8 @@ export default {
     addPluginToMenu: '将插件添加到托盘菜单',
     addGroupToMenu: '将代理组添加到托盘菜单',
     multipleInstance: '允许多APP实例运行',
+    contentProtection: '窗口内容保护',
+    contentProtectionTips: '防止屏幕录制/共享软件捕获窗口内容(重启生效)',
     rollingRelease: '启用滚动发行',
     debugOutline: '组件轮廓',
     debugNoAnimation: '禁用动画',

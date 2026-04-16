@@ -62,6 +62,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
     webviewGpuPolicy: WebviewGpuPolicy.OnDemand,
+    contentProtection: true,
     width: 0,
     height: 0,
     exitOnClose: true,
@@ -124,6 +125,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (!settings.proxyBypassList) {
       settings.proxyBypassList = await GetSystemProxyBypass()
+    }
+    if (typeof settings.contentProtection === 'undefined') {
+      settings.contentProtection = true
     }
 
     app.value = settings

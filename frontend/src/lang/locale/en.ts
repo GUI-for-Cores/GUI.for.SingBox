@@ -659,6 +659,8 @@ export default {
     addPluginToMenu: 'Add plugin to tray menu',
     addGroupToMenu: 'Add proxy group to tray menu',
     multipleInstance: 'Allow multiple app instances',
+    contentProtection: 'Content Protection',
+    contentProtectionTips: 'Blocks screen capture (Restart Required)',
     rollingRelease: 'Enable Rolling Release',
     debugOutline: 'Show component outlines',
     debugNoAnimation: 'Disable animations',
