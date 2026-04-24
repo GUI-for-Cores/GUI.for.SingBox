@@ -559,6 +559,7 @@ export default {
     testRun: 'TestRun',
     deprecated: 'Deprecated',
     newVersion: 'New',
+    slogan: 'Make {0} work your way',
   },
   scheduledtask: {
     name: 'Name',

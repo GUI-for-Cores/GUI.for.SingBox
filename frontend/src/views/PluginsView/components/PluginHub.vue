@@ -2,64 +2,67 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useBool } from '@/hooks'
 import { usePluginsStore } from '@/stores'
-import { deepClone, message, sleep } from '@/utils'
+import { APP_TITLE, createTextMatcher, deepClone, message } from '@/utils'
 
 import type { Plugin } from '@/types/app'
+
 const keywords = ref('')
 
 const { t } = useI18n()
 const pluginsStore = usePluginsStore()
+const loadingSet = ref(new Set<string>())
 
-const [tagsVisible, toggleTagsVisible] = useBool(false)
-const tags = ref<Set<string>>(new Set())
+const groupOrders = ['Recommended', 'Extensions', 'Tools', 'Fun', 'Examples', 'Development']
 
-const allTags = computed(() => {
-  const tagCountMap = new Map()
-
-  for (const plugin of pluginsStore.pluginHub) {
-    for (const tag of plugin.tags) {
-      tagCountMap.set(tag, (tagCountMap.get(tag) || 0) + 1)
+const groups = computed(() => {
+  const map: Record<string, Plugin[]> = {}
+  pluginsStore.pluginHub.forEach((plugin) => {
+    const group = plugin.group || 'Others'
+    if (!map[group]) {
+      map[group] = []
     }
-  }
-
-  return Array.from(tagCountMap, ([name, count]) => ({ name, count }))
+    map[group].push(plugin)
+  })
+  return Object.keys(map)
+    .map((name) => ({
+      name,
+      plugins: map[name]!,
+    }))
+    .sort((a, b) => {
+      const indexA = groupOrders.indexOf(a.name)
+      const indexB = groupOrders.indexOf(b.name)
+      if (indexA === -1 && indexB === -1) {
+        return a.name.localeCompare(b.name)
+      }
+      if (indexA === -1) return 1
+      if (indexB === -1) return -1
+      return indexA - indexB
+    })
 })
 
-const onTagClose = (tag: string) => tags.value.delete(tag)
-
-const toggleChecked = (tag: string) => {
-  tags.value.has(tag) ? tags.value.delete(tag) : tags.value.add(tag)
-}
-
 const filteredPlugins = computed(() => {
-  const allPlugins = pluginsStore.pluginHub
   const keyword = keywords.value.trim()
-  const selectedTags = tags.value
-
-  if (!keyword && selectedTags.size === 0) return allPlugins
-
-  return allPlugins.filter((plugin) => {
-    const matchesKeyword =
-      !keyword || (plugin.name + plugin.id + plugin.description).includes(keyword)
-
-    const matchesTags =
-      selectedTags.size === 0 || Array.from(selectedTags).every((tag) => plugin.tags.includes(tag))
-
-    return matchesKeyword && matchesTags
-  })
+  if (!keyword) return groups.value
+  const match = createTextMatcher(keyword.toLocaleLowerCase(), '')
+  return groups.value
+    .map((group) => ({
+      name: group.name,
+      plugins: group.plugins.filter((plugin) =>
+        match([plugin.id, plugin.name, plugin.description].join('').toLocaleLowerCase()),
+      ),
+    }))
+    .filter((group) => group.plugins.length)
 })
 
 const handleAddPlugin = async (plugin: Plugin) => {
-  const { success, error, destroy } = message.info('plugins.updating', 60 * 1000)
+  loadingSet.value.add(plugin.id)
   try {
     await pluginsStore.addPlugin(deepClone(plugin))
-    success('common.success')
   } catch (err: any) {
-    error(err.message || err)
+    message.error(err.message || err)
   } finally {
-    sleep(1000).then(destroy)
+    loadingSet.value.delete(plugin.id)
   }
 }
 
@@ -80,71 +83,51 @@ if (pluginsStore.pluginHub.length === 0) {
 </script>
 
 <template>
-  <div class="h-full">
-    <div v-if="pluginsStore.pluginHubLoading" class="flex items-center justify-center h-full">
-      <Button type="text" loading />
+  <div class="pr-8">
+    <div class="text-22 text-center pb-12">{{ t('plugins.slogan', [APP_TITLE]) }}</div>
+    <div class="flex items-center gap-8 sticky top-0 z-2 mb-12">
+      <Input
+        v-model="keywords"
+        :border="false"
+        :placeholder="t('plugins.total') + ': ' + pluginsStore.pluginHub.length"
+        clearable
+        class="flex-1"
+      >
+        <template #prefix>
+          <Icon icon="search" :size="22" />
+        </template>
+        <template #suffix>
+          <Button
+            v-tips="'plugins.update'"
+            icon="refresh"
+            :loading="pluginsStore.pluginHubLoading"
+            type="text"
+            @click="handleUpdatePluginHub"
+          />
+        </template>
+      </Input>
     </div>
-    <div v-else class="flex flex-col h-full">
-      <div class="flex items-center gap-8">
-        <Button
-          icon="settings3"
-          size="small"
-          :icon-color="tagsVisible ? 'var(--primary-color)' : ''"
-          @click="toggleTagsVisible"
-        />
-        <Input
-          v-model="keywords"
-          :border="false"
-          :placeholder="t('plugins.total') + ': ' + pluginsStore.pluginHub.length"
-          clearable
-          size="small"
-          class="flex-1"
-        >
-          <template #suffix>
-            <Tag
-              v-for="tag in tags"
-              :key="tag"
-              color="cyan"
-              size="small"
-              closeable
-              @close="onTagClose(tag)"
-              @click="onTagClose(tag)"
-            >
-              {{ tag }}
-            </Tag>
+
+    <div v-if="filteredPlugins.length == 0" class="flex items-center justify-center h-256">
+      <Empty />
+    </div>
+
+    <div v-for="group in filteredPlugins" :key="group.name">
+      <div class="text-16 font-bold mt-20 px-4">{{ group.name }}</div>
+
+      <div class="grid grid-cols-2 gap-8 py-8">
+        <Card v-for="plugin in group.plugins" :key="plugin.id">
+          <template #title-prefix>
+            <div class="text-14 font-bold">{{ plugin.name }}</div>
           </template>
-        </Input>
-        <Button icon="refresh" size="small" @click="handleUpdatePluginHub">
-          {{ t('plugins.update') }}
-        </Button>
-      </div>
-      <div v-if="tagsVisible" class="flex flex-wrap gap-2 mt-8">
-        <Tag
-          v-for="tag in allTags"
-          :key="tag.name"
-          :color="tags.has(tag.name) ? 'primary' : 'default'"
-          class="cursor-pointer"
-          @click="toggleChecked(tag.name)"
-        >
-          {{ `${tag.name}(${tag.count})` }}
-        </Tag>
-      </div>
-
-      <Empty v-if="filteredPlugins.length === 0" />
-
-      <div class="overflow-y-auto grid grid-cols-3 text-12 gap-8 mt-8 pb-16 pr-8">
-        <Card v-for="plugin in filteredPlugins" :key="plugin.id" :title="plugin.name">
-          <div class="flex flex-col h-full">
-            <div v-tips="plugin.description" class="flex-1 line-clamp-2">
+          <div class="flex items-center">
+            <div v-tips="plugin.description" class="flex-1 line-clamp-1 h-full text-10">
               {{ plugin.description }}
             </div>
-            <div class="flex items-center justify-end">
-              <Button v-if="isAlreadyAdded(plugin.id)" type="text" size="small">
-                {{ t('common.added') }}
-              </Button>
-              <Button v-else type="link" size="small" @click="handleAddPlugin(plugin)">
-                {{ t('common.add') }}
-              </Button>
+            <Button v-if="loadingSet.has(plugin.id)" loading type="text" size="small" />
+            <div v-else class="flex items-center">
+              <Button v-if="isAlreadyAdded(plugin.id)" icon="selected" type="text" size="small" />
+              <Button v-else type="text" icon="add" size="small" @click="handleAddPlugin(plugin)" />
             </div>
           </div>
         </Card>

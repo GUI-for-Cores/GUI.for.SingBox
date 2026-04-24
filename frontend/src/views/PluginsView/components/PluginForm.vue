@@ -27,6 +27,7 @@ const plugin = ref<Plugin>({
   name: '',
   description: '',
   tags: [],
+  group: '',
   type: 'File',
   url: '',
   status: 0,

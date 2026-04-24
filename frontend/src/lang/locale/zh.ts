@@ -558,6 +558,7 @@ export default {
     testRun: '运行测试',
     deprecated: '已废弃',
     newVersion: '新版本',
+    slogan: '让 {0} 按你的方式工作',
   },
   scheduledtask: {
     name: '名称',

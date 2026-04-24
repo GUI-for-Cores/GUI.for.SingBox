@@ -145,6 +145,7 @@ export interface Plugin {
   triggers: PluginTrigger[]
   tags: string[]
   hasUI: boolean
+  group: string
   menus: Record<string, string>
   context: {
     profiles: Recordable
