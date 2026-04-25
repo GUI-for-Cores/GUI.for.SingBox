@@ -57,15 +57,24 @@ func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
 	switch menu.Type {
 	case "item":
 		var m *systray.MenuItem
+		checkable := Env.OS == "linux" && (menu.Checkable || menu.Checked)
 		if parent == nil {
-			m = systray.AddMenuItem(menu.Text, menu.Tooltip)
+			if checkable {
+				m = systray.AddMenuItemCheckbox(menu.Text, menu.Tooltip, menu.Checked)
+			} else {
+				m = systray.AddMenuItem(menu.Text, menu.Tooltip)
+			}
 		} else {
-			m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
+			if checkable {
+				m = parent.AddSubMenuItemCheckbox(menu.Text, menu.Tooltip, menu.Checked)
+			} else {
+				m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
+			}
 		}
 
 		m.Click(func() { go runtime.EventsEmit(a.Ctx, "onMenuItemClick", menu.Event) })
 
-		if menu.Checked {
+		if menu.Checked && !checkable {
 			m.Check()
 		}
 

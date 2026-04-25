@@ -74,6 +74,7 @@ export namespace bridge {
 	    children: MenuItem[];
 	    hidden: boolean;
 	    checked: boolean;
+	    checkable: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MenuItem(source);
@@ -88,6 +89,7 @@ export namespace bridge {
 	        this.children = this.convertValues(source["children"], MenuItem);
 	        this.hidden = source["hidden"];
 	        this.checked = source["checked"];
+	        this.checkable = source["checkable"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

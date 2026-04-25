@@ -104,11 +104,12 @@ type WriteTracker struct {
 }
 
 type MenuItem struct {
-	Type     string     `json:"type"` // Menu Type: item / separator
-	Text     string     `json:"text"`
-	Tooltip  string     `json:"tooltip"`
-	Event    string     `json:"event"`
-	Children []MenuItem `json:"children"`
-	Hidden   bool       `json:"hidden"`
-	Checked  bool       `json:"checked"`
+	Type      string     `json:"type"` // Menu Type: item / separator
+	Text      string     `json:"text"`
+	Tooltip   string     `json:"tooltip"`
+	Event     string     `json:"event"`
+	Children  []MenuItem `json:"children"`
+	Hidden    bool       `json:"hidden"`
+	Checked   bool       `json:"checked"`
+	Checkable bool       `json:"checkable"`
 }
