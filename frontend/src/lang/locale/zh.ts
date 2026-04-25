@@ -559,6 +559,9 @@ export default {
     deprecated: '已废弃',
     newVersion: '新版本',
     slogan: '让 {0} 按你的方式工作',
+    sourceConfig: {
+      name: '插件源',
+    },
   },
   scheduledtask: {
     name: '名称',

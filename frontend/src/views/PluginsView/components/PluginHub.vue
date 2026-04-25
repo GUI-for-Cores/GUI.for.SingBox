@@ -2,7 +2,9 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { usePluginsStore } from '@/stores'
+import { useAppSettingsStore, usePluginsStore } from '@/stores'
+import { DefaultPluginHubSources } from '@/constant/app'
+import { useBool } from '@/hooks'
 import { APP_TITLE, createTextMatcher, deepClone, message } from '@/utils'
 
 import type { Plugin } from '@/types/app'
@@ -10,6 +12,8 @@ import type { Plugin } from '@/types/app'
 const keywords = ref('')
 
 const { t } = useI18n()
+const [settingsModalOpen, toggleSettingsModal] = useBool(false)
+const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
 const loadingSet = ref(new Set<string>())
 
@@ -75,6 +79,18 @@ const handleUpdatePluginHub = async () => {
   }
 }
 
+const handleAddSource = () => {
+  appSettingsStore.app.plugins.sources.push({ enable: false, name: '', url: '' })
+}
+
+const handleRemoveSource = (index: number) => {
+  appSettingsStore.app.plugins.sources.splice(index, 1)
+}
+
+const restoreDefaultSources = () => {
+  appSettingsStore.app.plugins.sources = DefaultPluginHubSources()
+}
+
 const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)
 
 if (pluginsStore.pluginHub.length === 0) {
@@ -103,6 +119,12 @@ if (pluginsStore.pluginHub.length === 0) {
             :loading="pluginsStore.pluginHubLoading"
             type="text"
             @click="handleUpdatePluginHub"
+          />
+          <Button
+            v-tips="'plugins.sourceConfig.name'"
+            icon="settings3"
+            type="text"
+            @click="toggleSettingsModal"
           />
         </template>
       </Input>
@@ -134,4 +156,38 @@ if (pluginsStore.pluginHub.length === 0) {
       </div>
     </div>
   </div>
+
+  <Modal
+    v-model:open="settingsModalOpen"
+    title="plugins.sourceConfig.name"
+    :submit="false"
+    cancel-text="common.close"
+  >
+    <template #action>
+      <div class="mr-auto">
+        <Button type="link" @click="restoreDefaultSources">{{ t('plugin.restore') }}</Button>
+      </div>
+    </template>
+
+    <Card
+      v-for="(source, index) in appSettingsStore.app.plugins.sources"
+      :key="source.name"
+      class="mb-8"
+    >
+      <template #extra>
+        <Button icon="delete" type="text" size="small" @click="handleRemoveSource(index)" />
+      </template>
+      <template #title-prefix>
+        <div class="flex items-center gap-8 font-bold">
+          <Switch v-model="source.enable" border="square" />
+          <Input v-model="source.name" editable />
+        </div>
+      </template>
+      <Input v-model="source.url" class="w-full" placeholder="https://" />
+    </Card>
+
+    <Empty v-if="appSettingsStore.app.plugins.sources.length == 0" />
+
+    <Button icon="add" class="w-full" type="primary" @click="handleAddSource" />
+  </Modal>
 </template>

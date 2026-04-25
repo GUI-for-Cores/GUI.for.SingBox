@@ -15,6 +15,7 @@ import {
   DefaultConcurrencyLimit,
   DefaultControllerSensitivity,
   DefaultFontFamily,
+  DefaultPluginHubSources,
   DefaultTestTimeout,
   DefaultTestURL,
   UserFilePath,
@@ -91,6 +92,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       main: undefined as any,
       alpha: undefined as any,
     },
+    plugins: {
+      sources: [],
+    },
     pluginSettings: {},
     githubApiToken: '',
     multipleInstance: false,
@@ -126,8 +130,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     if (!settings.proxyBypassList) {
       settings.proxyBypassList = await GetSystemProxyBypass()
     }
-    if (typeof settings.contentProtection === 'undefined') {
-      settings.contentProtection = true
+    if (!settings.plugins) {
+      settings.plugins = {
+        sources: DefaultPluginHubSources(),
+      }
     }
 
     app.value = settings

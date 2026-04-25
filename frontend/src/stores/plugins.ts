@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { parse } from 'yaml'
 
-import { HttpGet, ReadFile, RemoveFile, WriteFile } from '@/bridge'
+import { HttpGet, ReadFile, RemoveFile, Requests, WriteFile } from '@/bridge'
 import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
-import { PluginTrigger, PluginTriggerEvent } from '@/enums/app'
+import { PluginTrigger, PluginTriggerEvent, RequestMethod } from '@/enums/app'
 import { useAppSettingsStore } from '@/stores'
 import {
   ignoredError,
@@ -660,18 +660,30 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
   const updatePluginHub = async () => {
     pluginHubLoading.value = true
-    try {
-      const { body: body1 } = await HttpGet<string>(
-        'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json',
-      )
-      const { body: body2 } = await HttpGet<string>(
-        'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/gfs.json',
-      )
-      pluginHub.value = [...JSON.parse(body1), ...JSON.parse(body2)]
-      await WriteFile(PluginHubFilePath, JSON.stringify(pluginHub.value))
-    } finally {
-      pluginHubLoading.value = false
-    }
+    const promises = appSettingsStore.app.plugins.sources.flatMap((source) => {
+      if (!source.enable) return []
+      return Requests<string>({
+        url: source.url,
+        method: RequestMethod.Get,
+        autoTransformBody: false,
+      })
+    })
+    const results = await Promise.allSettled(promises)
+
+    pluginHub.value = results.reduce((acc, result) => {
+      if (result.status === 'fulfilled') {
+        try {
+          const plugins = JSON.parse(result.value.body) as Plugin[]
+          acc.push(...plugins)
+        } catch (error) {
+          console.error('Failed to parse plugin list from source. Reason: ', error)
+        }
+      }
+      return acc
+    }, [] as Plugin[])
+
+    await WriteFile(PluginHubFilePath, JSON.stringify(pluginHub.value))
+    pluginHubLoading.value = false
   }
 
   const getPluginById = (id: string) => plugins.value.find((v) => v.id === id)

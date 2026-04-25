@@ -10,6 +10,7 @@ import {
   WebviewGpuPolicy,
   WindowStartState,
 } from '@/enums/app'
+import { APP_TITLE } from '@/utils'
 
 export const LocalesFilePath = 'data/locales'
 
@@ -120,6 +121,24 @@ export const WebviewGpuPolicyOptions = [
   { label: 'settings.webviewGpuPolicy.always', value: WebviewGpuPolicy.Always },
   { label: 'settings.webviewGpuPolicy.onDemand', value: WebviewGpuPolicy.OnDemand },
   { label: 'settings.webviewGpuPolicy.never', value: WebviewGpuPolicy.Never },
+]
+
+export const DefaultPluginHubSources = () => [
+  {
+    enable: true,
+    name: 'General',
+    url: 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json',
+  },
+  {
+    enable: true,
+    name: APP_TITLE,
+    url: `https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/${
+      {
+        'GUI.for.Clash': 'gfc',
+        'GUI.for.SingBox': 'gfs',
+      }[APP_TITLE]
+    }.json`,
+  },
 ]
 
 // vue-draggable-plus config

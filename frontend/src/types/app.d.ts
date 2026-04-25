@@ -101,6 +101,9 @@ export interface AppSettings {
       args: string[]
     }
   }
+  plugins: {
+    sources: { enable: boolean; name: string; url: string }[]
+  }
   pluginSettings: Record<string, Record<string, any>>
   githubApiToken: string
   multipleInstance: boolean
