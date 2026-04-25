@@ -50,36 +50,55 @@ func (a *App) UpdateTrayAndMenus(tray TrayContent, menus []MenuItem) {
 	updateTrayMenus(a, menus)
 }
 
-func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
+// =======================================================
+// 核心托盘渲染逻辑：包含 Linux GNOME 防卡死与 Checkbox 修复
+// =======================================================
+
+func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem, depth int, isProxyGroup bool) {
 	if menu.Hidden {
 		return
 	}
+
+	// 【智能识别】：如果是一级菜单，且名字是代理组，开启拦截标志
+	// 做了中英文兼容，防止切换语言后失效
+	if depth == 0 && (menu.Text == "代理组" || menu.Text == "Proxies" || menu.Text == "Proxy Groups") {
+		isProxyGroup = true
+	}
+
 	switch menu.Type {
 	case "item":
 		var m *systray.MenuItem
-		checkable := Env.OS == "linux" && (menu.Checkable || menu.Checked)
+
 		if parent == nil {
-			if checkable {
-				m = systray.AddMenuItemCheckbox(menu.Text, menu.Tooltip, menu.Checked)
-			} else {
-				m = systray.AddMenuItem(menu.Text, menu.Tooltip)
-			}
+			m = systray.AddMenuItem(menu.Text, menu.Tooltip)
 		} else {
-			if checkable {
+			if Env.OS == "linux" {
+				// Linux 下强制使用 Checkbox API 渲染状态
 				m = parent.AddSubMenuItemCheckbox(menu.Text, menu.Tooltip, menu.Checked)
 			} else {
 				m = parent.AddSubMenuItem(menu.Text, menu.Tooltip)
 			}
 		}
 
-		m.Click(func() { go runtime.EventsEmit(a.Ctx, "onMenuItemClick", menu.Event) })
+		m.Click(func() {
+			// 【交互降级】：只有属于“代理组”的深层节点，点击时才唤起主界面，防止 GNOME 托盘卡死
+			if Env.OS == "linux" && len(menu.Children) > 0 && isProxyGroup && depth >= 1 {
+				a.ShowMainWindow()
+				return
+			}
+			go runtime.EventsEmit(a.Ctx, "onMenuItemClick", menu.Event)
+		})
 
-		if menu.Checked && !checkable {
+		if menu.Checked {
 			m.Check()
 		}
 
 		for _, child := range menu.Children {
-			createMenuItem(child, a, m)
+			// 【核心修复】：只拦截“代理组”的深层节点，完美放行“通用”、“主题”等基础设置的展开！
+			if Env.OS == "linux" && isProxyGroup && depth >= 1 {
+				continue
+			}
+			createMenuItem(child, a, m, depth+1, isProxyGroup)
 		}
 	case "separator":
 		systray.AddSeparator()
@@ -106,6 +125,7 @@ func updateTrayMenus(a *App, menus []MenuItem) {
 	systray.ResetMenu()
 
 	for _, menu := range menus {
-		createMenuItem(menu, a, nil)
+		// 初始调用时层级从 0 开始，默认不是代理组 (false)
+		createMenuItem(menu, a, nil, 0, false)
 	}
 }
