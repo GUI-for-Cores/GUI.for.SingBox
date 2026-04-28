@@ -18,8 +18,8 @@ import { useModal } from '@/components/Modal'
 
 import type { Menu } from '@/types/app'
 
-import ProfileForm from './components/ProfileForm.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
+import ProfileForm from './components/ProfileForm.vue'
 
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})

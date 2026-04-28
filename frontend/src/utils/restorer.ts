@@ -7,10 +7,11 @@ import {
   RuleType as RouteRuleType,
   DnsServer,
 } from '@/enums/kernel'
+import { useProfilesStore, useRulesetsStore, useSubscribesStore } from '@/stores'
+
+import type { Subscription } from '@/types/app'
 
 import { createTextMatcher, deepAssign, sampleID } from './others'
-import { useProfilesStore, useRulesetsStore, useSubscribesStore } from '@/stores'
-import type { Subscription } from '@/types/app'
 
 const supportedRuleTypes = [
   RouteRuleType.Inbound,

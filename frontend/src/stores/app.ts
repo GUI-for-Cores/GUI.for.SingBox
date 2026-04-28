@@ -13,6 +13,7 @@ import {
   Exec,
 } from '@/bridge'
 import { LanguageOptions, LocalesFilePath, RollingReleaseDirectory } from '@/constant/app'
+import { OS } from '@/enums/app'
 import { loadLocale } from '@/lang'
 import {
   APP_TITLE,
@@ -24,10 +25,9 @@ import {
   sleep,
 } from '@/utils'
 
-import { useEnvStore } from './env'
-
 import type { CustomAction, CustomActionFn, Menu } from '@/types/app'
-import { OS } from '@/enums/app'
+
+import { useEnvStore } from './env'
 
 export const useAppStore = defineStore('app', () => {
   const isAppExiting = ref(false)

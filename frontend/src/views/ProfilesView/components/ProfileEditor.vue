@@ -2,10 +2,10 @@
 import { ref, inject, h, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { useProfilesStore } from '@/stores'
 import { generateConfig, message, restoreProfile } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
-import { useProfilesStore } from '@/stores'
 
 interface Props {
   profile: IProfile

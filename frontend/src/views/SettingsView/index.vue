@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useAppStore } from '@/stores'
 
-import GeneralSettings from './components/GeneralSettings.vue'
 import CoreSettings from './components/CoreSettings.vue'
+import GeneralSettings from './components/GeneralSettings.vue'
 import PluginSettings from './components/PluginSettings.vue'
 
 const settings = [

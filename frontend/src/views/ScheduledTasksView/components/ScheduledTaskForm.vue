@@ -2,6 +2,7 @@
 import { ref, inject, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import { IsNotificationAvailable, RequestNotificationAuthorization } from '@/bridge'
 import { ScheduledTaskOptions } from '@/constant/app'
 import { ScheduledTasksType } from '@/enums/app'
 import {
@@ -15,7 +16,6 @@ import { alert, deepClone, formatDate, isValidCron, message, sampleID } from '@/
 import Button from '@/components/Button/index.vue'
 
 import type { ScheduledTask } from '@/types/app'
-import { IsNotificationAvailable, RequestNotificationAuthorization } from '@/bridge'
 
 interface Props {
   id?: string

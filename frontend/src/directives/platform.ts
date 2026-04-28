@@ -1,6 +1,6 @@
-import { useEnvStore } from '@/stores'
-
 import type { Directive, DirectiveBinding } from 'vue'
+
+import { useEnvStore } from '@/stores'
 
 export default {
   mounted(el: any, binding: DirectiveBinding) {

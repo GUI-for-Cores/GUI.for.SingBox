@@ -4,7 +4,6 @@ import { createApp } from 'vue'
 import './assets/main.less'
 import './assets/polyfills'
 import './assets/globalMethods'
-
 import App from './App.vue'
 import components from './components'
 import directives from './directives'

@@ -8,6 +8,7 @@ import {
 } from '@/bridge'
 import { ColorOptions, ThemeOptions } from '@/constant/app'
 import { ModeOptions } from '@/constant/kernel'
+import { OS } from '@/enums/app'
 import i18n from '@/lang'
 import {
   useAppSettingsStore,
@@ -27,7 +28,6 @@ import {
 } from '@/utils'
 
 import type { MenuItem } from '@/types/app'
-import { OS } from '@/enums/app'
 
 const getTrayIcons = () => {
   const envStore = useEnvStore()

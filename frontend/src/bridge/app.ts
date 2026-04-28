@@ -1,11 +1,13 @@
-import type { AppEnv } from '@/types/app'
+import * as App from '@wails/go/bridge/App'
 import {
   IsNotificationAvailable,
   RequestNotificationAuthorization,
   SendNotification,
 } from '@wails/runtime/runtime'
-import * as App from '@wails/go/bridge/App'
+
 import { sampleID } from '@/utils'
+
+import type { AppEnv } from '@/types/app'
 
 export const RestartApp = App.RestartApp
 

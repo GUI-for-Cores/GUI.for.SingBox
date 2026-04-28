@@ -2,9 +2,10 @@
 import { ref } from 'vue'
 
 import { EventsOn, WindowHide, IsStartup } from '@/bridge'
-import { NavigationBar, TitleBar, SplashView, AboutView, CommandView } from '@/components'
 import * as Stores from '@/stores'
 import { exitApp, sampleID, sleep, message } from '@/utils'
+
+import { NavigationBar, TitleBar, SplashView, AboutView, CommandView } from '@/components'
 
 const loading = ref(true)
 const percent = ref(0)

@@ -2,6 +2,7 @@ import { parse } from 'yaml'
 
 import { ReadFile, WriteFile } from '@/bridge'
 import { CoreConfigFilePath } from '@/constant/kernel'
+import { Branch } from '@/enums/app'
 import {
   DnsServer,
   Inbound,
@@ -12,7 +13,6 @@ import {
   RuleType,
   Strategy,
 } from '@/enums/kernel'
-import { Branch } from '@/enums/app'
 import {
   useAppSettingsStore,
   usePluginsStore,

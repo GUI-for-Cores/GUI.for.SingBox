@@ -17,7 +17,7 @@ const api: CustomActionApi = {
 
 const computedActions = computed(() => Array.from(resolvedActionMap.value.values()))
 
-const resolveDynamicField = <T,>(field: T): T => (typeof field === 'function' ? field(api) : field)
+const resolveDynamicField = <T>(field: T): T => (typeof field === 'function' ? field(api) : field)
 
 const renderCustomActionSlot = (slot: CustomAction['componentSlots']) => {
   const resolved = resolveDynamicField(slot ?? {})

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 import { ExitApp } from '@/bridge'
 import { WebviewGpuPolicyOptions, WindowStateOptions } from '@/constant/app'
+import { OS } from '@/enums/app'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import {
   confirm,
@@ -14,7 +15,6 @@ import {
   EnableAutoStart,
   DisableAutoStart,
 } from '@/utils'
-import { OS } from '@/enums/app'
 
 const appSettings = useAppSettingsStore()
 const envStore = useEnvStore()

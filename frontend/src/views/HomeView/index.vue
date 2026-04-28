@@ -9,10 +9,10 @@ import { APP_TITLE, debounce, message } from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
+import GroupsController from './components/GroupsController.vue'
+import KernelLogs from './components/KernelLogs.vue'
 import OverView from './components/OverView.vue'
 import QuickStart from './components/QuickStart.vue'
-import KernelLogs from './components/KernelLogs.vue'
-import GroupsController from './components/GroupsController.vue'
 
 const showController = ref(false)
 const controllerRef = useTemplateRef('controllerRef')

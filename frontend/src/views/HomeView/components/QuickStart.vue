@@ -86,6 +86,6 @@ defineExpose({ modalSlots })
 <template>
   <div class="flex gap-4">
     <Input v-model="name" :placeholder="$t('profile.name')" auto-size clearable class="w-[25%]" />
-    <Input v-model="url" placeholder="http(s)://" autofocus clearable  allow-paste class="w-[75%]" />
+    <Input v-model="url" placeholder="http(s)://" autofocus clearable allow-paste class="w-[75%]" />
   </div>
 </template>

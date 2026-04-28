@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useAppSettingsStore, usePluginsStore } from '@/stores'
 import { DefaultPluginHubSources } from '@/constant/app'
 import { useBool } from '@/hooks'
+import { useAppSettingsStore, usePluginsStore } from '@/stores'
 import { APP_TITLE, createTextMatcher, deepClone, message } from '@/utils'
 
 import type { Plugin } from '@/types/app'

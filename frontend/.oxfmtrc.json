@@ -5,5 +5,78 @@
   "singleQuote": true,
   "printWidth": 100,
   "trailingComma": "all",
+  "sortImports": {
+    "ignoreCase": true,
+    "internalPattern": ["@/", "@wails/"],
+    "sortSideEffects": false,
+    "groups": [
+      ["builtin", "external", "type-builtin", "type-external", "subpath", "type-subpath"],
+      { "newlinesBetween": true },
+      ["wails-internal", "wails-type", "bridge-internal", "bridge-type"],
+      { "newlinesBetween": true },
+      "app-internal",
+      { "newlinesBetween": true },
+      "components-internal",
+      { "newlinesBetween": true },
+      "project-type",
+      { "newlinesBetween": true },
+      ["parent", "sibling", "index", "relative-type", "side_effect_style", "side_effect", "style"],
+      "unknown"
+    ],
+    "customGroups": [
+      {
+        "groupName": "wails-internal",
+        "selector": "internal",
+        "elementNamePattern": ["@wails/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "wails-type",
+        "selector": "internal",
+        "elementNamePattern": ["@wails/**"],
+        "modifiers": ["type"]
+      },
+      {
+        "groupName": "bridge-internal",
+        "selector": "internal",
+        "elementNamePattern": ["@/bridge/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "bridge-type",
+        "selector": "internal",
+        "elementNamePattern": ["@/bridge/**"],
+        "modifiers": ["type"]
+      },
+      {
+        "groupName": "components-internal",
+        "selector": "internal",
+        "elementNamePattern": ["@/components", "@/components/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "app-internal",
+        "selector": "internal",
+        "elementNamePattern": ["@/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "type-external",
+        "selector": "type",
+        "elementNamePattern": ["*"]
+      },
+      {
+        "groupName": "project-type",
+        "selector": "internal",
+        "elementNamePattern": ["@/**"],
+        "modifiers": ["type"]
+      },
+      {
+        "groupName": "relative-type",
+        "selector": "type",
+        "elementNamePattern": ["./**", "../**"]
+      }
+    ]
+  },
   "ignorePatterns": ["src/bridge/wailsjs/**"]
 }

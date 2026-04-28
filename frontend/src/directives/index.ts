@@ -1,10 +1,9 @@
+import type { Plugin, App } from 'vue'
 import { vDraggable } from 'vue-draggable-plus'
 
 import menu from './menu'
 import platform from './platform'
 import tips from './tips'
-
-import type { Plugin, App } from 'vue'
 
 const directives: any = {
   menu,

@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 import { GetEnv } from '@/bridge'
+import { OS } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { updateTrayAndMenus, SetSystemProxy, GetSystemProxy } from '@/utils'
-import { OS } from '@/enums/app'
+
 import type { AppEnv } from '@/types/app'
 
 export const useEnvStore = defineStore('env', () => {

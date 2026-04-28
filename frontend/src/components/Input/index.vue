@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
+import { ClipboardGetText } from '@/bridge'
 import useI18n from '@/lang'
 import { debounce } from '@/utils'
-import { ClipboardGetText } from '@/bridge'
 
 export interface Props {
   modelValue?: string | number | undefined
