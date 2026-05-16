@@ -95,7 +95,9 @@ onUnmounted(() => {
             <span
               style="font-size: 13px; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 9999px;">
               {{ t('subscribes.expire') }}:{{ s.expire ? formatDate(s.expire, 'YYYY-MM-DD HH:mm:ss') : '--' }}
-
+              / 套餐流量：{{ formatBytes(s.download + s.upload,
+                2) }}/ {{ s.total ?
+                formatBytes(s.total, 2) : '--' }}
             </span>
           </div>
         </div>
@@ -126,10 +128,10 @@ onUnmounted(() => {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div
           style="background: linear-gradient(to right, #6D28D9, #7C3AED); color: white; padding: 14px 28px; border-radius: 14px; font-size: 20px; font-weight: 600;">
-          <div style="" v-show="!kernelApiStore.running" v-loading="kernelApiStore.starting" 
-            @click="handleStartKernel">开启VPN连接</div>
-          <div style="background: red; color: white;" v-show="kernelApiStore.running" v-loading="kernelApiStore.starting" 
-            @click="handleStopKernel">停止VPN连接</div>
+          <div style="" v-show="!kernelApiStore.running" v-loading="kernelApiStore.starting" @click="handleStartKernel">
+            开启VPN连接</div>
+          <div style="background: red; color: white;" v-show="kernelApiStore.running"
+            v-loading="kernelApiStore.starting" @click="handleStopKernel">停止VPN连接</div>
         </div>
 
         <!-- 更新按钮（带时间） -->
@@ -169,8 +171,10 @@ onUnmounted(() => {
 
           <div>
             <div style="color: #666; font-size: 14px;">{{ t('subscribes.total') }}</div>
-            <div style="font-size: 28px; font-weight: 700; color: #6D28D9; margin-top: 4px;">{{ s.total ?
-              formatBytes(s.total, 2) : '--' }}</div>
+            <div style="font-size: 28px; font-weight: 700; color: #6D28D9; margin-top: 4px;">({{ formatBytes(s.download
+              + s.upload,
+              2) }})/{{ s.total ?
+                formatBytes(s.total, 2) : '--' }}</div>
           </div>
         </div>
       </div>
