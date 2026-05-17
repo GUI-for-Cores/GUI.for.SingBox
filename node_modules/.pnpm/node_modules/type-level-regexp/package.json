@@ -1,0 +1,59 @@
+{
+  "name": "type-level-regexp",
+  "version": "0.1.17",
+  "description": "Type-Level RegExp parser, matcher and permutation resolver",
+  "keywords": [
+    "RegExp",
+    "regex",
+    "TypeScript",
+    "type-level",
+    "type-level-programming"
+  ],
+  "repository": "https://github.com/didavid61202/type-level-regexp.git",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./regexp": {
+      "import": "./dist/regexp.mjs",
+      "require": "./dist/regexp.cjs",
+      "types": "./dist/regexp.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "regexp.d.ts"
+  ],
+  "author": "David Tai <didavid61202@gmail.com>",
+  "homepage": "https://github.com/didavid61202/type-level-regexp#readme",
+  "scripts": {
+    "dev": "vitest --run && vitest typecheck",
+    "test:coverage": "vitest run --coverage",
+    "test:update": "vitest -u",
+    "build": "unbuild",
+    "release": "bumpp && npm publish"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.38.5",
+    "@vitest/coverage-c8": "^0.30.1",
+    "bumpp": "^9.1.0",
+    "c8": "^7.13.0",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "typescript": "^5.0.4",
+    "unbuild": "^1.2.1",
+    "vite": "^4.3.3",
+    "vitest": "^0.30.1"
+  },
+  "resolutions": {
+    "type-level-regexp": "link:."
+  }
+}

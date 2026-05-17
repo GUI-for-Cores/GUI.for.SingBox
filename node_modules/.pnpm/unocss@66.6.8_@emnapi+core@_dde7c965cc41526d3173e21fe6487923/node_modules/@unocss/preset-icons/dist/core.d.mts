@@ -1,0 +1,2 @@
+import { a as parseIconWithLoader, i as createPresetIcons, n as combineLoaders, o as _default, r as createCDNFetchLoader, s as IconsOptions, t as IconsAPI } from "./core-KGRmP95_.mjs";
+export { IconsAPI, IconsOptions, combineLoaders, createCDNFetchLoader, createPresetIcons, _default as icons, parseIconWithLoader };

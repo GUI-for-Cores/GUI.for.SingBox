@@ -1,0 +1,60 @@
+{
+  "name": "oxc-walker",
+  "version": "0.7.0",
+  "description": "",
+  "license": "MIT",
+  "repository": "oxc-project/oxc-walker",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "dependencies": {
+    "magic-regexp": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.3",
+    "@vitest/coverage-v8": "4.0.16",
+    "knip": "^5.69.1",
+    "lint-staged": "16.2.7",
+    "oxc-parser": "0.108.0",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.29.0",
+    "simple-git-hooks": "2.13.1",
+    "typescript": "5.9.3",
+    "unbuild": "3.6.1",
+    "vitest": "4.0.16"
+  },
+  "peerDependencies": {
+    "oxc-parser": ">=0.98.0"
+  },
+  "resolutions": {
+    "oxc-walker": "link:."
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*": [
+      "oxfmt --no-error-on-unmatched-pattern"
+    ],
+    "*.{js,ts,mjs,cjs,json,.*rc}": [
+      "pnpm run lint --fix"
+    ]
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "vitest dev",
+    "lint": "oxlint",
+    "fmt": "oxfmt",
+    "test": "pnpm test:unit && pnpm test:types",
+    "test:unit": "vitest",
+    "test:types": "tsc --noEmit"
+  }
+}

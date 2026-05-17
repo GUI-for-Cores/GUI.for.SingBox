@@ -2,11 +2,15 @@ import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-
+import UnoCSS from 'unocss/vite' // 引入 UnoCSS 插件
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [vue()],
+  plugins: [vue(),
+       UnoCSS({
+      mode: 'vue-scoped', // 在这里指定模式
+    }),
+  ],
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {

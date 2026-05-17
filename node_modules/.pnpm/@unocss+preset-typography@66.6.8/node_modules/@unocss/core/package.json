@@ -1,0 +1,43 @@
+{
+  "name": "@unocss/core",
+  "type": "module",
+  "version": "66.6.8",
+  "description": "The instant on-demand Atomic CSS engine.",
+  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/antfu",
+  "homepage": "https://unocss.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unocss/unocss.git",
+    "directory": "packages-engine/core"
+  },
+  "bugs": {
+    "url": "https://github.com/unocss/unocss/issues"
+  },
+  "keywords": [
+    "unocss",
+    "atomic-css",
+    "atomic-css-engine",
+    "css",
+    "tailwind",
+    "windicss"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "magic-string": "^0.30.21",
+    "unconfig": "^7.5.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  }
+}

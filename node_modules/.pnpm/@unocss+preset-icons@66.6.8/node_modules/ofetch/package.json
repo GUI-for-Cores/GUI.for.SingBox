@@ -1,0 +1,96 @@
+{
+  "name": "ofetch",
+  "version": "1.5.1",
+  "description": "A better fetch API. Works on node, browser and workers.",
+  "repository": "unjs/ofetch",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "browser": "./dist/index.mjs",
+      "bun": "./dist/index.mjs",
+      "deno": "./dist/index.mjs",
+      "edge-light": "./dist/index.mjs",
+      "edge-routine": "./dist/index.mjs",
+      "netlify": "./dist/index.mjs",
+      "react-native": "./dist/index.mjs",
+      "wintercg": "./dist/index.mjs",
+      "worker": "./dist/index.mjs",
+      "workerd": "./dist/index.mjs",
+      "node": {
+        "import": {
+          "types": "./dist/node.d.mts",
+          "default": "./dist/node.mjs"
+        },
+        "require": {
+          "types": "./dist/node.d.cts",
+          "default": "./dist/node.cjs"
+        }
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/node.d.cts",
+        "default": "./dist/node.cjs"
+      },
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./node": {
+      "import": {
+        "types": "./dist/node.d.mts",
+        "default": "./dist/node.mjs"
+      },
+      "require": {
+        "types": "./dist/node.d.cts",
+        "default": "./dist/node.cjs"
+      }
+    }
+  },
+  "main": "./dist/node.cjs",
+  "module": "./dist/index.mjs",
+  "react-native": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "node.d.ts"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "vitest",
+    "lint": "eslint . && prettier -c src test playground examples",
+    "lint:fix": "eslint --fix . && prettier -w src test playground examples",
+    "prepack": "pnpm build",
+    "play": "jiti playground/index.ts",
+    "release": "pnpm test && changelogen --release --publish",
+    "test": "pnpm lint && vitest run --coverage"
+  },
+  "dependencies": {
+    "destr": "^2.0.5",
+    "node-fetch-native": "^1.6.7",
+    "ufo": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "@vitest/coverage-v8": "^4.0.4",
+    "changelogen": "^0.6.2",
+    "eslint": "^9.38.0",
+    "eslint-config-unjs": "^0.5.0",
+    "fetch-blob": "^4.0.0",
+    "formdata-polyfill": "^4.0.10",
+    "h3": "^1.15.4",
+    "jiti": "^2.6.1",
+    "listhen": "^1.9.0",
+    "prettier": "^3.6.2",
+    "std-env": "^3.10.0",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
+    "undici": "^7.16.0",
+    "vitest": "^4.0.4"
+  },
+  "packageManager": "pnpm@10.19.0"
+}
