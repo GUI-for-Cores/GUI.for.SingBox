@@ -1,6 +1,0 @@
-{
-	"devDependencies": {
-		"@unocss/preset-rem-to-px": "^66.6.8",
-		"unocss": "^66.6.8"
-	}
-}
