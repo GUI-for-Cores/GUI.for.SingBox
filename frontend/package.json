@@ -27,6 +27,7 @@
     "codemirror": "^6.0.2",
     "croner": "10.0.1",
     "marked": "^17.0.5",
+    "naive-ui": "^2.44.1",
     "pinia": "^3.0.4",
     "prettier": "^3.8.1",
     "vue": "^3.5.31",

@@ -2,6 +2,19 @@
 import { ref, watch, useTemplateRef, defineAsyncComponent, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 // import router from '@/router'
+import { 
+  NConfigProvider,
+  NCard,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  NSelect,
+  NCheckbox,
+  NDivider,
+  NSpace,
+  darkTheme
+} from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { captcha, login } from '../api/api'
 import { useProfilesStore, useAppSettingsStore, useSubscribesStore, useKernelApiStore } from '@/stores'
@@ -141,6 +154,25 @@ const loginIn = async () => {
 }
 
 loginVerify()
+
+
+const formValue = ref({
+  server: 'jp-tokyo-01',
+  email: '',
+  password: '',
+  remember: true
+})
+
+const serverOptions = [
+  { label: '日本东京 01 (低延迟)', value: 'jp-tokyo-01' },
+  { label: '新加坡 01', value: 'sg-01' },
+  { label: '美国洛杉矶 02', value: 'us-la-02' },
+  { label: '德国法兰克福 01', value: 'de-fr-01' },
+  { label: '香港 01', value: 'hk-01' }
+]
+
+
+
 </script>
 
 <template>
@@ -175,14 +207,96 @@ loginVerify()
 
 
   </div>
+
+<n-config-provider :theme="darkTheme">
+    <div class="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] flex items-center justify-center p-20px">
+      <n-card 
+        class="w-420px bg-[rgba(255,255,255,0.06)] backdrop-blur-12px border-none shadow-2xl"
+        :bordered="false"
+      >
+        <!-- Logo & 标题 -->
+        <div class="text-center mb-32px">
+          <div class="text-52px mb-12px">🔒</div>
+          <h1 class="text-28px text-white font-bold tracking-tight">SecureVPN</h1>
+          <p class="text-15px text-gray-400 mt-6px">安全 • 高速 • 稳定</p>
+        </div>
+
+        <n-form :model="formValue" label-placement="top">
+          <!-- 服务器 -->
+          <!-- <n-form-item label="推荐服务器" class="mb-20px">
+            <n-select
+              v-model:value="formValue.server"
+              :options="serverOptions"
+              placeholder="请选择服务器节点"
+              size="large"
+            />
+          </n-form-item> -->
+
+          <!-- 邮箱 -->
+          <n-form-item label="邮箱地址" class="mb-20px">
+            <n-input
+              v-model:value="formValue.email"
+              placeholder="请输入邮箱地址"
+              type="text"
+              size="large"
+              clearable
+            />
+          </n-form-item>
+
+          <!-- 密码 -->
+          <n-form-item label="密码" class="mb-8px">
+            <n-input
+              v-model:value="formValue.password"
+              placeholder="请输入密码"
+              size="large"
+              show-password-on="click"
+            />
+          </n-form-item>
+
+          <!-- 记住我 + 忘记密码 -->
+          <div class="flex justify-between items-center mb-28px">
+            <n-checkbox v-model:checked="formValue.remember">
+              记住登录
+            </n-checkbox>
+            <n-button text type="primary" size="small" class="text-14px">
+              忘记密码？
+            </n-button>
+          </div>
+
+          <!-- 登录按钮 -->
+          <n-button
+            type="primary"
+            size="large"
+            block
+            class="h-52px text-16px font-medium"
+            @click="handleLogin"
+          >
+            立即登录
+          </n-button>
+
+          <n-divider class="my-24px text-gray-500">其他方式登录</n-divider>
+
+          <!-- 第三方登录 -->
+          <n-space justify="center" :size="12">
+            <n-button secondary size="large" class="flex-1">Google</n-button>
+            <n-button secondary size="large" class="flex-1">Apple</n-button>
+            <n-button secondary size="large" class="flex-1">微信</n-button>
+          </n-space>
+
+          <!-- 注册 -->
+          <div class="text-center text-14px text-gray-400 mt-32px">
+            还没有账号？
+            <n-button text type="primary" size="small" class="ml-4px">立即注册</n-button>
+          </div>
+        </n-form>
+      </n-card>
+    </div>
+  </n-config-provider>
+
+
+
+
+
 </template>
 <style lang="less" scoped>
-.form {
-
-  padding-left: 280px;
-
-  .form-item {
-    min-width: 80px;
-  }
-}
 </style>
