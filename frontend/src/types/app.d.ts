@@ -117,6 +117,7 @@ export interface AppSettings {
   debugNoAnimation: boolean
   debugNoRounded: false
   debugBorder: boolean
+  debugUsePointer: boolean
   pages: string[]
 }
 

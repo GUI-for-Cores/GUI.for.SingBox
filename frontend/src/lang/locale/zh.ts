@@ -679,6 +679,7 @@ export default {
     debugOutline: '组件轮廓',
     debugNoAnimation: '禁用动画',
     debugNoRounded: '禁用圆角',
+    debugUsePointer: '使用指针光标',
     debugBorder: '显示窗口边框',
     startup: {
       name: '自启动',

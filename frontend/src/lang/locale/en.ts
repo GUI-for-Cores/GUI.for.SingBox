@@ -680,6 +680,7 @@ export default {
     debugOutline: 'Show component outlines',
     debugNoAnimation: 'Disable animations',
     debugNoRounded: 'Disable rounded corners',
+    debugUsePointer: 'Use pointer cursor',
     debugBorder: 'Show window border',
     startup: {
       name: 'Run at startup',
