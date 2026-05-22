@@ -30,7 +30,7 @@ interface Response<T = any> {
 
 const mergeRequestOptions = async (options: Request['options']) => {
   const mergedReqOpts: Required<Request['options']> = {
-    Proxy: await GetRequestProxy(),
+    Proxy: options?.Proxy ?? (await GetRequestProxy()),
     Insecure: false,
     Redirect: true,
     Timeout: 15, // 15 seconds
