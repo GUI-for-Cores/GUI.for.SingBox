@@ -183,7 +183,7 @@ if (pluginsStore.pluginHub.length === 0) {
 
     <Card
       v-for="(source, index) in appSettingsStore.app.plugins.sources"
-      :key="source.name"
+      :key="index"
       class="mb-8"
     >
       <template #extra>
