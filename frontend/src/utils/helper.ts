@@ -579,14 +579,15 @@ const requestProxyCache: { proxyPromise: Promise<string> | null; lastAccessTime:
   lastAccessTime: 0,
 }
 
-export const GetRequestProxy = async () => {
+export const GetRequestProxy = async (mode?: RequestProxyMode, customProxy?: string) => {
   const appSettings = useAppSettingsStore()
+  const requestProxyMode = mode ?? appSettings.app.requestProxyMode
 
-  if (appSettings.app.requestProxyMode === RequestProxyMode.None) {
+  if (requestProxyMode === RequestProxyMode.None) {
     return ''
   }
 
-  if (appSettings.app.requestProxyMode === RequestProxyMode.Kernel) {
+  if (requestProxyMode === RequestProxyMode.Kernel) {
     const kernelProxy = useKernelApiStore().getProxyEndpoint()
     if (!kernelProxy) return ''
 
@@ -599,8 +600,8 @@ export const GetRequestProxy = async () => {
     return `${schema}://${auth}${formattedHost}:${port}`
   }
 
-  if (appSettings.app.requestProxyMode === RequestProxyMode.Custom) {
-    return normalizeRequestProxy(appSettings.app.customProxy)
+  if (requestProxyMode === RequestProxyMode.Custom) {
+    return normalizeRequestProxy(customProxy ?? appSettings.app.customProxy)
   }
 
   if (requestProxyCache.proxyPromise && Date.now() - requestProxyCache.lastAccessTime < 1000) {

@@ -202,6 +202,8 @@ export interface Subscription {
   includeProtocol: string
   excludeProtocol: string
   proxyPrefix: string
+  requestProxyMode: RequestProxyMode
+  customProxy: string
   disabled: boolean
   inSecure: boolean
   proxies: { id: string; tag: string; type: string }[]
