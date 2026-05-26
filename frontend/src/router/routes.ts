@@ -12,11 +12,11 @@ import WelcomeView from '@/views/Customize/WelcomeView/index.vue'
 
 const routes: RouteRecordRaw[] = [
     {
-    path: '/Login',
+    path: '/',
     name: 'Login',
     component: LoginView,
     meta: {
-      name: 'router.loginview',
+      name: 'router.login',
       icon: 'loginview',
     },
   },
@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/',
+    path: '/Overview',
     name: 'Overview',
     component: HomeView,
     meta: {

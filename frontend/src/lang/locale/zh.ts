@@ -306,6 +306,7 @@ export default {
     addInsertionPoint: '添加插入点',
   },
   router: {
+    login: '登录',
     overview: '概览',
     subscriptions: '订阅',
     rulesets: '规则集',

@@ -306,6 +306,7 @@ export default {
     addInsertionPoint: 'Add insertion point',
   },
   router: {
+    login: 'login',
     overview: 'Overview',
     subscriptions: 'Subscriptions',
     rulesets: 'Rulesets',
