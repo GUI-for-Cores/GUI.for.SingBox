@@ -187,9 +187,11 @@ const renderRule = (rule: IRule) => {
           </Button>
         </Divider>
       </div>
-      <div v-else class="flex items-center py-2 gap-8">
-        <Switch v-model="rule.enable" border="square" size="small" />
-        <div class="font-bold">
+      <div v-else class="flex items-start py-2 gap-8">
+        <div class="shrink-0">
+          <Switch v-model="rule.enable" border="square" size="small" />
+        </div>
+        <div class="font-bold flex-1 rule-content">
           <span
             v-if="hasLost(rule)"
             class="cursor-pointer"
@@ -200,7 +202,7 @@ const renderRule = (rule: IRule) => {
           </span>
           {{ renderRule(rule) }}
         </div>
-        <div class="ml-auto">
+        <div class="ml-auto shrink-0">
           <Button
             v-if="rule.type === RuleType.RuleSet && rule.payload && hasLost(rule)"
             type="text"
@@ -341,3 +343,10 @@ const renderRule = (rule: IRule) => {
     </template>
   </Modal>
 </template>
+
+<style lang="less" scoped>
+.rule-content {
+  min-width: 0;
+  word-break: break-all;
+}
+</style>

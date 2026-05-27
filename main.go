@@ -43,12 +43,14 @@ func main() {
 		Windows: &windows.Options{
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
+			ContentProtection:    bridge.Config.ContentProtection,
 			BackdropType:         windows.Acrylic,
 			WebviewBrowserPath:   bridge.Env.WebviewPath,
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarHiddenInset(),
 			Appearance:           mac.DefaultAppearance,
+			ContentProtection:    bridge.Config.ContentProtection,
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{

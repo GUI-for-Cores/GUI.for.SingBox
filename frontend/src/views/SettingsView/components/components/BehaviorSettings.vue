@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 import { ExitApp } from '@/bridge'
 import { WebviewGpuPolicyOptions, WindowStateOptions } from '@/constant/app'
+import { OS } from '@/enums/app'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
 import {
   confirm,
@@ -14,7 +15,6 @@ import {
   EnableAutoStart,
   DisableAutoStart,
 } from '@/utils'
-import { OS } from '@/enums/app'
 
 const appSettings = useAppSettingsStore()
 const envStore = useEnvStore()
@@ -100,7 +100,7 @@ if (envStore.env.os === OS.Windows) {
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
     </div>
-    <div v-platform="[OS.Windows, OS.Darwin]" class="px-8 py-12 flex items-center justify-between">
+    <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
         <span v-platform="[OS.Windows]" class="font-normal text-12">
@@ -150,6 +150,22 @@ if (envStore.env.os === OS.Windows) {
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">{{ $t('settings.closeKernelOnExit') }}</div>
       <Switch v-model="appSettings.app.closeKernelOnExit" />
+    </div>
+    <div class="px-8 py-12 flex items-center justify-between">
+      <div class="text-16 font-bold">{{ $t('settings.autoSetSystemProxy') }}</div>
+      <Switch v-model="appSettings.app.autoSetSystemProxy" />
+    </div>
+    <div class="px-8 pt-12 pb-8 flex flex-col gap-12">
+      <div class="text-16 font-bold">
+        {{ $t('settings.proxyBypassList') }}
+        <span class="font-normal text-12">({{ $t('settings.proxyBypassListTips') }})</span>
+      </div>
+      <CodeViewer
+        v-model="appSettings.app.proxyBypassList"
+        editable
+        lang="yaml"
+        class="min-w-256"
+      />
     </div>
     <div v-platform="[OS.Linux]" class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">

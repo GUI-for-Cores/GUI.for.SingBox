@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
+import { ClipboardGetText } from '@/bridge'
 import useI18n from '@/lang'
 import { debounce } from '@/utils'
-import { ClipboardGetText } from '@/bridge'
 
 export interface Props {
   modelValue?: string | number | undefined
@@ -18,6 +18,7 @@ export interface Props {
   autofocus?: boolean
   min?: number
   max?: number
+  maxWidth?: boolean
   disabled?: boolean
   border?: boolean
   delay?: number
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   allowPaste: false,
   min: undefined,
   max: undefined,
+  maxWidth: true,
   clearable: false,
   disabled: false,
   border: true,
@@ -96,15 +98,12 @@ const showInput = () => {
   nextTick(() => inputRef.value?.focus())
 }
 
-const onSubmit = debounce(
-  (e: any) => {
-    const val = validate(e.target.value)
-    e.target.value = val
-    emits('submit', val)
-    props.editable && (showEdit.value = false)
-  },
-  props.clearable ? 100 : 0,
-)
+const onSubmit = (e: any) => {
+  const val = validate(e.target.value)
+  e.target.value = val
+  emits('submit', val)
+  props.editable && (showEdit.value = false)
+}
 
 onMounted(() => props.autofocus && !props.editable && inputRef.value?.focus())
 
@@ -121,6 +120,7 @@ defineExpose({
       'auto-size': autoSize,
       'bg-color': !editable || showEdit,
       'is-editable': editable && !showEdit,
+      'no-max-width': !maxWidth,
       [size]: true,
       disabled,
     }"
@@ -167,7 +167,14 @@ defineExpose({
         @keydown.enter="() => nextTick(() => inputRef?.blur())"
         @keydown.esc.stop.prevent="inputRef?.blur"
       />
-      <Button v-if="innerClearable" icon="clear2" type="text" size="small" @click="handleClear" />
+      <Button
+        v-if="innerClearable"
+        icon="clear2"
+        type="text"
+        size="small"
+        @mousedown.prevent
+        @click="handleClear"
+      />
       <Button v-if="innerAllowPaste" icon="paste" type="text" size="small" @click="handlePaste" />
     </template>
     <div v-if="$slots.suffix" class="flex items-center shrink-0">
@@ -194,6 +201,9 @@ defineExpose({
 
 .is-editable {
   min-width: 0;
+}
+
+.is-editable:not(.no-max-width) {
   max-width: 220px;
 }
 

@@ -1,7 +1,8 @@
 import { stringify } from 'yaml'
 
-import { useAppSettingsStore, useEnvStore } from '@/stores'
-import { APP_TITLE, APP_VERSION } from '@/utils'
+import { OS } from '@/enums/app'
+import { useAppSettingsStore } from '@/stores'
+import { APP_TITLE, APP_VERSION, isValidIPv4, isValidIPv6 } from '@/utils'
 
 export const deepClone = <T>(json: T): T => JSON.parse(JSON.stringify(json))
 
@@ -185,9 +186,9 @@ export const getGitHubApiAuthorization = () => {
   return appSettings.app.githubApiToken ? `Bearer ${appSettings.app.githubApiToken}` : ''
 }
 
-// System ScheduledTask Helper
-export const getTaskSchXmlString = (appPath: string, delay = 30) => {
-  const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
+export const getAutoStartConfiguration = (os: OS, appPath: string, delay = 30) => {
+  if (os === OS.Windows) {
+    const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
     <Description>${APP_TITLE} at startup</Description>
@@ -230,9 +231,38 @@ export const getTaskSchXmlString = (appPath: string, delay = 30) => {
       <Arguments>tasksch</Arguments>
     </Exec>
   </Actions>
-</Task>
-`
-  return xml
+</Task>`
+    return xml
+  }
+  if (os === OS.Linux) {
+    const desktop = `[Desktop Entry]
+Type=Application
+Exec=${appPath} tasksch
+Name=${APP_TITLE}`
+    return desktop
+  }
+  if (os === OS.Darwin) {
+    const plist = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>${APP_TITLE}</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/open</string>
+        <string>${appPath}</string>
+        <string>--args</string>
+        <string>tasksch</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>`
+    return plist
+  }
+  throw new Error('Not Implemented')
 }
 
 export const setIntervalImmediately = (func: () => void, interval: number) => {
@@ -300,6 +330,12 @@ export const readonly = <T>(obj: T): T => {
   })
 }
 
+export const normalizeErrorMessage = (error: unknown) => {
+  if (typeof error === 'string') return error
+  if (error instanceof Error) return error.message
+  return String(error)
+}
+
 export const normalizeBase64 = (str: string): string => {
   const normalized = str.trim().replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/')
 
@@ -335,9 +371,33 @@ export const stringifyNoFolding = (content: any) => {
   return stringify(content, { lineWidth: 0, minContentWidth: 0 })
 }
 
-export const createTextMatcher = (include: string, exclude: string) => {
-  const includeRegex = include ? buildSmartRegExp(include) : null
-  const excludeRegex = exclude ? buildSmartRegExp(exclude) : null
+export const normalizeRequestProxy = (proxy: string) => {
+  const trimmed = proxy.trim()
+  if (!trimmed) return ''
+  if (/^[a-z][a-z\d+\-.]*:\/\//i.test(trimmed)) return trimmed
+  return `http://${trimmed}`
+}
+
+export const normalizeProxyHost = (host: string) => {
+  if (!host || ['0.0.0.0', '::', '[::]'].includes(host)) {
+    return '127.0.0.1'
+  }
+  return host
+}
+
+export const getDomainSuffixes = (host: string) => {
+  const normalizedHost = host.trim().replace(/\.+$/, '').toLowerCase()
+  if (!normalizedHost || isValidIPv4(normalizedHost) || isValidIPv6(normalizedHost)) return []
+
+  const labels = normalizedHost.split('.').filter(Boolean)
+  if (labels.length < 2) return []
+
+  return labels.slice(0, -1).map((_, index) => labels.slice(index).join('.'))
+}
+
+export const createTextMatcher = (include: string, exclude: string, flags = '') => {
+  const includeRegex = include ? buildSmartRegExp(include, flags) : null
+  const excludeRegex = exclude ? buildSmartRegExp(exclude, flags) : null
   return (text: string) => {
     const flag1 = includeRegex ? includeRegex.test(text) : true
     const flag2 = excludeRegex ? excludeRegex.test(text) : false

@@ -14,7 +14,7 @@ const handleCoreConfiguraion = async (isAlpha: boolean) => {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col gap-8 pr-20 mb-8">
     <BranchDetail :is-alpha="false" @config="handleCoreConfiguraion(false)" />
     <BranchDetail :is-alpha="true" @config="handleCoreConfiguraion(true)" />
     <SwitchBranch />

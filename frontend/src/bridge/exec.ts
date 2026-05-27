@@ -5,6 +5,7 @@ import { sampleID } from '@/utils'
 
 interface ExecOptions {
   PidFile?: string
+  LogFile?: string
   Convert?: boolean
   Env?: Record<string, any>
   StopOutputKeyword?: string
@@ -17,6 +18,7 @@ interface ExecOptions {
 const mergeExecOptions = (options: ExecOptions) => {
   const mergedExecOpts = {
     PidFile: options.PidFile ?? '',
+    LogFile: options.LogFile ?? '',
     Convert: options.Convert ?? options.convert ?? false,
     Env: options.Env ?? options.env ?? {},
     StopOutputKeyword: options.StopOutputKeyword ?? options.stopOutputKeyword ?? '',

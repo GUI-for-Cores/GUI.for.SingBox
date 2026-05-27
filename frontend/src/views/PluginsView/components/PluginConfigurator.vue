@@ -8,9 +8,9 @@ import { message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
-import PluginConfigItem from './PluginConfigItem.vue'
-
 import type { Plugin } from '@/types/app'
+
+import PluginConfigItem from './PluginConfigItem.vue'
 
 interface Props {
   plugin: Plugin

@@ -15,6 +15,7 @@ import {
   DefaultConcurrencyLimit,
   DefaultControllerSensitivity,
   DefaultFontFamily,
+  DefaultPluginHubSources,
   DefaultTestTimeout,
   DefaultTestURL,
   UserFilePath,
@@ -29,6 +30,7 @@ import {
   WebviewGpuPolicy,
   ControllerCloseMode,
   Branch,
+  RequestProxyMode,
 } from '@/enums/app'
 import i18n, { loadLocale } from '@/lang'
 import { useAppStore, useEnvStore } from '@/stores'
@@ -62,11 +64,14 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     scheduledtasksView: View.Grid,
     windowStartState: WindowStartState.Normal,
     webviewGpuPolicy: WebviewGpuPolicy.OnDemand,
+    contentProtection: false,
     width: 0,
     height: 0,
     exitOnClose: true,
     closeKernelOnExit: true,
     autoSetSystemProxy: true,
+    requestProxyMode: RequestProxyMode.System,
+    customProxy: '',
     proxyBypassList: '',
     autoStartKernel: false,
     autoRestartKernel: false,
@@ -90,6 +95,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       main: undefined as any,
       alpha: undefined as any,
     },
+    plugins: {
+      sources: DefaultPluginHubSources(),
+    },
     pluginSettings: {},
     githubApiToken: '',
     multipleInstance: false,
@@ -100,6 +108,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     debugNoAnimation: false,
     debugNoRounded: false,
     debugBorder: false,
+    debugUsePointer: false,
     pages: ['Login','Overview', 'Profiles', 'Subscriptions', 'Plugins'],
     userInfo: {
       userName: '',
@@ -132,6 +141,20 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     if (!settings.proxyBypassList) {
       settings.proxyBypassList = await GetSystemProxyBypass()
     }
+    if (!settings.requestProxyMode) {
+      settings.requestProxyMode = RequestProxyMode.System
+    }
+    if (settings.customProxy === undefined) {
+      settings.customProxy = ''
+    }
+    if (!settings.plugins) {
+      settings.plugins = {
+        sources: DefaultPluginHubSources(),
+      }
+    }
+    if (settings.debugUsePointer === undefined) {
+      settings.debugUsePointer = false
+    }
 
     app.value = settings
     latestUserSettings = stringify(app.value)
@@ -159,11 +182,18 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       document.documentElement.style.setProperty('--primary-color', primary)
       document.documentElement.style.setProperty('--secondary-color', secondary)
     },
-    feature(outline: boolean, noAnimation: boolean, noRounded: boolean, border: boolean) {
+    feature(
+      outline: boolean,
+      noAnimation: boolean,
+      noRounded: boolean,
+      border: boolean,
+      usePointer: boolean,
+    ) {
       document.body.setAttribute('feature-outline', String(outline))
       document.body.setAttribute('feature-no-animation', String(noAnimation))
       document.body.setAttribute('feature-no-rounded', String(noRounded))
       document.body.setAttribute('feature-border', String(border))
+      document.body.setAttribute('feature-use-pointer', String(usePointer))
     },
     fontFamily(fontFamily: string) {
       document.body.style.fontFamily = fontFamily
@@ -190,6 +220,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       settings.debugNoAnimation,
       settings.debugNoRounded,
       settings.debugBorder,
+      settings.debugUsePointer,
     )
     const lastModifiedSettings = stringify(settings)
     if (latestUserSettings !== lastModifiedSettings) {

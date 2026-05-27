@@ -15,6 +15,7 @@ import {
 import { ProcessInfo, KillProcess, ExecBackground, ReadFile, RemoveFile } from '@/bridge'
 import {
   CoreConfigFilePath,
+  CoreLogFilePath,
   CorePidFilePath,
   CoreStopOutputKeyword,
   CoreWorkingDirectory,
@@ -35,6 +36,7 @@ import {
   generateConfigFile,
   updateTrayAndMenus,
   getKernelFileName,
+  normalizeProxyHost,
   restoreProfile,
   deepClone,
   message,
@@ -46,6 +48,14 @@ import {
 import type { CoreApiConfig, CoreApiProxy } from '@/types/kernel'
 
 export type ProxyType = 'mixed' | 'http' | 'socks'
+export type ProxyEndpoint = {
+  schema: 'http' | 'socks5'
+  host: string
+  port: number
+  username: string
+  password: string
+  proxyType: ProxyType
+}
 
 export const useKernelApiStore = defineStore('kernelApi', () => {
   const envStore = useEnvStore()
@@ -264,6 +274,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         },
         {
           PidFile: CorePidFilePath,
+          LogFile: CoreLogFilePath,
           StopOutputKeyword: CoreStopOutputKeyword,
           Env: getKernelRuntimeEnv(isAlpha),
         },
@@ -360,33 +371,68 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   }
 
-  const getProxyPort = ():
-    | {
-        port: number
-        proxyType: ProxyType
-      }
-    | undefined => {
+  const getProxyProfileOptions = (proxyType: ProxyType) => {
+    const inboundTypeMap = {
+      mixed: Inbound.Mixed,
+      http: Inbound.Http,
+      socks: Inbound.Socks,
+    } satisfies Record<ProxyType, Inbound>
+
+    const inbound = runtimeProfile?.inbounds.find(
+      (item) => item.enable && item.type === inboundTypeMap[proxyType],
+    )
+
+    const inboundOptions =
+      proxyType === Inbound.Mixed
+        ? inbound?.mixed
+        : proxyType === Inbound.Http
+          ? inbound?.http
+          : inbound?.socks
+
+    const listen = inboundOptions?.listen.listen || ''
+    const auth = inboundOptions?.users[0]?.trim()
+    const host = normalizeProxyHost((listen || '').trim())
+
+    if (!auth) return { host, username: '', password: '' }
+
+    const [username, ...passwordParts] = auth.split(':')
+
+    return {
+      host,
+      username: username || '',
+      password: passwordParts.join(':'),
+    }
+  }
+
+  const getProxyEndpoint = (): ProxyEndpoint | undefined => {
     const { port, 'socks-port': socksPort, 'mixed-port': mixedPort } = config.value
+    let targetPort = 0
+    let proxyType: ProxyType | undefined
 
     if (mixedPort) {
-      return {
-        port: mixedPort,
-        proxyType: 'mixed',
-      }
+      targetPort = mixedPort
+      proxyType = 'mixed'
+    } else if (port) {
+      targetPort = port
+      proxyType = 'http'
+    } else if (socksPort) {
+      targetPort = socksPort
+      proxyType = 'socks'
+    } else {
+      return undefined
     }
-    if (port) {
-      return {
-        port,
-        proxyType: 'http',
-      }
+
+    const { host, username, password } = getProxyProfileOptions(proxyType)
+    const schema = proxyType === 'socks' ? 'socks5' : 'http'
+
+    return {
+      schema,
+      host,
+      port: targetPort,
+      username,
+      password,
+      proxyType,
     }
-    if (socksPort) {
-      return {
-        port: socksPort,
-        proxyType: 'socks',
-      }
-    }
-    return undefined
   }
 
   eventBus.on('profileChange', ({ id }) => {
@@ -488,7 +534,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     refreshConfig,
     updateConfig,
     refreshProviderProxies,
-    getProxyPort,
+    getProxyEndpoint,
 
     onLogs,
     onMemory,

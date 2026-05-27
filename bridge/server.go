@@ -23,6 +23,10 @@ import (
 var requestCounter uint64
 var serverMap sync.Map
 
+type serverEntry struct {
+	server *http.Server
+}
+
 type ResponseData struct {
 	Status  int
 	Headers map[string]string
@@ -32,10 +36,21 @@ type ResponseData struct {
 func (a *App) StartServer(address string, serverID string, options ServerOptions) FlagResult {
 	log.Printf("StartServer: %s %s %v", address, serverID, options)
 
+	entry := &serverEntry{}
+	if _, exists := serverMap.LoadOrStore(serverID, entry); exists {
+		return FlagResult{false, "server already exists"}
+	}
+	started := false
+	defer func() {
+		if !started {
+			serverMap.Delete(serverID)
+		}
+	}()
+
 	mux := http.NewServeMux()
 
 	if options.StaticPath != "" && options.StaticRoute != "" {
-		static := GetPath(options.StaticPath)
+		static := resolvePath(options.StaticPath)
 		fs := http.StripPrefix(options.StaticRoute, http.FileServer(http.Dir(static)))
 
 		mux.HandleFunc(options.StaticRoute, func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +59,7 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 	}
 
 	if options.UploadPath != "" && options.UploadRoute != "" {
-		uploadPath := GetPath(options.UploadPath)
+		uploadPath := resolvePath(options.UploadPath)
 		if err := os.MkdirAll(uploadPath, os.ModePerm); err != nil {
 			return FlagResult{false, "Failed to create upload directory: " + err.Error()}
 		}
@@ -61,7 +76,7 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 
 	var listener net.Listener
 	if options.Cert != "" && options.Key != "" {
-		cert, err := tls.LoadX509KeyPair(GetPath(options.Cert), GetPath(options.Key))
+		cert, err := tls.LoadX509KeyPair(resolvePath(options.Cert), resolvePath(options.Key))
 		if err != nil {
 			return FlagResult{false, "Failed to load TLS cert: " + err.Error()}
 		}
@@ -85,14 +100,16 @@ func (a *App) StartServer(address string, serverID string, options ServerOptions
 		Addr:    address,
 		Handler: mux,
 	}
+	entry.server = server
 
 	go func() {
 		if err := server.Serve(listener); err != nil && err != http.ErrServerClosed {
 			log.Printf("Server error on %s: %v", address, err)
+			serverMap.Delete(serverID)
 		}
 	}()
 
-	serverMap.Store(serverID, server)
+	started = true
 	return FlagResult{true, "Success"}
 }
 
@@ -104,12 +121,12 @@ func (a *App) StopServer(id string) FlagResult {
 		return FlagResult{false, "server not found"}
 	}
 
-	server, ok := val.(*http.Server)
-	if !ok {
+	entry, ok := val.(*serverEntry)
+	if !ok || entry.server == nil {
 		return FlagResult{false, "invalid server type"}
 	}
 
-	err := server.Close()
+	err := entry.server.Close()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
@@ -126,7 +143,8 @@ func (a *App) ListServer() FlagResult {
 
 	serverMap.Range(func(key, value any) bool {
 		serverID, ok := key.(string)
-		if ok {
+		entry, entryOK := value.(*serverEntry)
+		if ok && entryOK && entry.server != nil {
 			servers = append(servers, serverID)
 		}
 		return true
@@ -152,10 +170,14 @@ func handleHttpRequest(a *App, serverID string) http.HandlerFunc {
 		defer cancel()
 
 		runtime.EventsOn(ctx, requestID, func(data ...any) {
-			defer runtime.EventsOff(ctx, requestID)
 			resp := buildResponse(data)
-			respChan <- resp
+			select {
+			case respChan <- resp:
+			default:
+				log.Printf("Ignoring duplicate response for %s", requestID)
+			}
 		})
+		defer runtime.EventsOff(ctx, requestID)
 
 		runtime.EventsEmit(a.Ctx, serverID, requestID, r.Method, r.URL.RequestURI(), r.Header, body)
 
@@ -165,7 +187,9 @@ func handleHttpRequest(a *App, serverID string) http.HandlerFunc {
 				w.Header().Set(k, v)
 			}
 			w.WriteHeader(res.Status)
-			w.Write([]byte(res.Body))
+			if _, err := w.Write([]byte(res.Body)); err != nil {
+				log.Printf("Failed to write response for %s: %v", requestID, err)
+			}
 		case <-ctx.Done():
 			http.Error(w, "Request timed out", http.StatusGatewayTimeout)
 		}
@@ -222,6 +246,7 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, uploadPath string,
 	}
 	if r.Method != http.MethodPost && r.Method != http.MethodPut {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
@@ -273,7 +298,9 @@ func handleMultipartUpload(w http.ResponseWriter, r *http.Request, uploadPath st
 		part.Close()
 	}
 
-	w.Write([]byte("File uploaded successfully"))
+	if _, err := w.Write([]byte("File uploaded successfully")); err != nil {
+		log.Printf("Failed to write upload response: %v", err)
+	}
 }
 
 func handleRawUpload(w http.ResponseWriter, r *http.Request, uploadPath string) {
@@ -295,5 +322,7 @@ func handleRawUpload(w http.ResponseWriter, r *http.Request, uploadPath string) 
 		return
 	}
 
-	w.Write([]byte("File uploaded successfully"))
+	if _, err := w.Write([]byte("File uploaded successfully")); err != nil {
+		log.Printf("Failed to write upload response: %v", err)
+	}
 }

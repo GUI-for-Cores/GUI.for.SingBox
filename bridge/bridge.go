@@ -28,7 +28,7 @@ var Env = &EnvResult{
 	FromTaskSch:  false,
 	WebviewPath:  "",
 	AppName:      "",
-	AppVersion:   "v1.22.0",
+	AppVersion:   "v1.24.1",
 	BasePath:     "",
 	OS:           sysruntime.GOOS,
 	ARCH:         sysruntime.GOARCH,
@@ -93,7 +93,7 @@ func (a *App) ExitApp() {
 
 func (a *App) RestartApp() FlagResult {
 	log.Printf("RestartApp")
-	exePath := Env.BasePath + "/" + Env.AppName
+	exePath := resolvePath(Env.AppName)
 
 	cmd := exec.Command(exePath)
 	SetCmdWindowHidden(cmd)
@@ -145,11 +145,23 @@ func (a *App) ShowMainWindow() {
 }
 
 func createMacOSSymlink() {
-	user, _ := user.Current()
-	linkPath := Env.BasePath + "/data"
-	appPath := "/Users/" + user.Username + "/Library/Application Support/" + Env.AppName
-	os.MkdirAll(appPath, os.ModePerm)
-	os.Symlink(appPath, linkPath)
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Printf("Failed to resolve current user: %v", err)
+		return
+	}
+
+	linkPath := filepath.Join(Env.BasePath, "data")
+	appPath := filepath.Join("/Users", currentUser.Username, "Library", "Application Support", Env.AppName)
+
+	if err := os.MkdirAll(appPath, os.ModePerm); err != nil {
+		log.Printf("Failed to create macOS app data directory: %v", err)
+		return
+	}
+
+	if err := os.Symlink(appPath, linkPath); err != nil && !os.IsExist(err) {
+		log.Printf("Failed to create macOS data symlink: %v", err)
+	}
 }
 
 func createMacOSMenus(app *App) {
@@ -235,21 +247,34 @@ func extractEmbeddedFiles(fs embed.FS) {
 	imgSrc := "frontend/dist/imgs"
 	imgDst := "data/.cache/imgs"
 
-	os.MkdirAll(GetPath(iconDst), os.ModePerm)
-	os.MkdirAll(GetPath(imgDst), os.ModePerm)
+	if err := os.MkdirAll(resolvePath(iconDst), os.ModePerm); err != nil {
+		log.Printf("Failed to create icon cache directory: %v", err)
+	}
+	if err := os.MkdirAll(resolvePath(imgDst), os.ModePerm); err != nil {
+		log.Printf("Failed to create image cache directory: %v", err)
+	}
 
 	extractFiles(fs, iconSrc, iconDst)
 	extractFiles(fs, imgSrc, imgDst)
 }
 
 func extractFiles(fs embed.FS, srcDir, dstDir string) {
-	files, _ := fs.ReadDir(srcDir)
+	files, err := fs.ReadDir(srcDir)
+	if err != nil {
+		log.Printf("Failed to read embedded files [%s]: %v", srcDir, err)
+		return
+	}
+
 	for _, file := range files {
 		fileName := file.Name()
-		dstPath := GetPath(dstDir + "/" + fileName)
+		dstPath := resolvePath(dstDir + "/" + fileName)
 		if _, err := os.Stat(dstPath); os.IsNotExist(err) {
 			log.Printf("InitResources [%s]: %s", dstDir, fileName)
-			data, _ := fs.ReadFile(srcDir + "/" + fileName)
+			data, err := fs.ReadFile(srcDir + "/" + fileName)
+			if err != nil {
+				log.Printf("Error reading embedded file %s: %v", fileName, err)
+				continue
+			}
 			if err := os.WriteFile(dstPath, data, os.ModePerm); err != nil {
 				log.Printf("Error writing file %s: %v", dstPath, err)
 			}
@@ -258,9 +283,11 @@ func extractFiles(fs embed.FS, srcDir, dstDir string) {
 }
 
 func loadConfig() {
-	b, err := os.ReadFile(Env.BasePath + "/data/user.yaml")
+	b, err := os.ReadFile(resolvePath("data/user.yaml"))
 	if err == nil {
-		yaml.Unmarshal(b, &Config)
+		if err := yaml.Unmarshal(b, &Config); err != nil {
+			log.Printf("Failed to parse user config: %v", err)
+		}
 	}
 
 	if Config.Width == 0 {

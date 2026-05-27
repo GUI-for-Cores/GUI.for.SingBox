@@ -2,10 +2,17 @@
 import { ref, inject, computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { RequestMethodOptions } from '@/constant/app'
+import { HttpGet } from '@/bridge'
+import {
+  DefaultTestTimeout,
+  DefaultTestURL,
+  RequestMethodOptions,
+  RequestProxyModeOptions,
+} from '@/constant/app'
+import { RequestProxyMode } from '@/enums/app'
 import { useBool } from '@/hooks'
 import { useSubscribesStore } from '@/stores'
-import { deepClone, message } from '@/utils'
+import { deepClone, GetRequestProxy, message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
@@ -22,10 +29,13 @@ const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
 
 const loading = ref(false)
+const proxyTesting = ref(false)
 const sub = ref<Subscription>(subscribeStore.getSubscribeTemplate())
 
 const isManual = computed(() => sub.value.type === 'Manual')
 const isRemote = computed(() => sub.value.type === 'Http')
+const isCustomProxy = computed(() => sub.value.requestProxyMode === RequestProxyMode.Custom)
+const showProxyTest = computed(() => sub.value.requestProxyMode !== RequestProxyMode.None)
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -46,6 +56,24 @@ const handleSave = async () => {
   }
 
   loading.value = false
+}
+
+const handleTestProxy = async () => {
+  const proxy = await GetRequestProxy(sub.value.requestProxyMode, sub.value.customProxy)
+  if (!proxy) {
+    message.error('settings.requestProxy.empty')
+    return
+  }
+
+  proxyTesting.value = true
+  try {
+    await HttpGet(DefaultTestURL, {}, { Proxy: proxy, Timeout: DefaultTestTimeout })
+    message.success('settings.requestProxy.testSuccess')
+  } catch (error) {
+    message.error(error)
+  } finally {
+    proxyTesting.value = false
+  }
 }
 
 if (props.id) {
@@ -179,6 +207,32 @@ defineExpose({ modalSlots })
         <div class="form-item">
           {{ t('subscribe.requestMethod') }}
           <Radio v-model="sub.requestMethod" :options="RequestMethodOptions" />
+        </div>
+        <div class="form-item">
+          {{ t('settings.requestProxy.name') }}
+          <div class="flex items-center gap-4">
+            <Button
+              v-if="showProxyTest"
+              :loading="proxyTesting"
+              type="primary"
+              size="small"
+              @click="handleTestProxy"
+            >
+              {{ t('settings.requestProxy.test') }}
+            </Button>
+            <Radio v-model="sub.requestProxyMode" :options="RequestProxyModeOptions" />
+          </div>
+        </div>
+        <div v-if="isCustomProxy" class="form-item">
+          {{ t('settings.requestProxy.custom') }}
+          <div class="min-w-[75%]">
+            <Input
+              v-model="sub.customProxy"
+              placeholder="scheme://username:password@host:port"
+              clearable
+              class="w-full"
+            />
+          </div>
         </div>
         <div
           :class="{ 'items-start': Object.keys(sub.header.request).length !== 0 }"

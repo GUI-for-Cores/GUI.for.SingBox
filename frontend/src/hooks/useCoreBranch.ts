@@ -47,6 +47,8 @@ export const useCoreBranch = (isAlpha = false) => {
   const remoteVersionLoading = ref(false)
   const downloading = ref(false)
   const downloadCompleted = ref(false)
+  const downloadProgress = ref('')
+  const cancelDownload = ref<() => void>()
 
   const rollbackable = ref(false)
 
@@ -72,6 +74,8 @@ export const useCoreBranch = (isAlpha = false) => {
 
   const downloadCore = async () => {
     downloading.value = true
+    downloadProgress.value = ''
+    cancelDownload.value = undefined
     try {
       const { body } = await HttpGet<Record<string, any>>(releaseUrl, {
         Authorization: getGitHubApiAuthorization(),
@@ -92,12 +96,12 @@ export const useCoreBranch = (isAlpha = false) => {
       }
 
       const downloadCacheFile = `data/.cache/${assetName}`
-      const downloadCancelId = downloadCacheFile
 
-      const { update, destroy } = message.info('common.downloading', 10 * 60 * 1_000, () => {
-        HttpCancel(downloadCancelId)
+      cancelDownload.value = () => {
+        HttpCancel(downloadCacheFile)
         setTimeout(() => RemoveFile(downloadCacheFile), 1000)
-      })
+        cancelDownload.value = undefined
+      }
 
       await MakeDir(CoreWorkingDirectory)
 
@@ -106,10 +110,11 @@ export const useCoreBranch = (isAlpha = false) => {
         downloadCacheFile,
         undefined,
         (progress, total) => {
-          update(t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%')
+          const txt = t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%'
+          downloadProgress.value = txt
         },
-        { CancelId: downloadCancelId },
-      ).finally(destroy)
+        { CancelId: downloadCacheFile },
+      )
 
       const stableFileName = getKernelFileName()
 
@@ -183,7 +188,6 @@ export const useCoreBranch = (isAlpha = false) => {
     try {
       await kernelApiStore.restartCore()
       downloadCompleted.value = false
-      message.success('common.success')
     } catch (error: any) {
       message.error(error)
     }
@@ -252,9 +256,11 @@ export const useCoreBranch = (isAlpha = false) => {
     remoteVersion,
     remoteVersionLoading,
     downloading,
+    downloadProgress,
     refreshLocalVersion,
     refreshRemoteVersion,
     downloadCore,
+    cancelDownload,
     restartCore,
     rollbackCore,
     grantCorePermission,

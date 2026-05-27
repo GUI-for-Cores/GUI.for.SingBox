@@ -7,7 +7,7 @@ import { DraggableOptions } from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { addToRuleSet, formatBytes, formatRelativeTime, message, picker } from '@/utils'
+import { addToRuleSet, formatBytes, formatRelativeTime, getDomainSuffixes, message, picker } from '@/utils'
 
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Column } from '@/components/Table/index.vue'
@@ -179,13 +179,14 @@ const menu: Menu[] = [
             value: { domain: record.metadata.host } as any,
             description: record.metadata.host,
           })
-          const domain_suffix = '.' + record.metadata.host.split('.').slice(1).join('.')
-          options.push({
-            label: t('kernel.rules.type.domain_suffix'),
-            value: {
-              domain_suffix: domain_suffix,
-            } as any,
-            description: domain_suffix,
+          getDomainSuffixes(record.metadata.host).forEach((suffix) => {
+            options.push({
+              label: t('kernel.rules.type.domain_suffix'),
+              value: {
+                domain_suffix: suffix,
+              } as any,
+              description: suffix,
+            })
           })
         }
         if (record.metadata.destinationIP) {

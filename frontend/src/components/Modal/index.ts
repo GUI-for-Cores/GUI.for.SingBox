@@ -9,7 +9,6 @@ import {
 } from 'vue'
 
 import Modal from './index.vue'
-
 import type { Props as ModalProps, Slots as ModalSlots } from './index.vue'
 
 export const useModal = (options: Partial<ModalProps>, contents: ModalSlots = {}) => {

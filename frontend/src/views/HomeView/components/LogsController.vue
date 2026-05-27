@@ -5,7 +5,15 @@ import { useI18n } from 'vue-i18n'
 import { LogLevelOptions } from '@/constant/kernel'
 import { useBool } from '@/hooks'
 import { useKernelApiStore } from '@/stores'
-import { addToRuleSet, buildSmartRegExp, isValidIPv4, isValidIPv6, message, picker } from '@/utils'
+import {
+  addToRuleSet,
+  buildSmartRegExp,
+  getDomainSuffixes,
+  isValidIPv4,
+  isValidIPv6,
+  message,
+  picker,
+} from '@/utils'
 
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Menu } from '@/types/app'
@@ -70,6 +78,13 @@ const menus: Menu[] = (
             label: t('kernel.rules.type.domain'),
             value: { domain: address } as any,
             description: address,
+          })
+          getDomainSuffixes(address).forEach((suffix) => {
+            options.push({
+              label: t('kernel.rules.type.domain_suffix'),
+              value: { domain_suffix: suffix } as any,
+              description: suffix,
+            })
           })
         }
       })

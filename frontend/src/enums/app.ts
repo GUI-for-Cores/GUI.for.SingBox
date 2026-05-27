@@ -48,6 +48,13 @@ export enum Branch {
   Alpha = 'alpha',
 }
 
+export enum RequestProxyMode {
+  None = 'none',
+  System = 'system',
+  Kernel = 'kernel',
+  Custom = 'custom',
+}
+
 export enum ScheduledTasksType {
   UpdateSubscription = 'update::subscription',
   UpdateRuleset = 'update::ruleset',
@@ -60,6 +67,8 @@ export enum ScheduledTasksType {
 }
 
 export enum PluginTrigger {
+  OnEnabled = 'on::enabled',
+  OnDisabled = 'on::disabled',
   OnManual = 'on::manual',
   OnSubscribe = 'on::subscribe',
   OnGenerate = 'on::generate',
@@ -75,6 +84,9 @@ export enum PluginTrigger {
 }
 
 export enum PluginTriggerEvent {
+  OnEnabled = 'onEnabled',
+  OnDisabled = 'onDisabled',
+  OnDispose = 'onDispose',
   OnInstall = 'onInstall',
   OnUninstall = 'onUninstall',
   OnManual = 'onRun',

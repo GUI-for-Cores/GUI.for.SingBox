@@ -8,6 +8,7 @@ import {
 } from '@/bridge'
 import { ColorOptions, ThemeOptions } from '@/constant/app'
 import { ModeOptions } from '@/constant/kernel'
+import { OS } from '@/enums/app'
 import i18n from '@/lang'
 import {
   useAppSettingsStore,
@@ -27,7 +28,6 @@ import {
 } from '@/utils'
 
 import type { MenuItem } from '@/types/app'
-import { OS } from '@/enums/app'
 
 const getTrayIcons = () => {
   const envStore = useEnvStore()
@@ -140,6 +140,7 @@ const getTrayMenus = () => {
               type: 'item',
               text: proxy.name,
               show: true,
+              checkable: true,
               checked: proxy.name === group.now,
               event: () => {
                 handleUseProxy(group, proxy)
@@ -192,6 +193,7 @@ const getTrayMenus = () => {
       children: ModeOptions.map((mode) => ({
         type: 'item',
         text: mode.label,
+        checkable: true,
         checked: kernelApiStore.config.mode === mode.value,
         event: () => handleChangeMode(mode.value),
       })),
@@ -278,6 +280,7 @@ const getTrayMenus = () => {
           children: ThemeOptions.map((theme) => ({
             type: 'item',
             text: theme.label,
+            checkable: true,
             checked: appSettings.app.theme === theme.value,
             event: () => (appSettings.app.theme = theme.value),
           })),
@@ -288,6 +291,7 @@ const getTrayMenus = () => {
           children: ColorOptions.map((color) => ({
             type: 'item',
             text: color.label,
+            checkable: true,
             checked: appSettings.app.color === color.value,
             event: () => (appSettings.app.color = color.value),
           })),
@@ -298,6 +302,7 @@ const getTrayMenus = () => {
           children: appStore.locales.map((v) => ({
             type: 'item',
             text: v.label,
+            checkable: true,
             checked: appSettings.app.lang === v.value,
             event: () => (appSettings.app.lang = v.value),
           })),

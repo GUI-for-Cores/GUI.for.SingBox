@@ -1,9 +1,3 @@
-<div align="center">
-  <img src="build/appicon.png" alt="GUI.for.SingBox" width="200">
-  <h1>GUI.for.SingBox</h1>
-  <p>A GUI program developed by vue3 + wails.</p>
-</div>
-
 ## Preview
 
 Take a look at the live version here: 👉 <a href="https://gui-for-cores.github.io/guide/gfs/" target="_blank">Live Demo</a>

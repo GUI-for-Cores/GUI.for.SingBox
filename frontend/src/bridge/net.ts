@@ -3,7 +3,7 @@ import { EventsOn, EventsOff, EventsEmit } from '@wails/runtime/runtime'
 
 import { RequestMethod } from '@/enums/app'
 import { sampleID, getUserAgent } from '@/utils'
-import { GetSystemOrKernelProxy } from '@/utils/helper'
+import { GetRequestProxy } from '@/utils/helper'
 
 interface Request {
   method: RequestMethod
@@ -30,7 +30,7 @@ interface Response<T = any> {
 
 const mergeRequestOptions = async (options: Request['options']) => {
   const mergedReqOpts: Required<Request['options']> = {
-    Proxy: await GetSystemOrKernelProxy(),
+    Proxy: options?.Proxy ?? (await GetRequestProxy()),
     Insecure: false,
     Redirect: true,
     Timeout: 15, // 15 seconds

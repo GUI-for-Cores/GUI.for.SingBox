@@ -1,6 +1,7 @@
 package bridge
 
 import (
+	"crypto/tls"
 	"errors"
 	"net/http"
 	"net/url"
@@ -8,23 +9,31 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
-func GetPath(path string) string {
+type requestTransportKey struct {
+	Proxy    string
+	Insecure bool
+}
+
+var requestTransportCache sync.Map
+
+func resolvePath(path string) string {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(Env.BasePath, path)
 	}
 	return filepath.ToSlash(filepath.Clean(path))
 }
 
-func GetProxy(_proxy string) func(*http.Request) (*url.URL, error) {
+func requestProxy(proxyAddr string) func(*http.Request) (*url.URL, error) {
 	proxy := http.ProxyFromEnvironment
 
-	if _proxy != "" {
-		proxyUrl, err := url.Parse(_proxy)
+	if proxyAddr != "" {
+		proxyUrl, err := url.Parse(proxyAddr)
 		if err == nil {
 			proxy = http.ProxyURL(proxyUrl)
 		}
@@ -33,14 +42,14 @@ func GetProxy(_proxy string) func(*http.Request) (*url.URL, error) {
 	return proxy
 }
 
-func GetTimeout(timeout int) time.Duration {
+func requestTimeout(timeout int) time.Duration {
 	if timeout <= 0 {
 		return 15 * time.Second
 	}
 	return time.Duration(timeout) * time.Second
 }
 
-func GetHeader(headers map[string]string) http.Header {
+func requestHeaders(headers map[string]string) http.Header {
 	header := make(http.Header, len(headers))
 	for key, value := range headers {
 		header.Set(key, value)
@@ -48,12 +57,38 @@ func GetHeader(headers map[string]string) http.Header {
 	return header
 }
 
-func ConvertByte2String(byte []byte) string {
-	decodeBytes, _ := simplifiedchinese.GB18030.NewDecoder().Bytes(byte)
+func requestTransport(options RequestOptions) *http.Transport {
+	key := requestTransportKey{
+		Proxy:    options.Proxy,
+		Insecure: options.Insecure,
+	}
+
+	if value, ok := requestTransportCache.Load(key); ok {
+		return value.(*http.Transport)
+	}
+
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.Proxy = requestProxy(options.Proxy)
+	if options.Insecure {
+		transport.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	}
+
+	value, loaded := requestTransportCache.LoadOrStore(key, transport)
+	if loaded {
+		transport.CloseIdleConnections()
+	}
+
+	return value.(*http.Transport)
+}
+
+func decodeGB18030(data []byte) string {
+	decodeBytes, _ := simplifiedchinese.GB18030.NewDecoder().Bytes(data)
 	return string(decodeBytes)
 }
 
-func ParseRange(s string, size int64) (start int64, end int64, err error) {
+func parseByteRange(s string, size int64) (start int64, end int64, err error) {
 	if s == "" {
 		return 0, size - 1, nil
 	}
@@ -112,6 +147,9 @@ func ParseRange(s string, size int64) (start int64, end int64, err error) {
 		if end >= size {
 			end = size - 1
 		}
+		if start > end {
+			return 0, 0, errors.New("invalid range: start exceeds file size")
+		}
 		return start, end, nil
 	}
 
@@ -139,7 +177,7 @@ func RollingRelease(next http.Handler) http.Handler {
 			url = "/index.html"
 		}
 
-		filePath := GetPath("data/rolling-release" + url)
+		filePath := resolvePath("data/rolling-release" + url)
 		if _, err := os.Stat(filePath); err != nil {
 			next.ServeHTTP(w, r)
 			return

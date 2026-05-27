@@ -11,11 +11,11 @@ import {
   WindowIsMaximised,
   RestartApp,
 } from '@/bridge'
+import { OS } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore, useEnvStore, useAppStore } from '@/stores'
 import { APP_TITLE, APP_VERSION, debounce, exitApp, reloadApp } from '@/utils'
 
 import type { Menu } from '@/types/app'
-import { OS } from '@/enums/app'
 
 const isPinned = ref(false)
 const isMaximised = ref(false)

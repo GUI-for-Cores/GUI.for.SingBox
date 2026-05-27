@@ -55,3 +55,7 @@ export function formatDate(timestamp: number | string, format: string) {
 
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (matched) => map[matched])
 }
+
+export function formatProxyHost(host: string) {
+  return host.includes(':') && !host.startsWith('[') ? `[${host}]` : host
+}

@@ -7,10 +7,11 @@ import {
   RuleType as RouteRuleType,
   DnsServer,
 } from '@/enums/kernel'
+import { useProfilesStore, useRulesetsStore, useSubscribesStore } from '@/stores'
+
+import type { Subscription } from '@/types/app'
 
 import { createTextMatcher, deepAssign, sampleID } from './others'
-import { useProfilesStore, useRulesetsStore, useSubscribesStore } from '@/stores'
-import type { Subscription } from '@/types/app'
 
 const supportedRuleTypes = [
   RouteRuleType.Inbound,
@@ -219,6 +220,8 @@ const restoreOutbounds = (
 
     const originalGroup = originalOutboundMap.get(outbound.tag)
     if (originalGroup) {
+      outbound.icon = originalGroup.icon
+      outbound.hidden = originalGroup.hidden
       outbound.include = originalGroup.include
       outbound.exclude = originalGroup.exclude
 

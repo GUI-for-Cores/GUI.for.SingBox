@@ -3,7 +3,7 @@ import { marked } from 'marked'
 import { h, onMounted, ref, render, type VNode } from 'vue'
 
 import useI18n from '@/lang'
-import { APP_TITLE, APP_VERSION, sampleID } from '@/utils'
+import { APP_TITLE, APP_VERSION, bindAppContext, sampleID } from '@/utils'
 
 import CodeViewer from '@/components/CodeViewer/index.vue'
 import Divider from '@/components/Divider/index.vue'
@@ -109,7 +109,7 @@ marked.use({
 
 const mountCustomComp = (containerId: string, comp: VNode) => {
   let count = 0
-  comp.appContext = window.appInstance._context
+  bindAppContext(comp)
   const tryToMount = () => {
     if (count >= 3) return
     count += 1

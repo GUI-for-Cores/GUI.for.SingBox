@@ -27,6 +27,7 @@ const plugin = ref<Plugin>({
   name: '',
   description: '',
   tags: [],
+  group: '',
   type: 'File',
   url: '',
   status: 0,
@@ -43,8 +44,6 @@ const plugin = ref<Plugin>({
   },
   configuration: [],
   disabled: false,
-  install: false,
-  installed: false,
 })
 
 const componentList = [
@@ -256,10 +255,6 @@ defineExpose({ modalSlots })
       </Button>
     </Divider>
     <div v-show="showMore" class="pb-8">
-      <div class="form-item">
-        {{ t('plugin.install') }}
-        <Switch v-model="plugin.install" />
-      </div>
       <div class="form-item">
         {{ t('plugin.hasUI') }}
         <Switch v-model="plugin.hasUI" />

@@ -94,6 +94,9 @@ if (p) {
 const modalSlots = {
   action: () => {
     const events = [
+      [PluginTriggerEvent.OnEnabled, 'plugin.on::enabled'],
+      [PluginTriggerEvent.OnDisabled, 'plugin.on::disabled'],
+      [PluginTriggerEvent.OnDispose, 'plugin.on::dispose'],
       [PluginTriggerEvent.OnManual, 'plugin.on::manual'],
       [PluginTriggerEvent.OnInstall, 'plugin.on::install'],
       [PluginTriggerEvent.OnUninstall, 'plugin.on::uninstall'],

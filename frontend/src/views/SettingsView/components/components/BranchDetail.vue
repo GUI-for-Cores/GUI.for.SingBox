@@ -29,6 +29,8 @@ const {
   remoteVersion,
   remoteVersionLoading,
   downloading,
+  downloadProgress,
+  cancelDownload,
   refreshLocalVersion,
   refreshRemoteVersion,
   downloadCore,
@@ -55,8 +57,8 @@ const handleClearCoreCache = async () => {
 </script>
 
 <template>
-  <div class="flex items-center px-4 my-12">
-    <div class="mr-8 font-bold text-16">
+  <div class="flex items-center">
+    <div class="px-8 py-12 text-18 font-bold">
       {{ isAlpha ? 'Alpha' : t('settings.kernel.name') }}
     </div>
     <Button
@@ -104,37 +106,58 @@ const handleClearCoreCache = async () => {
       @click="emit('config')"
     />
   </div>
-  <div class="flex items-center py-8 min-h-42">
-    <Tag class="cursor-pointer" @click="refreshLocalVersion(true)">
-      {{ t('settings.kernel.local') }}
-      :
-      {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
-    </Tag>
-    <Tag class="cursor-pointer" @click="refreshRemoteVersion(true)">
-      {{ t('settings.kernel.remote') }}
-      :
-      {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
-    </Tag>
-    <Button
-      v-show="!localVersionLoading && !remoteVersionLoading && updatable"
-      :loading="downloading"
-      size="small"
-      type="primary"
-      @click="downloadCore"
-    >
-      {{ t('settings.kernel.update') }} : {{ remoteVersion }}
-    </Button>
-    <Button
-      v-show="!localVersionLoading && !remoteVersionLoading && restartable"
-      :loading="kernelApiStore.restarting"
-      size="small"
-      type="primary"
-      @click="restartCore"
-    >
-      {{ t('settings.kernel.restart') }}
-    </Button>
-  </div>
-  <div class="text-12 px-4 py-8 break-all">
-    {{ versionDetail }}
-  </div>
+  <Card>
+    <div v-if="versionDetail" class="text-12 pt-8 break-all line-clamp-2">
+      {{ versionDetail }}
+    </div>
+    <div class="flex items-center min-h-38">
+      <Tag
+        :color="updatable ? 'orange' : 'default'"
+        class="cursor-pointer"
+        @click="refreshLocalVersion(true)"
+      >
+        {{ t('settings.kernel.local') }}
+        :
+        {{ localVersionLoading ? 'Loading' : localVersion || t('kernel.notFound') }}
+      </Tag>
+      <Tag
+        :color="updatable ? 'purple' : 'default'"
+        class="cursor-pointer"
+        @click="refreshRemoteVersion(true)"
+      >
+        {{ t('settings.kernel.remote') }}
+        :
+        {{ remoteVersionLoading ? 'Loading' : remoteVersion }}
+      </Tag>
+      <Button
+        v-show="!localVersionLoading && !remoteVersionLoading && updatable"
+        :loading="downloading"
+        icon="sparkle"
+        size="small"
+        type="primary"
+        class="ml-auto"
+        @click="downloadCore"
+      >
+        {{ downloading ? downloadProgress : t('settings.kernel.update') }}
+      </Button>
+      <Button
+        v-if="downloading && cancelDownload"
+        icon="close"
+        size="small"
+        type="primary"
+        class="ml-2"
+        @click="cancelDownload"
+      />
+      <Button
+        v-show="!localVersionLoading && !remoteVersionLoading && restartable"
+        :loading="kernelApiStore.restarting"
+        size="small"
+        type="primary"
+        class="ml-auto"
+        @click="restartCore"
+      >
+        {{ t('settings.kernel.restart') }}
+      </Button>
+    </div>
+  </Card>
 </template>

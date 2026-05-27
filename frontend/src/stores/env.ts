@@ -2,20 +2,22 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 import { GetEnv } from '@/bridge'
-import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { updateTrayAndMenus, SetSystemProxy, GetSystemProxy } from '@/utils'
 import { OS } from '@/enums/app'
+import { useAppSettingsStore, useKernelApiStore } from '@/stores'
+import { formatProxyHost, updateTrayAndMenus, SetSystemProxy, GetSystemProxy } from '@/utils'
+
+import type { AppEnv } from '@/types/app'
 
 export const useEnvStore = defineStore('env', () => {
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
 
-  const env = ref({
+  const env = ref<AppEnv>({
     appName: '',
     appVersion: '',
     basePath: '',
     appPath: '',
-    os: '',
+    os: '' as OS,
     arch: '',
     isPrivileged: false,
   })
@@ -24,11 +26,13 @@ export const useEnvStore = defineStore('env', () => {
 
   const setupEnv = async () => {
     const _env = await GetEnv()
-    const appPath = `${_env.basePath}/${_env.appName}`
-    env.value = {
-      ..._env,
-      appPath: _env.os === OS.Windows ? appPath.replaceAll('/', '\\') : appPath,
+    let appPath = `${_env.basePath}/${_env.appName}`
+    if (_env.os === OS.Windows) {
+      appPath = appPath.replaceAll('/', '\\')
+    } else if (_env.os === OS.Darwin) {
+      appPath = appPath.replace(`/Contents/MacOS/${_env.appName}`, '')
     }
+    env.value = { ..._env, appPath }
   }
 
   const updateSystemProxyStatus = async () => {
@@ -38,17 +42,22 @@ export const useEnvStore = defineStore('env', () => {
     if (!proxyServer) {
       systemProxy.value = false
     } else {
-      const { port, 'mixed-port': mixedPort, 'socks-port': socksPort } = kernelApiStore.config
-      const proxyServerList = [
-        `http://127.0.0.1:${port}`,
-        `http://127.0.0.1:${mixedPort}`,
+      const kernelProxy = kernelApiStore.getProxyEndpoint()
+      if (!kernelProxy) {
+        systemProxy.value = false
+        return systemProxy.value
+      }
 
-        `socks5://127.0.0.1:${mixedPort}`,
-        `socks5://127.0.0.1:${socksPort}`,
-
-        `socks=127.0.0.1:${mixedPort}`,
-        `socks=127.0.0.1:${socksPort}`,
-      ]
+      const { host, port, proxyType } = kernelProxy
+      const server = `${formatProxyHost(host)}:${port}`
+      const proxyServerList = [`http://${server}`, `socks5://${server}`, `socks=${server}`]
+      if (proxyType === 'mixed') {
+        proxyServerList.push(
+          `http://127.0.0.1:${port}`,
+          `socks5://127.0.0.1:${port}`,
+          `socks=127.0.0.1:${port}`,
+        )
+      }
       systemProxy.value = proxyServerList.includes(proxyServer)
     }
 
@@ -57,18 +66,14 @@ export const useEnvStore = defineStore('env', () => {
 
   const setSystemProxy = async () => {
     const proxyBypassList = appSettings.app.proxyBypassList
-    let proxyPort = kernelApiStore.getProxyPort()
-
-    if (!proxyPort) {
+    let proxyEndpoint = kernelApiStore.getProxyEndpoint()
+    if (!proxyEndpoint) {
       await kernelApiStore.updateConfig('inbound', undefined)
     }
-
-    proxyPort = kernelApiStore.getProxyPort()
-
-    if (!proxyPort) throw 'home.overview.needPort'
-
-    await SetSystemProxy(true, '127.0.0.1:' + proxyPort.port, proxyPort.proxyType, proxyBypassList)
-
+    proxyEndpoint = kernelApiStore.getProxyEndpoint()
+    if (!proxyEndpoint) throw 'home.overview.needPort'
+    const server = `${formatProxyHost(proxyEndpoint.host)}:${proxyEndpoint.port}`
+    await SetSystemProxy(true, server, proxyEndpoint.proxyType, proxyBypassList)
     systemProxy.value = true
   }
 

@@ -2,6 +2,7 @@ export namespace bridge {
 	
 	export class ExecOptions {
 	    PidFile: string;
+	    LogFile: string;
 	    StopOutputKeyword: string;
 	    WorkingDirectory: string;
 	    Convert: boolean;
@@ -14,6 +15,7 @@ export namespace bridge {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PidFile = source["PidFile"];
+	        this.LogFile = source["LogFile"];
 	        this.StopOutputKeyword = source["StopOutputKeyword"];
 	        this.WorkingDirectory = source["WorkingDirectory"];
 	        this.Convert = source["Convert"];
@@ -74,6 +76,7 @@ export namespace bridge {
 	    children: MenuItem[];
 	    hidden: boolean;
 	    checked: boolean;
+	    checkable: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MenuItem(source);
@@ -88,6 +91,7 @@ export namespace bridge {
 	        this.children = this.convertValues(source["children"], MenuItem);
 	        this.hidden = source["hidden"];
 	        this.checked = source["checked"];
+	        this.checkable = source["checkable"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

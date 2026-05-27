@@ -23,20 +23,22 @@ var (
 func (a *App) OpenMMDB(path string, id string) FlagResult {
 	log.Printf("OpenMMDB: %s -> %s", id, path)
 
+	dbPath := resolvePath(path)
+
 	mu.Lock()
 	defer mu.Unlock()
 
-	if db, exists := mmdbMap[path]; exists {
+	if db, exists := mmdbMap[dbPath]; exists {
 		db.Refs[id] = true
 		return FlagResult{true, "Success"}
 	}
 
-	reader, err := geoip2.Open(GetPath(path))
+	reader, err := geoip2.Open(dbPath)
 	if err != nil {
 		return FlagResult{false, "Failed to open mmdb: " + err.Error()}
 	}
 
-	mmdbMap[path] = &MMDBInstance{
+	mmdbMap[dbPath] = &MMDBInstance{
 		Refs:   map[string]bool{id: true},
 		Reader: reader,
 	}
@@ -47,10 +49,12 @@ func (a *App) OpenMMDB(path string, id string) FlagResult {
 func (a *App) CloseMMDB(path string, id string) FlagResult {
 	log.Printf("CloseMMDB: %s -> %s", id, path)
 
+	dbPath := resolvePath(path)
+
 	mu.Lock()
 	defer mu.Unlock()
 
-	db, exists := mmdbMap[path]
+	db, exists := mmdbMap[dbPath]
 
 	if !exists {
 		return FlagResult{false, "Database not open: " + path}
@@ -66,7 +70,7 @@ func (a *App) CloseMMDB(path string, id string) FlagResult {
 		if err := db.Reader.Close(); err != nil {
 			return FlagResult{false, "Failed to close reader: " + err.Error()}
 		}
-		delete(mmdbMap, path)
+		delete(mmdbMap, dbPath)
 	}
 
 	return FlagResult{true, "Success"}
@@ -80,15 +84,17 @@ func (a *App) QueryMMDB(path string, ip string, dataType string) FlagResult {
 		return FlagResult{false, "Invalid IP address"}
 	}
 
-	mu.RLock()
-	db, exists := mmdbMap[path]
-	mu.RUnlock()
+	dbPath := resolvePath(path)
 
+	mu.RLock()
+	db, exists := mmdbMap[dbPath]
 	if !exists {
+		mu.RUnlock()
 		return FlagResult{false, "Database not open: " + path}
 	}
 
 	record, err := queryByType(db.Reader, parsedIP, dataType)
+	mu.RUnlock()
 	if err != nil {
 		return FlagResult{false, err.Error()}
 	}
