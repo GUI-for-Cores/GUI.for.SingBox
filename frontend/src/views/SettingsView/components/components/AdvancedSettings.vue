@@ -15,10 +15,6 @@ const handleOpenRollingReleaseFolder = async () => {
   await MakeDir(RollingReleaseDirectory)
   await OpenDir(RollingReleaseDirectory)
 }
-
-const handleClearApiToken = () => {
-  appSettings.app.githubApiToken = ''
-}
 </script>
 
 <template>
@@ -51,23 +47,6 @@ const handleClearApiToken = () => {
         <span class="font-normal text-12">({{ $t('settings.autoRestartKernel.tips') }})</span>
       </div>
       <Switch v-model="appSettings.app.autoRestartKernel" />
-    </div>
-    <div class="px-8 py-12 flex items-center justify-between">
-      <div class="text-16 font-bold">
-        {{ $t('settings.githubapi.name') }}
-        <span class="font-normal text-12">({{ $t('settings.githubapi.tips') }})</span>
-      </div>
-      <Input v-model.lazy="appSettings.app.githubApiToken" editable class="text-14">
-        <template #suffix>
-          <Button
-            v-tips="'settings.userAgent.reset'"
-            type="text"
-            size="small"
-            icon="reset"
-            @click="handleClearApiToken"
-          />
-        </template>
-      </Input>
     </div>
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">

@@ -45,6 +45,10 @@ const handleClearUserAgent = () => {
 const handleClearCustomProxy = () => {
   appSettings.app.customProxy = ''
 }
+
+const handleClearApiToken = () => {
+  appSettings.app.githubApiToken = ''
+}
 </script>
 
 <template>
@@ -106,6 +110,28 @@ const handleClearCustomProxy = () => {
             size="small"
             icon="reset"
             @click="handleClearUserAgent"
+          />
+        </template>
+      </Input>
+    </div>
+    <div class="px-8 py-12 flex items-center justify-between">
+      <div class="text-16 font-bold">
+        {{ $t('settings.githubapi.name') }}
+        <span class="font-normal text-12">({{ $t('settings.githubapi.tips') }})</span>
+      </div>
+      <Input
+        v-model.lazy="appSettings.app.githubApiToken"
+        editable
+        :max-width="false"
+        class="text-14"
+      >
+        <template #suffix>
+          <Button
+            v-tips="'settings.userAgent.reset'"
+            type="text"
+            size="small"
+            icon="reset"
+            @click="handleClearApiToken"
           />
         </template>
       </Input>
