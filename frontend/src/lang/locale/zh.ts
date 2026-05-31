@@ -39,6 +39,10 @@ export default {
     run: '运行',
     refresh: '刷新',
     confirm: '确定',
+    select: '选择',
+    selectedCount: '已选择{0}项',
+    selectAtLeast: '至少选择{0}项',
+    maxSelectionExceeded: '选择数量超出最大限制',
     selectAll: '全选',
     http: '远程下载',
     file: '本地文件',
@@ -414,6 +418,7 @@ export default {
     },
   },
   subscribes: {
+    select: '选择订阅',
     download: '下行流量',
     upload: '上行流量',
     total: '总流量',
@@ -464,6 +469,7 @@ export default {
     },
   },
   profiles: {
+    select: '选择配置',
     shouldStop: '当前配置正在使用，无法删除',
     empty: '配置列表为空，请先{action}配置。',
     copytoClipboard: '生成配置到剪切板',
@@ -491,6 +497,7 @@ export default {
     updating: '更新中',
   },
   rulesets: {
+    select: '选择规则集',
     hub: '规则集中心',
     total: '规则集数量为',
     noDesc: '无描述信息',
@@ -544,6 +551,7 @@ export default {
     restore: '恢复为默认值',
   },
   plugins: {
+    select: '选择插件',
     updating: '更新中',
     empty: '插件列表为空，请先{action}或从{import}导入。',
     source: '源码',
@@ -584,6 +592,7 @@ export default {
     'run::script': '运行脚本',
   },
   scheduledtasks: {
+    select: '选择计划任务',
     logs: '日志',
     name: '插件',
     duration: '持续时间',
