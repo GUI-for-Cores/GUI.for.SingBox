@@ -87,7 +87,7 @@ const handleUpdateRulesets = async () => {
 
 const handleEditRulesetList = (id: string) => {
   modalApi.setProps({
-    title: rulesetsStore.getRulesetById(id)?.tag,
+    title: rulesetsStore.getRulesetById(id)?.name,
     height: '90',
     width: '90',
   })
@@ -186,7 +186,7 @@ const onSortUpdate = debounce(rulesetsStore.saveRulesets, 1000)
       v-for="r in rulesetsStore.rulesets"
       :key="r.id"
       v-menu="generateMenus(r)"
-      :title="r.tag"
+      :title="r.name"
       :disabled="r.disabled"
       class="grid-list-item"
     >

@@ -12,12 +12,13 @@ import {
   eventBus,
   ignoredError,
   isValidRulesJson,
+  migrateRulesets,
   omitArray,
 } from '@/utils'
 
 export interface RuleSet {
   id: string
-  tag: string
+  name: string
   updateTime: number
   disabled: boolean
   type: 'Http' | 'File' | 'Manual'
@@ -42,6 +43,8 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const setupRulesets = async () => {
     const data = await ignoredError(ReadFile, RulesetsFilePath)
     data && (rulesets.value = parse(data))
+
+    await migrateRulesets(rulesets.value, saveRulesets)
 
     const list = await ignoredError(ReadFile, RulesetHubFilePath)
     list && (rulesetHub.value = JSON.parse(list))
@@ -151,7 +154,7 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const updateRuleset = async (id: string) => {
     const r = rulesets.value.find((v) => v.id === id)
     if (!r) throw id + ' Not Found'
-    if (r.disabled) throw r.tag + ' Disabled'
+    if (r.disabled) throw r.name + ' Disabled'
     try {
       r.updating = true
       await _doUpdateRuleset(r)
@@ -162,22 +165,22 @@ export const useRulesetsStore = defineStore('rulesets', () => {
 
     eventBus.emit('rulesetChange', { id })
 
-    return `Ruleset [${r.tag}] updated successfully.`
+    return `Ruleset [${r.name}] updated successfully.`
   }
 
   const updateRulesets = async () => {
     let needSave = false
 
     const update = async (r: RuleSet) => {
-      const result = { ok: true, id: r.id, name: r.tag, result: '' }
+      const result = { ok: true, id: r.id, name: r.name, result: '' }
       try {
         r.updating = true
         await _doUpdateRuleset(r)
         needSave = true
-        result.result = `Rule-Set [${r.tag}] updated successfully.`
+        result.result = `Rule-Set [${r.name}] updated successfully.`
       } catch (error: any) {
         result.ok = false
-        result.result = `Failed to update rule-set [${r.tag}]. Reason: ${error.message || error}`
+        result.result = `Failed to update rule-set [${r.name}]. Reason: ${error.message || error}`
       } finally {
         r.updating = false
       }

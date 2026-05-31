@@ -60,7 +60,7 @@ const hasLost = (ruleset: IRuleSet) => {
 
 const handleUse = (ruleset: any) => {
   fields.value.path = ruleset.id
-  fields.value.tag = ruleset.tag
+  fields.value.tag = ruleset.name
   fields.value.format = ruleset.format
 }
 </script>
@@ -133,9 +133,9 @@ const handleUse = (ruleset: any) => {
         <template v-else>
           <Card
             v-for="ruleset in rulesetsStore.rulesets"
-            :key="ruleset.tag"
+            :key="ruleset.id"
             v-tips="ruleset.path"
-            :title="ruleset.tag"
+            :title="ruleset.name"
             :selected="fields.path === ruleset.id"
             @click="handleUse(ruleset)"
           >

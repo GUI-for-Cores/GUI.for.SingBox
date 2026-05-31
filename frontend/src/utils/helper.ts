@@ -719,7 +719,7 @@ export const addToRuleSet = async (
   if (!ruleset) {
     ruleset = {
       id,
-      tag: id,
+      name: id,
       updateTime: 0,
       type: 'Manual',
       format: RulesetFormat.Source,

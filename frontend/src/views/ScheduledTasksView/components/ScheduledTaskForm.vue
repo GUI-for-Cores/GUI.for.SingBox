@@ -222,7 +222,7 @@ defineExpose({ modalSlots })
         <Card
           v-for="r in rulesetsStore.rulesets"
           :key="r.id"
-          :title="r.tag"
+          :title="r.name"
           :selected="task.rulesets.includes(r.id)"
           @click="handleUse(task.rulesets, r.id)"
         >

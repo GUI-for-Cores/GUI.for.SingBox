@@ -23,7 +23,7 @@ const loading = ref(false)
 
 const ruleset = ref<RuleSet>({
   id: sampleID(),
-  tag: '',
+  name: '',
   updateTime: 0,
   format: RulesetFormat.Binary,
   type: 'Http',
@@ -68,7 +68,7 @@ const handleSubmit = async () => {
 
 const disabled = computed(
   () =>
-    !ruleset.value.tag ||
+    !ruleset.value.name ||
     (ruleset.value.type === 'Manual' && !ruleset.value.path) ||
     (['Http', 'File'].includes(ruleset.value.type) && (!ruleset.value.url || !ruleset.value.path)),
 )
@@ -151,7 +151,7 @@ defineExpose({ modalSlots })
     <div class="form-item">
       {{ t('ruleset.name') }} *
       <div class="min-w-[75%]">
-        <Input v-model="ruleset.tag" autofocus class="w-full" />
+        <Input v-model="ruleset.name" autofocus class="w-full" />
       </div>
     </div>
     <div v-show="ruleset.type !== 'Manual'" class="form-item">
