@@ -277,7 +277,9 @@ export const useSubscribesStore = defineStore('subscribes', () => {
       requestMethod: RequestMethod.Get,
       requestTimeout: 15,
       header: {
-        request: {},
+        request: {
+          'User-Agent': 'clash.meta/mihomo',
+        },
         response: {},
       },
       proxies: [],
