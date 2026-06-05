@@ -76,7 +76,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       :style="{
         color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
       }"
-      class="font-bold w-full h-full flex items-center"
+      class="font-bold w-full h-full flex items-center duration-200"
       @dblclick="WindowToggleMaximise"
     >
       {{ APP_TITLE }} {{ APP_VERSION }}

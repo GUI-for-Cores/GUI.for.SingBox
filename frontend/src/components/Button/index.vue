@@ -29,7 +29,7 @@ withDefaults(defineProps<Props>(), {
   >
     <Icon
       v-if="loading"
-      :color="`var(--btn-${type}-color)`"
+      color="currentColor"
       :size="size === 'small' ? 14 : 16"
       icon="loading"
       class="rotation"
@@ -37,7 +37,7 @@ withDefaults(defineProps<Props>(), {
     <template v-else>
       <Icon
         v-if="disabled"
-        :color="`var(--btn-${type}-color)`"
+        color="currentColor"
         icon="forbidden"
         class="pointer-events-none shrink-0 mr-4"
       />
@@ -45,7 +45,7 @@ withDefaults(defineProps<Props>(), {
         v-if="icon"
         :icon="icon"
         :size="iconSize"
-        :color="iconColor || `var(--btn-${type}-color)`"
+        :color="iconColor || 'currentColor'"
         :class="$slots.default ? 'mr-4' : ''"
       />
     </template>
