@@ -5,10 +5,13 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -46,6 +49,86 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 	}
 
 	return HTTPResult{true, resp.StatusCode, resp.Header, string(b)}
+}
+
+func (a *App) TcpPing(address string, options NetOptions) FlagResult {
+	log.Printf("TcpPing: %s %v", address, options)
+
+	start := time.Now()
+	conn, err := net.DialTimeout("tcp", address, requestTimeout(options.Timeout))
+	latency := time.Since(start).Milliseconds()
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer conn.Close()
+
+	return FlagResult{true, strconv.FormatInt(latency, 10)}
+}
+
+func (a *App) TcpRequest(address string, payload string, options NetOptions) FlagResult {
+	log.Printf("TcpRequest: %s %v", address, options)
+
+	body, err := netPayloadBytes(payload, options)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	conn, err := net.DialTimeout("tcp", address, requestTimeout(options.Timeout))
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer conn.Close()
+
+	if err := conn.SetDeadline(time.Now().Add(requestTimeout(options.Timeout))); err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	if len(body) > 0 {
+		_, err = conn.Write(body)
+		if err != nil {
+			return FlagResult{false, err.Error()}
+		}
+	}
+
+	buf := make([]byte, 4096)
+	n, err := conn.Read(buf)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, netPayloadString(buf[:n], options)}
+}
+
+func (a *App) UdpRequest(address string, payload string, options NetOptions) FlagResult {
+	log.Printf("UdpRequest: %s %v", address, options)
+
+	body, err := netPayloadBytes(payload, options)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	conn, err := net.DialTimeout("udp", address, requestTimeout(options.Timeout))
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+	defer conn.Close()
+
+	if err := conn.SetDeadline(time.Now().Add(requestTimeout(options.Timeout))); err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	_, err = conn.Write(body)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	buf := make([]byte, 4096)
+	n, err := conn.Read(buf)
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
+
+	return FlagResult{true, netPayloadString(buf[:n], options)}
 }
 
 func (a *App) Download(method string, url string, path string, headers map[string]string, event string, options RequestOptions) HTTPResult {

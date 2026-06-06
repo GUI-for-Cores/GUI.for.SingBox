@@ -118,6 +118,18 @@ export function StopServer(arg1) {
   return window['go']['bridge']['App']['StopServer'](arg1);
 }
 
+export function TcpPing(arg1, arg2) {
+  return window['go']['bridge']['App']['TcpPing'](arg1, arg2);
+}
+
+export function TcpRequest(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['TcpRequest'](arg1, arg2, arg3);
+}
+
+export function UdpRequest(arg1, arg2, arg3) {
+  return window['go']['bridge']['App']['UdpRequest'](arg1, arg2, arg3);
+}
+
 export function UnzipGZFile(arg1, arg2) {
   return window['go']['bridge']['App']['UnzipGZFile'](arg1, arg2);
 }

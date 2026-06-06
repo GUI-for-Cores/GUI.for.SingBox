@@ -2,6 +2,7 @@ package bridge
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"errors"
 	"net/http"
 	"net/url"
@@ -47,6 +48,20 @@ func requestTimeout(timeout int) time.Duration {
 		return 15 * time.Second
 	}
 	return time.Duration(timeout) * time.Second
+}
+
+func netPayloadBytes(payload string, options NetOptions) ([]byte, error) {
+	if options.Mode == Binary {
+		return base64.StdEncoding.DecodeString(payload)
+	}
+	return []byte(payload), nil
+}
+
+func netPayloadString(payload []byte, options NetOptions) string {
+	if options.Mode == Binary {
+		return base64.StdEncoding.EncodeToString(payload)
+	}
+	return string(payload)
 }
 
 func requestHeaders(headers map[string]string) http.Header {

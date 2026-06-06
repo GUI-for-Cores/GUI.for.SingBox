@@ -71,6 +71,11 @@ type ServerOptions struct {
 	MaxUploadSize int64
 }
 
+type NetOptions struct {
+	Mode    string // Binary / Text
+	Timeout int
+}
+
 type HTTPResult struct {
 	Flag    bool        `json:"flag"`
 	Status  int         `json:"status"`

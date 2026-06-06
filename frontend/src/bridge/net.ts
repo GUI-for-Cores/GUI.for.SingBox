@@ -5,6 +5,11 @@ import { RequestMethod } from '@/enums/app'
 import { sampleID, getUserAgent } from '@/utils'
 import { GetRequestProxy } from '@/utils/helper'
 
+interface NetOptions {
+  Mode?: 'Binary' | 'Text'
+  Timeout?: number
+}
+
 interface Request {
   method: RequestMethod
   url: string
@@ -27,6 +32,12 @@ interface Response<T = any> {
   headers: Record<string, string | string[]>
   body: T
 }
+
+const mergeNetOptions = (options: NetOptions = {}): Required<NetOptions> => ({
+  Mode: 'Text',
+  Timeout: 15, // 15 seconds
+  ...options,
+})
 
 const mergeRequestOptions = async (options: Request['options']) => {
   const mergedReqOpts: Required<Request['options']> = {
@@ -214,3 +225,21 @@ export const HttpPost = requestWithBody(RequestMethod.Post)
 export const HttpPatch = requestWithBody(RequestMethod.Patch)
 
 export const HttpCancel = (cancelId: string) => EventsEmit(cancelId)
+
+export const TcpPing = async (address: string, options: NetOptions = {}) => {
+  const { flag, data } = await App.TcpPing(address, mergeNetOptions(options))
+  if (!flag) throw data
+  return data
+}
+
+export const TcpRequest = async (address: string, payload: string, options: NetOptions = {}) => {
+  const { flag, data } = await App.TcpRequest(address, payload, mergeNetOptions(options))
+  if (!flag) throw data
+  return data
+}
+
+export const UdpRequest = async (address: string, payload: string, options: NetOptions = {}) => {
+  const { flag, data } = await App.UdpRequest(address, payload, mergeNetOptions(options))
+  if (!flag) throw data
+  return data
+}

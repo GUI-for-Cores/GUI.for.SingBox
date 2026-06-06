@@ -112,6 +112,20 @@ export namespace bridge {
 		    return a;
 		}
 	}
+	export class NetOptions {
+	    Mode: string;
+	    Timeout: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new NetOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Mode = source["Mode"];
+	        this.Timeout = source["Timeout"];
+	    }
+	}
 	export class RequestOptions {
 	    Proxy: string;
 	    Insecure: boolean;

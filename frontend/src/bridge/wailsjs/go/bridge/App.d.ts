@@ -60,6 +60,12 @@ export function StartServer(arg1:string,arg2:string,arg3:bridge.ServerOptions):P
 
 export function StopServer(arg1:string):Promise<bridge.FlagResult>;
 
+export function TcpPing(arg1:string,arg2:bridge.NetOptions):Promise<bridge.FlagResult>;
+
+export function TcpRequest(arg1:string,arg2:string,arg3:bridge.NetOptions):Promise<bridge.FlagResult>;
+
+export function UdpRequest(arg1:string,arg2:string,arg3:bridge.NetOptions):Promise<bridge.FlagResult>;
+
 export function UnzipGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
 
 export function UnzipTarGZFile(arg1:string,arg2:string):Promise<bridge.FlagResult>;
