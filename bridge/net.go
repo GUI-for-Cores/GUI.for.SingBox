@@ -88,15 +88,19 @@ func (a *App) TcpRequest(address string, payload string, options NetOptions) Fla
 		if err != nil {
 			return FlagResult{false, err.Error()}
 		}
+		if tcpConn, ok := conn.(*net.TCPConn); ok {
+			_ = tcpConn.CloseWrite()
+		}
 	}
 
-	buf := make([]byte, 4096)
-	n, err := conn.Read(buf)
+	resp, err := io.ReadAll(conn)
 	if err != nil {
-		return FlagResult{false, err.Error()}
+		if netErr, ok := err.(net.Error); !ok || !netErr.Timeout() || len(resp) == 0 {
+			return FlagResult{false, err.Error()}
+		}
 	}
 
-	return FlagResult{true, netPayloadString(buf[:n], options)}
+	return FlagResult{true, netPayloadString(resp, options)}
 }
 
 func (a *App) UdpRequest(address string, payload string, options NetOptions) FlagResult {
@@ -122,7 +126,7 @@ func (a *App) UdpRequest(address string, payload string, options NetOptions) Fla
 		return FlagResult{false, err.Error()}
 	}
 
-	buf := make([]byte, 4096)
+	buf := make([]byte, 65535)
 	n, err := conn.Read(buf)
 	if err != nil {
 		return FlagResult{false, err.Error()}

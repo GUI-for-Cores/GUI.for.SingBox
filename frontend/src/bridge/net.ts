@@ -229,7 +229,7 @@ export const HttpCancel = (cancelId: string) => EventsEmit(cancelId)
 export const TcpPing = async (address: string, options: NetOptions = {}) => {
   const { flag, data } = await App.TcpPing(address, mergeNetOptions(options))
   if (!flag) throw data
-  return data
+  return Number(data)
 }
 
 export const TcpRequest = async (address: string, payload: string, options: NetOptions = {}) => {
