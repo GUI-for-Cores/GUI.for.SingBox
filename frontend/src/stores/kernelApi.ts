@@ -11,13 +11,13 @@ import {
   onTraffic,
   initWebsocket,
   destroyWebsocket,
+  probeApiAvailability,
 } from '@/api/kernel'
 import { ProcessInfo, KillProcess, ExecBackground, ReadFile, RemoveFile } from '@/bridge'
 import {
   CoreConfigFilePath,
   CoreLogFilePath,
   CorePidFilePath,
-  CoreStopOutputKeyword,
   CoreWorkingDirectory,
 } from '@/constant/kernel'
 import { DefaultInboundMixed } from '@/constant/profile'
@@ -267,31 +267,26 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     }
   }
 
-  const runCoreProcess = (isAlpha: boolean) => {
-    return new Promise<number | void>((resolve, reject) => {
-      let output: string
-      const pid = ExecBackground(
-        CoreWorkingDirectory + '/' + getKernelFileName(isAlpha),
-        getKernelRuntimeArgs(isAlpha),
-        (out) => {
-          output = out
-          logsStore.recordKernelLog(out)
-          if (out.includes(CoreStopOutputKeyword)) {
-            resolve(pid)
-          }
-        },
-        () => {
-          onCoreStopped()
-          reject(output)
-        },
-        {
-          PidFile: CorePidFilePath,
-          LogFile: CoreLogFilePath,
-          StopOutputKeyword: CoreStopOutputKeyword,
-          Env: getKernelRuntimeEnv(isAlpha),
-        },
-      ).catch((e) => reject(e))
-    })
+  const runCoreProcess = async (isAlpha: boolean) => {
+    const pid = await ExecBackground(
+      CoreWorkingDirectory + '/' + getKernelFileName(isAlpha),
+      getKernelRuntimeArgs(isAlpha),
+      undefined,
+      async (end) => {
+        const logs = await ReadFile(CoreLogFilePath, { Range: '-4096' }).catch((err) => String(err))
+        logs.split('\n').forEach((line) => line && logsStore.recordKernelLog(line))
+        end && logsStore.recordKernelLog(end)
+        onCoreStopped()
+      },
+      {
+        PidFile: CorePidFilePath,
+        LogFile: CoreLogFilePath,
+        Env: getKernelRuntimeEnv(isAlpha),
+      },
+    )
+    // TUN mode can make the first probe fail, so probe again.
+    await probeApiAvailability().catch(() => probeApiAvailability())
+    return pid
   }
 
   const onCoreStarted = async (pid: number) => {

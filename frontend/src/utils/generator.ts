@@ -6,7 +6,6 @@ import { Branch } from '@/enums/app'
 import {
   DnsServer,
   Inbound,
-  LogLevel,
   Outbound,
   RuleAction,
   RulesetType,
@@ -450,12 +449,6 @@ export const generateConfigFile = async (
 
   const _config = await generateConfig(profile)
   const config = await beforeWrite(_config)
-
-  config.log.disabled = false
-  config.log.output = ''
-  if (![LogLevel.Trace, LogLevel.Debug, LogLevel.Info].includes(config.log.level)) {
-    config.log.level = LogLevel.Info
-  }
 
   config.experimental.cache_file.path = 'cache.db'
 

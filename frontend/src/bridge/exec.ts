@@ -39,7 +39,7 @@ export const ExecBackground = async (
   path: string,
   args: string[] = [],
   onOut?: (out: string) => void,
-  onEnd?: () => void,
+  onEnd?: (out: string) => void,
   options: ExecOptions = {},
 ) => {
   const outEvent = (onOut && sampleID()) || ''
@@ -61,10 +61,10 @@ export const ExecBackground = async (
   }
 
   if (endEvent) {
-    EventsOn(endEvent, () => {
+    EventsOn(endEvent, (data: any) => {
       outEvent && EventsOff(outEvent)
       EventsOff(endEvent)
-      onEnd?.()
+      onEnd?.(data)
     })
   }
 
