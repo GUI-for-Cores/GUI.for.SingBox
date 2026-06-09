@@ -268,11 +268,13 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
   }
 
   const runCoreProcess = async (isAlpha: boolean) => {
+    let stopped = false
     const pid = await ExecBackground(
       CoreWorkingDirectory + '/' + getKernelFileName(isAlpha),
       getKernelRuntimeArgs(isAlpha),
       undefined,
       async (end) => {
+        stopped = true
         const logs = await ReadFile(CoreLogFilePath, { Range: '-4096' }).catch((err) => String(err))
         logs.split('\n').forEach((line) => line && logsStore.recordKernelLog(line))
         end && logsStore.recordKernelLog(end)
@@ -284,8 +286,11 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
         Env: getKernelRuntimeEnv(isAlpha),
       },
     )
-    // TUN mode can make the first probe fail, so probe again.
-    await probeApiAvailability().catch(() => probeApiAvailability())
+    while (!stopped) {
+      const ok = await probeApiAvailability().catch(() => false)
+      if (ok) break
+      if (stopped) throw 'Startup failed. Check logs for details.'
+    }
     return pid
   }
 
