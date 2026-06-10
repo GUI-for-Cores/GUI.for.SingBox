@@ -732,6 +732,12 @@ export default {
       name: 'GitHub REST API Token',
       tips: 'Provides a higher rate limit',
     },
+    githubDownloadAcceleration: {
+      name: 'GitHub Download Acceleration',
+      tips: 'Accelerates GitHub resources',
+      mirror: 'GitHub Mirror',
+      reset: 'Reset mirror',
+    },
   },
   about: {
     new: 'New',

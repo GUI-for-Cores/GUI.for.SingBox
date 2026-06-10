@@ -49,6 +49,10 @@ const handleClearCustomProxy = () => {
 const handleClearApiToken = () => {
   appSettings.app.githubApiToken = ''
 }
+
+const handleClearGithubMirror = () => {
+  appSettings.app.githubDownloadMirror = ''
+}
 </script>
 
 <template>
@@ -132,6 +136,39 @@ const handleClearApiToken = () => {
             size="small"
             icon="reset"
             @click="handleClearApiToken"
+          />
+        </template>
+      </Input>
+    </div>
+    <div class="px-8 py-12 flex items-center justify-between">
+      <div class="text-16 font-bold">
+        {{ $t('settings.githubDownloadAcceleration.name') }}
+        <span class="font-normal text-12">
+          ({{ $t('settings.githubDownloadAcceleration.tips') }})
+        </span>
+      </div>
+      <Switch v-model="appSettings.app.githubDownloadAcceleration" />
+    </div>
+    <div
+      v-if="appSettings.app.githubDownloadAcceleration"
+      class="px-8 py-12 flex items-center justify-between"
+    >
+      <div class="text-16 font-bold">{{ $t('settings.githubDownloadAcceleration.mirror') }}</div>
+      <Input
+        v-model.lazy="appSettings.app.githubDownloadMirror"
+        placeholder="https://example.com/{url}"
+        editable
+        clearable
+        :max-width="false"
+        class="text-14"
+      >
+        <template #suffix>
+          <Button
+            v-tips="'settings.githubDownloadAcceleration.reset'"
+            type="text"
+            size="small"
+            icon="reset"
+            @click="handleClearGithubMirror"
           />
         </template>
       </Input>

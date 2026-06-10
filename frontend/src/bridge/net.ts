@@ -2,7 +2,7 @@ import * as App from '@wails/go/bridge/App'
 import { EventsOn, EventsOff, EventsEmit } from '@wails/runtime/runtime'
 
 import { RequestMethod } from '@/enums/app'
-import { sampleID, getUserAgent } from '@/utils'
+import { sampleID, transformRequestUrl, getUserAgent } from '@/utils'
 import { GetRequestProxy } from '@/utils/helper'
 
 interface NetOptions {
@@ -128,7 +128,14 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
       status,
       headers: respHeaders,
       body: respBody,
-    } = await App[fnName](method, url, path, _headers, progressEvent, _options)
+    } = await App[fnName](
+      method,
+      transformRequestUrl(url),
+      path,
+      _headers,
+      progressEvent,
+      _options,
+    )
 
     if (progressEvent) {
       EventsOff(progressEvent)
@@ -154,7 +161,7 @@ const requestWithBody = (method: RequestMethod.Put | RequestMethod.Post | Reques
       status,
       headers: respHeaders,
       body: respBody,
-    } = await App.Requests(method, url, _headers, _body, _options)
+    } = await App.Requests(method, transformRequestUrl(url), _headers, _body, _options)
 
     if (!flag) throw respBody
 
@@ -177,7 +184,7 @@ const requestWithoutBody = (
       status,
       headers: respHeaders,
       body,
-    } = await App.Requests(methd, url, _headers, '', _options)
+    } = await App.Requests(methd, transformRequestUrl(url), _headers, '', _options)
 
     if (!flag) throw body
 
@@ -199,7 +206,13 @@ export const Requests = async <T = any>(options: RequestWithAutoTransform) => {
     status,
     headers: respHeaders,
     body: respBody,
-  } = await App.Requests(method.toUpperCase(), url, reqHeaders, reqBody, finalReqOpts)
+  } = await App.Requests(
+    method.toUpperCase(),
+    transformRequestUrl(url),
+    reqHeaders,
+    reqBody,
+    finalReqOpts,
+  )
 
   if (!flag) throw respBody
 

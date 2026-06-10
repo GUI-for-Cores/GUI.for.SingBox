@@ -731,6 +731,12 @@ export default {
       name: 'GitHub REST API 访问令牌',
       tips: '可获得更高的速率限制',
     },
+    githubDownloadAcceleration: {
+      name: 'GitHub 下载加速',
+      tips: '用于加速 GitHub 资源',
+      mirror: 'GitHub 加速镜像',
+      reset: '重置加速镜像',
+    },
   },
   about: {
     new: '新版本',

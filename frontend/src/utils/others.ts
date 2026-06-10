@@ -186,6 +186,51 @@ export const getGitHubApiAuthorization = () => {
   return appSettings.app.githubApiToken ? `Bearer ${appSettings.app.githubApiToken}` : ''
 }
 
+const transformGitHubUrl = (url: string) => {
+  const appSettings = useAppSettingsStore()
+  const mirror = appSettings.app.githubDownloadMirror
+
+  if (!appSettings.app.githubDownloadAcceleration || !mirror) return url
+
+  try {
+    const parsedUrl = new URL(url)
+    const hostname = parsedUrl.hostname.toLowerCase()
+    const pathname = parsedUrl.pathname
+    const hosts = [
+      'raw.githubusercontent.com',
+      'codeload.github.com',
+      'gist.githubusercontent.com',
+      'gist.github.com',
+    ]
+    const markers = [
+      '/releases/download/',
+      '/archive/refs/heads/',
+      '/archive/refs/tags/',
+      '/raw/',
+    ]
+    const matched =
+      hosts.includes(hostname) ||
+      (hostname === 'github.com' && markers.some((marker) => pathname.includes(marker)))
+
+    if (!matched) {
+      return url
+    }
+
+    if (mirror.includes('{url}')) {
+      return mirror.replaceAll('{url}', url)
+    }
+
+    return mirror.replace(/\/+$/, '') + '/' + url
+  } catch {
+    return url
+  }
+}
+
+export const transformRequestUrl = (url: string) => {
+  url = transformGitHubUrl(url)
+  return url
+}
+
 export const getAutoStartConfiguration = (os: OS, appPath: string, delay = 30) => {
   if (os === OS.Windows) {
     const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
