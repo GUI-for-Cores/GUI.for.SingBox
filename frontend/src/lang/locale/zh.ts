@@ -662,6 +662,7 @@ export default {
     autoSetSystemProxy: '自动配置系统代理',
     requestProxy: {
       name: '请求代理',
+      global: '跟随APP',
       none: '不使用代理',
       system: '使用系统代理',
       kernel: '使用核心代理',

@@ -7,11 +7,11 @@ import {
   DefaultTestTimeout,
   DefaultTestURL,
   RequestMethodOptions,
-  RequestProxyModeOptions,
+  SubscriptionRequestProxyModeOptions,
 } from '@/constant/app'
 import { RequestProxyMode } from '@/enums/app'
 import { useBool } from '@/hooks'
-import { useSubscribesStore } from '@/stores'
+import { useAppSettingsStore, useSubscribesStore } from '@/stores'
 import { deepClone, GetRequestProxy, message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
@@ -27,6 +27,7 @@ const props = defineProps<Props>()
 const { t } = useI18n()
 const [showMore, toggleShowMore] = useBool(false)
 const subscribeStore = useSubscribesStore()
+const appSettingsStore = useAppSettingsStore()
 
 const loading = ref(false)
 const proxyTesting = ref(false)
@@ -35,7 +36,15 @@ const sub = ref<Subscription>(subscribeStore.getSubscribeTemplate())
 const isManual = computed(() => sub.value.type === 'Manual')
 const isRemote = computed(() => sub.value.type === 'Http')
 const isCustomProxy = computed(() => sub.value.requestProxyMode === RequestProxyMode.Custom)
-const showProxyTest = computed(() => sub.value.requestProxyMode !== RequestProxyMode.None)
+const showProxyTest = computed(() => {
+  if (sub.value.requestProxyMode === RequestProxyMode.None) {
+    return false
+  }
+  if (sub.value.requestProxyMode === RequestProxyMode.Global) {
+    return appSettingsStore.app.requestProxyMode !== RequestProxyMode.None
+  }
+  return true
+})
 
 const handleCancel = inject('cancel') as any
 const handleSubmit = inject('submit') as any
@@ -59,7 +68,10 @@ const handleSave = async () => {
 }
 
 const handleTestProxy = async () => {
-  const proxy = await GetRequestProxy(sub.value.requestProxyMode, sub.value.customProxy)
+  const proxy =
+    sub.value.requestProxyMode === RequestProxyMode.Global
+      ? await GetRequestProxy()
+      : await GetRequestProxy(sub.value.requestProxyMode, sub.value.customProxy)
   if (!proxy) {
     message.error('settings.requestProxy.empty')
     return
@@ -220,7 +232,7 @@ defineExpose({ modalSlots })
             >
               {{ t('settings.requestProxy.test') }}
             </Button>
-            <Radio v-model="sub.requestProxyMode" :options="RequestProxyModeOptions" />
+            <Radio v-model="sub.requestProxyMode" :options="SubscriptionRequestProxyModeOptions" />
           </div>
         </div>
         <div v-if="isCustomProxy" class="form-item">

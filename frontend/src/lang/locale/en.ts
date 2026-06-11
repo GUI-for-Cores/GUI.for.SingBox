@@ -663,6 +663,7 @@ export default {
     autoSetSystemProxy: 'Auto-configure System Proxy',
     requestProxy: {
       name: 'Request Proxy',
+      global: 'Follow app',
       none: 'No proxy',
       system: 'Use system proxy',
       kernel: 'Use core proxy',

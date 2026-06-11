@@ -86,6 +86,11 @@ export const RequestProxyModeOptions = [
   { label: 'settings.requestProxy.custom', value: RequestProxyMode.Custom },
 ]
 
+export const SubscriptionRequestProxyModeOptions = [
+  { label: 'settings.requestProxy.global', value: RequestProxyMode.Global },
+  ...RequestProxyModeOptions,
+]
+
 export const ThemeOptions = [
   {
     label: 'settings.theme.dark',

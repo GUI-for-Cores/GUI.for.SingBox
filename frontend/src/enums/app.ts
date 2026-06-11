@@ -49,6 +49,7 @@ export enum Branch {
 }
 
 export enum RequestProxyMode {
+  Global = 'global',
   None = 'none',
   System = 'system',
   Kernel = 'kernel',
