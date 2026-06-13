@@ -19,6 +19,7 @@ declare module 'vue' {
     KeyValueEditor: (typeof import('./KeyValueEditor/index.vue'))['default']
     Menu: (typeof import('./Menu/index.vue'))['default']
     Message: (typeof import('./Message/index.vue'))['default']
+    MarkdownViewer: (typeof import('./MarkdownViewer/index.vue'))['default']
     Modal: (typeof import('./Modal/index.vue'))['default']
     MultipleSelect: (typeof import('./Select/index.vue'))['default']
     Pagination: (typeof import('./Pagination/index.vue'))['default']
