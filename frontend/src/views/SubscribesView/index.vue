@@ -4,7 +4,7 @@ import { useI18n, I18nT } from 'vue-i18n'
 
 import { BrowserOpenURL, ClipboardSetText, RemoveFile } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
-import { View } from '@/enums/app'
+import { RequestProxyMode, View } from '@/enums/app'
 import { useSubscribesStore, useAppSettingsStore, usePluginsStore, useAppStore } from '@/stores'
 import {
   formatBytes,
@@ -50,6 +50,32 @@ const menuList: Menu[] = [
       modalApi.setContent(SubscribeScript, { id }).open()
     },
   },
+  {
+    label: 'common.update',
+    children: [
+      {
+        label: 'subscribes.updateDirect',
+        handler: (id: string) => {
+          const sub = subscribeStore.getSubscribeById(id)!
+          handleUpdateSub(sub, { requestProxyMode: RequestProxyMode.None })
+        },
+      },
+      {
+        label: 'subscribes.updateSystemProxy',
+        handler: (id: string) => {
+          const sub = subscribeStore.getSubscribeById(id)!
+          handleUpdateSub(sub, { requestProxyMode: RequestProxyMode.System })
+        },
+      },
+      {
+        label: 'subscribes.updateKernelProxy',
+        handler: (id: string) => {
+          const sub = subscribeStore.getSubscribeById(id)!
+          handleUpdateSub(sub, { requestProxyMode: RequestProxyMode.Kernel })
+        },
+      },
+    ],
+  },
 ]
 
 const { t } = useI18n()
@@ -63,6 +89,10 @@ const generateMenus = (subscription: Subscription) => {
   const builtInMenus: Menu[] = menuList.map((v) => ({
     ...v,
     handler: () => v.handler?.(subscription.id),
+    children: v.children?.map((child) => ({
+      ...child,
+      handler: () => child.handler?.(subscription.id),
+    })),
   }))
 
   const contextMenus = pluginsStore.plugins.filter(
@@ -130,9 +160,9 @@ const handleEditProxies = (id: string, editor = false) => {
   }
 }
 
-const handleUpdateSub = async (s: Subscription) => {
+const handleUpdateSub = async (s: Subscription, options?: Partial<Subscription>) => {
   try {
-    await subscribeStore.updateSubscribe(s.id)
+    await subscribeStore.updateSubscribe(s.id, options)
   } catch (error: any) {
     console.error('updateSubscribe: ', error)
     message.error(error)
