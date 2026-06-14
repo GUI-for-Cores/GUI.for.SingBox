@@ -43,6 +43,7 @@ import {
   getKernelRuntimeArgs,
   getKernelRuntimeEnv,
   eventBus,
+  sleep,
 } from '@/utils'
 
 import type { CoreApiConfig, CoreApiProxy } from '@/types/kernel'
@@ -290,6 +291,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       const ok = await probeApiAvailability().catch(() => false)
       if (ok) break
       if (stopped) throw 'Startup failed. Check logs for details.'
+      await sleep(500)
     }
     return pid
   }
