@@ -677,6 +677,7 @@ export default {
     },
     proxyBypassList: 'Proxy Bypass List',
     proxyBypassListTips: 'Separate with semicolons',
+    darwinSystemProxyServices: 'Proxy Network Service Names',
     autoStartKernel: 'Start core on launch',
     realMemoryUsage: 'Show actual core memory usage',
     autoRestartKernel: {

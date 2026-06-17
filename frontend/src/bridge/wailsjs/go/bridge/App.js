@@ -42,6 +42,14 @@ export function GetInterfaces() {
   return window['go']['bridge']['App']['GetInterfaces']();
 }
 
+export function GetSystemProxy() {
+  return window['go']['bridge']['App']['GetSystemProxy']();
+}
+
+export function GetSystemProxyBypass() {
+  return window['go']['bridge']['App']['GetSystemProxyBypass']();
+}
+
 export function IsStartup() {
   return window['go']['bridge']['App']['IsStartup']();
 }
@@ -104,6 +112,10 @@ export function Requests(arg1, arg2, arg3, arg4, arg5) {
 
 export function RestartApp() {
   return window['go']['bridge']['App']['RestartApp']();
+}
+
+export function SetSystemProxy(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['bridge']['App']['SetSystemProxy'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function ShowMainWindow() {

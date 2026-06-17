@@ -29,6 +29,36 @@ export const GetEnv = <T extends string | undefined = undefined>(
 
 export const IsStartup = App.IsStartup
 
+export const GetSystemProxy = async () => {
+  const { flag, data } = await App.GetSystemProxy()
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const SetSystemProxy = async (
+  enable: boolean,
+  server: string,
+  proxyType: 'mixed' | 'http' | 'socks' = 'mixed',
+  bypass = '',
+  darwinServices: string[] = [],
+) => {
+  const { flag, data } = await App.SetSystemProxy(enable, server, proxyType, bypass, darwinServices)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const GetSystemProxyBypass = async () => {
+  const { flag, data } = await App.GetSystemProxyBypass()
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
 export const GetInterfaces = async () => {
   const { flag, data } = await App.GetInterfaces()
   if (!flag) {

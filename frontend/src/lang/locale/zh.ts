@@ -676,6 +676,7 @@ export default {
     },
     proxyBypassList: '不使用代理的地址',
     proxyBypassListTips: '分号分隔',
+    darwinSystemProxyServices: '代理网络服务名称',
     autoStartKernel: '程序启动时开启核心',
     realMemoryUsage: '显示真实的核心内存占用',
     autoRestartKernel: {

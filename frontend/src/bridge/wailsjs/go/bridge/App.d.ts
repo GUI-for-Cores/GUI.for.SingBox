@@ -22,6 +22,10 @@ export function GetEnv(arg1:string):Promise<any>;
 
 export function GetInterfaces():Promise<bridge.FlagResult>;
 
+export function GetSystemProxy():Promise<bridge.FlagResult>;
+
+export function GetSystemProxyBypass():Promise<bridge.FlagResult>;
+
 export function IsStartup():Promise<boolean>;
 
 export function KillProcess(arg1:number,arg2:number):Promise<bridge.FlagResult>;
@@ -53,6 +57,8 @@ export function RemoveFile(arg1:string):Promise<bridge.FlagResult>;
 export function Requests(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
 export function RestartApp():Promise<bridge.FlagResult>;
+
+export function SetSystemProxy(arg1:boolean,arg2:string,arg3:string,arg4:string,arg5:Array<string>):Promise<bridge.FlagResult>;
 
 export function ShowMainWindow():Promise<void>;
 

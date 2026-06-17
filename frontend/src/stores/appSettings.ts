@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { parse, stringify } from 'yaml'
 
 import {
+  GetSystemProxyBypass,
   ReadFile,
   WriteFile,
   WindowSetSystemDefaultTheme,
@@ -38,7 +39,6 @@ import {
   debounce,
   updateTrayAndMenus,
   ignoredError,
-  GetSystemProxyBypass,
   deepClone,
 } from '@/utils'
 
@@ -73,6 +73,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     requestProxyMode: RequestProxyMode.System,
     customProxy: '',
     proxyBypassList: '',
+    darwinSystemProxyServices: ['Ethernet', 'Wi-Fi'],
     autoStartKernel: false,
     autoRestartKernel: false,
     userAgent: '',
@@ -134,7 +135,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       settings.kernel.alpha = DefaultCoreConfig()
     }
     if (!settings.proxyBypassList) {
-      settings.proxyBypassList = await GetSystemProxyBypass()
+      settings.proxyBypassList = (await ignoredError(GetSystemProxyBypass)) || ''
+    }
+    if (!settings.darwinSystemProxyServices) {
+      settings.darwinSystemProxyServices = ['Ethernet', 'Wi-Fi']
     }
     if (!settings.requestProxyMode) {
       settings.requestProxyMode = RequestProxyMode.System
@@ -281,7 +285,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   const setSystemProxyBypass = debounce(() => {
     applyAppSettings.systemProxyBypass()
   }, 3000)
-  watch(() => app.value.proxyBypassList, setSystemProxyBypass)
+  watch(() => [app.value.proxyBypassList, app.value.darwinSystemProxyServices], setSystemProxyBypass)
 
   return { setupAppSettings, app, themeMode }
 })
