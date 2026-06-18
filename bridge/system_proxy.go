@@ -42,19 +42,19 @@ func (a *App) SetSystemProxy(enable bool, server string, proxyType string, bypas
 		proxyType = "mixed"
 	}
 
+	var err error
+
 	switch Env.OS {
 	case "windows":
-		if err := setWindowsSystemProxy(server, enable, proxyType, bypass); err != nil {
-			return FlagResult{false, err.Error()}
-		}
+		err = setWindowsSystemProxy(server, enable, proxyType, bypass)
 	case "darwin":
-		if err := setDarwinSystemProxy(server, enable, proxyType, bypass, darwinServices); err != nil {
-			return FlagResult{false, err.Error()}
-		}
+		err = setDarwinSystemProxy(server, enable, proxyType, bypass, darwinServices)
 	case "linux":
-		if err := setLinuxSystemProxy(server, enable, proxyType, bypass); err != nil {
-			return FlagResult{false, err.Error()}
-		}
+		err = setLinuxSystemProxy(server, enable, proxyType, bypass)
+	}
+
+	if err != nil {
+		return FlagResult{false, err.Error()}
 	}
 
 	return FlagResult{true, "Success"}
@@ -128,7 +128,9 @@ func getDarwinSystemProxy() (string, error) {
 }
 
 func getLinuxSystemProxy() (string, error) {
-	switch detectProxyBackend() {
+	backend, desktop := detectProxyBackend()
+
+	switch backend {
 	case "kde":
 		kreadconfig := kdeReadCommand()
 		if kreadconfig == "" {
@@ -191,6 +193,18 @@ func getLinuxSystemProxy() (string, error) {
 			return "http://" + httpHost + ":" + httpPort, nil
 		}
 
+		httpsHost, err := systemProxyCommandValue("gsettings", "get", "org.gnome.system.proxy.https", "host")
+		if err != nil {
+			return "", err
+		}
+		httpsPort, err := systemProxyCommandValue("gsettings", "get", "org.gnome.system.proxy.https", "port")
+		if err != nil {
+			return "", err
+		}
+		if httpsHost != "" && httpsPort != "0" {
+			return "https://" + httpsHost + ":" + httpsPort, nil
+		}
+
 		socksHost, err := systemProxyCommandValue("gsettings", "get", "org.gnome.system.proxy.socks", "host")
 		if err != nil {
 			return "", err
@@ -204,7 +218,7 @@ func getLinuxSystemProxy() (string, error) {
 		}
 
 	case "unknown":
-		return "", fmt.Errorf("unsupported Linux proxy backend")
+		return "", fmt.Errorf("unsupported Linux proxy backend: %s", desktop)
 	}
 
 	return "", nil
@@ -275,8 +289,9 @@ func setLinuxSystemProxy(server string, enabled bool, proxyType string, bypass s
 	serverName, serverPort := splitServer(server)
 	httpEnabled := enabled && (proxyType == "mixed" || proxyType == "http")
 	socksEnabled := enabled && (proxyType == "mixed" || proxyType == "socks")
+	backend, desktop := detectProxyBackend()
 
-	switch detectProxyBackend() {
+	switch backend {
 	case "kde":
 		kwriteconfig := kdeWriteCommand()
 		if kwriteconfig == "" {
@@ -328,7 +343,7 @@ func setLinuxSystemProxy(server string, enabled bool, proxyType string, bypass s
 		)
 
 	default:
-		return fmt.Errorf("unsupported Linux proxy backend")
+		return fmt.Errorf("unsupported Linux proxy backend: %s", desktop)
 	}
 }
 
@@ -365,7 +380,9 @@ func getDarwinSystemProxyBypass() (string, error) {
 }
 
 func getLinuxSystemProxyBypass() (string, error) {
-	switch detectProxyBackend() {
+	backend, desktop := detectProxyBackend()
+
+	switch backend {
 	case "kde":
 		kreadconfig := kdeReadCommand()
 		if kreadconfig == "" {
@@ -404,7 +421,7 @@ func getLinuxSystemProxyBypass() (string, error) {
 		return strings.Join(items, ";"), nil
 
 	case "unknown":
-		return "", fmt.Errorf("unsupported Linux proxy backend")
+		return "", fmt.Errorf("unsupported Linux proxy backend: %s", desktop)
 	}
 
 	return "", nil
@@ -430,22 +447,18 @@ func runSystemProxyCommand(path string, args ...string) (string, error) {
 func runSystemProxyCommands(commands ...[]string) error {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	errs := []error{}
+	messages := []string{}
 	for _, command := range commands {
 		wg.Go(func() {
 			if _, err := runSystemProxyCommand(command[0], command[1:]...); err != nil {
 				mu.Lock()
-				errs = append(errs, err)
+				messages = append(messages, err.Error())
 				mu.Unlock()
 			}
 		})
 	}
 	wg.Wait()
-	if len(errs) > 0 {
-		messages := make([]string, 0, len(errs))
-		for _, err := range errs {
-			messages = append(messages, err.Error())
-		}
+	if len(messages) > 0 {
 		return errors.New(strings.Join(messages, "; "))
 	}
 	return nil
@@ -496,10 +509,11 @@ func systemProxyCommandValue(path string, args ...string) (string, error) {
 	return cleanProxyValue(out), nil
 }
 
-func detectProxyBackend() string {
-	desktop := strings.ToLower(os.Getenv("XDG_CURRENT_DESKTOP"))
+func detectProxyBackend() (string, string) {
+	desktop := strings.TrimSpace(os.Getenv("XDG_CURRENT_DESKTOP"))
+	normalizedDesktop := strings.ToLower(desktop)
 
-	tokens := strings.FieldsFunc(desktop, func(r rune) bool {
+	tokens := strings.FieldsFunc(normalizedDesktop, func(r rune) bool {
 		return r == ':' || r == ';' || r == ','
 	})
 
@@ -513,14 +527,15 @@ func detectProxyBackend() string {
 		return false
 	}
 
-	switch {
-	case has("kde", "plasma"):
-		return "kde"
-	case has("gnome", "unity", "cinnamon", "x-cinnamon", "budgie"):
-		return "gnome"
-	default:
-		return "unknown"
+	if has("kde", "plasma") {
+		return "kde", desktop
 	}
+
+	if hasGSettingsProxyModeWritable() {
+		return "gnome", desktop
+	}
+
+	return "unknown", desktop
 }
 
 func kdeWriteCommand() string {
@@ -549,4 +564,9 @@ func hasGSettingsProxySchema() (bool, error) {
 		return false, err
 	}
 	return strings.Contains(out, "org.gnome.system.proxy"), nil
+}
+
+func hasGSettingsProxyModeWritable() bool {
+	out, err := runSystemProxyCommand("gsettings", "writable", "org.gnome.system.proxy", "mode")
+	return err == nil && strings.TrimSpace(out) == "true"
 }
