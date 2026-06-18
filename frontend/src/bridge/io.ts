@@ -53,6 +53,14 @@ export const FileExists = async (path: string) => {
   return data === 'true'
 }
 
+export const FileSHA256 = async (path: string) => {
+  const { flag, data } = await App.FileSHA256(path)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
 export const AbsolutePath = async (path: string) => {
   const { flag, data } = await App.AbsolutePath(path)
   if (!flag) {

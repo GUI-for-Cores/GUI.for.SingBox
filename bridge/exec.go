@@ -32,7 +32,9 @@ func (a *App) Exec(path string, args []string, options ExecOptions) FlagResult {
 	cmd := exec.Command(exePath, args...)
 	SetCmdWindowHidden(cmd)
 
-	cmd.Dir = options.WorkingDirectory
+	if options.WorkingDirectory != "" {
+		cmd.Dir = resolvePath(options.WorkingDirectory)
+	}
 	cmd.Env = os.Environ()
 
 	for key, value := range options.Env {
@@ -78,7 +80,9 @@ func (a *App) ExecBackground(path string, args []string, outEvent string, endEve
 	cmd := exec.Command(exePath, args...)
 	SetCmdWindowHidden(cmd)
 
-	cmd.Dir = options.WorkingDirectory
+	if options.WorkingDirectory != "" {
+		cmd.Dir = resolvePath(options.WorkingDirectory)
+	}
 	cmd.Env = os.Environ()
 
 	for key, value := range options.Env {
@@ -318,6 +322,8 @@ func scanAndEmitOutput(a *App, reader io.Reader, outEvent string, options ExecOp
 			}
 		}
 	}
+
+	_ = scanner.Err()
 }
 
 func tailAndEmitLogFile(a *App, path string, outEvent string, options ExecOptions, done <-chan struct{}, outputDone chan<- struct{}) {
