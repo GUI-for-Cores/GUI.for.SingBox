@@ -308,6 +308,7 @@ export default {
     notFound: '无核心',
     insertionPoint: '新规则将插入到这里',
     addInsertionPoint: '添加插入点',
+    missingInsertionPoint: '请先添加插入点',
   },
   router: {
     overview: '概览',
@@ -510,6 +511,7 @@ export default {
     empty: '规则集列表为空，请先{action}或从{import}导入。',
     rulesetCount: '规则数量',
     editRuleset: '编辑规则',
+    addToProfile: '添加到配置',
     selectRuleType: '选择规则类型',
   },
   plugin: {

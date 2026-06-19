@@ -4,11 +4,26 @@ import { useI18n, I18nT } from 'vue-i18n'
 
 import { RemoveFile, WriteFile, OpenURI } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
-import { EmptyRuleSet } from '@/constant/kernel'
+import { BuiltInOutbound, EmptyRuleSet } from '@/constant/kernel'
+import { DefaultRouteRule, DefaultRouteRuleset } from '@/constant/profile'
 import { View } from '@/enums/app'
-import { RulesetFormat } from '@/enums/kernel'
-import { type RuleSet, useRulesetsStore, useAppSettingsStore, useEnvStore } from '@/stores'
-import { debounce, formatRelativeTime, ignoredError, formatDate, message } from '@/utils'
+import { RulesetFormat, RulesetType, RuleType } from '@/enums/kernel'
+import {
+  type RuleSet,
+  useRulesetsStore,
+  useAppSettingsStore,
+  useEnvStore,
+  useProfilesStore,
+} from '@/stores'
+import {
+  debounce,
+  formatRelativeTime,
+  ignoredError,
+  formatDate,
+  message,
+  picker,
+  deepClone,
+} from '@/utils'
 
 import { useModal } from '@/components/Modal'
 
@@ -36,21 +51,12 @@ const sourceMenuList: Menu[] = [
   },
 ]
 
-const binaryMenuList: Menu[] = [
-  {
-    label: 'common.none',
-    handler: (id: string) => {
-      console.log(id)
-      message.info('common.none')
-    },
-  },
-]
-
 const { t } = useI18n()
 const [Modal, modalApi] = useModal({})
 const envStore = useEnvStore()
 const rulesetsStore = useRulesetsStore()
 const appSettingsStore = useAppSettingsStore()
+const profilesStore = useProfilesStore()
 
 const handleImportRuleset = async () => {
   modalApi.setProps({
@@ -133,10 +139,87 @@ const handleClearRuleset = async (id: string) => {
   }
 }
 
+const handleAddRulesetToProfile = async (id: string) => {
+  const ruleset = rulesetsStore.getRulesetById(id)
+  if (!ruleset) return
+
+  try {
+    const { items } = await picker.resource('profile', 'profiles.select', { max: 1, min: 1 })
+    const profile = items[0]
+    if (!profile) return
+
+    const insertionPointIndex = profile.route.rules.findIndex(
+      (rule) => rule.type === RuleType.InsertionPoint,
+    )
+
+    if (insertionPointIndex === -1) {
+      message.warn('kernel.missingInsertionPoint')
+      return
+    }
+
+    const profileRuleset = profile.route.rule_set.find(
+      (item) => item.type === RulesetType.Local && item.path === ruleset.id,
+    )
+    if (
+      profileRuleset &&
+      profile.route.rules.some(
+        (rule) =>
+          rule.type === RuleType.RuleSet && rule.payload.split(',').includes(profileRuleset.id),
+      )
+    ) {
+      message.info('common.added')
+      return
+    }
+
+    const outboundOptions = [
+      ...BuiltInOutbound.map((outbound) => ({ label: outbound, value: outbound })),
+      ...profile.outbounds.map((outbound) => ({
+        label: outbound.tag,
+        value: outbound.id,
+        description: outbound.type,
+      })),
+    ]
+    const target = await picker.single('kernel.route.rules.outbound', outboundOptions, [
+      profile.outbounds[0]?.id || BuiltInOutbound[0]!,
+    ])
+
+    if (!target) return
+
+    const nextProfile = deepClone(profile)
+    let rulesetReferenceId = profileRuleset?.id
+    if (!rulesetReferenceId) {
+      const rulesetReference = {
+        ...DefaultRouteRuleset(),
+        tag: ruleset.name,
+        format: ruleset.format,
+        path: ruleset.id,
+      }
+      nextProfile.route.rule_set.unshift(rulesetReference)
+      rulesetReferenceId = rulesetReference.id
+    }
+
+    nextProfile.route.rules.splice(insertionPointIndex + 1, 0, {
+      ...DefaultRouteRule(),
+      payload: rulesetReferenceId,
+      outbound: target,
+    })
+
+    await profilesStore.editProfile(nextProfile.id, nextProfile)
+    message.success('common.success')
+  } catch (error) {
+    message.error(error)
+  }
+}
+
 const generateMenus = (r: RuleSet) => {
+  const addToProfileMenu: Menu = {
+    label: 'rulesets.addToProfile',
+    handler: (id: string) => handleAddRulesetToProfile(id),
+  }
+
   return {
-    [RulesetFormat.Source]: sourceMenuList,
-    [RulesetFormat.Binary]: binaryMenuList,
+    [RulesetFormat.Source]: [addToProfileMenu, ...sourceMenuList],
+    [RulesetFormat.Binary]: [addToProfileMenu],
   }[r.format].map((v) => ({ ...v, handler: () => v.handler?.(r.id) }))
 }
 
