@@ -2,6 +2,9 @@ package bridge
 
 import (
 	"context"
+	"crypto/sha256"
+	"fmt"
+	"hash"
 	"io"
 	"log"
 	"mime/multipart"
@@ -175,14 +178,29 @@ func (a *App) Download(method string, url string, path string, headers map[strin
 	}
 
 	reader := wrapWithProgress(resp.Body, resp.ContentLength, event, a)
+	writer := io.Writer(file)
 
-	_, err = io.Copy(file, reader)
+	var hash hash.Hash
+	if options.Sha256 != "" {
+		hash = sha256.New()
+		writer = io.MultiWriter(file, hash)
+	}
+
+	_, err = io.Copy(writer, reader)
 	if err != nil {
 		file.Close()
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 	if err := file.Close(); err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
+	}
+
+	if options.Sha256 != "" {
+		actual := fmt.Sprintf("%x", hash.Sum(nil))
+		if actual != options.Sha256 {
+			_ = os.Remove(path)
+			return HTTPResult{false, 500, nil, fmt.Sprintf("SHA256 mismatch: %s, expected %s, got %s", filepath.Base(path), options.Sha256, actual)}
+		}
 	}
 
 	return HTTPResult{true, resp.StatusCode, resp.Header, "Success"}

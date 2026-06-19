@@ -14,7 +14,6 @@ import {
   BrowserOpenURL,
   MakeDir,
   FileExists,
-  FileSHA256,
   OpenDir,
 } from '@/bridge'
 import { CoreWorkingDirectory } from '@/constant/kernel'
@@ -114,15 +113,11 @@ export const useCoreBranch = (isAlpha = false) => {
           const txt = t('common.downloading') + ((progress / total) * 100).toFixed(2) + '%'
           downloadProgress.value = txt
         },
-        { CancelId: downloadCacheFile },
+        {
+          CancelId: downloadCacheFile,
+          Sha256: asset.digest.slice(7),
+        },
       )
-
-      const expectedSHA256 = asset.digest.slice(7)
-      const actualSHA256 = await FileSHA256(downloadCacheFile)
-      if (actualSHA256 !== expectedSHA256) {
-        await ignoredError(RemoveFile, downloadCacheFile)
-        throw `SHA256 mismatch: ${assetName}, expected ${expectedSHA256}, got ${actualSHA256}`
-      }
 
       const stableFileName = getKernelFileName()
 

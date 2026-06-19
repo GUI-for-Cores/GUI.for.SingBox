@@ -133,6 +133,7 @@ export namespace bridge {
 	    Timeout: number;
 	    CancelId: string;
 	    FileField: string;
+	    Sha256: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestOptions(source);
@@ -146,6 +147,7 @@ export namespace bridge {
 	        this.Timeout = source["Timeout"];
 	        this.CancelId = source["CancelId"];
 	        this.FileField = source["FileField"];
+	        this.Sha256 = source["Sha256"];
 	    }
 	}
 	export class ServerOptions {

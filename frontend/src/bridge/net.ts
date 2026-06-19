@@ -24,6 +24,7 @@ interface Request {
     Timeout?: number
     CancelId?: string
     FileField?: string
+    Sha256?: string
   }
 }
 
@@ -47,6 +48,7 @@ const mergeRequestOptions = async (options: Request['options']) => {
     Timeout: 15, // 15 seconds
     CancelId: '',
     FileField: 'file',
+    Sha256: '',
     ...options,
   }
   return mergedReqOpts

@@ -11,7 +11,6 @@ import {
   HttpCancel,
   ReadDir,
   Exec,
-  FileSHA256,
 } from '@/bridge'
 import { LanguageOptions, LocalesFilePath, RollingReleaseDirectory } from '@/constant/app'
 import { OS } from '@/enums/app'
@@ -132,15 +131,9 @@ export const useAppStore = defineStore('app', () => {
         },
         {
           CancelId: downloadCacheFile,
+          Sha256: downloadDigest.value.slice(7),
         },
       ).finally(destroy)
-
-      const expectedSHA256 = downloadDigest.value.slice(7)
-      const actualSHA256 = await FileSHA256(downloadCacheFile)
-      if (actualSHA256 !== expectedSHA256) {
-        await RemoveFile(downloadCacheFile)
-        throw `SHA256 mismatch: gui.zip, expected ${expectedSHA256}, got ${actualSHA256}`
-      }
 
       const { appName, os, appPath } = envStore.env
 
