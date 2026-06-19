@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, type SetupContext, type Slot } from 'vue'
+import { computed, nextTick, onMounted, type SetupContext, type Slot } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -24,19 +24,23 @@ type ResourceConfig = {
   getDescription: (item: ResourceItem) => string
 }
 
-interface Props {
+export interface ResourceSelectProps {
   type: ResourceType
   title?: string
   cols?: number
   max?: number
   min?: number
+  renderSlot?: boolean
+  openImmediate?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ResourceSelectProps>(), {
   title: undefined,
   cols: 3,
   min: 0,
   max: Number.MAX_SAFE_INTEGER,
+  renderSlot: true,
+  openImmediate: false,
 })
 
 const model = defineModel<string[]>({ default: [] })
@@ -160,10 +164,16 @@ const handleSelect = (item: ResourceItem) => {
 
   emit('change', nextValue, getItems(nextValue))
 }
+
+onMounted(() => {
+  if (props.openImmediate) {
+    nextTick(open)
+  }
+})
 </script>
 
 <template>
-  <slot v-bind="{ selected: model, open }">
+  <slot v-if="renderSlot" v-bind="{ selected: model, open }">
     <Button @click="open">{{ t('common.select') }}</Button>
   </slot>
 

@@ -8,12 +8,16 @@ import MessageComp from '@/components/Message/index.vue'
 import { useModal } from '@/components/Modal'
 import PickerComp from '@/components/Picker/index.vue'
 import PromptComp from '@/components/Prompt/index.vue'
+import ResourceSelectComp from '@/components/ResourceSelect/index.vue'
 
 import type { ConfirmOptions } from '@/components/Confirm/index.vue'
 import type { Props as InputProps } from '@/components/Input/index.vue'
 import type { MessageIcon } from '@/components/Message/index.vue'
 import type { Props as ModalProps, Slots as ModalSlots } from '@/components/Modal/index.vue'
 import type { PickerItem } from '@/components/Picker/index.vue'
+import type { ResourceSelectProps } from '@/components/ResourceSelect/index.vue'
+import type { RuleSet } from '@/stores'
+import type { Plugin, ScheduledTask, Subscription } from '@/types/app'
 
 const ContainerCssText = `
     position: fixed;
@@ -129,6 +133,32 @@ class Message {
   }
 }
 
+const ResourceTypeMap = {
+  profile: 'profile',
+  subscription: 'subscription',
+  ruleset: 'ruleset',
+  plugin: 'plugin',
+  scheduledtask: 'scheduledtask',
+  1: 'profile',
+  2: 'subscription',
+  3: 'ruleset',
+  4: 'plugin',
+  5: 'scheduledtask',
+} as const
+
+type ResourceResultMap = {
+  profile: IProfile
+  subscription: Subscription
+  ruleset: RuleSet
+  plugin: Plugin
+  scheduledtask: ScheduledTask
+  1: IProfile
+  2: Subscription
+  3: RuleSet
+  4: Plugin
+  5: ScheduledTask
+}
+
 class Picker {
   constructor() {}
 
@@ -138,6 +168,33 @@ class Picker {
 
   public multi = <T>(title: string, options: PickerItem<T>[], initialValue: T[] = []) => {
     return this.buildPicker('multi', title, options, initialValue)
+  }
+
+  public resource = <T extends keyof typeof ResourceTypeMap>(
+    type: T,
+    title: string,
+    options?: Partial<ResourceSelectProps>,
+    initialValue?: string[],
+  ): Promise<{ ids: string[]; items: ResourceResultMap[T][] }> => {
+    return new Promise((resolve) => {
+      const dom = document.createElement('div')
+      const vnode = h(ResourceSelectComp, {
+        type: ResourceTypeMap[type],
+        title,
+        renderSlot: false,
+        openImmediate: true,
+        modelValue: initialValue,
+        onSubmit(ids, items) {
+          resolve({ ids, items } as any)
+          render(null, dom)
+          dom.remove()
+        },
+        ...options,
+      })
+      bindAppContext(vnode)
+      document.body.appendChild(dom)
+      render(vnode, dom)
+    })
   }
 
   private buildPicker = <ValueType, PickerType extends 'single' | 'multi'>(

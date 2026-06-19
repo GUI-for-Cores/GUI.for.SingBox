@@ -6,7 +6,6 @@ export const IS_IN_MODAL = 'IS_IN_MODAL'
 import { computed, provide, ref, watch } from 'vue'
 
 import { useBool } from '@/hooks'
-import useI18n from '@/lang'
 import { useAppStore } from '@/stores'
 import { message } from '@/utils'
 
@@ -81,8 +80,6 @@ const modalZindex = ref()
 const appStore = useAppStore()
 const [isMaximize, toggleMaximize] = useBool(false)
 // const [isMinimize, toggleMinimize] = useBool(false)
-
-const { t } = useI18n.global
 
 const handleAction = async (isOk: boolean) => {
   const loading = isOk ? submitLoading : cancelLoading
@@ -180,7 +177,7 @@ provide(IS_IN_MODAL, true)
             @dblclick.self="toggleMaximize"
           >
             <slot name="title">
-              <div v-if="title" class="font-bold">{{ t(title) }}</div>
+              <div v-if="title" class="font-bold">{{ $t(title) }}</div>
             </slot>
             <div class="ml-auto" style="--wails-draggable: false">
               <slot name="toolbar"></slot>
@@ -206,12 +203,12 @@ provide(IS_IN_MODAL, true)
                 :type="maskClosable ? 'text' : 'normal'"
                 @click="handleCancel"
               >
-                {{ t(cancelText) }}
+                {{ $t(cancelText) }}
               </Button>
             </slot>
             <slot name="submit">
               <Button v-if="submit" :loading="submitLoading" type="primary" @click="handleSubmit">
-                {{ t(submitText) }}
+                {{ $t(submitText) }}
               </Button>
             </slot>
           </div>
