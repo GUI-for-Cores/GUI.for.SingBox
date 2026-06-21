@@ -4,12 +4,14 @@ import BehaviorSettings from './components/BehaviorSettings.vue'
 import FeatureSettings from './components/FeatureSettings.vue'
 import NetworkSettings from './components/NetworkSettings.vue'
 import PersonalizationSettings from './components/PersonalizationSettings.vue'
+import SystemProxySettings from './components/SystemProxySettings.vue'
 </script>
 
 <template>
   <div class="flex flex-col gap-8 pr-20 mb-8">
     <PersonalizationSettings />
     <BehaviorSettings />
+    <SystemProxySettings />
     <AdvancedSettings />
     <NetworkSettings />
     <FeatureSettings />

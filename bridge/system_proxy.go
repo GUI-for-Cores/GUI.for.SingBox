@@ -35,8 +35,8 @@ func (a *App) GetSystemProxy() FlagResult {
 	return FlagResult{true, proxy}
 }
 
-func (a *App) SetSystemProxy(enable bool, server string, proxyType string, bypass string, darwinServices []string) FlagResult {
-	log.Printf("SetSystemProxy: %t %s %s %s %v", enable, server, proxyType, bypass, darwinServices)
+func (a *App) SetSystemProxy(enable bool, server string, proxyType string, bypass string, services []string) FlagResult {
+	log.Printf("SetSystemProxy: %t %s %s %s %v", enable, server, proxyType, bypass, services)
 
 	if proxyType == "" {
 		proxyType = "mixed"
@@ -48,7 +48,7 @@ func (a *App) SetSystemProxy(enable bool, server string, proxyType string, bypas
 	case "windows":
 		err = setWindowsSystemProxy(server, enable, proxyType, bypass)
 	case "darwin":
-		err = setDarwinSystemProxy(server, enable, proxyType, bypass, darwinServices)
+		err = setDarwinSystemProxy(server, enable, proxyType, bypass, services)
 	case "linux":
 		err = setLinuxSystemProxy(server, enable, proxyType, bypass)
 	}
@@ -57,6 +57,25 @@ func (a *App) SetSystemProxy(enable bool, server string, proxyType string, bypas
 		return FlagResult{false, err.Error()}
 	}
 
+	return FlagResult{true, "Success"}
+}
+
+func (a *App) SetSystemDNS(servers string, services []string) FlagResult {
+	log.Printf("SetSystemDNS: %s %v", servers, services)
+
+	var err error
+	switch Env.OS {
+	case "darwin":
+		err = setDarwinSystemDNS(servers, services)
+	case "linux":
+		err = setLinuxSystemDNS(servers, services)
+	default:
+		return FlagResult{true, "Success"}
+	}
+
+	if err != nil {
+		return FlagResult{false, err.Error()}
+	}
 	return FlagResult{true, "Success"}
 }
 
@@ -347,6 +366,59 @@ func setLinuxSystemProxy(server string, enabled bool, proxyType string, bypass s
 	}
 }
 
+func setDarwinSystemDNS(servers string, services []string) error {
+	dnsServers := splitCommaSeparated(servers)
+	if len(dnsServers) == 0 {
+		dnsServers = []string{"Empty"}
+	}
+
+	commands := make([][]string, 0, len(services))
+	for _, service := range services {
+		service = strings.TrimSpace(service)
+		if service == "" {
+			continue
+		}
+		commands = append(commands, append([]string{"networksetup", "-setdnsservers", service}, dnsServers...))
+	}
+	return runSystemProxyCommands(commands...)
+}
+
+func setLinuxSystemDNS(servers string, services []string) error {
+	dnsServers := splitCommaSeparated(servers)
+	ipv4Servers := make([]string, 0, len(dnsServers))
+	ipv6Servers := make([]string, 0, len(dnsServers))
+	for _, server := range dnsServers {
+		if strings.Contains(server, ":") {
+			ipv6Servers = append(ipv6Servers, server)
+		} else {
+			ipv4Servers = append(ipv4Servers, server)
+		}
+	}
+	ignoreAutoDNS := "yes"
+	if len(dnsServers) == 0 {
+		ignoreAutoDNS = "no"
+	}
+
+	for _, service := range services {
+		service = strings.TrimSpace(service)
+		if service == "" {
+			continue
+		}
+		_, err := runSystemProxyCommand(
+			"nmcli", "connection", "modify", service,
+			"ipv4.ignore-auto-dns", ignoreAutoDNS, "ipv4.dns", strings.Join(ipv4Servers, ","),
+			"ipv6.ignore-auto-dns", ignoreAutoDNS, "ipv6.dns", strings.Join(ipv6Servers, ","),
+		)
+		if err != nil {
+			return err
+		}
+		if _, err := runSystemProxyCommand("nmcli", "connection", "up", service); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func getWindowsSystemProxyBypass() (string, error) {
 	out, err := runSystemProxyCommand("reg", "query", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "ProxyOverride")
 	if err != nil {
@@ -475,6 +547,17 @@ func splitServer(server string) (string, string) {
 func splitBypass(bypass string) []string {
 	result := []string{}
 	for item := range strings.SplitSeq(bypass, ";") {
+		item = strings.TrimSpace(item)
+		if item != "" {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func splitCommaSeparated(value string) []string {
+	result := []string{}
+	for item := range strings.SplitSeq(value, ",") {
 		item = strings.TrimSpace(item)
 		if item != "" {
 			result = append(result, item)

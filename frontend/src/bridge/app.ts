@@ -42,9 +42,17 @@ export const SetSystemProxy = async (
   server: string,
   proxyType: 'mixed' | 'http' | 'socks' = 'mixed',
   bypass = '',
-  darwinServices: string[] = [],
+  services: string[] = [],
 ) => {
-  const { flag, data } = await App.SetSystemProxy(enable, server, proxyType, bypass, darwinServices)
+  const { flag, data } = await App.SetSystemProxy(enable, server, proxyType, bypass, services)
+  if (!flag) {
+    throw data
+  }
+  return data
+}
+
+export const SetSystemDNS = async (servers: string, services: string[] = []) => {
+  const { flag, data } = await App.SetSystemDNS(servers, services)
   if (!flag) {
     throw data
   }

@@ -678,7 +678,11 @@ export default {
     },
     proxyBypassList: '不使用代理的地址',
     proxyBypassListTips: '分号分隔',
-    darwinSystemProxyServices: '代理网络服务名称',
+    systemProxyServices: '网络服务名称',
+    autoSetSystemDNS: '自动配置系统 DNS',
+    autoSetSystemDNSTips: '用于 TUN 模式劫持 DNS',
+    systemProxyDNS: '核心运行时的主备 DNS 服务器',
+    systemDefaultDNS: '核心停止时的主备 DNS 服务器',
     autoStartKernel: '程序启动时开启核心',
     realMemoryUsage: '显示真实的核心内存占用',
     autoRestartKernel: {

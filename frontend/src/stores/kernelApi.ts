@@ -309,6 +309,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     if (appSettingsStore.app.autoSetSystemProxy) {
       await envStore.setSystemProxy().catch((err) => message.error(err))
     }
+    if (appSettingsStore.app.autoSetSystemDNS) {
+      await envStore.setSystemDNS(true).catch((err) => message.error(err))
+    }
     await envStore.updateSystemProxyStatus()
 
     await pluginsStore.onCoreStartedTrigger()
@@ -328,6 +331,9 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     await envStore.updateSystemProxyStatus()
     if (envStore.systemProxy) {
       await envStore.clearSystemProxy()
+    }
+    if (appSettingsStore.app.autoSetSystemDNS || envStore.systemDNSSet) {
+      await envStore.setSystemDNS(false).catch((err) => message.error(err))
     }
 
     resetConfig()

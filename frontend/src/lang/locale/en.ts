@@ -679,7 +679,11 @@ export default {
     },
     proxyBypassList: 'Proxy Bypass List',
     proxyBypassListTips: 'Separate with semicolons',
-    darwinSystemProxyServices: 'Proxy Network Service Names',
+    systemProxyServices: 'Network Service Names',
+    autoSetSystemDNS: 'Auto-configure System DNS',
+    autoSetSystemDNSTips: 'Used for DNS hijacking in TUN mode',
+    systemProxyDNS: 'DNS While Core Is Running',
+    systemDefaultDNS: 'DNS While Core Is Stopped',
     autoStartKernel: 'Start core on launch',
     realMemoryUsage: 'Show actual core memory usage',
     autoRestartKernel: {

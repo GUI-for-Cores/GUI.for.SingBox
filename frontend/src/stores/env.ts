@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
-import { GetEnv, GetSystemProxy, SetSystemProxy } from '@/bridge'
+import { GetEnv, GetSystemProxy, SetSystemDNS, SetSystemProxy } from '@/bridge'
 import { OS } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { formatProxyHost, ignoredError, updateTrayAndMenus } from '@/utils'
@@ -23,6 +23,7 @@ export const useEnvStore = defineStore('env', () => {
   })
 
   const systemProxy = ref(false)
+  const systemDNSSet = ref(false)
 
   const setupEnv = async () => {
     const _env = await GetEnv()
@@ -67,7 +68,7 @@ export const useEnvStore = defineStore('env', () => {
 
   const setSystemProxy = async () => {
     const proxyBypassList = appSettings.app.proxyBypassList
-    const darwinServices = appSettings.app.darwinSystemProxyServices
+    const services = appSettings.app.systemProxyServices
     let proxyEndpoint = kernelApiStore.getProxyEndpoint()
     if (!proxyEndpoint) {
       await kernelApiStore.updateConfig('inbound', undefined)
@@ -75,14 +76,14 @@ export const useEnvStore = defineStore('env', () => {
     proxyEndpoint = kernelApiStore.getProxyEndpoint()
     if (!proxyEndpoint) throw 'home.overview.needPort'
     const server = `${formatProxyHost(proxyEndpoint.host)}:${proxyEndpoint.port}`
-    await SetSystemProxy(true, server, proxyEndpoint.proxyType, proxyBypassList, darwinServices)
+    await SetSystemProxy(true, server, proxyEndpoint.proxyType, proxyBypassList, services)
     systemProxy.value = true
   }
 
   const clearSystemProxy = async () => {
     const proxyBypassList = appSettings.app.proxyBypassList
-    const darwinServices = appSettings.app.darwinSystemProxyServices
-    await SetSystemProxy(false, '', undefined, proxyBypassList, darwinServices)
+    const services = appSettings.app.systemProxyServices
+    await SetSystemProxy(false, '', undefined, proxyBypassList, services)
     systemProxy.value = false
   }
 
@@ -91,15 +92,24 @@ export const useEnvStore = defineStore('env', () => {
     else await clearSystemProxy()
   }
 
+  const setSystemDNS = async (proxy: boolean) => {
+    if (![OS.Linux, OS.Darwin].includes(env.value.os)) return
+    const servers = proxy ? appSettings.app.systemProxyDNS : appSettings.app.systemDefaultDNS
+    await SetSystemDNS(servers, appSettings.app.systemProxyServices)
+    systemDNSSet.value = proxy
+  }
+
   watch(systemProxy, updateTrayAndMenus)
 
   return {
     env,
     setupEnv,
     systemProxy,
+    systemDNSSet,
     setSystemProxy,
     clearSystemProxy,
     switchSystemProxy,
     updateSystemProxyStatus,
+    setSystemDNS,
   }
 })
