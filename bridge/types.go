@@ -34,6 +34,7 @@ type RequestOptions struct {
 	CancelId  string
 	FileField string
 	Sha256    string
+	Stream    string
 }
 
 type ExecOptions struct {

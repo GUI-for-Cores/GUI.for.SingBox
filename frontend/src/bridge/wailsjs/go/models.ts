@@ -134,6 +134,7 @@ export namespace bridge {
 	    CancelId: string;
 	    FileField: string;
 	    Sha256: string;
+	    Stream: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestOptions(source);
@@ -148,6 +149,7 @@ export namespace bridge {
 	        this.CancelId = source["CancelId"];
 	        this.FileField = source["FileField"];
 	        this.Sha256 = source["Sha256"];
+	        this.Stream = source["Stream"];
 	    }
 	}
 	export class ServerOptions {

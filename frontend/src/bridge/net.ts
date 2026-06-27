@@ -10,6 +10,27 @@ interface NetOptions {
   Timeout?: number
 }
 
+type StreamEvent =
+  | {
+      type: 'response'
+      status: number
+      headers: Record<string, string | string[]>
+    }
+  | {
+      type: 'message'
+      event: string
+      data: string
+      id?: string
+      retry?: number
+    }
+  | {
+      type: 'done'
+    }
+  | {
+      type: 'error'
+      error: string
+    }
+
 interface Request {
   method: RequestMethod
   url: string
@@ -25,6 +46,7 @@ interface Request {
     CancelId?: string
     FileField?: string
     Sha256?: string
+    Stream?: string
   }
 }
 
@@ -49,12 +71,15 @@ const mergeRequestOptions = async (options: Request['options']) => {
     CancelId: '',
     FileField: 'file',
     Sha256: '',
+    Stream: '',
     ...options,
   }
   return mergedReqOpts
 }
 
-const transformResponseHeaders = (headers: Record<string, string[]>): Response['headers'] => {
+const transformResponseHeaders = (
+  headers: Record<string, string | string[]>,
+): Response['headers'] => {
   return Object.fromEntries(
     Object.entries(headers).map(([key, value]) => [key, value.length > 1 ? value : value[0]!]),
   )
@@ -196,12 +221,26 @@ const requestWithoutBody = (
 
 interface RequestWithAutoTransform extends Request {
   autoTransformBody?: boolean
+  onStream?: (e: StreamEvent) => void
 }
 
 export const Requests = async <T = any>(options: RequestWithAutoTransform) => {
   const { method = 'GET', url, headers = {}, body = '', options: reqOpts = {} } = options
 
   const [reqHeaders, reqBody, finalReqOpts] = await transformRequest(headers, body, reqOpts)
+  const streamEvent = (options.onStream && sampleID()) || ''
+  finalReqOpts.Stream = streamEvent
+
+  if (streamEvent) {
+    EventsOn(streamEvent, (e: StreamEvent) => {
+      if (e.type == 'response') {
+        e.headers = transformResponseHeaders(e.headers)
+      } else if (e.type == 'error' || e.type == 'done') {
+        EventsOff(streamEvent)
+      }
+      options.onStream!(e)
+    })
+  }
 
   const {
     flag,

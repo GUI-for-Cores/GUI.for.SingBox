@@ -1,6 +1,7 @@
 package bridge
 
 import (
+	"bufio"
 	"context"
 	"crypto/sha256"
 	"fmt"
@@ -25,12 +26,21 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 	client, ctx, cancel := withRequestOptionsClient(options)
 	defer cancel()
 
+	var headerTimeout *time.Timer
+	if options.Stream != "" {
+		client.Timeout = 0
+		headerTimeout = time.AfterFunc(requestTimeout(options.Timeout), cancel)
+	}
+
 	req, err := http.NewRequestWithContext(ctx, method, url, strings.NewReader(body))
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 
 	req.Header = requestHeaders(headers)
+	if options.Stream != "" && req.Header.Get("Accept") == "" {
+		req.Header.Set("Accept", "text/event-stream")
+	}
 
 	if options.CancelId != "" {
 		runtime.EventsOn(a.Ctx, options.CancelId, func(data ...any) {
@@ -41,10 +51,117 @@ func (a *App) Requests(method string, url string, headers map[string]string, bod
 	}
 
 	resp, err := client.Do(req)
+	if headerTimeout != nil {
+		headerTimeout.Stop()
+	}
 	if err != nil {
 		return HTTPResult{false, 500, nil, err.Error()}
 	}
 	defer resp.Body.Close()
+
+	if options.Stream != "" && strings.Contains(strings.ToLower(resp.Header.Get("Content-Type")), "text/event-stream") {
+		runtime.EventsEmit(a.Ctx, options.Stream, map[string]any{
+			"type":    "response",
+			"status":  resp.StatusCode,
+			"headers": resp.Header,
+		})
+
+		scanner := bufio.NewScanner(resp.Body)
+		scanner.Buffer(make([]byte, 0, 64*1024), 10*1024*1024)
+
+		firstLine := true
+		eventName := ""
+		dataLines := []string{}
+		lastID := ""
+		var retry *int
+
+		dispatch := func() {
+			defer func() {
+				eventName = ""
+				dataLines = nil
+				retry = nil
+			}()
+
+			if len(dataLines) == 0 {
+				return
+			}
+
+			if eventName == "" {
+				eventName = "message"
+			}
+
+			payload := map[string]any{
+				"type":  "message",
+				"event": eventName,
+				"data":  strings.Join(dataLines, "\n"),
+			}
+			if lastID != "" {
+				payload["id"] = lastID
+			}
+			if retry != nil {
+				payload["retry"] = *retry
+			}
+			runtime.EventsEmit(a.Ctx, options.Stream, payload)
+		}
+
+		for scanner.Scan() {
+			line := strings.TrimSuffix(scanner.Text(), "\r")
+			if firstLine {
+				line = strings.TrimPrefix(line, "\xef\xbb\xbf")
+				firstLine = false
+			}
+
+			if line == "" {
+				dispatch()
+				continue
+			}
+
+			if strings.HasPrefix(line, ":") {
+				continue
+			}
+
+			field, value, found := strings.Cut(line, ":")
+			if !found {
+				value = ""
+			} else {
+				value = strings.TrimPrefix(value, " ")
+			}
+
+			switch field {
+			case "event":
+				eventName = value
+			case "data":
+				dataLines = append(dataLines, value)
+			case "id":
+				if !strings.Contains(value, "\x00") {
+					lastID = value
+				}
+			case "retry":
+				retryValue, err := strconv.Atoi(value)
+				if err == nil && retryValue >= 0 {
+					retry = &retryValue
+				}
+			}
+		}
+
+		if err := scanner.Err(); err != nil {
+			runtime.EventsEmit(a.Ctx, options.Stream, map[string]any{
+				"type":  "error",
+				"error": err.Error(),
+			})
+			return HTTPResult{false, resp.StatusCode, resp.Header, err.Error()}
+		}
+
+		dispatch()
+		runtime.EventsEmit(a.Ctx, options.Stream, map[string]any{"type": "done"})
+		return HTTPResult{true, resp.StatusCode, resp.Header, ""}
+	}
+
+	var bodyTimeout *time.Timer
+	if options.Stream != "" {
+		bodyTimeout = time.AfterFunc(requestTimeout(options.Timeout), cancel)
+		defer bodyTimeout.Stop()
+	}
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
