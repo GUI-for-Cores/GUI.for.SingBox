@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { marked } from 'marked'
-import { h, onBeforeUnmount, onMounted, ref, render, watch, type VNode } from 'vue'
+import { Marked } from 'marked'
+import { h, nextTick, onBeforeUnmount, onMounted, ref, render, watch, type VNode } from 'vue'
 
 import { APP_TITLE, APP_VERSION, bindAppContext, sampleID } from '@/utils'
 
@@ -19,10 +19,18 @@ const props = defineProps<Props>()
 
 const html = ref('')
 const domContainers: (() => void)[] = []
+let renderFrame = 0
+let renderRequest = 0
+let isUnmounted = false
+let pendingMounts: { containerId: string; comp: VNode }[] = []
 
-marked.setOptions({ async: true })
+const queueCustomComp = (containerId: string, comp: VNode) => {
+  bindAppContext(comp)
+  pendingMounts.push({ containerId, comp })
+}
 
-marked.use({
+const markdownParser = new Marked({
+  async: false,
   renderer: {
     image({ href, title, text }) {
       return `<img src="${href}" alt="${title || text}" style="max-width: 100%">`
@@ -49,7 +57,7 @@ marked.use({
     hr() {
       const containerId = 'Divider_' + sampleID()
       const comp = h(Divider, () => APP_TITLE + '/' + APP_VERSION)
-      mountCustomComp(containerId, comp)
+      queueCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
     },
     heading({ text, depth }) {
@@ -58,13 +66,13 @@ marked.use({
     codespan({ text }) {
       const containerId = 'Tag_' + sampleID()
       const comp = h(Tag, { color: 'cyan', size: 'small' }, () => text)
-      mountCustomComp(containerId, comp)
+      queueCustomComp(containerId, comp)
       return `<span id="${containerId}"></span>`
     },
     code({ text, lang }) {
       const containerId = 'CodeViewer_' + sampleID()
       const comp = h(CodeViewer, { editable: false, modelValue: text, lang: lang as any })
-      mountCustomComp(containerId, comp)
+      queueCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
     },
     table({ header, rows }) {
@@ -84,7 +92,7 @@ marked.use({
           return record
         }),
       })
-      mountCustomComp(containerId, comp)
+      queueCustomComp(containerId, comp)
       return `<div id="${containerId}"></div>`
     },
   },
@@ -95,29 +103,48 @@ const destroyDomContainers = () => {
   domContainers.length = 0
 }
 
-const mountCustomComp = (containerId: string, comp: VNode) => {
-  let count = 0
-  bindAppContext(comp)
-  const tryToMount = () => {
-    if (count >= 3) return
-    count += 1
+const mountCustomComps = (mounts: { containerId: string; comp: VNode }[]) => {
+  mounts.forEach(({ containerId, comp }) => {
     const div = document.getElementById(containerId)
-    if (!div) return setTimeout(tryToMount, count * 100)
+    if (!div) return
     render(comp, div)
     domContainers.push(() => render(null, div))
-  }
-  setTimeout(tryToMount)
+  })
 }
 
-const renderContent = async () => {
+const renderContent = async (requestId: number) => {
+  const mounts: typeof pendingMounts = []
+  pendingMounts = mounts
+  const nextHtml = markdownParser.parse(props.content, { async: false })
+
+  if (requestId !== renderRequest || isUnmounted) return
+
   destroyDomContainers()
-  html.value = await marked.parse(props.content)
+  html.value = nextHtml
+  await nextTick()
+
+  if (requestId !== renderRequest || isUnmounted) return
+
+  mountCustomComps(mounts)
 }
 
-onMounted(renderContent)
-onBeforeUnmount(destroyDomContainers)
+const scheduleRenderContent = () => {
+  const requestId = ++renderRequest
+  if (renderFrame) cancelAnimationFrame(renderFrame)
+  renderFrame = requestAnimationFrame(() => {
+    renderFrame = 0
+    renderContent(requestId)
+  })
+}
 
-watch(() => props.content, renderContent)
+onMounted(scheduleRenderContent)
+onBeforeUnmount(() => {
+  isUnmounted = true
+  if (renderFrame) cancelAnimationFrame(renderFrame)
+  destroyDomContainers()
+})
+
+watch(() => props.content, scheduleRenderContent, { flush: 'post' })
 </script>
 
 <template>
