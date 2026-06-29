@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as Stores from '@/stores'
 import { message } from '@/utils'
+
 import { AboutView, CommandView } from '@/components'
 
 interface Props {

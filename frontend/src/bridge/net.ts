@@ -155,14 +155,7 @@ const requestWithProgress = (fnName: 'Download' | 'Upload') => {
       status,
       headers: respHeaders,
       body: respBody,
-    } = await App[fnName](
-      method,
-      transformRequestUrl(url),
-      path,
-      _headers,
-      progressEvent,
-      _options,
-    )
+    } = await App[fnName](method, transformRequestUrl(url), path, _headers, progressEvent, _options)
 
     if (progressEvent) {
       EventsOff(progressEvent)

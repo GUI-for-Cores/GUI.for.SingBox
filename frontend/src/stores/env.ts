@@ -51,7 +51,12 @@ export const useEnvStore = defineStore('env', () => {
 
       const { host, port, proxyType } = kernelProxy
       const server = `${formatProxyHost(host)}:${port}`
-      const proxyServerList = [`http://${server}`, `https://${server}`, `socks5://${server}`, `socks=${server}`]
+      const proxyServerList = [
+        `http://${server}`,
+        `https://${server}`,
+        `socks5://${server}`,
+        `socks=${server}`,
+      ]
       if (proxyType === 'mixed') {
         proxyServerList.push(
           `http://127.0.0.1:${port}`,

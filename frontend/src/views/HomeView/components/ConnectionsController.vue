@@ -7,7 +7,14 @@ import { DraggableOptions } from '@/constant/app'
 import { DefaultConnections } from '@/constant/kernel'
 import { useBool } from '@/hooks'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
-import { addToRuleSet, formatBytes, formatRelativeTime, getDomainSuffixes, message, picker } from '@/utils'
+import {
+  addToRuleSet,
+  formatBytes,
+  formatRelativeTime,
+  getDomainSuffixes,
+  message,
+  picker,
+} from '@/utils'
 
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { Column } from '@/components/Table/index.vue'

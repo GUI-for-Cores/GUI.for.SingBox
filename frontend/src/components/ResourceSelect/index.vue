@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<ResourceSelectProps>(), {
   openImmediate: false,
 })
 
-const model = defineModel<string[]>({ default: [] })
+const model = defineModel<string[]>({ default: () => [] })
 
 const emit = defineEmits<{
   (e: 'change', val: string[], items: ResourceItem[]): void

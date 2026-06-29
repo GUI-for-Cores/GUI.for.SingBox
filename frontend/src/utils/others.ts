@@ -202,12 +202,7 @@ const transformGitHubUrl = (url: string) => {
       'gist.githubusercontent.com',
       'gist.github.com',
     ]
-    const markers = [
-      '/releases/download/',
-      '/archive/refs/heads/',
-      '/archive/refs/tags/',
-      '/raw/',
-    ]
+    const markers = ['/releases/download/', '/archive/refs/heads/', '/archive/refs/tags/', '/raw/']
     const matched =
       hosts.includes(hostname) ||
       (hostname === 'github.com' && markers.some((marker) => pathname.includes(marker)))

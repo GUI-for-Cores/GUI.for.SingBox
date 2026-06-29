@@ -181,11 +181,7 @@ if (pluginsStore.pluginHub.length === 0) {
       </div>
     </template>
 
-    <Card
-      v-for="(source, index) in appSettingsStore.app.plugins.sources"
-      :key="index"
-      class="mb-8"
-    >
+    <Card v-for="(source, index) in appSettingsStore.app.plugins.sources" :key="index" class="mb-8">
       <template #extra>
         <Button icon="delete" type="text" size="small" @click="handleRemoveSource(index)" />
       </template>
