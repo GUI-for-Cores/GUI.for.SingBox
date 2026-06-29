@@ -283,11 +283,16 @@ func setDarwinSystemProxy(server string, enabled bool, proxyType string, bypass 
 			socksState = state
 		}
 
+		bypassItems := splitBypass(bypass)
+		if len(bypassItems) == 0 {
+			bypassItems = []string{"Empty"}
+		}
+
 		commands = append(commands,
 			[]string{"networksetup", "-setwebproxystate", device, httpState},
 			[]string{"networksetup", "-setsecurewebproxystate", device, httpState},
 			[]string{"networksetup", "-setsocksfirewallproxystate", device, socksState},
-			append([]string{"networksetup", "-setproxybypassdomains", device}, splitBypass(bypass)...),
+			append([]string{"networksetup", "-setproxybypassdomains", device}, bypassItems...),
 		)
 
 		serverName, serverPort := splitServer(server)
