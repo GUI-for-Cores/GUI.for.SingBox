@@ -175,5 +175,5 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <CodeViewer v-model="code" :plugin="metadata" lang="javascript" editable />
+  <CodeEditor v-model="code" :plugin="metadata" lang="javascript" editable />
 </template>

@@ -48,7 +48,7 @@ const plugin = ref<Plugin>({
 
 const componentList = [
   'CheckBox',
-  'CodeViewer',
+  'CodeEditor',
   'Input',
   'InputList',
   'KeyValueEditor',
@@ -123,7 +123,9 @@ const onComponentChange = (component: ComponentType, index: number) => {
       plugin.value.configuration[index]!.options = []
       break
     }
+    // @ts-expect-error(CodeViewer)
     case 'CodeViewer':
+    case 'CodeEditor':
     case 'Input':
     case 'Radio':
     case 'Select': {
@@ -322,7 +324,13 @@ defineExpose({ modalSlots })
             </div>
             <div class="form-item" :class="{ 'items-start': conf.value.length !== 0 }">
               {{ t('plugin.confDefault') }}
-              <div :class="conf.component === 'CodeViewer' ? 'min-w-[75%]' : ''">
+              <div
+                :class="
+                  conf.component === 'CodeEditor' || conf.component === ('CodeViewer' as any)
+                    ? 'min-w-[75%]'
+                    : ''
+                "
+              >
                 <Component
                   :is="conf.component"
                   v-model="conf.value"

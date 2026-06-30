@@ -1,214 +1,189 @@
 <script setup lang="ts">
-import { autocompletion } from '@codemirror/autocomplete'
-import { indentWithTab } from '@codemirror/commands'
-import { javascript } from '@codemirror/lang-javascript'
-import { json, jsonParseLinter } from '@codemirror/lang-json'
-import { yaml } from '@codemirror/lang-yaml'
-import { linter } from '@codemirror/lint'
-import { MergeView } from '@codemirror/merge'
-import { Compartment } from '@codemirror/state'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { keymap, placeholder as Placeholder } from '@codemirror/view'
-import { EditorView, basicSetup } from 'codemirror'
-import * as parserBabel from 'prettier/parser-babel'
-import * as parserYaml from 'prettier/parser-yaml'
-import estreePlugin from 'prettier/plugins/estree'
-import * as prettier from 'prettier/standalone'
-import { watch, onUnmounted, onMounted, useTemplateRef, inject } from 'vue'
+import Prism from 'prismjs'
+import { computed } from 'vue'
 
-import { Theme } from '@/enums/app'
-import { useAppSettingsStore } from '@/stores'
-import { debounce, message } from '@/utils'
-import { getCompletions } from '@/utils/completion'
+import { ClipboardSetText } from '@/bridge'
+import { message } from '@/utils'
 
-import { IS_IN_MODAL } from '@/components/Modal/index.vue'
+import 'prismjs/components/prism-markup'
+import 'prismjs/components/prism-css'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/components/prism-typescript'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-yaml'
+import 'prismjs/components/prism-bash'
+import 'prismjs/components/prism-powershell'
+import 'prismjs/components/prism-go'
+import 'prismjs/components/prism-markdown'
+import 'prismjs/components/prism-diff'
 
 interface Props {
   modelValue?: string
-  editable?: boolean
-  lang?: 'json' | 'javascript' | 'yaml'
-  mode?: 'editor' | 'diff'
-  placeholder?: string
-  plugin?: Record<string, any>
+  lang?: string
+  copyable?: boolean
 }
 
-const emit = defineEmits(['change', 'update:modelValue'])
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  lang: 'json',
-  mode: 'editor',
-  placeholder: '',
-  plugin: undefined,
+  lang: '',
+  copyable: true,
 })
 
-const { promise: editorReady, resolve: markEditorReady } = Promise.withResolvers()
-let internalUpdate = true
-
-watch(
-  () => props.modelValue,
-  async (val) => {
-    await editorReady
-    const view = editorView || mergeView?.b
-    if (view && val != view.state.doc.toString()) {
-      internalUpdate = false
-      view.dispatch({
-        changes: {
-          from: 0,
-          to: view.state.doc.length,
-          insert: val,
-        },
-      })
-    }
-  },
-)
-
-let editorView: EditorView
-let mergeView: MergeView
-const themeCompartment = new Compartment()
-const domRef = useTemplateRef('domRef')
-const appSettings = useAppSettingsStore()
-
-const onChange = debounce((content: string) => {
-  if (internalUpdate) {
-    emit('update:modelValue', content)
-    emit('change', content)
-  }
-  internalUpdate = true
-}, 300)
-
-const formatDoc = async (view: EditorView) => {
-  const content = view.state.doc.toString()
-  const cursor = view.state.selection.ranges[0]?.from || 0
-  try {
-    const parser = { javascript: 'babel', yaml: 'yaml', json: 'json' }[props.lang]
-    const plugins = {
-      javascript: [parserBabel, estreePlugin],
-      yaml: [parserYaml],
-      json: [parserBabel, estreePlugin],
-    }[props.lang]
-    const { formatted, cursorOffset } = await prettier.formatWithCursor(content, {
-      cursorOffset: cursor,
-      parser,
-      plugins,
-      // https://github.com/GUI-for-Cores/Plugin-Hub/blob/main/.prettierrc.json
-      semi: false,
-      tabWidth: 2,
-      singleQuote: true,
-      printWidth: 160,
-      trailingComma: 'none',
-    })
-    if (content !== formatted) {
-      view.dispatch({
-        changes: { from: 0, to: content.length, insert: formatted },
-        selection: { anchor: cursorOffset, head: cursorOffset },
-      })
-    }
-  } catch (error: any) {
-    message.error(error.message || error)
-  }
+const langAliases: Record<string, string> = {
+  cjs: 'javascript',
+  js: 'javascript',
+  jsx: 'javascript',
+  mjs: 'javascript',
+  ts: 'typescript',
+  tsx: 'typescript',
+  yml: 'yaml',
+  sh: 'bash',
+  shell: 'bash',
+  zsh: 'bash',
+  pwsh: 'powershell',
+  ps1: 'powershell',
+  html: 'markup',
+  svg: 'markup',
+  vue: 'markup',
+  xml: 'markup',
+  md: 'markdown',
+  patch: 'diff',
 }
 
-watch(
-  () => appSettings.themeMode,
-  (theme) => {
-    const views = editorView ? [editorView] : [mergeView.a, mergeView.b]
-    views.forEach((view) => {
-      view.dispatch({
-        effects: themeCompartment.reconfigure(
-          theme === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
-        ),
-      })
-    })
-  },
-)
+const plainLangs = new Set(['', 'none', 'plain', 'plaintext', 'text', 'txt'])
 
-let timer: number
-onMounted(() => (timer = setTimeout(() => initEditor(), inject(IS_IN_MODAL, false) ? 100 : 0)))
-onUnmounted(() => {
-  clearTimeout(timer)
-  const view = editorView || mergeView
-  view?.destroy()
+const escapeHtml = (str: string) =>
+  str
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+
+const rawLang = computed(() => props.lang.trim())
+
+const normalizedLang = computed(() => {
+  const lang = rawLang.value.toLowerCase().split(/\s+/)[0] || ''
+  if (plainLangs.has(lang)) return ''
+  return langAliases[lang] || lang
 })
 
-const initEditor = () => {
-  domRef.value!.innerHTML = ''
+const displayLang = computed(() => rawLang.value || 'text')
+const grammar = computed(() => Prism.languages[normalizedLang.value])
 
-  const extensions = [
-    basicSetup,
-    // keymap
-    keymap.of([
-      indentWithTab,
-      {
-        key: 'Shift-Alt-f',
-        run: function (v: EditorView) {
-          formatDoc(v)
-          return true
-        },
-      },
-    ]),
-    // code wrap
-    EditorView.lineWrapping,
-    // placeholder
-    Placeholder(props.placeholder),
-    // theme
-    themeCompartment.of(
-      appSettings.themeMode === Theme.Dark ? [EditorView.theme({}, { dark: true }), oneDark] : [],
-    ),
-    ...(props.lang === 'javascript'
-      ? [autocompletion({ override: getCompletions(props.plugin) })]
-      : []),
-    // lint
-    ...(props.lang === 'json' ? [linter(jsonParseLinter())] : []),
-    // lang
-    ...(['javascript', 'json', 'yaml'].includes(props.lang)
-      ? [{ javascript, json, yaml }[props.lang]()]
-      : []),
-    EditorView.updateListener.of((update) => {
-      update.docChanged && onChange(update.state.doc.toString())
-    }),
-  ]
+const html = computed(() => {
+  const code = props.modelValue || ''
+  if (!grammar.value || !normalizedLang.value) return escapeHtml(code)
+  return Prism.highlight(code, grammar.value, normalizedLang.value)
+})
 
-  if (props.mode === 'editor') {
-    editorView = new EditorView({
-      doc: props.modelValue,
-      parent: domRef.value!,
-      extensions: [...extensions, EditorView.editable.of(props.editable)],
-    })
-  } else {
-    mergeView = new MergeView({
-      parent: domRef.value!,
-      a: {
-        doc: props.modelValue,
-        extensions: [...extensions, EditorView.editable.of(false)],
-      },
-      b: {
-        doc: props.modelValue,
-        extensions: [...extensions, EditorView.editable.of(props.editable)],
-      },
-    })
-  }
-
-  markEditorReady(null)
+const onCopy = async () => {
+  const ok = await ClipboardSetText(props.modelValue || '')
+  ok ? message.success('common.copied') : message.error('ClipboardSetText Error')
 }
 </script>
 
 <template>
-  <div ref="domRef" @keydown.esc.stop @keydown.esc.prevent>
-    <div class="flex justify-center">
-      <Button loading type="link" />
+  <div class="code-block-viewer my-8 rounded-6">
+    <div class="code-block-toolbar flex items-center justify-between gap-8 min-h-32 px-8 py-4">
+      <div class="inline-flex min-w-0 items-center gap-4 text-12">
+        <Icon icon="code" :size="14" color="currentColor" />
+        <span>{{ displayLang }}</span>
+      </div>
+      <Button v-if="copyable" type="text" size="small" icon="copy" @click="onCopy">
+        {{ $t('common.copy') }}
+      </Button>
     </div>
+    <pre
+      class="m-0 overflow-auto px-12 py-8 select-text"
+      :class="normalizedLang ? `language-${normalizedLang}` : 'language-plain'"
+    ><code class="code-block-code" v-html="html"></code></pre>
   </div>
 </template>
 
 <style lang="less" scoped>
-:deep(.cm-editor) {
-  height: 100%;
+.code-block-viewer {
+  border: 1px solid var(--divider-color);
+  background: var(--card-bg);
 }
-:deep(.cm-scroller) {
+
+.code-block-toolbar {
+  color: var(--card-color);
+  border-bottom: 1px solid var(--divider-color);
+}
+
+.code-block-code {
   font-family: monaco, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
+  white-space: pre;
 }
-:deep(.cm-focused) {
-  outline: none;
+
+:deep(.token.comment),
+:deep(.token.prolog),
+:deep(.token.doctype),
+:deep(.token.cdata) {
+  color: #708090;
+}
+
+:deep(.token.punctuation) {
+  color: #999;
+}
+
+:deep(.token.namespace) {
+  opacity: 0.7;
+}
+
+:deep(.token.property),
+:deep(.token.tag),
+:deep(.token.boolean),
+:deep(.token.number),
+:deep(.token.constant),
+:deep(.token.symbol),
+:deep(.token.deleted) {
+  color: #d73a49;
+}
+
+:deep(.token.selector),
+:deep(.token.attr-name),
+:deep(.token.string),
+:deep(.token.char),
+:deep(.token.builtin),
+:deep(.token.inserted) {
+  color: #22863a;
+}
+
+:deep(.token.operator),
+:deep(.token.entity),
+:deep(.token.url),
+:deep(.language-css .token.string),
+:deep(.style .token.string) {
+  color: #005cc5;
+}
+
+:deep(.token.atrule),
+:deep(.token.attr-value),
+:deep(.token.keyword) {
+  color: #d73a49;
+}
+
+:deep(.token.function),
+:deep(.token.class-name) {
+  color: #6f42c1;
+}
+
+:deep(.token.regex),
+:deep(.token.important),
+:deep(.token.variable) {
+  color: #e36209;
+}
+
+:deep(.token.important),
+:deep(.token.bold) {
+  font-weight: 700;
+}
+
+:deep(.token.italic) {
+  font-style: italic;
 }
 </style>

@@ -34,5 +34,5 @@ fetchAndUpdatePluginCode()
 </script>
 
 <template>
-  <CodeViewer v-model="code" lang="javascript" mode="diff" />
+  <CodeEditor v-model="code" lang="javascript" mode="diff" />
 </template>

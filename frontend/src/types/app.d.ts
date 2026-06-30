@@ -134,7 +134,7 @@ export interface PluginConfiguration {
   key: string
   component:
     | 'CheckBox'
-    | 'CodeViewer'
+    | 'CodeEditor'
     | 'Input'
     | 'InputList'
     | 'KeyValueEditor'

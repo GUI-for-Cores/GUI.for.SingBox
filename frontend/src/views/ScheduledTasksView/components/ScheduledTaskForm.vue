@@ -266,7 +266,7 @@ defineExpose({ modalSlots })
 
     <div v-else-if="task.type === ScheduledTasksType.RunScript">
       <Divider>{{ t('scheduledtask.script') }}</Divider>
-      <CodeViewer v-model="task.script" editable lang="javascript" />
+      <CodeEditor v-model="task.script" editable lang="javascript" />
     </div>
   </div>
 </template>

@@ -165,7 +165,7 @@ const handleUse = (ruleset: any) => {
       </div>
     </template>
     <template v-else-if="fields.type === RulesetType.Inline">
-      <CodeViewer v-model="fields.rules" lang="json" editable />
+      <CodeEditor v-model="fields.rules" lang="json" editable />
     </template>
   </Modal>
 </template>

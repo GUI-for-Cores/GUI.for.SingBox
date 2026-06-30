@@ -144,9 +144,9 @@ defineExpose({
       </slot>
     </div>
     <template v-else>
-      <CodeViewer
+      <CodeEditor
         v-if="type === 'code'"
-        :value="modelValue"
+        :model-value="String(modelValue ?? '')"
         :lang="lang"
         :editable="!disabled"
         :placeholder="placeholder"

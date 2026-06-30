@@ -29,6 +29,7 @@
     "marked": "^18.0.5",
     "pinia": "^3.0.4",
     "prettier": "^3.9.1",
+    "prismjs": "^1.30.0",
     "vue": "^3.5.39",
     "vue-draggable-plus": "^0.6.1",
     "vue-i18n": "11.4.6",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "26.0.1",
+    "@types/prismjs": "^1.26.6",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/eslint-config-typescript": "^14.9.0",
     "@vue/tsconfig": "^0.9.1",

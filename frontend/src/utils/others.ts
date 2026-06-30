@@ -50,6 +50,44 @@ export const debounce = (fn: (...args: any) => any, wait: number) => {
   return _debuonce
 }
 
+export function throttle<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number,
+): (...args: Parameters<T>) => void {
+  let last = 0
+  let timer: null | number = null
+  let trailingArgs: Parameters<T> | null = null
+
+  const invoke = (args: Parameters<T>) => {
+    last = Date.now()
+    fn(...args)
+  }
+
+  return (...args: Parameters<T>) => {
+    const now = Date.now()
+    const remaining = delay - (now - last)
+
+    if (remaining <= 0) {
+      timer && clearTimeout(timer)
+      timer = null
+      trailingArgs = null
+      invoke(args)
+      return
+    }
+
+    trailingArgs = args
+    if (!timer) {
+      timer = window.setTimeout(() => {
+        timer = null
+        if (trailingArgs) {
+          invoke(trailingArgs)
+          trailingArgs = null
+        }
+      }, remaining)
+    }
+  }
+}
+
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 export const ignoredError = async <F extends (...args: any[]) => Promise<any>>(

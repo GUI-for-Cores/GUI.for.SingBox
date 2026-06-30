@@ -253,7 +253,7 @@ const renderRule = (rule: IRule) => {
         v-model="fields.payload"
         :options="inboundOptions"
       />
-      <CodeViewer
+      <CodeEditor
         v-else-if="fields.type === RuleType.Inline"
         v-model="fields.payload"
         editable
@@ -281,7 +281,7 @@ const renderRule = (rule: IRule) => {
       <template v-else-if="fields.action === RuleAction.RouteOptions">
         <div class="form-item">
           {{ t('kernel.route.rules.routeOptions') }}
-          <CodeViewer v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
+          <CodeEditor v-model="fields.outbound" editable lang="json" style="min-width: 320px" />
         </div>
       </template>
       <template v-else-if="fields.action === RuleAction.Reject">

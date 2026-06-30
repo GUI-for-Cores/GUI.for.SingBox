@@ -87,5 +87,5 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <CodeViewer v-model="profileText" lang="json" editable class="h-full" />
+  <CodeEditor v-model="profileText" lang="json" editable class="h-full" />
 </template>

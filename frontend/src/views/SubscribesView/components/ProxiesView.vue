@@ -257,6 +257,6 @@ defineExpose({ modalSlots })
     max-height="80"
     max-width="80"
   >
-    <CodeViewer v-model="details" lang="json" :editable="isEdit" />
+    <CodeEditor v-model="details" lang="json" :editable="isEdit" />
   </Modal>
 </template>

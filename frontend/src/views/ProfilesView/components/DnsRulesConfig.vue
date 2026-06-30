@@ -248,7 +248,7 @@ const renderRule = (rule: IDNSRule) => {
         v-model="fields.payload"
         :options="inboundOptions"
       />
-      <CodeViewer
+      <CodeEditor
         v-else-if="fields.type === RuleType.Inline"
         v-model="fields.payload"
         editable
@@ -280,7 +280,7 @@ const renderRule = (rule: IDNSRule) => {
       <template v-else-if="fields.action === RuleAction.RouteOptions">
         <div class="form-item">
           {{ t('kernel.route.rules.routeOptions') }}
-          <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
+          <CodeEditor v-model="fields.server" editable lang="json" style="min-width: 320px" />
         </div>
       </template>
       <template v-else-if="fields.action === RuleAction.Reject">
@@ -292,7 +292,7 @@ const renderRule = (rule: IDNSRule) => {
       <template v-else-if="fields.action === RuleAction.Predefined">
         <div class="form-item">
           {{ t('kernel.route.rules.action.predefined') }}
-          <CodeViewer v-model="fields.server" editable lang="json" style="min-width: 320px" />
+          <CodeEditor v-model="fields.server" editable lang="json" style="min-width: 320px" />
         </div>
       </template>
       <template v-if="[RuleAction.Route, RuleAction.RouteOptions].includes(fields.action as any)">

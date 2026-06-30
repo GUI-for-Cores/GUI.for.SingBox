@@ -61,7 +61,7 @@ const envStore = useEnvStore()
         {{ $t('settings.proxyBypassList') }}
         <span class="font-normal text-12">({{ $t('settings.proxyBypassListTips') }})</span>
       </div>
-      <CodeViewer
+      <CodeEditor
         v-model="appSettings.app.proxyBypassList"
         editable
         lang="yaml"
