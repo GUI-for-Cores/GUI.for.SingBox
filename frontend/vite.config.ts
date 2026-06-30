@@ -24,6 +24,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 4096, // 4MB
     rolldownOptions: {
       output: {
+        strictExecutionOrder: true,
         codeSplitting: {
           groups: [
             { name: 'vue', test: /node_modules\/vue/ },
