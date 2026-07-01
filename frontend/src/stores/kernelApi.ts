@@ -23,15 +23,7 @@ import {
 import { DefaultInboundMixed } from '@/constant/profile'
 import { Branch } from '@/enums/app'
 import { Inbound, RulesetType, TunStack } from '@/enums/kernel'
-import {
-  useAppSettingsStore,
-  useProfilesStore,
-  useLogsStore,
-  useEnvStore,
-  usePluginsStore,
-  useSubscribesStore,
-  useRulesetsStore,
-} from '@/stores'
+import { useAppSettingsStore, useProfilesStore, useLogsStore, useEnvStore, usePluginsStore, useSubscribesStore, useRulesetsStore } from '@/stores'
 import {
   generateConfigFile,
   updateTrayAndMenus,
@@ -82,7 +74,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     },
   })
 
-  let runtimeProfile: IProfile | undefined
+  let runtimeProfile: App.Profile | undefined
 
   const proxies = ref<Record<string, CoreApiProxy>>({})
 
@@ -210,7 +202,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
       if (!inbound) throw 'home.overview.needTun'
       options = { ...config.value.tun, ...options }
       inbound.enable = options.enable
-      inbound.tun!.stack = options.stack || TunStack.Mixed
+      inbound.tun!.stack = (options.stack || TunStack.Mixed) as App.TunStack
       inbound.tun!.interface_name = options.device || ''
       if (options.interface_name) {
         runtimeProfile.route.default_interface = options.interface_name
@@ -343,7 +335,7 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     coreStoppedResolver(null)
   }
 
-  const startCore = async (_profile?: IProfile) => {
+  const startCore = async (_profile?: App.Profile) => {
     if (running.value) throw 'The core is already running'
 
     logsStore.clearKernelLog()

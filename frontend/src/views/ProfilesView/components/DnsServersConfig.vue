@@ -18,10 +18,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const model = defineModel<IDNSServer[]>({ required: true })
+const model = defineModel<App.DnsServerConfig[]>({ required: true })
 
 let serverId = 0
-const fields = ref<IDNSServer>(DefaultDnsServer())
+const fields = ref<App.DnsServerConfig>(DefaultDnsServer())
 
 const isSupportDetourAndDomainResolver = computed(() => {
   return [
@@ -80,7 +80,7 @@ const handleDeleteRule = (index: number) => {
   model.value.splice(index, 1)
 }
 
-const renderServer = (server: IDNSServer) => {
+const renderServer = (server: App.DnsServerConfig) => {
   const { tag, detour } = server
   const children: VNode[] = [
     h(Tag, { color: 'cyan' }, () => tag),

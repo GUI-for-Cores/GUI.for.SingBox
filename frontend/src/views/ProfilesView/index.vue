@@ -4,19 +4,10 @@ import { useI18n, I18nT } from 'vue-i18n'
 import { ClipboardSetText } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { View } from '@/enums/app'
-import {
-  useProfilesStore,
-  useAppSettingsStore,
-  useKernelApiStore,
-  useSubscribesStore,
-  usePluginsStore,
-  useAppStore,
-} from '@/stores'
+import { useProfilesStore, useAppSettingsStore, useKernelApiStore, useSubscribesStore, usePluginsStore, useAppStore } from '@/stores'
 import { debounce, deepClone, generateConfig, message, sampleID, alert } from '@/utils'
 
 import { useModal } from '@/components/Modal'
-
-import type { Menu } from '@/types/app'
 
 import ProfileEditor from './components/ProfileEditor.vue'
 import ProfileForm from './components/ProfileForm.vue'
@@ -30,7 +21,7 @@ const appSettingsStore = useAppSettingsStore()
 const kernelApiStore = useKernelApiStore()
 const pluginsStore = usePluginsStore()
 
-const menuList: Menu[] = [
+const menuList: App.Menu[] = [
   'profile.step.name',
   'profile.step.general',
   'profile.step.inbounds',
@@ -48,7 +39,7 @@ const menuList: Menu[] = [
   }
 })
 
-const secondaryMenusList: Menu[] = [
+const secondaryMenusList: App.Menu[] = [
   {
     label: 'profiles.start',
     handler: async (id: string) => {
@@ -112,12 +103,12 @@ const secondaryMenusList: Menu[] = [
   },
 ]
 
-const generateMenus = (profile: IProfile) => {
-  const moreMenus: Menu[] = secondaryMenusList.map((v) => ({
+const generateMenus = (profile: App.Profile) => {
+  const moreMenus: App.Menu[] = secondaryMenusList.map((v) => ({
     ...v,
     handler: () => v.handler?.(profile.id),
   }))
-  const builtInMenus: Menu[] = [
+  const builtInMenus: App.Menu[] = [
     ...menuList.map((v) => ({ ...v, handler: () => v.handler?.(profile.id) })),
     {
       label: '',
@@ -158,7 +149,7 @@ const generateMenus = (profile: IProfile) => {
             }
           }),
         )
-      }, [] as Menu[]),
+      }, [] as App.Menu[]),
     )
   }
 
@@ -170,7 +161,7 @@ const handleShowProfileForm = (id?: string, step = 0) => {
   modalApi.setContent(ProfileForm, { id, step }).open()
 }
 
-const handleDeleteProfile = async (p: IProfile) => {
+const handleDeleteProfile = async (p: App.Profile) => {
   const { profile } = appSettingsStore.app.kernel
   if (profile === p.id && kernelApiStore.running) {
     message.warn('profiles.shouldStop')
@@ -185,7 +176,7 @@ const handleDeleteProfile = async (p: IProfile) => {
   }
 }
 
-const handleUseProfile = async (p: IProfile) => {
+const handleUseProfile = async (p: App.Profile) => {
   if (appSettingsStore.app.kernel.profile === p.id) return
 
   appSettingsStore.app.kernel.profile = p.id

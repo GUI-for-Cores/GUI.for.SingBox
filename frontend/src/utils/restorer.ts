@@ -9,8 +9,6 @@ import {
 } from '@/enums/kernel'
 import { useProfilesStore, useRulesetsStore, useSubscribesStore } from '@/stores'
 
-import type { Subscription } from '@/types/app'
-
 import { createTextMatcher, deepAssign, sampleID } from './others'
 
 const supportedRuleTypes = [
@@ -42,7 +40,7 @@ const buildTagIdMapping = (prefix: string, arr?: Recordable[]): Recordable<strin
 }
 
 type RestoreProfileOptions = {
-  profile?: IProfile
+  profile?: App.Profile
   subscriptionIds?: string[]
 }
 
@@ -50,7 +48,7 @@ export const restoreProfile = (
   config: Recordable,
   name = sampleID(),
   options: RestoreProfileOptions = {},
-): IProfile => {
+): App.Profile => {
   const template = useProfilesStore().getProfileTemplate()
 
   const { profile, subscriptionIds } = options
@@ -110,7 +108,7 @@ export const restoreProfile = (
   }
 }
 
-const restoreExperimental = (raw: Recordable, OutboundsIds: Recordable): IExperimental => {
+const restoreExperimental = (raw: Recordable, OutboundsIds: Recordable): App.Experimental => {
   const template = Defaults.DefaultExperimental()
   const experimental = deepAssign(template, raw)
   experimental.clash_api.external_ui_download_detour =
@@ -118,10 +116,10 @@ const restoreExperimental = (raw: Recordable, OutboundsIds: Recordable): IExperi
   return experimental
 }
 
-const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): IInbound[] => {
+const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): App.Inbound[] => {
   return inbounds.flatMap((raw) => {
     if (![Inbound.Mixed, Inbound.Http, Inbound.Socks, Inbound.Tun].includes(raw.type)) return []
-    const inbound: IInbound = {
+    const inbound: App.Inbound = {
       id: InboundsIds[raw.tag],
       tag: raw.tag,
       type: raw.type,
@@ -161,14 +159,14 @@ const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): IInbo
 const restoreOutbounds = (
   outbounds: Recordable[],
   OutboundsIds: Recordable,
-  originalOutbounds: IOutbound[],
+  originalOutbounds: App.Outbound[],
   subscriptionIds: string[],
-): IOutbound[] => {
+): App.Outbound[] => {
   const subscribesStore = useSubscribesStore()
 
-  const subscriptionCache = new Map<string, Subscription>()
+  const subscriptionCache = new Map<string, App.Subscription>()
   const proxyToSubMap = new Map<string, { sub: string; id: string }>()
-  const originalOutboundMap = new Map<string, IOutbound>()
+  const originalOutboundMap = new Map<string, App.Outbound>()
 
   const groupTags = new Set(
     outbounds
@@ -199,7 +197,7 @@ const restoreOutbounds = (
     outbound.tag = raw.tag
     outbound.type = raw.type
 
-    let newOutbounds: IProxy[] = []
+    let newOutbounds: App.Proxy[] = []
 
     raw.outbounds?.forEach((tag: string) => {
       const isBuiltIn = [Outbound.Direct, Outbound.Block].includes(tag as Outbound)
@@ -276,7 +274,7 @@ const restoreRouteRuleset = (
   rulesets: Recordable[],
   RouteRuleSetIds: Recordable,
   OutboundsIds: Recordable,
-): IRuleSet[] => {
+): App.ProfileRuleSet[] => {
   const rulesetsStore = useRulesetsStore()
   return rulesets.flatMap((raw) => {
     const ruleset = Defaults.DefaultRouteRuleset()
@@ -324,7 +322,7 @@ const restoreRouteRules = (
   OutboundsIds: Recordable,
   RouteRuleSetIds: Recordable,
   DnsServersIds: Recordable,
-): IRule[] => {
+): App.Rule[] => {
   return rules.flatMap((raw, i) => {
     const rule = Defaults.DefaultRouteRule()
 
@@ -403,7 +401,7 @@ const restoreDnsServers = (
   servers: Recordable[],
   DnsServersIds: Recordable,
   OutboundsIds: Recordable,
-): IDNSServer[] => {
+): App.DnsServerConfig[] => {
   return servers.flatMap((raw) => {
     if (!raw.type) return []
     const server = Defaults.DefaultDnsServer()
@@ -484,7 +482,7 @@ const restoreDnsRules = (
   InboundsIds: Recordable,
   RouteRuleSetIds: Recordable,
   DnsServersIds: Recordable,
-): IDNSRule[] => {
+): App.DnsRule[] => {
   return rules.flatMap((raw: Recordable, i) => {
     const rule = Defaults.DefaultDnsRule()
     rule.id = 'rule-' + i

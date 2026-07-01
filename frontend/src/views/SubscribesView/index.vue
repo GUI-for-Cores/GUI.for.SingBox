@@ -17,14 +17,12 @@ import {
 
 import { useModal } from '@/components/Modal'
 
-import type { Menu, Subscription } from '@/types/app'
-
 import ProxiesEditor from './components/ProxiesEditor.vue'
 import ProxiesView from './components/ProxiesView.vue'
 import SubscribeForm from './components/SubscribeForm.vue'
 import SubscribeScript from './components/SubscribeScript.vue'
 
-const menuList: Menu[] = [
+const menuList: App.Menu[] = [
   {
     label: 'subscribes.editProxies',
     handler: (id: string) => handleEditProxies(id),
@@ -85,8 +83,8 @@ const subscribeStore = useSubscribesStore()
 const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
 
-const generateMenus = (subscription: Subscription) => {
-  const builtInMenus: Menu[] = menuList.map((v) => ({
+const generateMenus = (subscription: App.Subscription) => {
+  const builtInMenus: App.Menu[] = menuList.map((v) => ({
     ...v,
     handler: () => v.handler?.(subscription.id),
     children: v.children?.map((child) => ({
@@ -126,7 +124,7 @@ const generateMenus = (subscription: Subscription) => {
               }
             }),
           )
-        }, [] as Menu[]),
+        }, [] as App.Menu[]),
       },
     )
   }
@@ -160,7 +158,7 @@ const handleEditProxies = (id: string, editor = false) => {
   }
 }
 
-const handleUpdateSub = async (s: Subscription, options?: Partial<Subscription>) => {
+const handleUpdateSub = async (s: App.Subscription, options?: Partial<App.Subscription>) => {
   try {
     await subscribeStore.updateSubscribe(s.id, options)
   } catch (error: any) {
@@ -169,7 +167,7 @@ const handleUpdateSub = async (s: Subscription, options?: Partial<Subscription>)
   }
 }
 
-const handleDeleteSub = async (s: Subscription) => {
+const handleDeleteSub = async (s: App.Subscription) => {
   try {
     await ignoredError(RemoveFile, s.path)
     await subscribeStore.deleteSubscribe(s.id)
@@ -179,16 +177,16 @@ const handleDeleteSub = async (s: Subscription) => {
   }
 }
 
-const handleDisableSub = async (s: Subscription) => {
+const handleDisableSub = async (s: App.Subscription) => {
   s.disabled = !s.disabled
   subscribeStore.editSubscribe(s.id, s)
 }
 
 const noUpdateNeeded = computed(() => subscribeStore.subscribes.every((v) => v.disabled))
 
-const clacTrafficPercent = (s: Subscription) => ((s.upload + s.download) / s.total) * 100
+const clacTrafficPercent = (s: App.Subscription) => ((s.upload + s.download) / s.total) * 100
 
-const clacTrafficStatus = (s: Subscription) => {
+const clacTrafficStatus = (s: App.Subscription) => {
   const percent = clacTrafficPercent(s)
   if (percent > 90) return 'danger'
   if (percent > 80) return 'warning'

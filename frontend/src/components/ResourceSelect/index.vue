@@ -11,11 +11,8 @@ import {
 } from '@/stores'
 import { message, modal } from '@/utils'
 
-import type { RuleSet } from '@/stores'
-import type { Plugin, ScheduledTask, Subscription } from '@/types/app'
-
 type ResourceType = 'profile' | 'subscription' | 'ruleset' | 'plugin' | 'scheduledtask'
-type ResourceItem = IProfile | Subscription | RuleSet | Plugin | ScheduledTask
+type ResourceItem = App.Profile | App.Subscription | App.RuleSet | App.Plugin | App.ScheduledTask
 type ResourceConfig = {
   title: string
   list: ResourceItem[]
@@ -63,23 +60,23 @@ const resourceConfig = computed(() => {
       title: 'profiles.select',
       list: profilesStore.profiles,
       getById: profilesStore.getProfileById,
-      getName: (item) => (item as IProfile).name,
+      getName: (item) => (item as App.Profile).name,
       getDescription: () => '',
     },
     subscription: {
       title: 'subscribes.select',
       list: subscribesStore.subscribes,
       getById: subscribesStore.getSubscribeById,
-      getName: (item) => (item as Subscription).name,
-      getDescription: (item) => (item as Subscription).type,
+      getName: (item) => (item as App.Subscription).name,
+      getDescription: (item) => (item as App.Subscription).type,
     },
     ruleset: {
       title: 'rulesets.select',
       list: rulesetsStore.rulesets,
       getById: rulesetsStore.getRulesetById,
-      getName: (item) => (item as RuleSet).name,
+      getName: (item) => (item as App.RuleSet).name,
       getDescription: (item) => {
-        const ruleset = item as RuleSet
+        const ruleset = item as App.RuleSet
         return `${ruleset.type} / ${ruleset.format}`
       },
     },
@@ -87,9 +84,9 @@ const resourceConfig = computed(() => {
       title: 'plugins.select',
       list: pluginsStore.plugins,
       getById: pluginsStore.getPluginById,
-      getName: (item) => (item as Plugin).name,
+      getName: (item) => (item as App.Plugin).name,
       getDescription: (item) => {
-        const plugin = item as Plugin
+        const plugin = item as App.Plugin
         return plugin.description || plugin.type
       },
     },
@@ -97,8 +94,8 @@ const resourceConfig = computed(() => {
       title: 'scheduledtasks.select',
       list: scheduledTasksStore.scheduledtasks,
       getById: scheduledTasksStore.getScheduledTaskById,
-      getName: (item) => (item as ScheduledTask).name,
-      getDescription: (item) => t('scheduledtask.' + (item as ScheduledTask).type),
+      getName: (item) => (item as App.ScheduledTask).name,
+      getDescription: (item) => t('scheduledtask.' + (item as App.ScheduledTask).type),
     },
   }
 

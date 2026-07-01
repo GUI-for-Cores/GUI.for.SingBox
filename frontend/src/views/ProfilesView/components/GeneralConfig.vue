@@ -11,7 +11,7 @@ interface Props {
 
 defineProps<Props>()
 
-const model = defineModel<{ log: IProfile['log']; experimental: IProfile['experimental'] }>({
+const model = defineModel<{ log: App.Profile['log']; experimental: App.Profile['experimental'] }>({
   required: true,
 })
 

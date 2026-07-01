@@ -26,15 +26,15 @@ interface Props {
   inboundOptions: { label: string; value: string }[]
   outboundOptions: { label: string; value: string }[]
   serversOptions: { label: string; value: string }[]
-  ruleSet: IRuleSet[]
+  ruleSet: App.ProfileRuleSet[]
 }
 
 const props = defineProps<Props>()
 
-const model = defineModel<IDNSRule[]>({ required: true })
+const model = defineModel<App.DnsRule[]>({ required: true })
 
 let ruleId = 0
-const fields = ref<IDNSRule>(DefaultDnsRule())
+const fields = ref<App.DnsRule>(DefaultDnsRule())
 
 const isInsertionPointMissing = computed(
   () => model.value.findIndex((rule) => rule.type === RuleType.InsertionPoint) === -1,
@@ -107,7 +107,7 @@ const handleClearRuleset = (ruleset: any) => {
 
 const showLost = () => message.warn('kernel.route.rules.invalid')
 
-const hasLost = (rule: IDNSRule) => {
+const hasLost = (rule: App.DnsRule) => {
   const checkServer = () => {
     if (rule.action === RuleAction.Route) {
       if (!props.serversOptions.find((v) => v.value === rule.server)) {
@@ -141,7 +141,7 @@ const hasLost = (rule: IDNSRule) => {
   return checkServer() || checkPayload()
 }
 
-const renderRule = (rule: IDNSRule) => {
+const renderRule = (rule: App.DnsRule) => {
   const { type, payload, server, action, invert } = rule
   const children: string[] = [type]
   let _payload = payload

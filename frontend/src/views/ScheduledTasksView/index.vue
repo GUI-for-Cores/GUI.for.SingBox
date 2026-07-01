@@ -9,12 +9,10 @@ import { debounce, formatRelativeTime, formatDate, message, alert } from '@/util
 
 import { useModal } from '@/components/Modal'
 
-import type { Menu, ScheduledTask } from '@/types/app'
-
 import ScheduledTaskForm from './components/ScheduledTaskForm.vue'
 import ScheduledTasksLogs from './components/ScheduledTasksLogs.vue'
 
-const menuList: Menu[] = [
+const menuList: App.Menu[] = [
   {
     label: 'scheduledtasks.run',
     handler: (id: string) => {
@@ -69,7 +67,7 @@ const handleShowTaskForm = (id?: string) => {
   modalApi.setContent(ScheduledTaskForm, { id }).open()
 }
 
-const handleDeleteTask = async (s: ScheduledTask) => {
+const handleDeleteTask = async (s: App.ScheduledTask) => {
   try {
     await scheduledTasksStore.deleteScheduledTask(s.id)
   } catch (error: any) {
@@ -78,7 +76,7 @@ const handleDeleteTask = async (s: ScheduledTask) => {
   }
 }
 
-const handleDisableTask = async (s: ScheduledTask) => {
+const handleDisableTask = async (s: App.ScheduledTask) => {
   s.disabled = !s.disabled
   scheduledTasksStore.editScheduledTask(s.id, s)
 }

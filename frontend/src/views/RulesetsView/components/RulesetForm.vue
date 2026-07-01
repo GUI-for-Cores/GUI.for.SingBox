@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { RulesetFormatOptions } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
-import { type RuleSet, useRulesetsStore } from '@/stores'
+import { useRulesetsStore } from '@/stores'
 import { deepClone, message, sampleID } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const loading = ref(false)
 
-const ruleset = ref<RuleSet>({
+const ruleset = ref<App.RuleSet>({
   id: sampleID(),
   name: '',
   updateTime: 0,

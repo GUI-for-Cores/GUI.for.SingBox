@@ -26,8 +26,6 @@ import {
   sleep,
 } from '@/utils'
 
-import type { CustomAction, CustomActionFn, Menu } from '@/types/app'
-
 import { useEnvStore } from './env'
 
 export const useAppStore = defineStore('app', () => {
@@ -36,7 +34,7 @@ export const useAppStore = defineStore('app', () => {
 
   /* Global Menu */
   const menuShow = ref(false)
-  const menuList = ref<Menu[]>([])
+  const menuList = ref<App.Menu[]>([])
   const menuPosition = ref({
     x: 0,
     y: 0,
@@ -73,14 +71,14 @@ export const useAppStore = defineStore('app', () => {
 
   /* Actions */
   const customActions = ref({
-    core_state: [] as (CustomAction | CustomActionFn)[],
-    title_bar: [] as (CustomAction | CustomActionFn)[],
-    profiles_header: [] as (CustomAction | CustomActionFn)[],
-    subscriptions_header: [] as (CustomAction | CustomActionFn)[],
+    core_state: [] as (App.CustomAction | App.CustomActionFn)[],
+    title_bar: [] as (App.CustomAction | App.CustomActionFn)[],
+    profiles_header: [] as (App.CustomAction | App.CustomActionFn)[],
+    subscriptions_header: [] as (App.CustomAction | App.CustomActionFn)[],
   })
   const addCustomActions = (
     target: keyof typeof customActions.value,
-    actions: CustomAction | CustomAction[] | CustomActionFn | CustomActionFn[],
+    actions: App.CustomAction | App.CustomAction[] | App.CustomActionFn | App.CustomActionFn[],
   ) => {
     if (!customActions.value[target]) throw new Error('Target does not exist: ' + target)
     const _actions = Array.isArray(actions) ? actions : [actions]

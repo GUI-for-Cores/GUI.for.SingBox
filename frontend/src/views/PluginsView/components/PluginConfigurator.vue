@@ -8,12 +8,10 @@ import { message } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
-import type { Plugin } from '@/types/app'
-
 import PluginConfigItem from './PluginConfigItem.vue'
 
 interface Props {
-  plugin: Plugin
+  plugin: App.Plugin
 }
 
 const props = defineProps<Props>()

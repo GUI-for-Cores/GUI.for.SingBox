@@ -6,18 +6,16 @@ import { OS } from '@/enums/app'
 import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import { formatProxyHost, ignoredError, updateTrayAndMenus } from '@/utils'
 
-import type { AppEnv } from '@/types/app'
-
 export const useEnvStore = defineStore('env', () => {
   const appSettings = useAppSettingsStore()
   const kernelApiStore = useKernelApiStore()
 
-  const env = ref<AppEnv>({
+  const env = ref<App.AppEnv>({
     appName: '',
     appVersion: '',
     basePath: '',
     appPath: '',
-    os: '' as OS,
+    os: '' as App.OS,
     arch: '',
     isPrivileged: false,
   })
@@ -98,7 +96,8 @@ export const useEnvStore = defineStore('env', () => {
   }
 
   const setSystemDNS = async (proxy: boolean) => {
-    if (![OS.Linux, OS.Darwin].includes(env.value.os)) return
+    const supportedSystems: App.OS[] = [OS.Linux, OS.Darwin]
+    if (!supportedSystems.includes(env.value.os)) return
     const servers = proxy ? appSettings.app.systemProxyDNS : appSettings.app.systemDefaultDNS
     await SetSystemDNS(servers, appSettings.app.systemProxyServices)
     systemDNSSet.value = proxy

@@ -15,14 +15,7 @@ import { CoreWorkingDirectory } from '@/constant/kernel'
 import { OS, RequestProxyMode } from '@/enums/app'
 import { RulesetFormat } from '@/enums/kernel'
 import i18n from '@/lang'
-import {
-  useAppSettingsStore,
-  useAppStore,
-  useEnvStore,
-  useKernelApiStore,
-  usePluginsStore,
-  useRulesetsStore,
-} from '@/stores'
+import { useAppSettingsStore, useAppStore, useEnvStore, useKernelApiStore, usePluginsStore, useRulesetsStore } from '@/stores'
 import {
   formatProxyHost,
   ignoredError,
@@ -144,7 +137,7 @@ const requestProxyCache: { proxyPromise: Promise<string> | null; lastAccessTime:
   lastAccessTime: 0,
 }
 
-export const GetRequestProxy = async (mode?: RequestProxyMode, customProxy?: string) => {
+export const GetRequestProxy = async (mode?: App.RequestProxyMode, customProxy?: string) => {
   const appSettings = useAppSettingsStore()
   const requestProxyMode = mode ?? appSettings.app.requestProxyMode
 

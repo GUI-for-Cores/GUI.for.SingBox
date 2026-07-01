@@ -3,10 +3,8 @@ import { ref, watch } from 'vue'
 
 import { deepClone, message } from '@/utils'
 
-import type { Plugin } from '@/types/app'
-
 interface Props {
-  plugin: Plugin
+  plugin: App.Plugin
   modelValue?: Recordable
 }
 

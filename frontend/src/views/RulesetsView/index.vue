@@ -8,13 +8,7 @@ import { BuiltInOutbound, EmptyRuleSet } from '@/constant/kernel'
 import { DefaultRouteRule, DefaultRouteRuleset } from '@/constant/profile'
 import { View } from '@/enums/app'
 import { RulesetFormat, RulesetType, RuleType } from '@/enums/kernel'
-import {
-  type RuleSet,
-  useRulesetsStore,
-  useAppSettingsStore,
-  useEnvStore,
-  useProfilesStore,
-} from '@/stores'
+import { useRulesetsStore, useAppSettingsStore, useEnvStore, useProfilesStore } from '@/stores'
 import {
   debounce,
   formatRelativeTime,
@@ -27,13 +21,11 @@ import {
 
 import { useModal } from '@/components/Modal'
 
-import type { Menu } from '@/types/app'
-
 import RulesetForm from './components/RulesetForm.vue'
 import RulesetHub from './components/RulesetHub.vue'
 import RulesetView from './components/RulesetView.vue'
 
-const sourceMenuList: Menu[] = [
+const sourceMenuList: App.Menu[] = [
   {
     label: 'rulesets.editRuleset',
     handler: (id: string) => handleEditRulesetList(id),
@@ -101,7 +93,7 @@ const handleEditRulesetList = (id: string) => {
   modalApi.open()
 }
 
-const handleUpdateRuleset = async (r: RuleSet) => {
+const handleUpdateRuleset = async (r: App.RuleSet) => {
   try {
     await rulesetsStore.updateRuleset(r.id)
   } catch (error: any) {
@@ -110,7 +102,7 @@ const handleUpdateRuleset = async (r: RuleSet) => {
   }
 }
 
-const handleDeleteRuleset = async (r: RuleSet) => {
+const handleDeleteRuleset = async (r: App.RuleSet) => {
   try {
     await ignoredError(RemoveFile, r.path)
     await rulesetsStore.deleteRuleset(r.id)
@@ -120,7 +112,7 @@ const handleDeleteRuleset = async (r: RuleSet) => {
   }
 }
 
-const handleDisableRuleset = async (r: RuleSet) => {
+const handleDisableRuleset = async (r: App.RuleSet) => {
   r.disabled = !r.disabled
   rulesetsStore.editRuleset(r.id, r)
 }
@@ -211,8 +203,8 @@ const handleAddRulesetToProfile = async (id: string) => {
   }
 }
 
-const generateMenus = (r: RuleSet) => {
-  const addToProfileMenu: Menu = {
+const generateMenus = (r: App.RuleSet) => {
+  const addToProfileMenu: App.Menu = {
     label: 'rulesets.addToProfile',
     handler: (id: string) => handleAddRulesetToProfile(id),
   }

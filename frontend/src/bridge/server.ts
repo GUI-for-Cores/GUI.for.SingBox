@@ -1,4 +1,4 @@
-import * as App from '@wails/go/bridge/App'
+import * as Bridge from '@wails/go/bridge/App'
 import { EventsOn, EventsEmit, EventsOff } from '@wails/runtime/runtime'
 
 interface Request {
@@ -58,7 +58,7 @@ export const StartServer = async (
     MaxUploadSize: 50 * 1024 * 1024, // 50MB
     ...options,
   }
-  const { flag, data } = await App.StartServer(address, id, _options)
+  const { flag, data } = await Bridge.StartServer(address, id, _options)
   if (!flag) {
     throw data
   }
@@ -95,7 +95,7 @@ export const StartServer = async (
 }
 
 export const StopServer = async (serverID: string) => {
-  const { flag, data } = await App.StopServer(serverID)
+  const { flag, data } = await Bridge.StopServer(serverID)
   if (!flag) {
     throw data
   }
@@ -104,7 +104,7 @@ export const StopServer = async (serverID: string) => {
 }
 
 export const ListServer = async () => {
-  const { flag, data } = await App.ListServer()
+  const { flag, data } = await Bridge.ListServer()
   if (!flag) {
     throw data
   }

@@ -13,7 +13,7 @@ interface Props {
 
 defineProps<Props>()
 
-const model = defineModel<IProfile['route']>({ required: true })
+const model = defineModel<App.Profile['route']>({ required: true })
 
 const activeKey = ref('common')
 const rulesConfigRef = useTemplateRef('rulesConfigRef')

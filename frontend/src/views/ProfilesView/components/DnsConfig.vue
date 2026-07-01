@@ -10,12 +10,12 @@ import DnsServersConfig from './DnsServersConfig.vue'
 interface Props {
   inboundOptions: { label: string; value: string }[]
   outboundOptions: { label: string; value: string }[]
-  ruleSet: IRuleSet[]
+  ruleSet: App.ProfileRuleSet[]
 }
 
 defineProps<Props>()
 
-const model = defineModel<IDNS>({ required: true })
+const model = defineModel<App.Dns>({ required: true })
 
 const serversOptions = computed(() =>
   model.value.servers.map((v) => ({ label: v.tag, value: v.id })),

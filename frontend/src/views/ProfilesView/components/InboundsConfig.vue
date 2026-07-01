@@ -12,7 +12,7 @@ import {
 import { Inbound } from '@/enums/kernel'
 import { picker, sampleID } from '@/utils'
 
-const model = defineModel<IProfile['inbounds']>({ required: true })
+const model = defineModel<App.Profile['inbounds']>({ required: true })
 
 const { t } = useI18n()
 

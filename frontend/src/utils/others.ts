@@ -264,7 +264,7 @@ export const transformRequestUrl = (url: string) => {
   return url
 }
 
-export const getAutoStartConfiguration = (os: OS, appPath: string, delay = 30) => {
+export const getAutoStartConfiguration = (os: App.OS, appPath: string, delay = 30) => {
   if (os === OS.Windows) {
     const xml = /*xml*/ `<?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">

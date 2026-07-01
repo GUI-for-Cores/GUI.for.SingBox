@@ -56,7 +56,7 @@ const stepItems = [
   { title: 'profile.step.mixin-script' },
 ] as const
 
-const profile = ref<IProfile>(profilesStore.getProfileTemplate())
+const profile = ref<App.Profile>(profilesStore.getProfileTemplate())
 
 const inboundOptions = computed(() =>
   profile.value.inbounds.map((v) => ({ label: v.tag, value: v.id })),

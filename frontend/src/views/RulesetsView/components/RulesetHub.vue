@@ -6,7 +6,7 @@ import { HttpGet } from '@/bridge'
 import { BuiltInOutbound } from '@/constant/kernel'
 import { DefaultRouteRule, DefaultRouteRuleset } from '@/constant/profile'
 import { RulesetFormat, RulesetType, RuleType } from '@/enums/kernel'
-import { useProfilesStore, useRulesetsStore, type RuleSetHub } from '@/stores'
+import { useProfilesStore, useRulesetsStore } from '@/stores'
 import { alert, deepClone, message, picker } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
@@ -37,7 +37,7 @@ const currentList = computed(() => {
   )
 })
 
-const getRulesetUrlAndSuffix = (ruleset: RuleSetHub['list'][number], format: RulesetFormat) => {
+const getRulesetUrlAndSuffix = (ruleset: App.RuleSetHub['list'][number], format: RulesetFormat) => {
   const suffix = { [RulesetFormat.Binary]: '.srs', [RulesetFormat.Source]: '.json' }[format]
   const basrUrl = {
     geosite: rulesetsStore.rulesetHub.geosite,
@@ -46,7 +46,7 @@ const getRulesetUrlAndSuffix = (ruleset: RuleSetHub['list'][number], format: Rul
   return [basrUrl + ruleset.name + suffix, suffix] as const
 }
 
-const handleAddRuleset = async (ruleset: RuleSetHub['list'][number], format: RulesetFormat) => {
+const handleAddRuleset = async (ruleset: App.RuleSetHub['list'][number], format: RulesetFormat) => {
   const [url, suffix] = getRulesetUrlAndSuffix(ruleset, format)
   const id = ruleset.type + '_' + ruleset.name + '.' + format
   const file = ruleset.type + '_' + ruleset.name + suffix
@@ -72,7 +72,7 @@ const handleAddRuleset = async (ruleset: RuleSetHub['list'][number], format: Rul
 }
 
 const handleAddRulesetToProfile = async (
-  ruleset: RuleSetHub['list'][number],
+  ruleset: App.RuleSetHub['list'][number],
   format: RulesetFormat,
 ) => {
   const [url, suffix] = getRulesetUrlAndSuffix(ruleset, format)
@@ -146,7 +146,7 @@ const handleAddRulesetToProfile = async (
   }
 }
 
-const handlePreview = async (ruleset: RuleSetHub['list'][number], format: RulesetFormat) => {
+const handlePreview = async (ruleset: App.RuleSetHub['list'][number], format: RulesetFormat) => {
   const { destroy, error } = message.info('rulesets.fetching', 15_000)
   try {
     const { body } = await HttpGet(getRulesetUrlAndSuffix(ruleset, format)[0])
@@ -167,7 +167,7 @@ const handleUpdatePluginHub = async () => {
   }
 }
 
-const isAlreadyAdded = (ruleset: RuleSetHub['list'][number], format: RulesetFormat) => {
+const isAlreadyAdded = (ruleset: App.RuleSetHub['list'][number], format: RulesetFormat) => {
   const id = ruleset.type + '_' + ruleset.name + '.' + format
   return rulesetsStore.getRulesetById(id)
 }

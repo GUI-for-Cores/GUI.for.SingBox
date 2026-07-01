@@ -8,7 +8,7 @@ import { generateConfig, message, restoreProfile } from '@/utils'
 import Button from '@/components/Button/index.vue'
 
 interface Props {
-  profile: IProfile
+  profile: App.Profile
 }
 
 const props = defineProps<Props>()

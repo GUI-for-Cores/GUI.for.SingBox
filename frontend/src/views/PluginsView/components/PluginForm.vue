@@ -10,8 +10,6 @@ import { deepClone, message, sampleID } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
-import type { Plugin } from '@/types/app'
-
 interface Props {
   id?: string
 }
@@ -21,7 +19,7 @@ const props = defineProps<Props>()
 const official = computed(() => pluginsStore.findPluginInHubById(plugin.value.id))
 const loading = ref(false)
 const pluginID = sampleID()
-const plugin = ref<Plugin>({
+const plugin = ref<App.Plugin>({
   id: pluginID,
   version: 'v1.0.0',
   name: '',

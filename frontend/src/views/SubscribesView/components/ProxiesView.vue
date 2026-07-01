@@ -10,10 +10,8 @@ import { buildSmartRegExp, deepClone, ignoredError, message, sampleID } from '@/
 
 import Button from '@/components/Button/index.vue'
 
-import type { Menu, Subscription } from '@/types/app'
-
 interface Props {
-  sub: Subscription
+  sub: App.Subscription
 }
 
 const props = defineProps<Props>()
@@ -51,10 +49,10 @@ const filteredProxies = computed(() => {
   })
 })
 
-const menus: Menu[] = [
+const menus: App.Menu[] = [
   {
     label: 'common.details',
-    handler: async (record: Subscription['proxies'][0]) => {
+    handler: async (record: App.Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         details.value = JSON.stringify(proxy, null, 2)
@@ -67,7 +65,7 @@ const menus: Menu[] = [
   },
   {
     label: 'common.copy',
-    handler: async (record: Subscription['proxies'][0]) => {
+    handler: async (record: App.Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         await ClipboardSetText(JSON.stringify(proxy, null, 2))
@@ -79,7 +77,7 @@ const menus: Menu[] = [
   },
   {
     label: 'common.edit',
-    handler: async (record: Subscription['proxies'][0]) => {
+    handler: async (record: App.Subscription['proxies'][0]) => {
       try {
         const proxy = await getProxyByTag(record.tag)
         details.value = JSON.stringify(proxy, null, 2)

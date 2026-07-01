@@ -11,7 +11,7 @@ import { ignoredError, eventBus, stringifyNoFolding, migrateProfiles, sampleID }
 export const useProfilesStore = defineStore('profiles', () => {
   const appSettingsStore = useAppSettingsStore()
 
-  const profiles = ref<IProfile[]>([])
+  const profiles = ref<App.Profile[]>([])
   const currentProfile = computed(() => getProfileById(appSettingsStore.app.kernel.profile))
 
   const setupProfiles = async () => {
@@ -25,7 +25,7 @@ export const useProfilesStore = defineStore('profiles', () => {
     return WriteFile(ProfilesFilePath, stringifyNoFolding(profiles.value))
   }
 
-  const addProfile = async (p: IProfile) => {
+  const addProfile = async (p: App.Profile) => {
     profiles.value.push(p)
     try {
       await saveProfiles()
@@ -52,7 +52,7 @@ export const useProfilesStore = defineStore('profiles', () => {
     eventBus.emit('profileChange', { id })
   }
 
-  const editProfile = async (id: string, p: IProfile) => {
+  const editProfile = async (id: string, p: App.Profile) => {
     const idx = profiles.value.findIndex((v) => v.id === id)
     if (idx === -1) return
     const backup = profiles.value.splice(idx, 1, p)[0]!
@@ -68,7 +68,7 @@ export const useProfilesStore = defineStore('profiles', () => {
 
   const getProfileById = (id: string) => profiles.value.find((v) => v.id === id)
 
-  const getProfileTemplate = (name = ''): IProfile => {
+  const getProfileTemplate = (name = ''): App.Profile => {
     return {
       id: sampleID(),
       name: name,

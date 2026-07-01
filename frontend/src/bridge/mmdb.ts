@@ -1,4 +1,4 @@
-import * as App from '@wails/go/bridge/App'
+import * as Bridge from '@wails/go/bridge/App'
 
 type QueryType =
   | 'ASN'
@@ -10,7 +10,7 @@ type QueryType =
   | 'Enterprise'
 
 export const OpenMMDB = async (path: string, id: string) => {
-  const { flag, data } = await App.OpenMMDB(path, id)
+  const { flag, data } = await Bridge.OpenMMDB(path, id)
   if (!flag) {
     throw data
   }
@@ -21,7 +21,7 @@ export const OpenMMDB = async (path: string, id: string) => {
 }
 
 export const CloseMMDB = async (path: string, id: string) => {
-  const { flag, data } = await App.CloseMMDB(path, id)
+  const { flag, data } = await Bridge.CloseMMDB(path, id)
   if (!flag) {
     throw data
   }
@@ -29,7 +29,7 @@ export const CloseMMDB = async (path: string, id: string) => {
 }
 
 export const QueryMMDB = async (path: string, ip: string, type: QueryType = 'Country') => {
-  const { flag, data } = await App.QueryMMDB(path, ip, type)
+  const { flag, data } = await Bridge.QueryMMDB(path, ip, type)
   if (!flag) {
     throw data
   }

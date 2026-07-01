@@ -5,8 +5,6 @@ import vMenu from '@/directives/menu'
 import useI18n from '@/lang'
 import { getValue } from '@/utils'
 
-import type { Menu } from '@/types/app'
-
 export type Column = {
   title: string
   key: string
@@ -18,7 +16,7 @@ export type Column = {
 }
 
 interface Props {
-  menu?: Menu[]
+  menu?: App.Menu[]
   columns: Column[]
   dataSource: Record<string, any>[]
   sort?: string

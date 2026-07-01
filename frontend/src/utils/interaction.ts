@@ -16,8 +16,6 @@ import type { MessageIcon } from '@/components/Message/index.vue'
 import type { Props as ModalProps, Slots as ModalSlots } from '@/components/Modal/index.vue'
 import type { PickerItem } from '@/components/Picker/index.vue'
 import type { ResourceSelectProps } from '@/components/ResourceSelect/index.vue'
-import type { RuleSet } from '@/stores'
-import type { Plugin, ScheduledTask, Subscription } from '@/types/app'
 
 const ContainerCssText = `
     position: fixed;
@@ -147,16 +145,16 @@ const ResourceTypeMap = {
 } as const
 
 type ResourceResultMap = {
-  profile: IProfile
-  subscription: Subscription
-  ruleset: RuleSet
-  plugin: Plugin
-  scheduledtask: ScheduledTask
-  1: IProfile
-  2: Subscription
-  3: RuleSet
-  4: Plugin
-  5: ScheduledTask
+  profile: App.Profile
+  subscription: App.Subscription
+  ruleset: App.RuleSet
+  plugin: App.Plugin
+  scheduledtask: App.ScheduledTask
+  1: App.Profile
+  2: App.Subscription
+  3: App.RuleSet
+  4: App.Plugin
+  5: App.ScheduledTask
 }
 
 class Picker {
