@@ -37,6 +37,10 @@ export const migrateSubscribes = async (
       subscribe.customProxy = ''
       needSync = true
     }
+    if (!subscribe.dnsServers) {
+      subscribe.dnsServers = []
+      needSync = true
+    }
   })
 
   if (needSync) await save()
