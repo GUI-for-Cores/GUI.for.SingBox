@@ -22,6 +22,42 @@ import {
   migrateSubscribes,
 } from '@/utils'
 
+const collectDomainResolverTags = (value: any): string[] => {
+  if (!value || typeof value !== 'object') return []
+  if (Array.isArray(value)) return value.flatMap(collectDomainResolverTags)
+
+  return Object.entries(value).flatMap(([key, val]) => {
+    if (key === 'domain_resolver' && typeof val === 'string' && val) {
+      return [val]
+    }
+    return collectDomainResolverTags(val)
+  })
+}
+
+const collectReferencedDnsServers = (
+  outbounds: Recordable[],
+  dnsServers: Recordable[],
+): Recordable[] => {
+  const serverMap = new Map<string, Recordable>(
+    dnsServers.flatMap((server) => (server.tag ? [[server.tag, server]] : [])),
+  )
+  const result = new Map<string, Recordable>()
+  const pending = outbounds.flatMap(collectDomainResolverTags)
+
+  while (pending.length > 0) {
+    const tag = pending.shift()!
+    if (result.has(tag)) continue
+
+    const server = serverMap.get(tag)
+    if (!server) continue
+
+    result.set(tag, server)
+    pending.push(...collectDomainResolverTags(server))
+  }
+
+  return Array.from(result.values())
+}
+
 export const useSubscribesStore = defineStore('subscribes', () => {
   const subscribes = ref<App.Subscription[]>([])
 
@@ -86,6 +122,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     const userInfo: Recordable = {}
     let body = ''
     let proxies: Record<string, any>[] = []
+    let dnsServers: Recordable[] = []
 
     if (s.type === 'Manual') {
       body = await ReadFile(s.path)
@@ -124,7 +161,9 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     }
 
     if (isValidSubJson(body)) {
-      proxies = JSON.parse(body).outbounds
+      const config = JSON.parse(body)
+      proxies = config.outbounds
+      dnsServers = config.dns?.servers || []
     } else if (isValidSubYAML(body)) {
       proxies = parse(body).proxies
     } else if (isValidBase64(body)) {
@@ -187,6 +226,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
     const { proxies: _proxies, subscription } = await fn(proxies, s)
 
     Object.assign(s, subscription)
+    s.dnsServers = collectReferencedDnsServers(_proxies, dnsServers)
     s.proxies = _proxies.map(({ tag, type }) => {
       // Keep the original ID value of the proxy unchanged
       const id = s.proxies.find((v) => v.tag === tag)?.id || sampleID()
@@ -284,6 +324,7 @@ export const useSubscribesStore = defineStore('subscribes', () => {
         response: {},
       },
       proxies: [],
+      dnsServers: [],
       script: DefaultSubscribeScript,
     }
   }

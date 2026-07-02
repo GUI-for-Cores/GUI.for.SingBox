@@ -92,10 +92,19 @@ const generateInbounds = (inbounds: App.Inbound[]) => {
 const generateOutbounds = async (outbounds: App.Outbound[]) => {
   const result: Recordable[] = []
   const SubscriptionCache: Recordable<any[]> = {}
+  const SubscriptionDnsServersCache: Recordable<Recordable[]> = {}
   const proxiesSet = new Set<any>()
   const builtInProxiesSet = new Set<string>()
+  const dnsServersMap = new Map<string, Recordable>()
 
   const subscribesStore = useSubscribesStore()
+  const collectSubscriptionDnsServers = (subId: string) => {
+    SubscriptionDnsServersCache[subId]?.forEach((server) => {
+      if (server.tag && !dnsServersMap.has(server.tag)) {
+        dnsServersMap.set(server.tag, server)
+      }
+    })
+  }
 
   for (const outbound of outbounds) {
     const _outbound: Recordable = {
@@ -125,6 +134,7 @@ const generateOutbounds = async (outbounds: App.Outbound[]) => {
               const subStr = await ReadFile(sub.path)
               const proxies = JSON.parse(subStr)
               SubscriptionCache[subId] = proxies
+              SubscriptionDnsServersCache[subId] = sub.dnsServers || []
             }
           }
           if (proxy.type === 'Subscription') {
@@ -132,11 +142,13 @@ const generateOutbounds = async (outbounds: App.Outbound[]) => {
               ...SubscriptionCache[subId]!.map((v) => v.tag).filter((tag) => isTagMatching(tag)),
             )
             SubscriptionCache[subId]!.forEach((v) => proxiesSet.add(v))
+            collectSubscriptionDnsServers(subId)
           } else {
             const _proxy = SubscriptionCache[subId]!.find((v) => v.tag === proxy.tag)
             if (_proxy && isTagMatching(_proxy.tag)) {
               _outbound.outbounds.push(_proxy.tag)
               proxiesSet.add(_proxy)
+              collectSubscriptionDnsServers(subId)
             }
           }
         }
@@ -148,7 +160,24 @@ const generateOutbounds = async (outbounds: App.Outbound[]) => {
   result.push(...proxiesSet)
   result.push(...Array.from(builtInProxiesSet).map((v) => ({ type: v, tag: v })))
 
-  return result
+  return {
+    outbounds: result,
+    dnsServers: Array.from(dnsServersMap.values()),
+  }
+}
+
+const normalizeSubscriptionDnsServers = (
+  dnsServers: Recordable[],
+  generatedOutbounds: Recordable[],
+) => {
+  const outboundTags = new Set(generatedOutbounds.map((outbound) => outbound.tag))
+  return dnsServers.map((server) => {
+    const normalized = { ...server }
+    if (normalized.detour && !outboundTags.has(normalized.detour)) {
+      delete normalized.detour
+    }
+    return normalized
+  })
 }
 
 const generateRoute = (route: App.Route, inbounds: App.Inbound[], outbounds: App.Outbound[], dns: App.Dns) => {
@@ -230,6 +259,7 @@ const generateDns = (
   rule_set: App.ProfileRuleSet[],
   inbounds: App.Inbound[],
   outbounds: App.Outbound[],
+  subscriptionDnsServers: Recordable[] = [],
 ) => {
   const getOutbound = (id: string) => outbounds.find((v) => v.id === id)
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
@@ -240,63 +270,72 @@ const generateDns = (
   if (dns.client_subnet) {
     extra.client_subnet = dns.client_subnet
   }
-  return {
-    servers: dns.servers.flatMap((server) => {
-      const extra: Recordable = {}
+  const servers: Recordable[] = dns.servers.flatMap((server) => {
+    const extra: Recordable = {}
+    if (
+      [
+        DnsServer.Local,
+        DnsServer.Tcp,
+        DnsServer.Udp,
+        DnsServer.Tls,
+        DnsServer.Quic,
+        DnsServer.Https,
+        DnsServer.H3,
+        DnsServer.Dhcp,
+      ].includes(server.type as any)
+    ) {
+      if (server.detour) {
+        const outbound = getOutbound(server.detour)
+        if (outbound?.type !== Outbound.Direct) {
+          extra.detour = outbound?.tag
+        }
+      }
+      server.domain_resolver && (extra.domain_resolver = getDnsServer(server.domain_resolver))
       if (
         [
-          DnsServer.Local,
           DnsServer.Tcp,
           DnsServer.Udp,
           DnsServer.Tls,
           DnsServer.Quic,
           DnsServer.Https,
           DnsServer.H3,
-          DnsServer.Dhcp,
         ].includes(server.type as any)
       ) {
-        if (server.detour) {
-          const outbound = getOutbound(server.detour)
-          if (outbound?.type !== Outbound.Direct) {
-            extra.detour = outbound?.tag
-          }
-        }
-        server.domain_resolver && (extra.domain_resolver = getDnsServer(server.domain_resolver))
-        if (
-          [
-            DnsServer.Tcp,
-            DnsServer.Udp,
-            DnsServer.Tls,
-            DnsServer.Quic,
-            DnsServer.Https,
-            DnsServer.H3,
-          ].includes(server.type as any)
-        ) {
-          server.server_port && (extra.server_port = Number(server.server_port))
-          extra.server = server.server
-          if ([DnsServer.Https, DnsServer.H3].includes(server.type as any)) {
-            server.path && (extra.path = server.path)
-          }
+        server.server_port && (extra.server_port = Number(server.server_port))
+        extra.server = server.server
+        if ([DnsServer.Https, DnsServer.H3].includes(server.type as any)) {
+          server.path && (extra.path = server.path)
         }
       }
-      if (server.type === DnsServer.Hosts) {
-        extra.path = server.hosts_path.reduce((p, c) => p.concat(c.split(',')), [] as string[])
-        extra.predefined = Object.entries(server.predefined).reduce(
-          (p, [k, v]) => ({ ...p, [k]: v.split(',') }),
-          {},
-        )
-      } else if (server.type === DnsServer.Dhcp) {
-        server.interface && (extra.interface = server.interface)
-      } else if (server.type === DnsServer.FakeIP) {
-        server.inet4_range && (extra.inet4_range = server.inet4_range)
-        server.inet6_range && (extra.inet6_range = server.inet6_range)
-      }
-      return {
-        tag: server.tag,
-        type: server.type,
-        ...extra,
-      }
-    }),
+    }
+    if (server.type === DnsServer.Hosts) {
+      extra.path = server.hosts_path.reduce((p, c) => p.concat(c.split(',')), [] as string[])
+      extra.predefined = Object.entries(server.predefined).reduce(
+        (p, [k, v]) => ({ ...p, [k]: v.split(',') }),
+        {},
+      )
+    } else if (server.type === DnsServer.Dhcp) {
+      server.interface && (extra.interface = server.interface)
+    } else if (server.type === DnsServer.FakeIP) {
+      server.inet4_range && (extra.inet4_range = server.inet4_range)
+      server.inet6_range && (extra.inet6_range = server.inet6_range)
+    }
+    return {
+      tag: server.tag,
+      type: server.type,
+      ...extra,
+    }
+  })
+  const serverTags = new Set(servers.map((server) => server.tag))
+  subscriptionDnsServers.forEach((server) => {
+    if (server.tag && !serverTags.has(server.tag)) {
+      servers.push(server)
+      serverTags.add(server.tag)
+    }
+  })
+
+  return {
+    servers,
     rules: dns.rules.flatMap((rule) => {
       if (rule.type === RuleType.InsertionPoint || !rule.enable) {
         return []
@@ -385,14 +424,25 @@ export const generateConfig = async (
   } = options
 
   const profile = deepClone(originalProfile)
+  const generatedOutbounds = await generateOutbounds(profile.outbounds)
+  const subscriptionDnsServers = normalizeSubscriptionDnsServers(
+    generatedOutbounds.dnsServers,
+    generatedOutbounds.outbounds,
+  )
   // step 1
   let config: Recordable = {
     log: profile.log,
     experimental: generateExperimental(profile.experimental, profile.outbounds),
     inbounds: generateInbounds(profile.inbounds),
-    outbounds: await generateOutbounds(profile.outbounds),
+    outbounds: generatedOutbounds.outbounds,
     route: generateRoute(profile.route, profile.inbounds, profile.outbounds, profile.dns),
-    dns: generateDns(profile.dns, profile.route.rule_set, profile.inbounds, profile.outbounds),
+    dns: generateDns(
+      profile.dns,
+      profile.route.rule_set,
+      profile.inbounds,
+      profile.outbounds,
+      subscriptionDnsServers,
+    ),
   }
 
   // adapt to stable branch

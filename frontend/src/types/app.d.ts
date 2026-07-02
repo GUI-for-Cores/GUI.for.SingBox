@@ -326,6 +326,7 @@ declare namespace App {
       response: Recordable
     }
     script: string
+    dnsServers: Recordable[]
     // Not Config
     updating?: boolean
   }
