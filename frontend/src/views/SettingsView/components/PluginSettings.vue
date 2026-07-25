@@ -13,7 +13,7 @@ const plugins = computed(() =>
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 pr-12 mb-8">
+  <div class="flex flex-col gap-8">
     <template v-if="plugins.length === 0">
       <div class="px-8 py-12 text-18 font-bold">
         {{ $t('plugins.configuration') }}

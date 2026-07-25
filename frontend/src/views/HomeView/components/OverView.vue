@@ -50,6 +50,8 @@ const handleShowApiLogs = () => {
   const m = modal({
     title: 'Logs',
     cancelText: 'common.close',
+    px: 0,
+    py: 0,
     width: '90',
     height: '90',
     submit: false,
@@ -62,6 +64,8 @@ const handleShowApiConnections = () => {
   const m = modal({
     title: 'home.overview.connections',
     cancelText: 'common.close',
+    px: 0,
+    py: 0,
     width: '90',
     height: '90',
     submit: false,

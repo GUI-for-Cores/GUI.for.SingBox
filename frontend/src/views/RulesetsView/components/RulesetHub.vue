@@ -203,11 +203,8 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="h-full">
-    <div v-if="rulesetsStore.rulesetHubLoading" class="flex items-center justify-center h-full">
-      <Button type="text" loading />
-    </div>
-    <div v-else class="flex flex-col h-full">
+  <ModalContainer :empty="filteredList.length === 0">
+    <template #top>
       <div class="flex items-center gap-8">
         <Input
           v-model="keywords"
@@ -217,14 +214,19 @@ defineExpose({ modalSlots })
           size="small"
           class="flex-1"
         />
-        <Button icon="refresh" size="small" @click="handleUpdatePluginHub">
+        <Button
+          icon="refresh"
+          size="small"
+          :loading="rulesetsStore.rulesetHubLoading"
+          @click="handleUpdatePluginHub"
+        >
           {{ t('plugins.update') }}
         </Button>
       </div>
+    </template>
 
-      <Empty v-if="filteredList.length === 0" />
-
-      <div class="overflow-y-auto grid grid-cols-3 text-12 gap-8 mt-8 pb-16 pr-8">
+    <template #body>
+      <div class="grid grid-cols-3 text-12 gap-8">
         <Card
           v-for="ruleset in currentList"
           :key="ruleset.name + ruleset.type"
@@ -291,6 +293,6 @@ defineExpose({ modalSlots })
           </div>
         </Card>
       </div>
-    </div>
-  </div>
+    </template>
+  </ModalContainer>
 </template>

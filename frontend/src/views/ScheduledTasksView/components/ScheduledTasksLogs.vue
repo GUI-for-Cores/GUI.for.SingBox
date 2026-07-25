@@ -17,7 +17,7 @@ const { t } = useI18n()
 const logsStore = useLogsStore()
 const pluginsStore = useScheduledTasksStore()
 
-const plugin = ref(pluginsStore.getScheduledTaskById(props.id)?.name)
+const plugin = ref(pluginsStore.getScheduledTaskById(props.id)?.name || '')
 const keywords = ref('')
 
 const columns: Column[] = [
@@ -77,10 +77,6 @@ const clearLogs = () => logsStore.scheduledtasksLogs.splice(0)
 <template>
   <div class="h-full flex flex-col">
     <div class="flex items-center">
-      <span class="mr-4">
-        {{ t('scheduledtasks.name') }}
-        :
-      </span>
       <Select v-model="plugin" :options="pluginsOptions" size="small" />
       <Input
         v-model="keywords"

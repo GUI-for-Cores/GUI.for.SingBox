@@ -60,10 +60,12 @@ const currentComponent = computed(() => {
       <slot name="extra"></slot>
     </div>
 
-    <div class="flex flex-col overflow-y-auto" :style="{ width: isTop ? 'auto' : contentWidth }">
-      <KeepAlive>
-        <component :is="currentComponent" />
-      </KeepAlive>
+    <div class="flex flex-col" :style="{ width: isTop ? 'auto' : contentWidth }">
+      <ScrollView :pt="0" :pr="24" :pb="8" :pl="8">
+        <KeepAlive>
+          <component :is="currentComponent" />
+        </KeepAlive>
+      </ScrollView>
     </div>
   </div>
 </template>

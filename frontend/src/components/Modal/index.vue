@@ -18,6 +18,8 @@ export interface Props {
   minHeight?: string
   width?: string
   height?: string
+  px?: number
+  py?: number
   cancel?: boolean
   submit?: boolean
   cancelText?: string
@@ -58,6 +60,8 @@ const props = withDefaults(defineProps<Props>(), {
   minHeight: '',
   width: '',
   height: '',
+  px: 16,
+  py: 16,
   cancel: true,
   submit: true,
   cancelText: 'common.cancel',
@@ -242,7 +246,7 @@ defineExpose({ handleCancel })
         >
           <div
             v-if="title || slots.title || slots.toolbar"
-            class="flex items-center p-16"
+            class="gui-modal-header flex items-center p-16"
             style="--wails-draggable: drag"
             @dblclick.self="toggleMaximize"
           >
@@ -266,10 +270,13 @@ defineExpose({ handleCancel })
               </Button>
             </div>
           </div>
-          <div class="flex-1 overflow-auto mx-16">
+          <ScrollView :pt="props.py" :pr="props.px" :pb="props.py" :pl="props.px">
             <slot></slot>
-          </div>
-          <div v-if="footer" class="flex items-center justify-end py-8 px-16 gap-8">
+          </ScrollView>
+          <div
+            v-if="footer"
+            class="gui-modal-footer flex items-center justify-end py-8 px-16 gap-8"
+          >
             <slot name="action"></slot>
             <slot name="cancel">
               <Button
@@ -312,6 +319,14 @@ defineExpose({ handleCancel })
 
   .gui-modal-modal {
     background-color: var(--modal-bg);
+  }
+
+  .gui-modal-header {
+    border-bottom: 1px solid var(--divider-color);
+  }
+
+  .gui-modal-footer {
+    border-top: 1px solid var(--divider-color);
   }
 }
 .maximize-normal {

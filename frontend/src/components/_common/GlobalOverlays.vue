@@ -2,8 +2,6 @@
 import * as Stores from '@/stores'
 import { message } from '@/utils'
 
-import { CommandView } from '@/components'
-
 interface Props {
   loading: boolean
 }
@@ -41,8 +39,6 @@ const minimizeAll = () => {
     :position="appStore.tipsPosition"
     :message="appStore.tipsMessage"
   />
-
-  <CommandView v-if="!loading" />
 
   <div
     v-if="appStore.modalMinimized.length || kernelApiStore.needRestart || kernelApiStore.restarting"

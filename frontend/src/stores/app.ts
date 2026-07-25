@@ -217,10 +217,15 @@ export const useAppStore = defineStore('app', () => {
   watch(showAbout, (v) => {
     if (v) {
       const m = modal({
-        cancel: false,
+        title: 'router.about',
         submit: false,
+        cancelText: 'common.close',
+        toolbar: {
+          minimize: false,
+          maximize: false,
+        },
         maskClosable: true,
-        minWidth: '50',
+        minWidth: '60',
         afterDestroy() {
           showAbout.value = false
         },

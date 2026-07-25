@@ -2,12 +2,15 @@ import { onUnmounted } from 'vue'
 
 import { EventsOn, WindowHide } from '@/bridge'
 import * as Stores from '@/stores'
-import { exitApp, message, sampleID } from '@/utils'
+import { exitApp, message, modal, sampleID } from '@/utils'
+
+import { CommandView } from '@/components'
 
 export const useAppLifecycle = () => {
   const appStore = Stores.useAppStore()
   const appSettings = Stores.useAppSettingsStore()
   const subscribesStore = Stores.useSubscribesStore()
+  let commandModal: ReturnType<typeof modal> | undefined
 
   const offLaunchApp = EventsOn('onLaunchApp', async ([arg]: string[]) => {
     if (!arg) return
@@ -49,10 +52,34 @@ export const useAppLifecycle = () => {
   const offExitApp = EventsOn('onExitApp', () => exitApp())
 
   const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key !== 'Escape') return
+    if (((event.ctrlKey && event.shiftKey) || event.metaKey) && event.code === 'KeyP') {
+      event.preventDefault()
+      if (event.repeat || commandModal) return
 
-    const closeFn = appStore.modalStack.at(-1)
-    closeFn?.()
+      const m = modal({
+        title: 'commands.title',
+        maskClosable: true,
+        height: '90',
+        px: 0,
+        py: 0,
+        submit: false,
+        toolbar: {
+          maximize: false,
+          minimize: false,
+        },
+        afterDestroy() {
+          commandModal = undefined
+        },
+      })
+      commandModal = m
+      m.setContent(CommandView, { close: () => m.close() }).open()
+      return
+    }
+
+    if (event.key === 'Escape') {
+      const closeFn = appStore.modalStack.at(-1)
+      closeFn?.()
+    }
   }
 
   window.addEventListener('keydown', handleKeydown)

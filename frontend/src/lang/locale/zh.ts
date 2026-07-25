@@ -804,6 +804,7 @@ export default {
     plugins: '插件',
   },
   commands: {
+    title: '命令',
     noMatching: '没有匹配到命令',
   },
 }

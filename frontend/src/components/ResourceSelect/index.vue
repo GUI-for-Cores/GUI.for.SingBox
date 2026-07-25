@@ -185,7 +185,7 @@ onMounted(() => {
       </Button>
     </template>
     <Empty v-if="resourceConfig.list.length === 0" />
-    <div class="grid gap-8 pb-8" :class="[`grid-cols-${cols}`]">
+    <div class="grid gap-8" :class="[`grid-cols-${cols}`]">
       <Card
         v-for="item in resourceConfig.list"
         :key="item.id"

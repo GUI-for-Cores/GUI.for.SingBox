@@ -8,7 +8,7 @@ import SystemProxySettings from './components/SystemProxySettings.vue'
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 pr-20 mb-8">
+  <div class="flex flex-col gap-8">
     <PersonalizationSettings />
     <BehaviorSettings />
     <SystemProxySettings />

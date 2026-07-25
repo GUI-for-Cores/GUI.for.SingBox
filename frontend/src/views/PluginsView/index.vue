@@ -48,6 +48,8 @@ const appSettingsStore = useAppSettingsStore()
 const handleImportPlugin = () => {
   const m = modal({
     title: 'plugins.hub',
+    px: 0,
+    py: 0,
     height: '90',
     width: '90',
     submit: false,
@@ -58,7 +60,7 @@ const handleImportPlugin = () => {
 }
 
 const openPluginFormModal = (id?: string) => {
-  const m = modal({ title: id ? 'common.edit' : 'common.add', minWidth: '80' })
+  const m = modal({ title: id ? 'common.edit' : 'common.add', width: '80' })
   m.setContent(PluginForm, { id }).open()
 }
 

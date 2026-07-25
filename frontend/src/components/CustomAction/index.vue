@@ -40,19 +40,21 @@ watch(
 )
 </script>
 <template>
-  <component
-    :is="action.component"
-    v-for="action in computedActions"
-    :key="action.id"
-    v-memo="action.id"
-    v-bind="resolveDynamicField(action.componentProps)"
-  >
-    <template
-      v-for="[name, slot] in Object.entries(resolveDynamicField(action.componentSlots ?? {}))"
-      :key="name"
-      #[name]
+  <div class="flex items-center gap-8 mx-8 overflow-hidden">
+    <component
+      :is="action.component"
+      v-for="action in computedActions"
+      :key="action.id"
+      v-memo="action.id"
+      v-bind="resolveDynamicField(action.componentProps)"
     >
-      <component :is="renderCustomActionSlot(slot)" />
-    </template>
-  </component>
+      <template
+        v-for="[name, slot] in Object.entries(resolveDynamicField(action.componentSlots ?? {}))"
+        :key="name"
+        #[name]
+      >
+        <component :is="renderCustomActionSlot(slot)" />
+      </template>
+    </component>
+  </div>
 </template>

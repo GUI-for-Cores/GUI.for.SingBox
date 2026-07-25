@@ -2,16 +2,14 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { DefaultPluginHubSources } from '@/constant/app'
-import { useBool } from '@/hooks'
-import { useAppSettingsStore, usePluginsStore } from '@/stores'
-import { APP_TITLE, createTextMatcher, deepClone, message } from '@/utils'
+import { usePluginsStore } from '@/stores'
+import { createTextMatcher, deepClone, message, modal } from '@/utils'
+
+import PluginSource from './PluginSource.vue'
 
 const keywords = ref('')
 
 const { t } = useI18n()
-const [settingsModalOpen, toggleSettingsModal] = useBool(false)
-const appSettingsStore = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
 const loadingSet = ref(new Set<string>())
 
@@ -77,16 +75,14 @@ const handleUpdatePluginHub = async () => {
   }
 }
 
-const handleAddSource = () => {
-  appSettingsStore.app.plugins.sources.push({ enable: false, name: '', url: '' })
-}
-
-const handleRemoveSource = (index: number) => {
-  appSettingsStore.app.plugins.sources.splice(index, 1)
-}
-
-const restoreDefaultSources = () => {
-  appSettingsStore.app.plugins.sources = DefaultPluginHubSources()
+const toggleSettingsModal = () => {
+  const m = modal({
+    title: 'plugins.sourceConfig.name',
+    submit: false,
+    width: '60',
+    cancelText: 'common.close',
+  })
+  m.setContent(PluginSource).open()
 }
 
 const isAlreadyAdded = (id: string) => pluginsStore.getPluginById(id)
@@ -97,15 +93,14 @@ if (pluginsStore.pluginHub.length === 0) {
 </script>
 
 <template>
-  <div class="pr-8">
-    <div class="text-22 text-center pb-12">{{ t('plugins.slogan', [APP_TITLE]) }}</div>
-    <div class="flex items-center gap-8 sticky top-0 z-2 mb-12">
+  <ModalContainer :empty="filteredPlugins.length == 0">
+    <template #top>
       <Input
         v-model="keywords"
         :border="false"
         :placeholder="t('plugins.total') + ': ' + pluginsStore.pluginHub.length"
         clearable
-        class="flex-1"
+        class="w-full"
       >
         <template #prefix>
           <Icon icon="search" :size="22" />
@@ -126,9 +121,9 @@ if (pluginsStore.pluginHub.length === 0) {
           />
         </template>
       </Input>
-    </div>
+    </template>
 
-    <div v-if="filteredPlugins.length == 0" class="flex items-center justify-center h-256">
+    <template #empty>
       <Empty>
         <template #description>
           <Button
@@ -142,58 +137,36 @@ if (pluginsStore.pluginHub.length === 0) {
           </Button>
         </template>
       </Empty>
-    </div>
-
-    <div v-for="group in filteredPlugins" :key="group.name">
-      <div class="text-16 font-bold mt-20 px-4">{{ group.name }}</div>
-
-      <div class="grid grid-cols-2 gap-8 py-8">
-        <Card v-for="plugin in group.plugins" :key="plugin.id">
-          <template #title-prefix>
-            <div class="text-14 font-bold">{{ plugin.name }}</div>
-          </template>
-          <div class="flex items-center">
-            <div v-tips="plugin.description" class="flex-1 line-clamp-1 h-full text-10">
-              {{ plugin.description }}
-            </div>
-            <Button v-if="loadingSet.has(plugin.id)" loading type="text" size="small" />
-            <div v-else class="flex items-center">
-              <Button v-if="isAlreadyAdded(plugin.id)" icon="selected" type="text" size="small" />
-              <Button v-else type="text" icon="add" size="small" @click="handleAddPlugin(plugin)" />
-            </div>
-          </div>
-        </Card>
-      </div>
-    </div>
-  </div>
-
-  <Modal
-    v-model:open="settingsModalOpen"
-    title="plugins.sourceConfig.name"
-    :submit="false"
-    cancel-text="common.close"
-  >
-    <template #action>
-      <div class="mr-auto">
-        <Button type="link" @click="restoreDefaultSources">{{ t('plugin.restore') }}</Button>
-      </div>
     </template>
 
-    <Card v-for="(source, index) in appSettingsStore.app.plugins.sources" :key="index" class="mb-8">
-      <template #extra>
-        <Button icon="delete" type="text" size="small" @click="handleRemoveSource(index)" />
-      </template>
-      <template #title-prefix>
-        <div class="flex items-center gap-8 font-bold">
-          <Switch v-model="source.enable" border="square" />
-          <Input v-model="source.name" editable />
+    <template #body>
+      <div v-for="group in filteredPlugins" :key="group.name">
+        <div class="text-16 font-bold px-4 py-12 sticky top-0 z-9">{{ group.name }}</div>
+
+        <div class="grid grid-cols-2 gap-8">
+          <Card v-for="plugin in group.plugins" :key="plugin.id">
+            <template #title-prefix>
+              <div class="text-14 font-bold">{{ plugin.name }}</div>
+            </template>
+            <div class="flex items-center">
+              <div v-tips="plugin.description" class="flex-1 line-clamp-1 h-full text-10">
+                {{ plugin.description }}
+              </div>
+              <Button v-if="loadingSet.has(plugin.id)" loading type="text" size="small" />
+              <div v-else class="flex items-center">
+                <Button v-if="isAlreadyAdded(plugin.id)" icon="selected" type="text" size="small" />
+                <Button
+                  v-else
+                  type="text"
+                  icon="add"
+                  size="small"
+                  @click="handleAddPlugin(plugin)"
+                />
+              </div>
+            </div>
+          </Card>
         </div>
-      </template>
-      <Input v-model="source.url" class="w-full" placeholder="https://" />
-    </Card>
-
-    <Empty v-if="appSettingsStore.app.plugins.sources.length == 0" />
-
-    <Button icon="add" class="w-full" type="primary" @click="handleAddSource" />
-  </Modal>
+      </div>
+    </template>
+  </ModalContainer>
 </template>

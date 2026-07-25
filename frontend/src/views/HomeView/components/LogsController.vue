@@ -117,43 +117,45 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <div class="flex items-center">
-      <span class="text-12 pr-8">
-        {{ t('kernel.log.level') }}
-        :
-      </span>
-      <Select v-model="logType" :options="LogLevelOptions" size="small" />
-      <Input
-        v-model="keywords"
-        clearable
-        size="small"
-        :placeholder="t('common.keywords')"
-        class="ml-8 flex-1"
-      />
-      <Button
-        :icon="pause ? 'play' : 'pause'"
-        type="text"
-        size="small"
-        class="ml-8"
-        @click="togglePause"
-      />
-      <Button v-tips="'common.clear'" icon="clear" size="small" type="text" @click="handleClear" />
-    </div>
+  <ModalContainer :empty="filteredLogs.length === 0">
+    <template #top>
+      <div class="flex items-center">
+        <Select v-model="logType" :options="LogLevelOptions" size="small" />
+        <Input
+          v-model="keywords"
+          clearable
+          size="small"
+          :placeholder="t('common.keywords')"
+          class="ml-8 flex-1"
+        />
+        <Button
+          :icon="pause ? 'play' : 'pause'"
+          type="text"
+          size="small"
+          class="ml-8"
+          @click="togglePause"
+        />
+        <Button
+          v-tips="'common.clear'"
+          icon="clear"
+          size="small"
+          type="text"
+          @click="handleClear"
+        />
+      </div>
+    </template>
 
-    <Empty v-if="filteredLogs.length === 0" />
-
-    <div v-else class="mt-8 overflow-y-auto">
+    <template #body>
       <div
         v-for="log in filteredLogs"
         :key="log.payload"
         v-menu="menus.map((v) => ({ ...v, handler: () => v.handler?.(log) }))"
-        class="log select-text text-12 py-2 px-4 my-4"
+        class="log select-text text-12 py-2 my-4"
       >
         <span class="type inline-block text-center">{{ log.type }}</span> {{ log.payload }}
       </div>
-    </div>
-  </div>
+    </template>
+  </ModalContainer>
 </template>
 
 <style lang="less" scoped>

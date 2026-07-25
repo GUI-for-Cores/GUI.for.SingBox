@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, useTemplateRef } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import { useAppSettingsStore, useAppStore, usePluginsStore } from '@/stores'
 import { debounce, message } from '@/utils'
@@ -8,8 +7,11 @@ import { getCommands } from '@/utils/command'
 
 import Input from '@/components/Input/index.vue'
 
+const props = defineProps<{
+  close: () => void
+}>()
+
 const loading = ref(false)
-const showCommandPanel = ref(false)
 const userInput = ref('')
 const selected = ref(0)
 const inputRef = useTemplateRef<typeof Input>('inputRef')
@@ -26,17 +28,18 @@ const hitCommand = computed(() =>
     : commands.value,
 )
 
-const { t } = useI18n()
 const appStore = useAppStore()
 const appSettings = useAppSettingsStore()
 const pluginsStore = usePluginsStore()
 
 const handleExecCommand = async (index: number) => {
+  if (loading.value) return
+
   loading.value = true
   try {
     await hitCommand.value[index]?.handler?.()
     userInput.value = ''
-    showCommandPanel.value = false
+    props.close()
   } catch (error: any) {
     message.error(error.message || error)
   }
@@ -45,23 +48,8 @@ const handleExecCommand = async (index: number) => {
 }
 
 const onKeydown = async (ev: KeyboardEvent) => {
-  if (((ev.ctrlKey && ev.shiftKey) || ev.metaKey) && ev.code === 'KeyP') {
-    ev.preventDefault()
-    showCommandPanel.value = true
-    nextTick(inputRef.value!.focus)
-    return
-  }
+  if (loading.value) return
 
-  if (!showCommandPanel.value || loading.value) return
-
-  if (ev.code === 'Escape') {
-    if (userInput.value) {
-      userInput.value = ''
-      return
-    }
-    showCommandPanel.value = false
-    return
-  }
   if (ev.code === 'ArrowUp') {
     selected.value = selected.value - 1 < 0 ? 0 : selected.value - 1
     commandsRefMap[hitCommand.value[selected.value]!.label]?.scrollIntoView({ block: 'nearest' })
@@ -97,12 +85,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <div
-    v-show="showCommandPanel"
-    class="fixed z-9999 left-1/2 -translate-x-1/2 shadow rounded-4 min-w-[50%]"
-    style="top: 40px; background: var(--modal-bg)"
-  >
-    <div class="p-6 shadow">
+  <ModalContainer :empty="hitCommand.length === 0">
+    <template #top>
       <Input
         ref="inputRef"
         v-model="userInput"
@@ -118,8 +102,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
           <Icon v-show="loading" icon="loading" class="rotation" />
         </template>
       </Input>
-    </div>
-    <div class="overflow-y-auto p-8" style="max-height: calc(100vh - 130px)">
+    </template>
+
+    <template #empty>
+      <Empty description="commands.noMatching" />
+    </template>
+
+    <template #body>
       <div
         v-for="(c, index) in hitCommand"
         :key="c.label"
@@ -136,9 +125,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
           <div>{{ c.cmd }}</div>
         </Card>
       </div>
-      <div v-show="hitCommand.length === 0" class="p-4 text-12">
-        {{ t('commands.noMatching') }}
-      </div>
-    </div>
-  </div>
+    </template>
+  </ModalContainer>
 </template>

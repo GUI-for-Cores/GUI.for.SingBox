@@ -30,19 +30,17 @@ defineExpose({ modalSlots })
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto">
-    <Empty v-if="logsStore.isEmpty" description="home.overview.noLogs" />
-    <template v-else>
-      <div
-        v-for="(log, i) in logsStore.kernelLogs"
-        :key="i"
-        :style="{
-          background: 'var(--card-bg)',
-        }"
-        class="text-12 my-4 py-2 px-4"
-      >
-        {{ log }}
-      </div>
-    </template>
-  </div>
+  <Empty v-if="logsStore.isEmpty" description="home.overview.noLogs" />
+  <template v-else>
+    <div
+      v-for="(log, i) in logsStore.kernelLogs"
+      :key="i"
+      :style="{
+        background: 'var(--card-bg)',
+      }"
+      class="text-12 my-4 py-2 px-4"
+    >
+      {{ log }}
+    </div>
+  </template>
 </template>
