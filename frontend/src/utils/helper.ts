@@ -82,11 +82,7 @@ export const GrantTUNPermission = async (path: string) => {
     const command = `chown root:admin "${absPath}"; chmod +sx "${absPath}"`
     await RunWithOsaScript(command, [], { admin: true, wait: true })
   } else if (os === OS.Linux) {
-    await Exec('pkexec', [
-      'setcap',
-      'cap_net_bind_service,cap_net_admin,cap_dac_override=+ep',
-      absPath,
-    ])
+    await Exec('pkexec', ['setcap', 'cap_net_admin,cap_net_raw,cap_net_bind_service=ep', absPath])
   }
 }
 
