@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   getProxies,
@@ -233,6 +234,8 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     proxies.value = b
   }
 
+  const { t } = useI18n()
+
   /* Bridge API */
   const corePid = ref(-1)
   const running = ref(false)
@@ -282,9 +285,13 @@ export const useKernelApiStore = defineStore('kernelApi', () => {
     while (!stopped) {
       const ok = await probeApiAvailability().catch(() => false)
       if (ok) break
-      if (stopped) throw 'Startup failed. Check logs for details.'
       await sleep(500)
     }
+
+    if (stopped) {
+      throw t('kernel.startupFailed')
+    }
+
     return pid
   }
 
