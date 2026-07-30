@@ -103,9 +103,6 @@ if (envStore.env.os === OS.Windows) {
     <div class="px-8 py-12 flex items-center justify-between">
       <div class="text-16 font-bold">
         {{ $t('settings.startup.name') }}
-        <span v-platform="[OS.Windows]" class="font-normal text-12">
-          ({{ $t('settings.needAdmin') }})
-        </span>
       </div>
       <div class="flex items-center">
         <Radio
@@ -124,7 +121,6 @@ if (envStore.env.os === OS.Windows) {
     >
       <div class="text-16 font-bold">
         {{ $t('settings.startup.startupDelay') }}
-        <span class="font-normal text-12">({{ $t('settings.needAdmin') }})</span>
       </div>
       <Input
         :model-value="appSettings.app.startupDelay"
