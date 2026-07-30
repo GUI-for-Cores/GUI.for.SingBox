@@ -26,8 +26,15 @@ const handleCancel = inject('cancel') as any
 watch(keywords, () => (currentPage.value = 1))
 
 const filteredList = computed(() => {
-  if (!keywords.value) return rulesetsStore.rulesetHub.list
-  return rulesetsStore.rulesetHub.list.filter((ruleset) => ruleset.name.includes(keywords.value))
+  const tokens = keywords.value.trim().split(/\s+/).filter(Boolean)
+  if (tokens.length === 0) return rulesetsStore.rulesetHub.list
+  const lowered = tokens.map((t) => t.toLocaleLowerCase())
+  return rulesetsStore.rulesetHub.list.filter((ruleset) => {
+    const fields = [ruleset.name, ruleset.type, ruleset.description].map((f) =>
+      f?.toLocaleLowerCase(),
+    )
+    return lowered.every((token) => fields.some((f) => f?.includes(token)))
+  })
 })
 
 const currentList = computed(() => {
