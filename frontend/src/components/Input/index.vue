@@ -46,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits(['change', 'update:modelValue', 'submit'])
 
 const showEdit = ref(false)
+const isComposing = ref(false)
 const inputRef = useTemplateRef('inputRef')
 const innerClearable = computed(
   () => props.clearable && props.type !== 'code' && props.modelValue && !props.disabled,
@@ -71,12 +72,32 @@ const validate = (val: string | number) => {
   return val
 }
 
-const onInput = debounce((e: any) => {
+const emitInput = debounce((e: any) => {
   const val = validate(e.target.value)
   e.target.value = val
   emits('update:modelValue', val)
   emits('change', val)
 }, props.delay)
+
+const onInput = (e: any) => {
+  if (isComposing.value || e.isComposing) return
+  emitInput(e)
+}
+
+const onCompositionStart = () => {
+  isComposing.value = true
+  emitInput.cancel()
+}
+
+const onCompositionEnd = (e: CompositionEvent) => {
+  isComposing.value = false
+  emitInput(e)
+}
+
+const onKeydownEnter = (e: KeyboardEvent) => {
+  if (isComposing.value || e.isComposing || e.keyCode === 229) return
+  nextTick(() => inputRef.value?.blur())
+}
 
 const handleClear = () => {
   const val = props.type === 'number' ? Math.min(props.min || 0, 0) : ''
@@ -163,8 +184,10 @@ defineExpose({
         autocomplete="off"
         class="flex-1 inline-block py-6 outline-none border-0 bg-transparent w-0"
         @input="onInput"
+        @compositionstart="onCompositionStart"
+        @compositionend="onCompositionEnd"
         @blur="onSubmit"
-        @keydown.enter="() => nextTick(() => inputRef?.blur())"
+        @keydown.enter="onKeydownEnter"
         @keydown.esc.stop.prevent="inputRef?.blur"
       />
       <Button
