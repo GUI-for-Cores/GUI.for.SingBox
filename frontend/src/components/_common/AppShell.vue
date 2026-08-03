@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 
-import { NavigationBar, TitleBar } from '@/components'
+import NavigationBar from './NavigationBar.vue'
+import TitleBar from './TitleBar.vue'
 
 const route = useRoute()
 </script>

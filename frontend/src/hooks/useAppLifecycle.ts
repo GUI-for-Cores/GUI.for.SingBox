@@ -4,7 +4,7 @@ import { EventsOn, WindowHide } from '@/bridge'
 import * as Stores from '@/stores'
 import { exitApp, message, modal, sampleID } from '@/utils'
 
-import { CommandView } from '@/components'
+import CommandView from '@/components/_common/CommandView.vue'
 
 export const useAppLifecycle = () => {
   const appStore = Stores.useAppStore()
