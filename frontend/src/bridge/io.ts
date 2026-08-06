@@ -6,7 +6,11 @@ interface IOOptions {
 }
 
 export const WriteFile = async (path: string, content: string, options: IOOptions = {}) => {
-  const { flag, data } = await Bridge.WriteFile(path, content, { Mode: 'Text', Range: '', ...options })
+  const { flag, data } = await Bridge.WriteFile(path, content, {
+    Mode: 'Text',
+    Range: '',
+    ...options,
+  })
   if (!flag) {
     throw data
   }

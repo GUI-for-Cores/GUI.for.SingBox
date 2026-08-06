@@ -24,7 +24,15 @@ import {
 import { DefaultInboundMixed } from '@/constant/profile'
 import { Branch } from '@/enums/app'
 import { Inbound, RulesetType, TunStack } from '@/enums/kernel'
-import { useAppSettingsStore, useProfilesStore, useLogsStore, useEnvStore, usePluginsStore, useSubscribesStore, useRulesetsStore } from '@/stores'
+import {
+  useAppSettingsStore,
+  useProfilesStore,
+  useLogsStore,
+  useEnvStore,
+  usePluginsStore,
+  useSubscribesStore,
+  useRulesetsStore,
+} from '@/stores'
 import {
   generateConfigFile,
   updateTrayAndMenus,

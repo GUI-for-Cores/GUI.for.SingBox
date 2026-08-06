@@ -10,7 +10,14 @@ import { ColorOptions, ThemeOptions } from '@/constant/app'
 import { ModeOptions } from '@/constant/kernel'
 import { OS } from '@/enums/app'
 import i18n from '@/lang'
-import { useAppSettingsStore, useKernelApiStore, useEnvStore, usePluginsStore, useAppStore, useProfilesStore } from '@/stores'
+import {
+  useAppSettingsStore,
+  useKernelApiStore,
+  useEnvStore,
+  usePluginsStore,
+  useAppStore,
+  useProfilesStore,
+} from '@/stores'
 import {
   debounce,
   exitApp,

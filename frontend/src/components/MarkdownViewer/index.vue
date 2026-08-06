@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Marked, type Token, type Tokens } from 'marked'
-import { defineComponent, h, onBeforeUnmount, onMounted, shallowRef, watch, type VNodeChild } from 'vue'
+import {
+  defineComponent,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  shallowRef,
+  watch,
+  type VNodeChild,
+} from 'vue'
 
 import { BrowserOpenURL } from '@/bridge'
 import { APP_TITLE, APP_VERSION } from '@/utils'
@@ -127,15 +135,18 @@ const renderBlockToken = (token: Token, key: string): VNodeChild | VNodeChild[] 
     }
     case 'heading': {
       const headingToken = token as Tokens.Heading
-      return h(
-        `h${headingToken.depth}`,
-        { key, style: { color: 'var(--primary-color)' } },
-        ['# ', ...renderInlineTokens(headingToken.tokens, key)],
-      )
+      return h(`h${headingToken.depth}`, { key, style: { color: 'var(--primary-color)' } }, [
+        '# ',
+        ...renderInlineTokens(headingToken.tokens, key),
+      ])
     }
     case 'blockquote': {
       const blockquoteToken = token as Tokens.Blockquote
-      return h('div', { key, style: blockquoteStyle }, renderBlockTokens(blockquoteToken.tokens, key))
+      return h(
+        'div',
+        { key, style: blockquoteStyle },
+        renderBlockTokens(blockquoteToken.tokens, key),
+      )
     }
     case 'list': {
       const listToken = token as Tokens.List
@@ -208,7 +219,10 @@ const renderTable = (token: Tokens.Table, key: string) => {
   const dataSource = token.rows.map((row, rowIndex) => {
     const record: Record<string, any> = { id: `${key}-row-${rowIndex}` }
     row.forEach((cell, cellIndex) => {
-      record[`col_${cellIndex}`] = renderInlineTokens(cell.tokens, `${key}-${rowIndex}-${cellIndex}`)
+      record[`col_${cellIndex}`] = renderInlineTokens(
+        cell.tokens,
+        `${key}-${rowIndex}-${cellIndex}`,
+      )
     })
     return record
   })
