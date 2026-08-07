@@ -151,7 +151,7 @@ const handleUpdateSubs = async () => {
 const handleEditProxies = (id: string, editor = false) => {
   const sub = subscribeStore.getSubscribeById(id)
   if (sub) {
-    const m = modal({ title: sub.name, height: '90', width: '90' })
+    const m = modal({ title: sub.name, height: '90', width: '90', px: 0, py: 0 })
     m.setContent(editor ? ProxiesEditor : ProxiesView, { sub }).open()
   }
 }
