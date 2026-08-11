@@ -78,7 +78,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       :style="{
         color: kernelApiStore.running ? 'var(--primary-color)' : 'var(--color)',
       }"
-      class="app-titlebar__brand font-bold w-full h-full flex items-center duration-200"
+      class="app-titlebar__brand font-bold w-full h-full flex items-center gap-4 duration-200"
       @dblclick="WindowToggleMaximise"
     >
       <span class="app-titlebar__name">{{ APP_TITLE }}</span>

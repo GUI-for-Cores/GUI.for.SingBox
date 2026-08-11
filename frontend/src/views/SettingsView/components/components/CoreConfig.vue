@@ -78,49 +78,53 @@ defineExpose({ modalSlots })
   <div>
     <Tabs v-model:active-key="activeKey" :items="tabs">
       <template #env>
-        <Empty v-if="Object.keys(model.env).length === 0" />
-        <Card v-else :title="t('common.preview')">
-          <div class="flex flex-col gap-4">
-            <div
-              v-for="[key, value] in Object.entries(model.env)"
-              :key="key"
-              class="flex items-center"
-            >
-              <Tag class="w-[25%] self-stretch">
-                <div
-                  class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
-                >
-                  {{ key }}
-                </div>
-              </Tag>
-              :
-              <Tag class="w-[75%] self-stretch">
-                <div
-                  class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
-                >
-                  {{ processMagicVariables(value) }}
-                </div>
-              </Tag>
+        <div class="flex flex-col">
+          <Empty v-if="Object.keys(model.env).length === 0" />
+          <Card v-else :title="t('common.preview')">
+            <div class="flex flex-col gap-4">
+              <div
+                v-for="[key, value] in Object.entries(model.env)"
+                :key="key"
+                class="flex items-center"
+              >
+                <Tag class="w-[25%] self-stretch">
+                  <div
+                    class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
+                  >
+                    {{ key }}
+                  </div>
+                </Tag>
+                :
+                <Tag class="w-[75%] self-stretch">
+                  <div
+                    class="h-full flex items-center justify-center py-2 break-all whitespace-pre-wrap"
+                  >
+                    {{ processMagicVariables(value) }}
+                  </div>
+                </Tag>
+              </div>
             </div>
-          </div>
-        </Card>
-        <KeyValueEditor v-model="model.env" class="mt-16" />
+          </Card>
+          <KeyValueEditor v-model="model.env" class="mt-16" />
+        </div>
       </template>
 
       <template #args>
-        <Empty v-if="model.args.length === 0" />
-        <Card v-else :title="t('common.preview')">
-          <div v-draggable="[model.args, DraggableOptions]" class="flex flex-wrap items-center">
-            <div v-for="item in model.args" :key="item">
-              <Tag size="small">
-                <div class="py-2 break-all whitespace-pre-wrap">
-                  {{ processMagicVariables(item) }}
-                </div>
-              </Tag>
+        <div class="flex flex-col">
+          <Empty v-if="model.args.length === 0" />
+          <Card v-else :title="t('common.preview')">
+            <div v-draggable="[model.args, DraggableOptions]" class="flex flex-wrap items-center">
+              <div v-for="item in model.args" :key="item">
+                <Tag size="small">
+                  <div class="py-2 break-all whitespace-pre-wrap">
+                    {{ processMagicVariables(item) }}
+                  </div>
+                </Tag>
+              </div>
             </div>
-          </div>
-        </Card>
-        <InputList v-model="model.args" class="mt-16" />
+          </Card>
+          <InputList v-model="model.args" class="mt-16" />
+        </div>
       </template>
     </Tabs>
   </div>
