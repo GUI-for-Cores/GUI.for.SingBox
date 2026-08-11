@@ -116,7 +116,15 @@ jobs:
 
   Build-Linux:
     needs: Build-Frontend
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-26.04-arm
+    runs-on: ${{ matrix.runner }}
     env:
       APP_NAME: GUI.for.SingBox
     steps:
@@ -149,11 +157,11 @@ jobs:
             cd ../..
           }
 
-          build_and_pack amd64
+          build_and_pack ${{ matrix.arch }}
 
       - uses: actions/upload-artifact@v6
         with:
-          name: linux-builds
+          name: linux-build-${{ matrix.arch }}
           path: build/bin/*.zip
 
   Release:
