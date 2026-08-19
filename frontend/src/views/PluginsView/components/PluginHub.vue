@@ -149,7 +149,7 @@ if (pluginsStore.pluginHub.length === 0) {
               <div class="text-14 font-bold">{{ plugin.name }}</div>
             </template>
             <div class="flex items-center">
-              <div v-tips="plugin.description" class="flex-1 line-clamp-1 h-full text-10">
+              <div v-tips="plugin.description" class="flex-1 line-clamp-1 h-full text-12">
                 {{ plugin.description }}
               </div>
               <Button v-if="loadingSet.has(plugin.id)" loading type="text" size="small" />
