@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"embed"
-	"guiforcores/bridge"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
+
+	"guiforcores/bridge"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -26,6 +30,18 @@ func main() {
 	app := bridge.CreateApp(assets)
 
 	trayStart, trayEnd := bridge.CreateTray(app, icon)
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-sigChan
+
+		app.ExitApp()
+
+		time.Sleep(1500 * time.Millisecond)
+		os.Exit(0)
+	}()
 
 	// Create application with options
 	err := wails.Run(&options.App{
