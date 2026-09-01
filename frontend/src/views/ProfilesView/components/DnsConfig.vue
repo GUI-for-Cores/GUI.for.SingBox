@@ -56,10 +56,6 @@ defineExpose({ handleAdd })
         <Switch v-model="model.disable_expire" />
       </div>
       <div class="form-item">
-        {{ t('kernel.dns.independent_cache') }}
-        <Switch v-model="model.independent_cache" />
-      </div>
-      <div class="form-item">
         {{ t('kernel.dns.final') }}
         <Select v-model="model.final" :options="serversOptions" />
       </div>

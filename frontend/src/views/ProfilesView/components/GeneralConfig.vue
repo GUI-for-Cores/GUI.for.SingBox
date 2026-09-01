@@ -113,8 +113,8 @@ const [showMore, toggleMore] = useBool(false)
           <Switch v-model="model.experimental.cache_file.store_fakeip" />
         </div>
         <div class="form-item">
-          {{ t('kernel.cache_file.store_rdrc') }}
-          <Switch v-model="model.experimental.cache_file.store_rdrc" />
+          {{ t('kernel.cache_file.store_dns') }}
+          <Switch v-model="model.experimental.cache_file.store_dns" />
         </div>
       </template>
     </div>

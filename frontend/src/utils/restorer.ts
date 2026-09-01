@@ -57,6 +57,15 @@ export const restoreProfile = (
   const OutboundsIds = buildTagIdMapping('out-', config.outbounds)
   const RouteRuleSetIds = buildTagIdMapping('ruleset-', config.route?.rule_set)
   const DnsServersIds = buildTagIdMapping('dns-', config.dns?.servers)
+  const HttpClientOutboundIds = (config.http_clients || []).reduce(
+    (mapping: Recordable<string>, client: Recordable) => {
+      mapping[client.tag] = OutboundsIds[client.detour] || ''
+      return mapping
+    },
+    {},
+  )
+  const defaultHttpClientTag =
+    config.route?.default_http_client || config.http_clients?.[0]?.tag || ''
 
   return {
     id: profile?.id || sampleID(),
@@ -71,7 +80,11 @@ export const restoreProfile = (
       subscriptionIds || [],
     ),
     route: {
-      rule_set: restoreRouteRuleset(config.route?.rule_set || [], RouteRuleSetIds, OutboundsIds),
+      rule_set: restoreRouteRuleset(
+        config.route?.rule_set || [],
+        RouteRuleSetIds,
+        HttpClientOutboundIds,
+      ),
       rules: restoreRouteRules(
         config.route?.rules || [],
         InboundsIds,
@@ -84,6 +97,7 @@ export const restoreProfile = (
       find_process: config.route?.find_process ?? template.route.find_process,
       default_interface: config.route?.default_interface ?? template.route.default_interface,
       final: OutboundsIds[config.route?.final] ?? template.route.final,
+      default_http_client: HttpClientOutboundIds[defaultHttpClientTag] || '',
       default_domain_resolver: {
         server:
           DnsServersIds[config.route?.default_domain_resolver?.server] ??
@@ -96,7 +110,6 @@ export const restoreProfile = (
     dns: {
       disable_cache: config.dns?.disable_cache ?? template.dns.disable_cache,
       disable_expire: config.dns?.disable_expire ?? template.dns.disable_expire,
-      independent_cache: config.dns?.independent_cache ?? template.dns.independent_cache,
       final: DnsServersIds[config.dns?.final] ?? template.dns.final,
       strategy: config.dns?.strategy ?? template.dns.strategy,
       client_subnet: config.dns?.client_subnet ?? template.dns.client_subnet,
@@ -290,7 +303,7 @@ const restoreOutbounds = (
 const restoreRouteRuleset = (
   rulesets: Recordable[],
   RouteRuleSetIds: Recordable,
-  OutboundsIds: Recordable,
+  HttpClientOutboundIds: Recordable,
 ): App.ProfileRuleSet[] => {
   const rulesetsStore = useRulesetsStore()
   return rulesets.flatMap((raw) => {
@@ -322,8 +335,8 @@ const restoreRouteRuleset = (
       if ('url' in raw) {
         ruleset.url = raw.url
       }
-      if ('download_detour' in raw) {
-        ruleset.download_detour = OutboundsIds[raw.download_detour]
+      if (typeof raw.http_client === 'string') {
+        ruleset.http_client = HttpClientOutboundIds[raw.http_client] || ''
       }
       if ('update_interval' in raw) {
         ruleset.update_interval = raw.update_interval
