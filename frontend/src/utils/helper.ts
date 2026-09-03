@@ -86,6 +86,21 @@ export const GrantTUNPermission = async (path: string) => {
   }
 }
 
+export const PreserveCorePermissions = async (source: string, target: string) => {
+  if (useEnvStore().env.os !== OS.Darwin || !(await FileExists(source))) return
+
+  const metadata = await Exec('stat', ['-f', '%u %Op', await AbsolutePath(source)])
+  const [owner = '', mode = ''] = metadata.trim().split(/\s+/)
+  if (!/^\d+$/.test(owner) || !/^[0-7]+$/.test(mode)) {
+    throw new Error('Unable to read core permissions: ' + metadata)
+  }
+  // macOS can reject port reuse while root-owned sockets are in TIME_WAIT if the
+  // replacement core loses setuid and starts as the current user instead.
+  if (owner === '0' && (parseInt(mode, 8) & 0o4000) !== 0) {
+    await GrantTUNPermission(target).catch(() => {})
+  }
+}
+
 export const RunWithOsaScript = async (
   path: string,
   args: string[] = [],
