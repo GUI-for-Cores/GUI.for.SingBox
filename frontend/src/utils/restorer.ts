@@ -513,10 +513,11 @@ const restoreDnsRules = (
   RouteRuleSetIds: Recordable,
   DnsServersIds: Recordable,
 ): App.DnsRule[] => {
-  return rules.flatMap((raw: Recordable, i) => {
+  const dnsRules = rules.flatMap((raw: Recordable, i) => {
     const rule = Defaults.DefaultDnsRule()
     rule.id = 'rule-' + i
     rule.action = raw.action || RuleAction.Route
+    rule.match_response = raw.match_response === true ? '__true' : raw.match_response || ''
 
     const hits = supportedRuleTypes.filter((key) => key in raw)
     if (hits.length === 1) {
@@ -535,6 +536,8 @@ const restoreDnsRules = (
           disable_cache: undefined,
           strategy: undefined,
           server: undefined,
+          match_response: undefined,
+          tag: undefined,
         },
         null,
         2,
@@ -550,12 +553,12 @@ const restoreDnsRules = (
         : String(raw[rule.type])
     }
 
-    if (RuleAction.Route === raw.action) {
+    if (RuleAction.Route === raw.action || RuleAction.Evaluate === raw.action) {
       if ('server' in raw) {
         rule.server = DnsServersIds[raw.server]
       }
-      if ('strategy' in raw) {
-        rule.strategy = raw.strategy
+      if (RuleAction.Evaluate === raw.action && 'tag' in raw) {
+        rule.tag = raw.tag
       }
     } else if (RuleAction.Reject === raw.action) {
       if ('method' in raw) {
@@ -571,13 +574,14 @@ const restoreDnsRules = (
           client_subnet: undefined,
           strategy: undefined,
           server: undefined,
+          match_response: undefined,
           ...supportedRuleTypes.reduce((p, c) => ((p[c] = undefined), p), {} as Recordable),
         },
         null,
         2,
       )
     }
-    if ([RuleAction.Route, RuleAction.RouteOptions].includes(raw.action)) {
+    if ([RuleAction.Route, RuleAction.Evaluate, RuleAction.RouteOptions].includes(raw.action)) {
       if ('disable_cache' in raw) {
         rule.disable_cache = raw.disable_cache
       }
@@ -590,4 +594,14 @@ const restoreDnsRules = (
     }
     return rule
   })
+
+  dnsRules.forEach((rule) => {
+    if (rule.match_response && rule.match_response !== '__true') {
+      rule.match_response =
+        dnsRules.find((v) => v.action === RuleAction.Evaluate && v.tag === rule.match_response)
+          ?.id || ''
+    }
+  })
+
+  return dnsRules
 }

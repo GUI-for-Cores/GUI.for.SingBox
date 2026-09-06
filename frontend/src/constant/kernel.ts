@@ -85,7 +85,7 @@ export const OutboundOptions = [
   { label: 'kernel.outbounds.urltest', value: Outbound.Urltest },
 ]
 
-export const RulesTypeOptions = [
+const CommonRuleTypeOptions = [
   {
     label: 'kernel.rules.type.inbound',
     value: RuleType.Inbound,
@@ -162,16 +162,31 @@ export const RulesTypeOptions = [
     label: 'kernel.rules.type.rule_set',
     value: RuleType.RuleSet,
   },
+]
+
+export const RulesTypeOptions = CommonRuleTypeOptions.concat([
   {
     label: 'kernel.rules.type.inline',
     value: RuleType.Inline,
   },
-]
+])
 
 export const DnsRuleTypeOptions = RulesTypeOptions.concat([
+  { label: 'kernel.rules.type.ip_version', value: RuleType.IpVersion },
+  { label: 'kernel.rules.type.query_type', value: RuleType.QueryType },
+  { label: 'kernel.rules.type.query_dnssec', value: RuleType.QueryDnssec },
+  { label: 'kernel.rules.type.query_client_subnet', value: RuleType.QueryClientSubnet },
+  { label: 'kernel.rules.type.response_rcode', value: RuleType.ResponseRcode },
+  { label: 'kernel.rules.type.response_answer', value: RuleType.ResponseAnswer },
+  { label: 'kernel.rules.type.response_ns', value: RuleType.ResponseNs },
+  { label: 'kernel.rules.type.response_extra', value: RuleType.ResponseExtra },
   {
     label: 'kernel.rules.type.ip_accept_any',
     value: RuleType.IpAcceptAny,
+  },
+  {
+    label: 'kernel.rules.type.inline',
+    value: RuleType.Inline,
   },
 ])
 
@@ -235,8 +250,10 @@ export const DnsServerTypeOptions = [
 
 export const DnsRuleActionOptions = [
   { label: 'kernel.route.rules.action.route', value: RuleAction.Route },
-  { label: 'kernel.route.rules.action.route-options', value: RuleAction.RouteOptions },
+  { label: 'kernel.route.rules.action.evaluate', value: RuleAction.Evaluate },
+  { label: 'kernel.route.rules.action.respond', value: RuleAction.Respond },
   { label: 'kernel.route.rules.action.reject', value: RuleAction.Reject },
+  { label: 'kernel.route.rules.action.route-options', value: RuleAction.RouteOptions },
   { label: 'kernel.route.rules.action.predefined', value: RuleAction.Predefined },
 ]
 

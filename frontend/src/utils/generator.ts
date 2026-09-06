@@ -35,8 +35,12 @@ const _generateRule = (
     extra[rule.type] = rule.payload.split(',').map((id) => getRuleset(id))
   } else if (rule.type === RuleType.Inbound) {
     extra[rule.type] = getInbound(rule.payload)
-  } else if ([RuleType.IpIsPrivate, RuleType.IpAcceptAny].includes(rule.type as any)) {
+  } else if (
+    [RuleType.IpIsPrivate, RuleType.IpAcceptAny, RuleType.QueryDnssec].includes(rule.type as any)
+  ) {
     extra[rule.type] = rule.payload === 'true'
+  } else if (rule.type === RuleType.IpVersion) {
+    extra[rule.type] = Number(rule.payload)
   } else if (rule.type === RuleType.ClashMode) {
     extra[rule.type] = rule.payload
   } else {
@@ -44,6 +48,9 @@ const _generateRule = (
       .split(',')
       .map((val) => {
         if ([RuleType.Port, RuleType.SourcePort].includes(rule.type as any)) {
+          return Number(val)
+        }
+        if (rule.type === RuleType.QueryType && /^\d+$/.test(val.trim())) {
           return Number(val)
         }
         return val
@@ -277,6 +284,7 @@ const generateDns = (
 ) => {
   const getOutbound = (id: string) => outbounds.find((v) => v.id === id)
   const getDnsServer = (id: string) => dns.servers.find((v) => v.id === id)?.tag
+  const getRuleTag = (id: string) => dns.rules.find((v) => v.id === id)?.tag
   const extra: Recordable = {}
   if (dns.strategy !== Strategy.Default) {
     extra.strategy = dns.strategy
@@ -352,21 +360,30 @@ const generateDns = (
         }
         delete extra.__is_fake_ip
       }
-      if ([RuleAction.Route, RuleAction.RouteOptions].includes(rule.action as any)) {
+      const isRoute = rule.action === RuleAction.Route
+      const isEvaluate = rule.action === RuleAction.Evaluate
+      const isRouteOptions = rule.action === RuleAction.RouteOptions
+      const isPredefined = rule.action === RuleAction.Predefined
+      const isReject = rule.action === RuleAction.Reject
+      if (isRoute || isEvaluate) {
+        extra.server = getDnsServer(rule.server)
+      }
+      if (isEvaluate) {
+        extra.tag = rule.tag
+      }
+      if (isRoute || isEvaluate || isRouteOptions) {
         rule.disable_cache && (extra.disable_cache = rule.disable_cache)
         rule.client_subnet && (extra.client_subnet = rule.client_subnet)
-        if (rule.action === RuleAction.Route) {
-          extra.server = getDnsServer(rule.server)
-          if (rule.strategy !== Strategy.Default) {
-            // extra.strategy = rule.strategy
-          }
-        }
       }
-      if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(rule.action as any)) {
+      if (isRouteOptions || isPredefined) {
         deepAssign(extra, JSON.parse(rule.server))
       }
-      if (rule.action === RuleAction.Reject) {
+      if (isReject) {
         extra.method = rule.server
+      }
+      if (rule.match_response) {
+        extra.match_response =
+          rule.match_response === '__true' ? true : getRuleTag(rule.match_response)
       }
       return extra
     }),

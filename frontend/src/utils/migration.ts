@@ -9,6 +9,18 @@ export const migrateProfiles = async (profiles: App.Profile[], save: () => Promi
         rule.enable = true
         needSync = true
       }
+      if (typeof rule.match_response === 'undefined') {
+        rule.match_response = ''
+        needSync = true
+      }
+      if (typeof rule.tag === 'undefined') {
+        rule.tag = ''
+        needSync = true
+      }
+      if ('strategy' in rule) {
+        delete rule.strategy
+        needSync = true
+      }
     })
     profile.route.rules.forEach((rule) => {
       if (typeof rule.enable === 'undefined') {

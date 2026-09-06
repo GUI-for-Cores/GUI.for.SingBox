@@ -72,6 +72,15 @@ export enum RuleType {
   ClashMode = 'clash_mode',
   RuleSet = 'rule_set',
   IpAcceptAny = 'ip_accept_any',
+  IpVersion = 'ip_version',
+  QueryType = 'query_type',
+  QueryDnssec = 'query_dnssec',
+  QueryClientSubnet = 'query_client_subnet',
+  ResponseRcode = 'response_rcode',
+  ResponseAnswer = 'response_answer',
+  ResponseNs = 'response_ns',
+  ResponseExtra = 'response_extra',
+
   // GUI
   Inline = 'inline',
   InsertionPoint = 'InsertionPoint',
@@ -106,6 +115,8 @@ export enum RuleAction {
   Sniff = 'sniff',
   Resolve = 'resolve',
   Predefined = 'predefined',
+  Evaluate = 'evaluate',
+  Respond = 'respond',
 }
 
 export enum RuleActionReject {
