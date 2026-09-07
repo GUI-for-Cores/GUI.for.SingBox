@@ -110,6 +110,16 @@ export const restoreProfile = (
     dns: {
       disable_cache: config.dns?.disable_cache ?? template.dns.disable_cache,
       disable_expire: config.dns?.disable_expire ?? template.dns.disable_expire,
+      optimistic: {
+        enabled:
+          (typeof config.dns?.optimistic === 'object'
+            ? config.dns.optimistic?.enabled
+            : config.dns?.optimistic) ?? false,
+        timeout:
+          typeof config.dns?.optimistic === 'object'
+            ? (config.dns.optimistic?.timeout ?? '3d')
+            : '3d',
+      },
       final: DnsServersIds[config.dns?.final] ?? template.dns.final,
       strategy: config.dns?.strategy ?? template.dns.strategy,
       client_subnet: config.dns?.client_subnet ?? template.dns.client_subnet,

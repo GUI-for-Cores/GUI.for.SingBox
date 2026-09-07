@@ -305,6 +305,10 @@ export default {
       disable_cache: 'Disable Cache',
       client_subnet: 'Client Subnet',
       disable_expire: 'Disable Expire',
+      optimistic: {
+        name: 'Optimistic DNS Cache',
+        timeout: 'Maximum Stale Cache Age',
+      },
       final: 'Final DNS',
       strategy: 'Strategy',
       inet4_range: 'Fake-IP Range(IPv4)',

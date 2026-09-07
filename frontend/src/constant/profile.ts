@@ -753,6 +753,10 @@ export const DefaultDns = (): App.Dns => ({
   disable_cache: false,
   disable_expire: false,
   client_subnet: '',
+  optimistic: {
+    enabled: false,
+    timeout: '3d',
+  },
   final: DefaultDnsServersIds.RemoteDns,
   strategy: Strategy.Default,
 })

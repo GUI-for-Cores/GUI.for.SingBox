@@ -305,6 +305,10 @@ export default {
       disable_cache: '禁用DNS缓存',
       client_subnet: '客户端子网',
       disable_expire: '禁用DNS缓存过期',
+      optimistic: {
+        name: '乐观DNS缓存',
+        timeout: '过期缓存最长可用时间',
+      },
       final: '回退DNS',
       strategy: '解析策略',
       inet4_range: 'Fake-IP范围(IPv4)',

@@ -59,6 +59,13 @@ export const migrateProfiles = async (profiles: App.Profile[], save: () => Promi
       delete profile.dns.independent_cache
       needSync = true
     }
+    if (typeof profile.dns.optimistic === 'undefined') {
+      profile.dns.optimistic = {
+        enabled: false,
+        timeout: '3d',
+      }
+      needSync = true
+    }
     const store_rdrc = !!(profile.experimental.cache_file as any).store_rdrc
     if (typeof profile.experimental.cache_file.store_dns === 'undefined') {
       profile.experimental.cache_file.store_dns = store_rdrc

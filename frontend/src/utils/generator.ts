@@ -389,6 +389,7 @@ const generateDns = (
     }),
     disable_cache: dns.disable_cache,
     disable_expire: dns.disable_expire,
+    optimistic: dns.optimistic,
     final: getDnsServer(dns.final),
     ...extra,
   }
