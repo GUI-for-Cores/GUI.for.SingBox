@@ -46,8 +46,8 @@ func (a *App) UpdateTrayMenus(menus []MenuItem) {
 
 func (a *App) UpdateTrayAndMenus(tray TrayContent, menus []MenuItem) {
 	log.Printf("UpdateTrayAndMenus")
-	updateTray(a, tray)
 	updateTrayMenus(a, menus)
+	updateTray(a, tray)
 }
 
 func createMenuItem(menu MenuItem, a *App, parent *systray.MenuItem) {
