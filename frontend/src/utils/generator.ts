@@ -460,6 +460,12 @@ export const generateConfig = async (
   // adapt to stable branch
   if (enableStableConfigCompat) {
     _adaptToStableBranch(config)
+  } else {
+    config.inbounds?.forEach((v: Recordable) => {
+      if (v.type === Inbound.Tun) {
+        delete v.stack
+      }
+    })
   }
 
   // step 2
