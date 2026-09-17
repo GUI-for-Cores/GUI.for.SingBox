@@ -64,6 +64,19 @@ export const useAppStore = defineStore('app', () => {
     }[]
   >([])
 
+  /* Side-by-side modal tabs */
+  const modalTabs = ref<
+    {
+      id: string
+      title: () => string
+      activate: () => void
+      close: () => void
+    }[]
+  >([])
+  const activeModalTab = ref('')
+  const modalSideBySide = ref(false)
+  const modalSplitActive = ref(false)
+
   /* i18n */
   const localesLoading = ref(false)
   const locales = ref<{ label: string; value: string }[]>([])
@@ -243,6 +256,10 @@ export const useAppStore = defineStore('app', () => {
     tipsShow,
     tipsMessage,
     tipsPosition,
+    modalTabs,
+    activeModalTab,
+    modalSideBySide,
+    modalSplitActive,
     modalStack,
     modalMinimized,
     modalZIndexCounter,

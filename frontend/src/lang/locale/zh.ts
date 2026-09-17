@@ -724,6 +724,7 @@ export default {
     contentProtection: '窗口内容保护',
     contentProtectionTips: '防止屏幕录制/共享软件捕获窗口内容(重启生效)',
     rollingRelease: '启用滚动发行',
+    debugModalSideBySide: '使用左右标签布局',
     debugOutline: '组件轮廓',
     debugNoAnimation: '禁用动画',
     debugNoRounded: '禁用圆角',

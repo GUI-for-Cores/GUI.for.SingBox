@@ -41,7 +41,11 @@ const closeWindow = async () => {
 const menus: App.Menu[] = [
   {
     label: 'titlebar.resetSize',
-    handler: () => WindowSetSize(800, 540),
+    handler: () => {
+      if (!appStore.modalSplitActive) {
+        WindowSetSize(800, 540)
+      }
+    },
   },
   {
     label: 'titlebar.reload',

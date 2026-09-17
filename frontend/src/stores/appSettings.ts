@@ -9,6 +9,11 @@ import {
   WindowSetSystemDefaultTheme,
   WindowIsMaximised,
   WindowIsMinimised,
+  WindowGetSize,
+  WindowGetPosition,
+  WindowSetPosition,
+  WindowSetSize,
+  WindowIsFullscreen,
 } from '@/bridge'
 import {
   Colors,
@@ -103,6 +108,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     addPluginToMenu: false,
     addGroupToMenu: false,
     rollingRelease: true,
+    debugModalSideBySide: false,
     debugOutline: false,
     debugNoAnimation: false,
     debugNoRounded: false,
@@ -176,6 +182,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
     if (settings.debugUsePointer === undefined) {
       settings.debugUsePointer = false
+    }
+    if (settings.debugModalSideBySide === undefined) {
+      settings.debugModalSideBySide = false
     }
 
     app.value = settings
@@ -280,10 +289,60 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   }
   watch(themeMode, setAppTheme, { immediate: true })
 
+  /* Apply ModalLayout */
+  watch(
+    () => app.value.debugModalSideBySide,
+    (enabled) => {
+      appStore.modalSideBySide = enabled
+    },
+    { immediate: true },
+  )
+
+  let originalModalSize: { w: number; h: number } | undefined
+  let resizeQueue = Promise.resolve()
+
+  watch(
+    () => appStore.modalSideBySide && appStore.modalTabs.length > 0,
+    (split) => {
+      resizeQueue = resizeQueue.then(async () => {
+        if (split === appStore.modalSplitActive) return
+        try {
+          const [maximized, fullscreen] = await Promise.all([
+            WindowIsMaximised(),
+            WindowIsFullscreen(),
+          ])
+          if (split) {
+            const size = await WindowGetSize()
+            const availableWidth = window.screen.availWidth
+            if (!maximized && !fullscreen) {
+              const position = await WindowGetPosition()
+              originalModalSize = size
+              const width = Math.min(size.w * 2, availableWidth)
+              const left = (window.screen as Screen & { availLeft?: number }).availLeft ?? 0
+              WindowSetPosition(
+                Math.max(left, Math.min(position.x, left + availableWidth - width)),
+                position.y,
+              )
+              WindowSetSize(width, size.h)
+            }
+          } else if (originalModalSize && !maximized && !fullscreen) {
+            WindowSetSize(originalModalSize.w, originalModalSize.h)
+          }
+          appStore.modalSplitActive = split
+          document.body.setAttribute('feature-modal-side-by-side', String(split))
+          if (!split) originalModalSize = undefined
+        } catch (error) {
+          message.error(error)
+        }
+      })
+    },
+  )
+
   /* Apply WindowSize */
   const onWindowSizeChange = debounce(async () => {
+    if (appStore.modalSplitActive) return
     const [isMinimised, isMaximised] = await Promise.all([WindowIsMinimised(), WindowIsMaximised()])
-    if (!isMinimised && !isMaximised) {
+    if (!isMinimised && !isMaximised && !appStore.modalSplitActive) {
       const w = document.documentElement.clientWidth
       const h = document.documentElement.clientHeight
       applyAppSettings.windowSize(w, h)

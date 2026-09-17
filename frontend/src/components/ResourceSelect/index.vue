@@ -118,6 +118,7 @@ const open = () => {
     {
       title: modalTitle.value,
       submit: false,
+      sideTab: false,
       afterClose: () => {
         emit('submit', model.value, getItems())
         m.destroy()

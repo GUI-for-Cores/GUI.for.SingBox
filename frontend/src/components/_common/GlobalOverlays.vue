@@ -42,6 +42,7 @@ const minimizeAll = () => {
 
   <div
     v-if="appStore.modalMinimized.length || kernelApiStore.needRestart || kernelApiStore.restarting"
+    :style="appStore.modalSplitActive ? { right: 'calc(50% + 32px)' } : undefined"
     class="fixed right-32 bottom-32 flex flex-col gap-8 z-9999"
   >
     <Dropdown v-if="appStore.modalMinimized.length" placement="top">

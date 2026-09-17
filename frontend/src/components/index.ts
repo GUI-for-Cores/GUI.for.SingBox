@@ -7,6 +7,7 @@ export { default as AboutView } from './_common/AboutView.vue'
 export { default as CommandView } from './_common/CommandView.vue'
 export { default as AppShell } from './_common/AppShell.vue'
 export { default as GlobalOverlays } from './_common/GlobalOverlays.vue'
+export { default as ModalTabs } from './_common/ModalTabs.vue'
 
 const Components = import.meta.glob<Component>('./*/index.vue', {
   eager: true,
