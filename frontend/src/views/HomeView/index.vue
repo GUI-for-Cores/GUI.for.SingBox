@@ -166,7 +166,7 @@ watch(showController, (v) => {
 
       <Button
         v-show="showController"
-        class="controller-close fixed left-1/2 -translate-x-1/2 bottom-12 z-2"
+        class="controller-close absolute left-1/2 -translate-x-1/2 bottom-12 z-2"
         style="background-color: var(--card-bg)"
         type="text"
         size="small"

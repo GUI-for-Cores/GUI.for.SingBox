@@ -326,7 +326,12 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
               WindowSetSize(width, size.h)
             }
           } else if (originalModalSize && !maximized && !fullscreen) {
+            const [size, position] = await Promise.all([WindowGetSize(), WindowGetPosition()])
             WindowSetSize(originalModalSize.w, originalModalSize.h)
+            WindowSetPosition(
+              Math.round(position.x + (size.w - originalModalSize.w) / 2),
+              Math.round(position.y + (size.h - originalModalSize.h) / 2),
+            )
           }
           appStore.modalSplitActive = split
           document.body.setAttribute('feature-modal-side-by-side', String(split))
