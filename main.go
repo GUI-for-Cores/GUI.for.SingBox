@@ -77,13 +77,20 @@ func main() {
 				return bridge.Env.AppName
 			}(),
 			OnSecondInstanceLaunch: func(data options.SecondInstanceData) {
-				runtime.Show(app.Ctx)
+				app.ShowMainWindow()
 				runtime.EventsEmit(app.Ctx, "onLaunchApp", data.Args)
 			},
 		},
 		OnStartup: func(ctx context.Context) {
 			app.Ctx = ctx
 			runtime.InitializeNotifications(ctx)
+			if bridge.Env.OS == "darwin" {
+				if bridge.Config.StartHidden {
+					bridge.SetActivationPolicyAccessory()
+				} else {
+					bridge.SetActivationPolicyRegular()
+				}
+			}
 			trayStart()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
