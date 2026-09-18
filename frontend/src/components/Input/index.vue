@@ -10,7 +10,7 @@ export interface Props {
   autoSize?: boolean
   placeholder?: string
   type?: 'number' | 'text' | 'code'
-  lang?: 'yaml' | 'json' | 'javascript'
+  lang?: 'yaml' | 'json' | 'javascript' | 'css'
   size?: 'default' | 'small'
   editable?: boolean
   clearable?: boolean

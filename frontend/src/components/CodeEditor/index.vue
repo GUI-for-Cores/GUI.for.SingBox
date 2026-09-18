@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { autocompletion } from '@codemirror/autocomplete'
 import { indentWithTab } from '@codemirror/commands'
+import { css } from '@codemirror/lang-css'
 import { javascript } from '@codemirror/lang-javascript'
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 import { yaml } from '@codemirror/lang-yaml'
@@ -13,6 +14,7 @@ import { EditorView, basicSetup } from 'codemirror'
 import * as parserBabel from 'prettier/parser-babel'
 import * as parserYaml from 'prettier/parser-yaml'
 import estreePlugin from 'prettier/plugins/estree'
+import * as postcssPlugin from 'prettier/plugins/postcss'
 import * as prettier from 'prettier/standalone'
 import { watch, onUnmounted, onMounted, useTemplateRef, inject } from 'vue'
 
@@ -26,7 +28,7 @@ import { IS_IN_MODAL } from '@/components/Modal/index.vue'
 interface Props {
   modelValue?: string
   editable?: boolean
-  lang?: 'json' | 'javascript' | 'yaml'
+  lang?: 'json' | 'javascript' | 'yaml' | 'css'
   mode?: 'editor' | 'diff'
   placeholder?: string
   plugin?: Record<string, any>
@@ -80,11 +82,12 @@ const formatDoc = async (view: EditorView) => {
   const content = view.state.doc.toString()
   const cursor = view.state.selection.ranges[0]?.from || 0
   try {
-    const parser = { javascript: 'babel', yaml: 'yaml', json: 'json' }[props.lang]
+    const parser = { javascript: 'babel', yaml: 'yaml', json: 'json', css: 'css' }[props.lang]
     const plugins = {
       javascript: [parserBabel, estreePlugin],
       yaml: [parserYaml],
       json: [parserBabel, estreePlugin],
+      css: [postcssPlugin],
     }[props.lang]
     const { formatted, cursorOffset } = await prettier.formatWithCursor(content, {
       cursorOffset: cursor,
@@ -160,8 +163,8 @@ const initEditor = () => {
     // lint
     ...(props.lang === 'json' ? [linter(jsonParseLinter())] : []),
     // lang
-    ...(['javascript', 'json', 'yaml'].includes(props.lang)
-      ? [{ javascript, json, yaml }[props.lang]()]
+    ...(['javascript', 'json', 'yaml', 'css'].includes(props.lang)
+      ? [{ javascript, json, yaml, css }[props.lang]()]
       : []),
     EditorView.updateListener.of((update) => {
       update.docChanged && onChange(update.state.doc.toString())
