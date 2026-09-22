@@ -13,6 +13,8 @@ export const ExitApp = Bridge.ExitApp
 
 export const ShowMainWindow = Bridge.ShowMainWindow
 
+export const HideMainWindow = Bridge.HideMainWindow
+
 export const UpdateTray = Bridge.UpdateTray
 
 export const UpdateTrayMenus = Bridge.UpdateTrayMenus

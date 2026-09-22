@@ -54,6 +54,10 @@ export function GetSystemProxyBypass() {
   return window['go']['bridge']['App']['GetSystemProxyBypass']();
 }
 
+export function HideMainWindow() {
+  return window['go']['bridge']['App']['HideMainWindow']();
+}
+
 export function IsStartup() {
   return window['go']['bridge']['App']['IsStartup']();
 }
