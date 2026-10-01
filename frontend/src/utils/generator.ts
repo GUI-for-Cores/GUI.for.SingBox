@@ -74,26 +74,30 @@ const generateExperimental = (experimental: App.Experimental, outbounds: App.Out
 }
 
 const generateHttpClients = (route: App.Route, outbounds: App.Outbound[]) => {
-  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)?.tag
-  const defaultHttpClient = getOutbound(route.default_http_client)
-  const detours = Array.from(
-    new Set(
-      [
-        defaultHttpClient,
-        ...route.rule_set.map((ruleset) => getOutbound(ruleset.http_client)),
-      ].filter((tag): tag is string => !!tag),
-    ),
+  const getOutbound = (id: string) => outbounds.find((v) => v.id === id)
+  const defaultOutbound = getOutbound(route.default_http_client)
+
+  const selected = Array.from(
+    new Map(
+      [defaultOutbound, ...route.rule_set.map((ruleset) => getOutbound(ruleset.http_client))]
+        .filter((outbound): outbound is App.Outbound => !!outbound)
+        .map((outbound) => [outbound.tag, outbound]),
+    ).values(),
   )
 
-  const httpClients: { tag: string; detour?: string }[] = detours.map((detour) => ({
-    tag: detour,
-    detour,
+  const httpClients = selected.map((outbound) => ({
+    tag: outbound.tag,
+    ...(outbound.type === Outbound.Direct ? {} : { detour: outbound.tag }),
   }))
-  if (!defaultHttpClient) {
+
+  if (!defaultOutbound) {
     let defaultTag = 'default'
-    while (detours.includes(defaultTag)) defaultTag = `_${defaultTag}`
+    while (selected.some((outbound) => outbound.tag === defaultTag)) {
+      defaultTag = `_${defaultTag}`
+    }
     httpClients.unshift({ tag: defaultTag })
   }
+
   return httpClients
 }
 
