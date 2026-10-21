@@ -1,6 +1,6 @@
 module guiforcores
 
-go 1.27.0
+go 1.27.3
 
 require (
 	github.com/energye/systray v1.0.3
