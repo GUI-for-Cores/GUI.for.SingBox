@@ -279,9 +279,12 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
   })
   const setAppTheme = (theme: Extract<App.Theme, 'light' | 'dark'>) => {
     if (document.startViewTransition) {
-      document.startViewTransition(() => {
+      const transition = document.startViewTransition(() => {
         document.body.setAttribute('theme-mode', theme)
       })
+      transition.ready.catch(() => {})
+      transition.updateCallbackDone.catch(() => {})
+      transition.finished.catch(() => {})
     } else {
       document.body.setAttribute('theme-mode', theme)
     }
