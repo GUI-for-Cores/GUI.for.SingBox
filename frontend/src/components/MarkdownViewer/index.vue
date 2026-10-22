@@ -11,7 +11,7 @@ import {
 } from 'vue'
 
 import { BrowserOpenURL } from '@/bridge'
-import { APP_TITLE, APP_VERSION } from '@/utils'
+import { APP_TITLE, APP_VERSION, sanitizeHtml } from '@/utils'
 
 import CodeViewer from '@/components/CodeViewer/index.vue'
 import Divider from '@/components/Divider/index.vue'
@@ -43,6 +43,26 @@ const blockquoteStyle = {
 const linkStyle = {
   color: 'var(--primary-color)',
   cursor: 'pointer',
+}
+
+/**
+ * Click handler for containers holding sanitized HTML: never let <a> tags navigate
+ * the webview, and open http(s) links in the system browser instead.
+ */
+const handleExternalLinkClick = (e: MouseEvent) => {
+  const anchor = (e.target as Element | null)?.closest?.('a')
+  if (!anchor) return
+  e.preventDefault()
+  const href = anchor.getAttribute('href') || ''
+  if (/^https?:\/\//i.test(href)) BrowserOpenURL(href)
+}
+
+const renderRawHtml = (token: Tokens.HTML | Tokens.Tag, key: string) => {
+  return h(token.block ? 'div' : 'span', {
+    key,
+    innerHTML: sanitizeHtml(token.text),
+    onClick: handleExternalLinkClick,
+  })
 }
 
 const renderInlineTokens = (tokens: Token[] = [], key: string): VNodeChild[] => {
@@ -100,8 +120,7 @@ const renderInlineToken = (token: Token, key: string): VNodeChild | VNodeChild[]
       })
     }
     case 'html': {
-      const htmlToken = token as Tokens.HTML | Tokens.Tag
-      return h(htmlToken.block ? 'div' : 'span', { key, innerHTML: htmlToken.text })
+      return renderRawHtml(token as Tokens.HTML | Tokens.Tag, key)
     }
     case 'checkbox': {
       const checkboxToken = token as Tokens.Checkbox
@@ -169,8 +188,7 @@ const renderBlockToken = (token: Token, key: string): VNodeChild | VNodeChild[] 
     case 'table':
       return renderTable(token as Tokens.Table, key)
     case 'html': {
-      const htmlToken = token as Tokens.HTML | Tokens.Tag
-      return h(htmlToken.block ? 'div' : 'span', { key, innerHTML: htmlToken.text })
+      return renderRawHtml(token as Tokens.HTML | Tokens.Tag, key)
     }
     case 'text': {
       const textToken = token as Tokens.Text

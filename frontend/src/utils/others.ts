@@ -1,3 +1,4 @@
+import DOMPurify, { type Config } from 'dompurify'
 import { stringify } from 'yaml'
 
 import { OS } from '@/enums/app'
@@ -502,4 +503,40 @@ export const buildSmartRegExp = (pattern: string, flags = '') => {
 
   regexCache.set(key, r)
   return r
+}
+
+/**
+ * Default policy for rendering untrusted HTML (subscriptions, remote changelogs, plugins).
+ * The webview can call window.go bindings, so anything that can run script, submit data
+ * or change the document base must be removed.
+ */
+export const HTML_SANITIZE_CONFIG: Config = {
+  USE_PROFILES: { html: true },
+  FORBID_TAGS: [
+    'style',
+    'script',
+    'iframe',
+    'frame',
+    'frameset',
+    'object',
+    'embed',
+    'form',
+    'input',
+    'button',
+    'textarea',
+    'select',
+    'option',
+    'link',
+    'meta',
+    'base',
+  ],
+  FORBID_ATTR: ['srcset', 'action', 'formaction', 'xlink:href'],
+  ALLOW_DATA_ATTR: false,
+}
+
+/**
+ * Sanitize an HTML string before assigning it to innerHTML / v-html.
+ */
+export const sanitizeHtml = (html: string, config: Config = HTML_SANITIZE_CONFIG): string => {
+  return DOMPurify.sanitize(html, config)
 }

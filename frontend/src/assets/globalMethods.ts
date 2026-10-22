@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify'
 import * as Vue from 'vue'
 import { stringify, parse } from 'yaml'
 
@@ -16,6 +17,7 @@ window.Plugins = {
     parse,
     stringify,
   },
+  DOMPurify,
 }
 
 window.Vue = Vue

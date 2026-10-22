@@ -27,6 +27,7 @@
     "@codemirror/view": "^6.43.15",
     "codemirror": "^6.0.2",
     "croner": "10.0.1",
+    "dompurify": "^3.4.17",
     "marked": "^18.1.1",
     "pinia": "^4.1.0",
     "prettier": "^3.9.10",
