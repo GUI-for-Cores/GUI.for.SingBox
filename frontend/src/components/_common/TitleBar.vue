@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import logo from '@/assets/logo'
 import {
   WindowSetAlwaysOnTop,
-  WindowHide,
+  HideMainWindow,
   WindowMinimise,
   WindowSetSize,
   WindowToggleMaximise,
@@ -34,7 +34,7 @@ const closeWindow = async () => {
   if (appSettingsStore.app.exitOnClose) {
     exitApp()
   } else {
-    WindowHide()
+    HideMainWindow()
   }
 }
 

@@ -1,6 +1,6 @@
 import { onUnmounted } from 'vue'
 
-import { EventsOn, WindowHide } from '@/bridge'
+import { EventsOn, HideMainWindow } from '@/bridge'
 import * as Stores from '@/stores'
 import { exitApp, message, modal, sampleID } from '@/utils'
 
@@ -46,7 +46,7 @@ export const useAppLifecycle = () => {
       return
     }
 
-    WindowHide()
+    HideMainWindow()
   })
 
   const offExitApp = EventsOn('onExitApp', () => exitApp())
