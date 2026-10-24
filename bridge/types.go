@@ -92,6 +92,7 @@ type AppConfig struct {
 	Height            int  `yaml:"height"`
 	MultipleInstance  bool `yaml:"multipleInstance"`
 	RollingRelease    bool `yaml:"rollingRelease" default:"true"`
+	SystemTitleBar    bool `yaml:"systemTitleBar"`
 	StartHidden       bool
 }
 

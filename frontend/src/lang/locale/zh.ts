@@ -661,6 +661,7 @@ export default {
       secondary: '辅助色',
     },
     fontFamily: '字体',
+    systemTitleBar: '使用系统标题栏和边框',
     resetFont: '重置字体',
     appFolder: {
       name: '应用程序文件夹',
