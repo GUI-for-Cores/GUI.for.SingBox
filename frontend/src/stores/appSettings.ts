@@ -118,7 +118,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     pages: ['Overview', 'Profiles', 'Subscriptions', 'Plugins'],
   })
 
-  const systemTitleBar = ref(false)
+  const systemTitleBarOnStartup = ref(false)
 
   const saveAppSettings = debounce((config: string) => {
     WriteFile(UserFilePath, config)
@@ -193,7 +193,7 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     settings.systemTitleBar ??= false
 
     app.value = settings
-    systemTitleBar.value = settings.systemTitleBar
+    systemTitleBarOnStartup.value = settings.systemTitleBar
     latestUserSettings = stringify(app.value)
   }
 
@@ -397,5 +397,5 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     setSystemDNS,
   )
 
-  return { setupAppSettings, app, themeMode, systemTitleBar }
+  return { setupAppSettings, app, themeMode, systemTitleBarOnStartup }
 })

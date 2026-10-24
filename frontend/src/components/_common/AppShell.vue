@@ -15,7 +15,7 @@ const appSettings = useAppSettingsStore()
 <template>
   <div class="flex flex-1 min-h-0">
     <div class="app-main flex flex-col w-full">
-      <TitleBar v-if="!appSettings.systemTitleBar" />
+      <TitleBar v-if="!appSettings.systemTitleBarOnStartup" />
       <div class="app-content flex-1 overflow-y-auto flex flex-col p-8">
         <NavigationBar />
         <div
