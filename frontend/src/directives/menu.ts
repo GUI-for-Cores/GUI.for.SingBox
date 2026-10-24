@@ -21,10 +21,10 @@ const updateMenus = (el: any, binding: DirectiveBinding) => {
 }
 
 export default {
-  mounted(el: any, binding: DirectiveBinding) {
+  mounted(el, binding) {
     updateMenus(el, binding)
   },
-  updated(el: any, binding: DirectiveBinding) {
+  updated(el, binding) {
     updateMenus(el, binding)
   },
-} as Directive
+} satisfies Directive<HTMLElement, App.Menu[]>

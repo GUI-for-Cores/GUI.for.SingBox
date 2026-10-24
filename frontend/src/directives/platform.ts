@@ -1,9 +1,9 @@
-import type { Directive, DirectiveBinding } from 'vue'
+import type { Directive } from 'vue'
 
 import { useEnvStore } from '@/stores'
 
 export default {
-  mounted(el: any, binding: DirectiveBinding) {
+  mounted(el, binding) {
     const envStore = useEnvStore()
     const supports = binding.value
     if (!supports.includes(envStore.env.os)) {
@@ -15,4 +15,4 @@ export default {
     const supports = binding.value
     el.style.display = supports.includes(envStore.env.os) ? '' : 'none'
   },
-} as Directive
+} satisfies Directive<HTMLElement, App.OS[]>
