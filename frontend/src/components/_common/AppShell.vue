@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 
-import { useAppStore } from '@/stores'
+import { useAppSettingsStore, useAppStore } from '@/stores'
 
 import ModalTabs from './ModalTabs.vue'
 import NavigationBar from './NavigationBar.vue'
@@ -9,12 +9,13 @@ import TitleBar from './TitleBar.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
+const appSettings = useAppSettingsStore()
 </script>
 
 <template>
   <div class="flex flex-1 min-h-0">
     <div class="app-main flex flex-col w-full">
-      <TitleBar />
+      <TitleBar v-if="!appSettings.systemTitleBarOnStartup" />
       <div class="app-content flex-1 overflow-y-auto flex flex-col p-8">
         <NavigationBar />
         <div

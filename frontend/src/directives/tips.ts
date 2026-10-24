@@ -1,10 +1,10 @@
-import { type Directive, type DirectiveBinding } from 'vue'
+import { type Directive } from 'vue'
 
 import { useAppStore } from '@/stores'
 import { debounce } from '@/utils'
 
 export default {
-  mounted(el: HTMLElement, binding: DirectiveBinding) {
+  mounted(el, binding) {
     const appStore = useAppStore()
 
     const delay = binding.modifiers.fast ? 200 : 500
@@ -29,9 +29,9 @@ export default {
       el.dataset.showTips = 'false'
     }
   },
-  beforeUnmount(el: HTMLElement) {
+  beforeUnmount(el) {
     const appStore = useAppStore()
     appStore.tipsShow = false
     el.dataset.showTips = 'false'
   },
-} as Directive
+} satisfies Directive<HTMLElement, string>
