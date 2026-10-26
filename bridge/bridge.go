@@ -141,7 +141,14 @@ func (a *App) GetInterfaces() FlagResult {
 
 func (a *App) ShowMainWindow() {
 	log.Printf("ShowMainWindow")
+	SetActivationPolicyRegular()
 	runtime.WindowShow(a.Ctx)
+}
+
+func (a *App) HideMainWindow() {
+	log.Printf("HideMainWindow")
+	runtime.WindowHide(a.Ctx)
+	SetActivationPolicyAccessory()
 }
 
 func createMacOSSymlink() {
@@ -167,10 +174,10 @@ func createMacOSSymlink() {
 func createMacOSMenus(app *App) {
 	appMenu := app.AppMenu.AddSubmenu("App")
 	appMenu.AddText("Show", keys.CmdOrCtrl("s"), func(_ *menu.CallbackData) {
-		runtime.WindowShow(app.Ctx)
+		app.ShowMainWindow()
 	})
 	appMenu.AddText("Hide", keys.CmdOrCtrl("h"), func(_ *menu.CallbackData) {
-		runtime.WindowHide(app.Ctx)
+		app.HideMainWindow()
 	})
 	appMenu.AddSeparator()
 	appMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
