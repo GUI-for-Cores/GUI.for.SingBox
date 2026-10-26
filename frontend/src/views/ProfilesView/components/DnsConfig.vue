@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { DomainStrategyOptions } from '@/constant/kernel'
+import { DnsServer } from '@/enums/kernel'
 
 import DnsRulesConfig from './DnsRulesConfig.vue'
 import DnsServersConfig from './DnsServersConfig.vue'
@@ -17,8 +18,25 @@ defineProps<Props>()
 
 const model = defineModel<App.Dns>({ required: true })
 
-const serversOptions = computed(() =>
-  model.value.servers.map((v) => ({ label: v.tag, value: v.id })),
+const toServerOption = (server: App.DnsServerConfig) => ({
+  label: server.tag,
+  value: server.id,
+})
+
+const serversOptions = computed(() => model.value.servers.map(toServerOption))
+
+const finalServersOptions = computed(() =>
+  model.value.servers.filter((server) => server.type !== DnsServer.FakeIP).map(toServerOption),
+)
+
+watch(
+  finalServersOptions,
+  (options) => {
+    if (model.value.final && !options.some((v) => v.value === model.value.final)) {
+      model.value.final = ''
+    }
+  },
+  { immediate: true },
 )
 
 const activeKey = ref('common')
@@ -82,7 +100,7 @@ defineExpose({ handleAdd })
       </div>
       <div class="form-item">
         {{ t('kernel.dns.final') }}
-        <Select v-model="model.final" :options="serversOptions" />
+        <Select v-model="model.final" :options="finalServersOptions" />
       </div>
       <div class="form-item">
         {{ t('kernel.dns.strategy') }}
