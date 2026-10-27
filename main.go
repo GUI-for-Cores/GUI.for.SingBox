@@ -27,6 +27,8 @@ func main() {
 
 	trayStart, trayEnd := bridge.CreateTray(app, icon)
 
+	signalReady := bridge.HandleExitSignals(app)
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		MinWidth:         600,
@@ -85,6 +87,9 @@ func main() {
 			app.Ctx = ctx
 			runtime.InitializeNotifications(ctx)
 			trayStart()
+		},
+		OnDomReady: func(ctx context.Context) {
+			signalReady()
 		},
 		OnBeforeClose: func(ctx context.Context) (prevent bool) {
 			if !bridge.Env.PreventExit {
