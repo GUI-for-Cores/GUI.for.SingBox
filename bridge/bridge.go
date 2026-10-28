@@ -16,6 +16,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
 )
@@ -68,6 +69,10 @@ func CreateApp(fs embed.FS) *App {
 
 	if Env.OS == "windows" {
 		processFixedWebView2Runtime()
+	}
+
+	if Env.OS == "linux" {
+		configureLinuxWebKit()
 	}
 
 	extractEmbeddedFiles(fs)
@@ -241,6 +246,24 @@ func processFixedWebView2Runtime() {
 	Env.WebviewPath = strings.TrimSuffix(cabFile, ".cab")
 }
 
+func configureLinuxWebKit() {
+	// On Linux with WebKitGTK 2.42+/2.52+ (libwebkit2gtk-4.1) and NVIDIA proprietary
+	// drivers (or when WEBKIT_DISABLE_DMABUF_RENDERER / WEBKIT_DISABLE_COMPOSITING_MODE
+	// is set in the environment), AcceleratedBackingStore::checkRequirements() returns
+	// false and leaves WebKitWebViewBasePrivate::acceleratedBackingStore as nullptr,
+	// causing a SIGSEGV in WebKitWebViewBase when WebKitWebProcess enters
+	// AcceleratedCompositingMode. Forcing the DMABuf renderer with POSIX SHM transport
+	// avoids GBM/DMABuf driver incompatibilities while keeping acceleratedBackingStore valid.
+	os.Unsetenv("WEBKIT_DISABLE_DMABUF_RENDERER")
+	os.Unsetenv("WEBKIT_DISABLE_COMPOSITING_MODE")
+	if os.Getenv("WEBKIT_FORCE_DMABUF_RENDERER") == "" {
+		os.Setenv("WEBKIT_FORCE_DMABUF_RENDERER", "1")
+	}
+	if os.Getenv("WEBKIT_DMABUF_RENDERER_FORCE_SHM") == "" {
+		os.Setenv("WEBKIT_DMABUF_RENDERER_FORCE_SHM", "1")
+	}
+}
+
 func extractEmbeddedFiles(fs embed.FS) {
 	iconSrc := "frontend/dist/icons"
 	iconDst := "data/.cache/icons"
@@ -302,5 +325,12 @@ func loadConfig() {
 
 	if !Env.FromTaskSch {
 		Config.WindowStartState = int(options.Normal)
+	}
+
+	// In WebKitGTK 2.52+, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER (WebviewGpuPolicy = 2)
+	// disables ThreadedCompositor while DrawingAreaCoordinatedGraphics::graphicsLayerFactory()
+	// still enters AcceleratedCompositingMode, resulting in a black window.
+	if Env.OS == "linux" && Config.WebviewGpuPolicy == int(linux.WebviewGpuPolicyNever) {
+		Config.WebviewGpuPolicy = int(linux.WebviewGpuPolicyOnDemand)
 	}
 }
