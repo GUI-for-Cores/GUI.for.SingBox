@@ -22,10 +22,17 @@ var assets embed.FS
 //go:embed frontend/dist/favicon.ico
 var icon []byte
 
+//go:embed build/appicon.png
+var appIcon []byte
+
 func main() {
 	app := bridge.CreateApp(assets)
 
-	trayStart, trayEnd := bridge.CreateTray(app, icon)
+	trayIcon := icon
+	if bridge.Env.OS == "linux" {
+		trayIcon = appIcon
+	}
+	trayStart, trayEnd := bridge.CreateTray(app, trayIcon)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -60,7 +67,7 @@ func main() {
 			},
 		},
 		Linux: &linux.Options{
-			Icon:                icon,
+			Icon:                appIcon,
 			WindowIsTranslucent: false,
 			ProgramName:         bridge.Env.AppName,
 			WebviewGpuPolicy:    linux.WebviewGpuPolicy(bridge.Config.WebviewGpuPolicy),
