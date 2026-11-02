@@ -1,0 +1,38 @@
+name: Publish to WinGet
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v1.28.1). Leave empty to use the latest release."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  Publish-WinGet:
+    runs-on: ubuntu-latest
+    if: github.repository == 'GUI-for-Cores/GUI.for.SingBox'
+    steps:
+      - name: Resolve release tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          TAG="$INPUT_TAG"
+          if [ -z "$TAG" ]; then
+            TAG=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName)
+          fi
+          echo "Publishing $TAG to WinGet"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - uses: vedantmgoyal9/winget-releaser@v2
+        with:
+          identifier: Ayideyia.GUI-for-SingBox
+          release-tag: ${{ steps.tag.outputs.tag }}
+          installers-regex: '-windows-(amd64|arm64|386)\.zip$'
+          fork-user: Ayideyia
+          token: ${{ secrets.WINGET_TOKEN }}
