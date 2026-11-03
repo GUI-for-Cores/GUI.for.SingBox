@@ -1,5 +1,6 @@
 import { Request } from '@/api/request'
 import { WebSockets } from '@/api/websocket'
+import { HttpGet } from '@/bridge'
 import { useProfilesStore } from '@/stores'
 import { formatProxyHost, normalizeProxyHost } from '@/utils'
 
@@ -128,11 +129,26 @@ export const deleteConnection = (id: string) => request.delete<null>(Api.Connect
 export const useProxy = (group: string, proxy: string) => {
   return request.put<null>(Api.Proxies + '/' + group, { name: proxy })
 }
-export const getProxyDelay = (proxy: string, url: string, timeout: number) => {
-  return request.get<Record<string, number>>(Api.ProxyDelay.replace('{0}', proxy), {
-    url,
-    timeout,
+export const getProxyDelay = async (proxy: string, url: string, timeout: number, cancelId = '') => {
+  setupCoreApi('http')
+  const query = new URLSearchParams({ url, timeout: String(timeout) }).toString()
+  const path = Api.ProxyDelay.replace('{0}', proxy)
+  const headers: Record<string, string> = {}
+  if (request.bearer) {
+    headers['Authorization'] = `Bearer ${request.bearer}`
+  }
+  const { status, body } = await HttpGet<any>(`${request.base}${path}?${query}`, headers, {
+    Proxy: '',
+    Timeout: request.timeout / 1000,
+    CancelId: cancelId,
   })
+  if (status === 204) {
+    return null as unknown as Record<string, number>
+  }
+  if ([504, 401, 503].includes(status)) {
+    throw body?.message ?? body
+  }
+  return body as Record<string, number>
 }
 
 // websocket api

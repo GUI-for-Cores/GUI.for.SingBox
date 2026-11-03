@@ -3,6 +3,7 @@ import { ref, computed, onActivated } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getProxyDelay } from '@/api/kernel'
+import { HttpCancel } from '@/bridge'
 import {
   ControllerCloseModeOptions,
   DefaultCardColumns,
@@ -21,6 +22,7 @@ import {
   message,
   createAsyncPool,
   buildSmartRegExp,
+  sampleID,
 } from '@/utils'
 
 const expandedSet = ref<Set<string>>(new Set())
@@ -116,24 +118,32 @@ const handleGroupDelay = async (group: string) => {
     let index = 0
     let success = 0
     let failure = 0
+    let cancelled = false
+    const pendingRequests = new Set<string>()
 
     const delayTest = async (proxy: string) => {
       index += 1
       update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
       const _proxy = kernelApiStore.proxies[proxy]
+      const cancelId = sampleID()
+      pendingRequests.add(cancelId)
       try {
         loadingSet.value.add(proxy)
         const { delay = 0 } = await getProxyDelay(
           encodeURIComponent(proxy),
           appSettings.app.kernel.testUrl || DefaultTestURL,
           appSettings.app.kernel.testTimeout || DefaultTestTimeout,
+          cancelId,
         )
         success += 1
         _proxy && _proxy.history.push({ delay })
       } catch {
-        failure += 1
-        _proxy && _proxy.history.push({ delay: 0 })
+        if (!cancelled) {
+          failure += 1
+          _proxy && _proxy.history.push({ delay: 0 })
+        }
       }
+      pendingRequests.delete(cancelId)
       update(`Testing... ${index} / ${_group.all.length}, success: ${success} failure: ${failure}`)
       loadingSet.value.delete(proxy)
     }
@@ -149,7 +159,9 @@ const handleGroupDelay = async (group: string) => {
       destroy,
       success: msgSuccess,
     } = message.info('Testing...', 99999, () => {
+      cancelled = true
       controller.cancel()
+      pendingRequests.forEach((id) => HttpCancel(id))
       message.warn('common.canceled')
     })
     await run()
