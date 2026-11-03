@@ -35,6 +35,13 @@ export enum TunStack {
   Mixed = 'mixed',
 }
 
+export enum TunDnsMode {
+  Default = '',
+  Disabled = 'disabled',
+  Native = 'native',
+  Hijack = 'hijack',
+}
+
 export enum Network {
   Tcp = 'tcp',
   Udp = 'udp',

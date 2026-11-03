@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 import { DraggableOptions } from '@/constant/app'
-import { NetworkOptions, TunStackOptions } from '@/constant/kernel'
+import { NetworkOptions, TunDnsModeOptions, TunStackOptions } from '@/constant/kernel'
 import {
   DefaultInboundMixed,
   DefaultInboundHttp,
@@ -173,6 +173,13 @@ defineExpose({ handleAdd })
         <div class="form-item">
           {{ t('kernel.inbounds.tun.strict_route') }}
           <Switch v-model="inbound.tun.strict_route" />
+        </div>
+        <div class="form-item">
+          <div>
+            {{ t('kernel.inbounds.tun.dns_mode') }}
+            <span class="font-normal text-12">({{ t('kernel.inbounds.tun.dns_mode_tips') }})</span>
+          </div>
+          <Select v-model="inbound.tun.dns_mode" :options="TunDnsModeOptions" />
         </div>
         <div class="form-item">
           {{ t('kernel.inbounds.tun.endpoint_independent_nat') }}

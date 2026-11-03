@@ -164,6 +164,7 @@ const restoreInbounds = (inbounds: Recordable[], InboundsIds: Recordable): App.I
         route_exclude_address: raw.route_exclude_address ?? template.route_exclude_address,
         endpoint_independent_nat: raw.endpoint_independent_nat ?? template.endpoint_independent_nat,
         stack: raw.stack ?? template.stack,
+        dns_mode: raw.dns_mode ?? template.dns_mode,
       }
     }
     if (raw.type === Inbound.Direct) {

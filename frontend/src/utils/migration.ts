@@ -1,4 +1,5 @@
 import { RequestProxyMode } from '@/enums/app'
+import { Inbound, TunDnsMode } from '@/enums/kernel'
 
 export const migrateProfiles = async (profiles: App.Profile[], save: () => Promise<string>) => {
   let needSync = false
@@ -83,6 +84,16 @@ export const migrateProfiles = async (profiles: App.Profile[], save: () => Promi
       profile.route.default_http_client = ''
       needSync = true
     }
+    profile.inbounds.forEach((inbound) => {
+      if (
+        inbound.type === Inbound.Tun &&
+        inbound.tun &&
+        typeof inbound.tun.dns_mode === 'undefined'
+      ) {
+        inbound.tun.dns_mode = TunDnsMode.Default
+        needSync = true
+      }
+    })
   })
 
   if (needSync) await save()

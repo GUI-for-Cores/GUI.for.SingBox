@@ -298,6 +298,7 @@ declare namespace App {
   }
   type OutboundType = 'direct' | 'block' | 'selector' | 'urltest'
   type TunStack = 'system' | 'gvisor' | 'mixed'
+  type TunDnsMode = '' | 'disabled' | 'native' | 'hijack'
   type Network = 'tcp' | 'udp'
   type RuleSetType = 'inline' | 'local' | 'remote'
   type RuleSetFormat = 'source' | 'binary'
@@ -441,6 +442,7 @@ declare namespace App {
       route_exclude_address: string[]
       endpoint_independent_nat: boolean
       stack: TunStack
+      dns_mode: TunDnsMode
     }
   }
 

@@ -3,6 +3,7 @@ import {
   Inbound,
   Outbound,
   TunStack,
+  TunDnsMode,
   ClashMode,
   RulesetType,
   RulesetFormat,
@@ -130,6 +131,7 @@ export const DefaultInboundTun = (): NonNullable<App.Inbound['tun']> => ({
   route_exclude_address: [],
   endpoint_independent_nat: false,
   stack: TunStack.Mixed,
+  dns_mode: TunDnsMode.Default,
 })
 
 export const DefaultInbounds = (): App.Inbound[] => [

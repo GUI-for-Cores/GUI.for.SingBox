@@ -133,6 +133,8 @@ const generateInbounds = (inbounds: App.Inbound[]) => {
         route_exclude_address: inbound.tun!.route_exclude_address?.length
           ? inbound.tun!.route_exclude_address
           : undefined,
+        // sing-box 1.14.0+
+        dns_mode: inbound.tun!.dns_mode || undefined,
       }
     }
   })

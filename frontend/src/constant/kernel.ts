@@ -3,6 +3,7 @@ import {
   Inbound,
   Outbound,
   TunStack,
+  TunDnsMode,
   LogLevel,
   RuleType,
   RulesetFormat,
@@ -194,6 +195,13 @@ export const TunStackOptions = [
   { label: 'kernel.inbounds.tun.system', value: TunStack.System },
   { label: 'kernel.inbounds.tun.gvisor', value: TunStack.GVisor },
   { label: 'kernel.inbounds.tun.mixed', value: TunStack.Mixed },
+]
+
+export const TunDnsModeOptions = [
+  { label: 'kernel.inbounds.tun.dns_mode_default', value: TunDnsMode.Default },
+  { label: 'kernel.inbounds.tun.dns_mode_disabled', value: TunDnsMode.Disabled },
+  { label: 'kernel.inbounds.tun.dns_mode_native', value: TunDnsMode.Native },
+  { label: 'kernel.inbounds.tun.dns_mode_hijack', value: TunDnsMode.Hijack },
 ]
 
 export const NetworkOptions = [
