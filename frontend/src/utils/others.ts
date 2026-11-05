@@ -540,3 +540,9 @@ export const HTML_SANITIZE_CONFIG: Config = {
 export const sanitizeHtml = (html: string, config: Config = HTML_SANITIZE_CONFIG): string => {
   return DOMPurify.sanitize(html, config)
 }
+
+export const sha256 = async (text: string) => {
+  const data = new TextEncoder().encode(text)
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', data))
+  return Array.from(digest, (b) => b.toString(16).padStart(2, '0')).join('')
+}

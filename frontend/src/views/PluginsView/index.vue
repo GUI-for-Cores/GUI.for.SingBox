@@ -100,8 +100,13 @@ const handleUpdatePluginHub = async () => {
 
 const handleUpdatePlugins = async () => {
   try {
-    await pluginsStore.updatePlugins()
-    message.success('common.success')
+    const result = await pluginsStore.updatePlugins()
+    const failed = result.filter((v) => !v.ok)
+    if (failed.length) {
+      alert('common.warning', failed.map((v) => `- ${v.result}`).join('\n'), { type: 'markdown' })
+    } else {
+      message.success('common.success')
+    }
   } catch (error: any) {
     console.error('handleUpdatePlugins: ', error)
     message.error(error)

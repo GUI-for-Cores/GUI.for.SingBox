@@ -134,6 +134,7 @@ declare namespace App {
     type: 'Http' | 'File'
     url: string
     path: string
+    hash?: string
     triggers: (
       | 'on::enabled'
       | 'on::disabled'

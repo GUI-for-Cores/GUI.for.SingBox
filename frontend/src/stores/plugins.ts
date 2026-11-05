@@ -18,7 +18,10 @@ import {
   stringifyNoFolding,
   readonly,
   base64Encode,
+  sha256,
 } from '@/utils'
+
+class PluginHashMismatchError extends Error {}
 
 type PluginRuntimeCache = {
   plugin: App.Plugin
@@ -446,7 +449,16 @@ export const usePluginsStore = defineStore('plugins', () => {
     plugins.value.push(plugin)
     upsertPluginCache(plugin)
     syncPluginObservers(plugin, !plugin.disabled)
-    await _doUpdatePlugin(plugin).catch(() => {})
+    try {
+      await _doUpdatePlugin(plugin)
+    } catch (error) {
+      if (error instanceof PluginHashMismatchError) {
+        plugins.value.splice(plugins.value.indexOf(plugin), 1)
+        syncPluginObservers(plugin, false)
+        releasePluginRuntimeCache(plugin.id)
+        throw error
+      }
+    }
     await runPluginEvent(plugin.id, PluginTriggerEvent.OnInstall, [], {
       allowDisabled: true,
       allowUndefined: true,
@@ -546,8 +558,23 @@ export const usePluginsStore = defineStore('plugins', () => {
     await savePlugins()
   }
 
+  const fetchPluginCode = async (plugin: App.Plugin, hash?: string) => {
+    if (plugin.type === 'File') {
+      return ReadFile(plugin.path).catch(() => '')
+    }
+    const { status, body } = await HttpGet<string>(plugin.url)
+    if (status !== 200) {
+      throw new Error(`Failed to fetch plugin code from ${plugin.url}. Status: ${status}`)
+    }
+    if (!hash || (await sha256(body)) !== hash.toLowerCase()) {
+      throw new PluginHashMismatchError(i18n.global.t('plugins.hashMismatch'))
+    }
+    return body
+  }
+
   const _doUpdatePlugin = async (plugin: App.Plugin) => {
     let nextPlugin = plugin
+    let code: string | undefined
     const isFromPluginHub = plugin.id.startsWith('plugin-')
     if (isFromPluginHub) {
       const newPlugin = pluginHub.value.find((v) => v.id === plugin.id)
@@ -555,6 +582,8 @@ export const usePluginsStore = defineStore('plugins', () => {
 
       const [major_now, minor_now, patch_now] = (plugin.version || '').substring(1).split('.')
       const [major_new, minor_new, patch_new] = (newPlugin.version || '').substring(1).split('.')
+
+      code = await fetchPluginCode(major_now !== major_new ? newPlugin : plugin, newPlugin.hash)
 
       if (major_now !== major_new) {
         newPlugin.updating = plugin.updating
@@ -580,23 +609,12 @@ export const usePluginsStore = defineStore('plugins', () => {
         nextPlugin = newPlugin
       } else if (minor_now !== minor_new || patch_now !== patch_new) {
         plugin.version = newPlugin.version
+        plugin.hash = newPlugin.hash
         await editPlugin(plugin.id, plugin)
       }
     }
 
-    let code = ''
-
-    if (nextPlugin.type === 'File') {
-      code = await ReadFile(nextPlugin.path).catch(() => '')
-    }
-
-    if (nextPlugin.type === 'Http') {
-      const { status, body } = await HttpGet(nextPlugin.url)
-      if (status !== 200) {
-        throw new Error(`Failed to fetch plugin code from ${nextPlugin.url}. Status: ${status}`)
-      }
-      code = body
-    }
+    if (code === undefined) code = await fetchPluginCode(nextPlugin, nextPlugin.hash)
 
     if (nextPlugin.type !== 'File') {
       await WriteFile(nextPlugin.path, code)

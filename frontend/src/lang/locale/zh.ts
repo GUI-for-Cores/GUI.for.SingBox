@@ -600,6 +600,7 @@ export default {
     update: '更新列表',
     checkForUpdates: '检查更新',
     updateSuccess: '插件中心更新成功',
+    hashMismatch: '插件内容校验失败，请先更新插件中心；若已更新，请稍后再试',
     total: '插件数量为',
     removeConfiguration: '是否删除插件配置？',
     testRun: '运行测试',

@@ -601,6 +601,8 @@ export default {
     update: 'Update List',
     checkForUpdates: 'Check for updates',
     updateSuccess: 'Plugin-Hub updated successfully',
+    hashMismatch:
+      'Plugin content verification failed. Please update the Plugin-Hub first; if it is already up to date, please try again later.',
     total: 'Number of plug-ins',
     removeConfiguration: 'Do you want to remove the plugin configuration?',
     testRun: 'TestRun',
