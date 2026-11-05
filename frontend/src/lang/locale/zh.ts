@@ -547,6 +547,12 @@ export default {
     editRuleset: '编辑规则',
     addToProfile: '添加到配置',
     selectRuleType: '选择规则类型',
+    changes: {
+      title: '规则集中心变更',
+      added: '新增',
+      removed: '移除',
+      updated: '更新',
+    },
   },
   plugin: {
     trigger: '触发器',

@@ -548,6 +548,12 @@ export default {
     editRuleset: 'Edit Rules',
     addToProfile: 'Add to Profile',
     selectRuleType: 'Select Rule Type',
+    changes: {
+      title: 'Ruleset-Hub Changes',
+      added: 'Added',
+      removed: 'Removed',
+      updated: 'Updated',
+    },
   },
   plugin: {
     trigger: 'Trigger',

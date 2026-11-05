@@ -167,8 +167,12 @@ const handlePreview = async (ruleset: App.RulesetHub['list'][number], format: Ru
 
 const handleUpdatePluginHub = async () => {
   try {
-    await rulesetsStore.updateRulesetHub()
-    message.success('rulesets.updateSuccess')
+    const changes = await rulesetsStore.updateRulesetHub()
+    if (changes) {
+      alert('rulesets.changes.title', changes, { type: 'markdown' })
+    } else {
+      message.success('rulesets.updateSuccess')
+    }
   } catch (err: any) {
     message.error(err.message || err)
   }

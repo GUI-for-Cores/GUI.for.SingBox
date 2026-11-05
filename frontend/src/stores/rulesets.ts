@@ -6,6 +6,7 @@ import { ReadFile, WriteFile, CopyFile, Download, HttpGet } from '@/bridge'
 import { RulesetHubFilePath, RulesetsFilePath } from '@/constant/app'
 import { EmptyRuleSet } from '@/constant/kernel'
 import { RulesetFormat } from '@/enums/kernel'
+import i18n from '@/lang'
 import {
   asyncPool,
   stringifyNoFolding,
@@ -184,11 +185,38 @@ export const useRulesetsStore = defineStore('rulesets', () => {
   const updateRulesetHub = async () => {
     rulesetHubLoading.value = true
     try {
+      const oldHub = rulesetHub.value
       const { body } = await HttpGet<string>(
         'https://github.com/GUI-for-Cores/Ruleset-Hub/releases/download/latest/sing-full.json',
       )
       rulesetHub.value = JSON.parse(body)
       await WriteFile(RulesetHubFilePath, body)
+
+      type HubItem = App.RulesetHub['list'][number]
+      const key = (v: HubItem) => `${v.type}:${v.name}`
+      const oldMap = new Map(oldHub.list.map((v) => [key(v), v]))
+      const newIds = new Set(rulesetHub.value.list.map(key))
+      const hasOld = oldHub.list.length !== 0
+      const added = hasOld ? rulesetHub.value.list.filter((v) => !oldMap.has(key(v))) : []
+      const removed = oldHub.list.filter((v) => !newIds.has(key(v)))
+      const updated = rulesetHub.value.list.filter((v) => {
+        const old = oldMap.get(key(v))
+        return old && (old.count !== v.count || old.description !== v.description)
+      })
+
+      const { t } = i18n.global
+      const section = <T>(title: string, list: T[], fn: (v: T) => string) =>
+        list.length ? [`**${t(title)} (${list.length})**`, '', ...list.map(fn), ''] : []
+      const item = (v: HubItem) => `- ${v.name} \`${v.type}\``
+
+      return [
+        ...section('rulesets.changes.added', added, item),
+        ...section('rulesets.changes.removed', removed, item),
+        ...section('rulesets.changes.updated', updated, (v) => {
+          const old = oldMap.get(key(v))!
+          return old.count !== v.count ? `${item(v)} ${old.count} → ${v.count}` : item(v)
+        }),
+      ].join('\n')
     } finally {
       rulesetHubLoading.value = false
     }
