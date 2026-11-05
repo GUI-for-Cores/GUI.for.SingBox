@@ -636,6 +636,7 @@ export default {
     cron: 'Cron',
     notification: 'Task Completed Notification',
     cronTips: 'Seconds Minutes Hours "Day of month" Month "Day of week"',
+    validate: 'Validate',
     lastTime: 'Last Time',
     'update::subscription': 'update::subscription',
     'update::ruleset': 'update::ruleset',

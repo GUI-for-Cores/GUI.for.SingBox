@@ -113,7 +113,7 @@ const handleViewNextRuns = () => {
     const index = (i + 1).toString().padStart(2, '0')
     return index + ' - '.repeat(14) + formatDate(v.getTime(), 'YYYY/MM/DD HH:mm:ss')
   })
-  alert('Next Run Time', list.join('\n'))
+  alert('scheduledtasks.next', list.join('\n'))
 }
 
 const onNotificationChange = async (v: boolean) => {
@@ -176,9 +176,11 @@ defineExpose({ modalSlots })
       <div class="min-w-[75%]">
         <Input v-model="task.cron" :placeholder="t('scheduledtask.cronTips')" class="w-full">
           <template #suffix>
-            <Button type="primary" size="small" @click="handleValidate">Validate</Button>
+            <Button type="primary" size="small" @click="handleValidate">{{
+              t('scheduledtask.validate')
+            }}</Button>
             <Button type="primary" size="small" class="ml-4" @click="handleViewNextRuns">
-              Next Run Time
+              {{ t('scheduledtasks.next') }}
             </Button>
           </template>
         </Input>

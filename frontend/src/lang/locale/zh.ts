@@ -634,6 +634,7 @@ export default {
     cron: '表达式',
     notification: '任务完成通知',
     cronTips: '秒 分 时 日 月 星期',
+    validate: '校验',
     lastTime: '上次执行时间',
     'update::subscription': '更新订阅',
     'update::ruleset': '更新规则集',
