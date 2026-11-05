@@ -39,27 +39,15 @@ const updatePosition = () => {
   const totalSpaceBelow = window.innerHeight - triggerRect.bottom
   const totalSpaceAbove = triggerRect.top
 
-  let finalPlacement: 'top' | 'bottom'
-
-  const canPlaceBottom = totalSpaceBelow >= overlayHeight
-  const canPlaceTop = totalSpaceAbove >= overlayHeight
+  const minPreferredSpace = 80
+  let finalPlacement: 'top' | 'bottom' = props.placement
 
   if (props.placement === 'bottom') {
-    if (canPlaceBottom) {
-      finalPlacement = 'bottom'
-    } else if (canPlaceTop) {
+    if (totalSpaceBelow < minPreferredSpace && totalSpaceAbove > totalSpaceBelow) {
       finalPlacement = 'top'
-    } else {
-      finalPlacement = totalSpaceBelow > totalSpaceAbove ? 'bottom' : 'top'
     }
-  } else {
-    if (canPlaceTop) {
-      finalPlacement = 'top'
-    } else if (canPlaceBottom) {
-      finalPlacement = 'bottom'
-    } else {
-      finalPlacement = totalSpaceAbove > totalSpaceBelow ? 'top' : 'bottom'
-    }
+  } else if (totalSpaceAbove < minPreferredSpace && totalSpaceBelow > totalSpaceAbove) {
+    finalPlacement = 'bottom'
   }
 
   transformOrigin.value = finalPlacement === 'top' ? 'bottom' : 'top'

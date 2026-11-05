@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 
-import { BrowserOpenURL, Download, MakeDir, OpenDir } from '@/bridge'
+import { BrowserOpenURL, Download, MakeDir, OpenDir, RemoveFile } from '@/bridge'
 import { ColorOptions, DefaultFontFamily, LocalesFilePath, ThemeOptions } from '@/constant/app'
-import { Color, OS } from '@/enums/app'
+import { Color, Lang, OS } from '@/enums/app'
 import routes from '@/router/routes'
 import { useAppSettingsStore, useAppStore } from '@/stores'
 import { APP_LOCALES_URL, message } from '@/utils'
@@ -49,6 +49,10 @@ const localeOptions = computed(() =>
   appStore.locales.map(({ label, value }) => ({ label: remoteLocales[value] ?? label, value })),
 )
 const downloadingLocales = ref<Set<string>>(new Set())
+const isLocaleInstalled = (locale: string) =>
+  appStore.locales.some(({ value }) => value === locale)
+
+
 
 const handleDownloadLocale = async (locale: string) => {
   downloadingLocales.value.add(locale)
@@ -63,6 +67,19 @@ const handleDownloadLocale = async (locale: string) => {
     message.error(error)
   }
   downloadingLocales.value.delete(locale)
+}
+
+const handleDeleteLocale = async (locale: string) => {
+  try {
+    await RemoveFile(`${LocalesFilePath}/${locale}.json`)
+    if (appSettings.app.lang === locale) {
+      appSettings.app.lang = Lang.EN
+    }
+    await appStore.loadLocales()
+    message.success('common.success')
+  } catch (error) {
+    message.error(error)
+  }
 }
 </script>
 <template>
@@ -95,7 +112,7 @@ const handleDownloadLocale = async (locale: string) => {
       <div class="flex items-center text-16 font-bold">
         <div class="mr-4">{{ $t('settings.lang.name') }}</div>
         <Button type="text" icon="link" @click="BrowserOpenURL(APP_LOCALES_URL)" />
-        <Dropdown>
+        <Dropdown placement="top">
           <Button type="text" icon="download" />
           <template #overlay>
             <div class="flex flex-col gap-4 min-w-64 p-4">
@@ -105,22 +122,31 @@ const handleDownloadLocale = async (locale: string) => {
                 class="flex items-center justify-between gap-8 pl-8 text-14 font-normal"
               >
                 <span>{{ label }}</span>
-                <Button
-                  v-if="appStore.locales.some(({ value }) => value === locale)"
-                  :loading="downloadingLocales.has(locale)"
-                  type="text"
-                  size="small"
-                  icon="update"
-                  @click="handleDownloadLocale(locale)"
-                />
-                <Button
-                  v-else
-                  :loading="downloadingLocales.has(locale)"
-                  type="text"
-                  size="small"
-                  icon="download"
-                  @click="handleDownloadLocale(locale)"
-                />
+                <div class="flex items-center">
+                  <Button
+                    v-if="isLocaleInstalled(locale)"
+                    :loading="downloadingLocales.has(locale)"
+                    type="text"
+                    size="small"
+                    icon="downloadAgain"
+                    @click="handleDownloadLocale(locale)"
+                  />
+                  <Button
+                    v-else
+                    :loading="downloadingLocales.has(locale)"
+                    type="text"
+                    size="small"
+                    icon="download"
+                    @click="handleDownloadLocale(locale)"
+                  />
+                  <Button
+                    v-if="isLocaleInstalled(locale)"
+                    type="text"
+                    size="small"
+                    icon="delete"
+                    @click="handleDeleteLocale(locale)"
+                  />
+                </div>
               </div>
             </div>
           </template>
