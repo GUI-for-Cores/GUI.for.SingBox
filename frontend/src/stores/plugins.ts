@@ -5,6 +5,7 @@ import { parse } from 'yaml'
 import { HttpGet, ReadFile, RemoveFile, Requests, WriteFile } from '@/bridge'
 import { PluginHubFilePath, PluginsFilePath } from '@/constant/app'
 import { PluginTrigger, PluginTriggerEvent, RequestMethod } from '@/enums/app'
+import i18n from '@/lang'
 import { useAppSettingsStore } from '@/stores'
 import {
   ignoredError,
@@ -661,30 +662,65 @@ export const usePluginsStore = defineStore('plugins', () => {
   }
   const updatePluginHub = async () => {
     pluginHubLoading.value = true
-    const promises = appSettingsStore.app.plugins.sources.flatMap((source) => {
-      if (!source.enable) return []
-      return Requests<string>({
-        url: source.url,
-        method: RequestMethod.Get,
-        autoTransformBody: false,
-      })
-    })
-    const results = await Promise.allSettled(promises)
-
-    pluginHub.value = results.reduce((acc, result) => {
-      if (result.status === 'fulfilled') {
+    const oldHub = pluginHub.value
+    const sources = appSettingsStore.app.plugins.sources.filter((v) => v.enable)
+    const results = await Promise.allSettled(
+      sources.map(async (source) => {
+        const { status, body } = await Requests<string>({
+          url: source.url,
+          method: RequestMethod.Get,
+          autoTransformBody: false,
+        })
+        if (status !== 200) throw `HTTP ${status}`
+        let plugins: App.Plugin[]
         try {
-          const plugins = JSON.parse(result.value.body) as App.Plugin[]
-          acc.push(...plugins)
-        } catch (error) {
-          console.error('Failed to parse plugin list from source. Reason: ', error)
+          plugins = JSON.parse(body)
+        } catch {
+          throw 'Invalid JSON'
         }
-      }
-      return acc
-    }, [] as App.Plugin[])
+        if (!Array.isArray(plugins)) throw 'Invalid JSON'
+        return plugins
+      }),
+    )
+
+    const failed: { name: string; url: string; reason: string }[] = []
+    pluginHub.value = results.flatMap((result, index) => {
+      if (result.status === 'fulfilled') return result.value
+      const { name, url } = sources[index]!
+      const reason = String(result.reason?.message ?? result.reason)
+      console.error(`Failed to update plugin list from source [${name}]. Reason: `, reason)
+      failed.push({ name, url, reason })
+      return []
+    })
 
     await WriteFile(PluginHubFilePath, JSON.stringify(pluginHub.value))
     pluginHubLoading.value = false
+
+    const oldMap = new Map(oldHub.map((v) => [v.id, v]))
+    const newIds = new Set(pluginHub.value.map((v) => v.id))
+    const hasOld = oldHub.length !== 0
+    const added = hasOld ? pluginHub.value.filter((v) => !oldMap.has(v.id)) : []
+    const removed = oldHub.filter((v) => !newIds.has(v.id))
+    const updated = pluginHub.value.filter((v) => {
+      const old = oldMap.get(v.id)
+      return old && old.version !== v.version
+    })
+
+    const { t } = i18n.global
+    const section = <T>(title: string, list: T[], fn: (v: T) => string) =>
+      list.length ? [`**${t(title)} (${list.length})**`, '', ...list.map(fn), ''] : []
+    const item = (v: App.Plugin) => `- ${v.name} \`${v.id}\``
+
+    return [
+      ...section('plugins.changes.failed', failed, (v) => `- ${v.name} \`${v.reason}\` ${v.url}`),
+      ...section('plugins.changes.added', added, item),
+      ...section('plugins.changes.removed', removed, item),
+      ...section(
+        'plugins.changes.updated',
+        updated,
+        (v) => `${item(v)} ${oldMap.get(v.id)!.version} → ${v.version}`,
+      ),
+    ].join('\n')
   }
 
   const getPluginById = (id: string) => plugins.value.find((v) => v.id === id)

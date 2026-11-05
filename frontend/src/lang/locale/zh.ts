@@ -606,6 +606,13 @@ export default {
     deprecated: '已废弃',
     newVersion: '新版本',
     slogan: '让 {0} 按你的方式工作',
+    changes: {
+      title: '插件中心变更',
+      failed: '失败的插件源',
+      added: '新增',
+      removed: '移除',
+      updated: '更新',
+    },
     sourceConfig: {
       name: '插件源',
     },

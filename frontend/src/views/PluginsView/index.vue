@@ -6,7 +6,7 @@ import { OpenURI } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
 import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
-import { debounce, message, deepClone, modal } from '@/utils'
+import { alert, debounce, message, deepClone, modal } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
 
@@ -86,8 +86,12 @@ const handleViewChangelog = (id: string) => {
 
 const handleUpdatePluginHub = async () => {
   try {
-    await pluginsStore.updatePluginHub()
-    message.success('plugins.updateSuccess')
+    const changes = await pluginsStore.updatePluginHub()
+    if (changes) {
+      alert('plugins.changes.title', changes, { type: 'markdown' })
+    } else {
+      message.success('plugins.updateSuccess')
+    }
   } catch (error: any) {
     console.error('handleUpdatePluginHub: ', error)
     message.error(error)

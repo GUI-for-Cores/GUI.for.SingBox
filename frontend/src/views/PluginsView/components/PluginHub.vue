@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { usePluginsStore } from '@/stores'
-import { createTextMatcher, deepClone, message, modal } from '@/utils'
+import { alert, createTextMatcher, deepClone, message, modal } from '@/utils'
 
 import PluginSource from './PluginSource.vue'
 
@@ -68,8 +68,12 @@ const handleAddPlugin = async (plugin: App.Plugin) => {
 
 const handleUpdatePluginHub = async () => {
   try {
-    await pluginsStore.updatePluginHub()
-    message.success('plugins.updateSuccess')
+    const changes = await pluginsStore.updatePluginHub()
+    if (changes) {
+      alert('plugins.changes.title', changes, { type: 'markdown' })
+    } else {
+      message.success('plugins.updateSuccess')
+    }
   } catch (err: any) {
     message.error(err.message || err)
   }
