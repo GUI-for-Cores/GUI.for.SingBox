@@ -229,7 +229,7 @@ const tab = markRaw({
   title: () => props.title || 'common.modalList',
   activate: () => {
     appStore.activeModalTab = tabId
-    modalZindex.value = ++appStore.modalZIndexCounter
+    if (appStore.modalSplitActive) modalZindex.value = ++appStore.modalZIndexCounter
     const idx = appStore.modalStack.indexOf(closeFn)
     if (idx !== -1) appStore.modalStack.splice(idx, 1)
     appStore.modalStack.push(closeFn)
