@@ -17,6 +17,7 @@ declare namespace App {
     appName: string
     appVersion: string
     basePath: string
+    dataPath: string
     appPath: string
     os: OS
     arch: string

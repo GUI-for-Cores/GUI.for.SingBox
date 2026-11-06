@@ -21,6 +21,7 @@ type EnvResult struct {
 	AppName      string `json:"appName"`
 	AppVersion   string `json:"appVersion"`
 	BasePath     string `json:"basePath"`
+	DataPath     string `json:"dataPath"`
 	OS           string `json:"os"`
 	ARCH         string `json:"arch"`
 	IsPrivileged bool   `json:"isPrivileged"`

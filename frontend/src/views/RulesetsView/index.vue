@@ -33,7 +33,7 @@ const sourceMenuList: App.Menu[] = [
     label: 'common.openFile',
     handler: async (id: string) => {
       const ruleset = rulesetsStore.getRulesetById(id)
-      await OpenURI(envStore.env.basePath + '/' + ruleset!.path)
+      await OpenURI(envStore.env.dataPath + '/' + ruleset!.path)
     },
   },
   {
