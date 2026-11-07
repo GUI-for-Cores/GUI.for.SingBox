@@ -34,7 +34,7 @@ const menuList: App.Menu[] = [
     label: 'common.openFile',
     handler: async (id: string) => {
       const plugin = pluginsStore.getPluginById(id)
-      await OpenURI(envStore.env.basePath + '/' + plugin!.path)
+      await OpenURI(envStore.env.dataPath + '/' + plugin!.path)
     },
   },
 ]

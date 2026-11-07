@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,13 +19,6 @@ type requestTransportKey struct {
 }
 
 var requestTransportCache sync.Map
-
-func resolvePath(path string) string {
-	if !filepath.IsAbs(path) {
-		path = filepath.Join(Env.BasePath, path)
-	}
-	return filepath.ToSlash(filepath.Clean(path))
-}
 
 func requestProxy(proxyAddr string) func(*http.Request) (*url.URL, error) {
 	proxy := http.ProxyFromEnvironment

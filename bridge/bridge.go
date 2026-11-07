@@ -30,6 +30,7 @@ var Env = &EnvResult{
 	AppName:      "",
 	AppVersion:   "v1.28.1",
 	BasePath:     "",
+	DataPath:     "",
 	OS:           sysruntime.GOOS,
 	ARCH:         sysruntime.GOARCH,
 	IsPrivileged: false,
@@ -50,6 +51,8 @@ func CreateApp(fs embed.FS) *App {
 
 	Env.BasePath = filepath.ToSlash(filepath.Dir(exePath))
 	Env.AppName = filepath.Base(exePath)
+	Env.DataPath = Env.BasePath
+	setDataPath()
 
 	if slices.Contains(os.Args, "tasksch") {
 		Env.FromTaskSch = true
@@ -93,7 +96,7 @@ func (a *App) ExitApp() {
 
 func (a *App) RestartApp() FlagResult {
 	log.Printf("RestartApp")
-	exePath := resolvePath(Env.AppName)
+	exePath := filepath.Join(Env.BasePath, Env.AppName)
 
 	cmd := exec.Command(exePath)
 	SetCmdWindowHidden(cmd)
@@ -116,6 +119,7 @@ func (a *App) GetEnv(key string) any {
 		AppName:      Env.AppName,
 		AppVersion:   Env.AppVersion,
 		BasePath:     Env.BasePath,
+		DataPath:     Env.DataPath,
 		OS:           Env.OS,
 		ARCH:         Env.ARCH,
 		IsPrivileged: Env.IsPrivileged,
