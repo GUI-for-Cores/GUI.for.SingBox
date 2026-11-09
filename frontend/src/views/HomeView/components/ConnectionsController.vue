@@ -10,6 +10,7 @@ import { useAppSettingsStore, useKernelApiStore } from '@/stores'
 import {
   addToRuleSet,
   formatBytes,
+  formatProxyHost,
   formatRelativeTime,
   getDomainSuffixes,
   message,
@@ -60,7 +61,7 @@ const columns = computed(() =>
         hidden: !appSettingsStore.app.connections.visibility['metadata.sourceIP'],
         sort: (a, b) => b.metadata.sourceIP.localeCompare(a.metadata.sourceIP),
         customRender: ({ value, record }) => {
-          return value + ':' + record.metadata.sourcePort
+          return formatProxyHost(value) + ':' + record.metadata.sourcePort
         },
       },
       {
@@ -70,7 +71,7 @@ const columns = computed(() =>
         hidden: !appSettingsStore.app.connections.visibility['metadata.destinationIP'],
         sort: (a, b) => b.metadata.destinationIP.localeCompare(a.metadata.destinationIP),
         customRender: ({ value, record }) => {
-          return value + ':' + record.metadata.destinationPort
+          return formatProxyHost(value) + ':' + record.metadata.destinationPort
         },
       },
       {
