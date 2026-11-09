@@ -105,10 +105,10 @@ const generateInbounds = (inbounds: App.Inbound[]) => {
   return inbounds.flatMap((inbound) => {
     if (!inbound.enable) return []
     if (inbound.type !== Inbound.Tun && inbound.type !== Inbound.Direct) {
-      const users = inbound[inbound.type]!.users.map((user) => ({
-        username: user.split(':')[0],
-        password: user.split(':')[1],
-      }))
+      const users = inbound[inbound.type]!.users.map((user) => {
+        const [username, ...passwordParts] = user.split(':')
+        return { username, password: passwordParts.join(':') }
+      })
       return {
         type: inbound.type,
         tag: inbound.tag,
