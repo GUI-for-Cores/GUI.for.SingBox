@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/exec"
 	"regexp"
@@ -138,10 +139,10 @@ func getDarwinSystemProxy() (string, error) {
 	}
 
 	if values["HTTPEnable"] == "1" {
-		return "http://" + values["HTTPProxy"] + ":" + values["HTTPPort"], nil
+		return "http://" + net.JoinHostPort(values["HTTPProxy"], values["HTTPPort"]), nil
 	}
 	if values["SOCKSEnable"] == "1" {
-		return "socks5://" + values["SOCKSProxy"] + ":" + values["SOCKSPort"], nil
+		return "socks5://" + net.JoinHostPort(values["SOCKSProxy"], values["SOCKSPort"]), nil
 	}
 	return "", nil
 }
@@ -355,13 +356,19 @@ func setLinuxSystemProxy(server string, enabled bool, proxyType string, bypass s
 		}
 		ignoreHosts := "[" + strings.Join(quotedBypassItems, ",") + "]"
 
+		// GLib builds "http://" + host + ":" + port from these keys, so an IPv6 host keeps its brackets
+		gnomeHost := serverName
+		if strings.Contains(serverName, ":") {
+			gnomeHost = "[" + serverName + "]"
+		}
+
 		return runSystemProxyCommands(
 			[]string{"gsettings", "set", "org.gnome.system.proxy", "mode", mode},
-			[]string{"gsettings", "set", "org.gnome.system.proxy.http", "host", enabledURL(httpEnabled, serverName)},
+			[]string{"gsettings", "set", "org.gnome.system.proxy.http", "host", enabledURL(httpEnabled, gnomeHost)},
 			[]string{"gsettings", "set", "org.gnome.system.proxy.http", "port", enabledURL(httpEnabled, serverPort, "0")},
-			[]string{"gsettings", "set", "org.gnome.system.proxy.https", "host", enabledURL(httpEnabled, serverName)},
+			[]string{"gsettings", "set", "org.gnome.system.proxy.https", "host", enabledURL(httpEnabled, gnomeHost)},
 			[]string{"gsettings", "set", "org.gnome.system.proxy.https", "port", enabledURL(httpEnabled, serverPort, "0")},
-			[]string{"gsettings", "set", "org.gnome.system.proxy.socks", "host", enabledURL(socksEnabled, serverName)},
+			[]string{"gsettings", "set", "org.gnome.system.proxy.socks", "host", enabledURL(socksEnabled, gnomeHost)},
 			[]string{"gsettings", "set", "org.gnome.system.proxy.socks", "port", enabledURL(socksEnabled, serverPort, "0")},
 			[]string{"gsettings", "set", "org.gnome.system.proxy", "ignore-hosts", ignoreHosts},
 		)
@@ -542,8 +549,8 @@ func runSystemProxyCommands(commands ...[]string) error {
 }
 
 func splitServer(server string) (string, string) {
-	serverName, serverPort, ok := strings.Cut(server, ":")
-	if !ok {
+	serverName, serverPort, err := net.SplitHostPort(server)
+	if err != nil {
 		return server, ""
 	}
 	return serverName, serverPort
