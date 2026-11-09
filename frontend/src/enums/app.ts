@@ -5,8 +5,8 @@ export enum OS {
 }
 
 export enum WindowStartState {
-  Normal = 0,
-  Minimised = 2,
+  Normal = 'normal',
+  Minimised = 'minimised',
 }
 
 export enum WebviewGpuPolicy {

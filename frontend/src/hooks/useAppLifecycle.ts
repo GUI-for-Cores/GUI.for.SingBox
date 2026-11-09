@@ -12,7 +12,8 @@ export const useAppLifecycle = () => {
   const subscribesStore = Stores.useSubscribesStore()
   let commandModal: ReturnType<typeof modal> | undefined
 
-  const offLaunchApp = EventsOn('onLaunchApp', async ([arg]: string[]) => {
+  const offLaunchApp = EventsOn('onLaunchApp', async (args: string[]) => {
+    const arg = args.find((a) => a.includes('://'))
     if (!arg) return
 
     let _url

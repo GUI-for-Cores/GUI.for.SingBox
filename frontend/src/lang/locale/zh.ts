@@ -685,8 +685,8 @@ export default {
     systemTitleBar: '使用系统标题栏和边框',
     resetFont: '重置字体',
     appFolder: {
-      name: '应用程序文件夹',
-      open: '打开应用程序文件夹',
+      name: '数据文件夹',
+      open: '打开数据文件夹',
     },
     lang: {
       name: '语言',

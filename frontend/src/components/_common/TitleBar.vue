@@ -53,7 +53,7 @@ const menus: App.Menu[] = [
   },
   {
     label: 'titlebar.restart',
-    handler: RestartApp,
+    handler: () => RestartApp(envStore.env.isPrivileged),
   },
   {
     label: 'titlebar.exitApp',

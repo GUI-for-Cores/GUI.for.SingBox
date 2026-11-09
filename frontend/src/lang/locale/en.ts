@@ -687,8 +687,8 @@ export default {
     systemTitleBar: 'Use system title bar and border',
     resetFont: 'Reset Font-Family',
     appFolder: {
-      name: 'App Folder',
-      open: 'Open application folder',
+      name: 'Data Folder',
+      open: 'Open data folder',
     },
     lang: {
       name: 'Language',

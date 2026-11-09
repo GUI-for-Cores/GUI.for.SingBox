@@ -166,7 +166,7 @@ export const getCommands = () => {
         {
           label: 'tray.restartTip',
           cmd: 'Restart APP',
-          handler: RestartApp,
+          handler: () => RestartApp(envStore.env.isPrivileged),
         },
         {
           label: 'tray.exitTip',

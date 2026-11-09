@@ -7,7 +7,12 @@ import {
 
 import { sampleID } from '@/utils'
 
-export const RestartApp = Bridge.RestartApp
+export const RestartApp = async (admin: boolean) => {
+  const { flag, data } = await Bridge.RestartApp(admin)
+  if (!flag) {
+    throw data
+  }
+}
 
 export const ExitApp = Bridge.ExitApp
 

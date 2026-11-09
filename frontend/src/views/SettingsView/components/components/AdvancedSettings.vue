@@ -2,13 +2,12 @@
 import { MakeDir, OpenDir } from '@/bridge'
 import { RollingReleaseDirectory } from '@/constant/app'
 import { OS } from '@/enums/app'
-import { useAppSettingsStore, useEnvStore } from '@/stores'
+import { useAppSettingsStore } from '@/stores'
 
 const appSettings = useAppSettingsStore()
-const envStore = useEnvStore()
 
 const handleOpenFolder = async () => {
-  await OpenDir(envStore.env.basePath)
+  await OpenDir('data')
 }
 
 const handleOpenRollingReleaseFolder = async () => {

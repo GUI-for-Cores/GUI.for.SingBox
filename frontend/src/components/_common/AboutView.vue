@@ -3,18 +3,9 @@ import { h, resolveComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import logo from '@/assets/logo'
-import { BrowserOpenURL, ExitApp, RestartApp } from '@/bridge'
-import { OS } from '@/enums/app'
+import { BrowserOpenURL, RestartApp } from '@/bridge'
 import { useAppStore, useEnvStore } from '@/stores'
-import {
-  APP_TITLE,
-  APP_VERSION,
-  PROJECT_URL,
-  TG_GROUP,
-  TG_CHANNEL,
-  message,
-  RunWithOsaScript,
-} from '@/utils'
+import { APP_TITLE, APP_VERSION, PROJECT_URL, TG_GROUP, TG_CHANNEL, message } from '@/utils'
 
 const { t } = useI18n()
 const envStore = useEnvStore()
@@ -22,14 +13,7 @@ const appStore = useAppStore()
 
 const handleRestartApp = async () => {
   try {
-    if (envStore.env.os === OS.Darwin) {
-      RunWithOsaScript('open', [envStore.env.appPath], {
-        wait: false,
-      })
-      await ExitApp()
-    } else {
-      await RestartApp()
-    }
+    await RestartApp(envStore.env.isPrivileged)
   } catch (error: any) {
     message.error(error)
   }

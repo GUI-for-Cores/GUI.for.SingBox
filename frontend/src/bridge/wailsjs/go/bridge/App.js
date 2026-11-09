@@ -114,8 +114,8 @@ export function Requests(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['bridge']['App']['Requests'](arg1, arg2, arg3, arg4, arg5);
 }
 
-export function RestartApp() {
-  return window['go']['bridge']['App']['RestartApp']();
+export function RestartApp(arg1) {
+  return window['go']['bridge']['App']['RestartApp'](arg1);
 }
 
 export function SetSystemDNS(arg1, arg2) {

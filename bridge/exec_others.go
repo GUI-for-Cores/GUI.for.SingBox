@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"time"
 )
 
 func DecodeCommandOutput(data []byte) string {
@@ -42,4 +43,15 @@ func IsProcessAlive(p *os.Process) (bool, error) {
 
 func IsPrivileged() (bool, error) {
 	return os.Geteuid() == 0, nil
+}
+
+func startApp(path string, args []string, admin bool) error {
+	return exec.Command(path, args...).Start()
+}
+
+func waitForExit(pid int) {
+	// Polling the parent pid rather than pid itself is immune to the zombie state
+	for deadline := time.Now().Add(10 * time.Second); pid > 0 && os.Getppid() == pid && time.Now().Before(deadline); {
+		time.Sleep(50 * time.Millisecond)
+	}
 }
