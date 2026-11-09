@@ -18,6 +18,7 @@ import {
   stringifyNoFolding,
   readonly,
   base64Encode,
+  getGitHubApiAuthorization,
   sha256,
 } from '@/utils'
 
@@ -684,9 +685,28 @@ export const usePluginsStore = defineStore('plugins', () => {
     const sources = appSettingsStore.app.plugins.sources.filter((v) => v.enable)
     const results = await Promise.allSettled(
       sources.map(async (source) => {
+        let isGitHubApi = false
+        try {
+          const url = new URL(source.url)
+          isGitHubApi =
+            url.protocol === 'https:' &&
+            url.host === 'api.github.com' &&
+            !url.username &&
+            !url.password
+        } catch {
+          // Let Requests report invalid source URLs as before.
+        }
+        const authorization = isGitHubApi ? getGitHubApiAuthorization() : ''
         const { status, body } = await Requests<string>({
           url: source.url,
           method: RequestMethod.Get,
+          headers: isGitHubApi
+            ? {
+                Accept: 'application/vnd.github.raw+json',
+                ...(authorization ? { Authorization: authorization } : {}),
+              }
+            : {},
+          options: isGitHubApi ? { Redirect: false } : {},
           autoTransformBody: false,
         })
         if (status !== 200) throw `HTTP ${status}`

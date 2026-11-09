@@ -140,17 +140,17 @@ export const DefaultPluginHubSources = () => [
   {
     enable: true,
     name: 'General',
-    url: 'https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/generic.json',
+    url: 'https://api.github.com/repos/GUI-for-Cores/Plugin-Hub/contents/plugins/generic.json?ref=main',
   },
   {
     enable: true,
     name: APP_TITLE,
-    url: `https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/${
+    url: `https://api.github.com/repos/GUI-for-Cores/Plugin-Hub/contents/plugins/${
       {
         'GUI.for.Clash': 'gfc',
         'GUI.for.SingBox': 'gfs',
       }[APP_TITLE]
-    }.json`,
+    }.json?ref=main`,
   },
 ]
 

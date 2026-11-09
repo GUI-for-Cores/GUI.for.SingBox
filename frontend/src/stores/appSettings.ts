@@ -183,6 +183,18 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
         sources: DefaultPluginHubSources(),
       }
     }
+    let pluginSourcesMigrated = false
+    for (const source of settings.plugins.sources) {
+      const name = ['generic', 'gfc', 'gfs'].find(
+        (name) =>
+          source.url ===
+          `https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/${name}.json`,
+      )
+      if (name) {
+        source.url = `https://api.github.com/repos/GUI-for-Cores/Plugin-Hub/contents/plugins/${name}.json?ref=main`
+        pluginSourcesMigrated = true
+      }
+    }
     if (settings.debugUsePointer === undefined) {
       settings.debugUsePointer = false
     }
@@ -191,6 +203,10 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     }
 
     settings.systemTitleBar ??= false
+
+    if (pluginSourcesMigrated) {
+      await WriteFile(UserFilePath, stringify(settings))
+    }
 
     app.value = settings
     systemTitleBarOnStartup.value = settings.systemTitleBar
