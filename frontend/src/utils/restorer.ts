@@ -320,14 +320,14 @@ const restoreRouteRuleset = (
   return rulesets.flatMap((raw) => {
     const ruleset = Defaults.DefaultRouteRuleset()
     ruleset.id = RouteRuleSetIds[raw.tag]
-    ruleset.type = raw.type
+    ruleset.type = raw.type || RulesetType.Inline
     ruleset.tag = raw.tag
 
-    if (raw.type === RulesetType.Inline) {
+    if (ruleset.type === RulesetType.Inline) {
       if ('rules' in raw) {
         ruleset.rules = JSON.stringify(raw.rules, null, 2)
       }
-    } else if (raw.type === RulesetType.Local) {
+    } else if (ruleset.type === RulesetType.Local) {
       if ('path' in raw) {
         const r = rulesetsStore.rulesets.find((v) => v.path === raw.path.replace('../', 'data/'))
         if (r) {
@@ -339,7 +339,7 @@ const restoreRouteRuleset = (
       if ('format' in raw) {
         ruleset.format = raw.format
       }
-    } else if (raw.type === RulesetType.Remote) {
+    } else if (ruleset.type === RulesetType.Remote) {
       if ('format' in raw) {
         ruleset.format = raw.format
       }
@@ -402,13 +402,13 @@ const restoreRouteRules = (
         : String(raw[rule.type])
     }
 
-    if (RuleAction.Route === raw.action) {
+    if (RuleAction.Route === rule.action) {
       rule.outbound = OutboundsIds[raw.outbound]
-    } else if (RuleAction.Reject === raw.action) {
+    } else if (RuleAction.Reject === rule.action) {
       if ('method' in raw) {
         rule.outbound = raw.method
       }
-    } else if (RuleAction.RouteOptions === raw.action) {
+    } else if (RuleAction.RouteOptions === rule.action) {
       rule.outbound = JSON.stringify(
         {
           ...raw,
@@ -419,11 +419,11 @@ const restoreRouteRules = (
         null,
         2,
       )
-    } else if (RuleAction.Sniff === raw.action) {
+    } else if (RuleAction.Sniff === rule.action) {
       if ('sniffer' in raw) {
         rule.sniffer = Array.isArray(raw.sniffer) ? raw.sniffer : [raw.sniffer]
       }
-    } else if (RuleAction.Resolve === raw.action) {
+    } else if (RuleAction.Resolve === rule.action) {
       if ('strategy' in raw) {
         rule.strategy = raw.strategy
       }
@@ -564,18 +564,18 @@ const restoreDnsRules = (
         : String(raw[rule.type])
     }
 
-    if (RuleAction.Route === raw.action || RuleAction.Evaluate === raw.action) {
+    if (RuleAction.Route === rule.action || RuleAction.Evaluate === rule.action) {
       if ('server' in raw) {
         rule.server = DnsServersIds[raw.server]
       }
-      if (RuleAction.Evaluate === raw.action && 'tag' in raw) {
+      if (RuleAction.Evaluate === rule.action && 'tag' in raw) {
         rule.tag = raw.tag
       }
-    } else if (RuleAction.Reject === raw.action) {
+    } else if (RuleAction.Reject === rule.action) {
       if ('method' in raw) {
         rule.server = raw.method
       }
-    } else if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(raw.action)) {
+    } else if ([RuleAction.RouteOptions, RuleAction.Predefined].includes(rule.action as any)) {
       rule.server = JSON.stringify(
         {
           ...raw,
@@ -592,7 +592,9 @@ const restoreDnsRules = (
         2,
       )
     }
-    if ([RuleAction.Route, RuleAction.Evaluate, RuleAction.RouteOptions].includes(raw.action)) {
+    if (
+      [RuleAction.Route, RuleAction.Evaluate, RuleAction.RouteOptions].includes(rule.action as any)
+    ) {
       if ('disable_cache' in raw) {
         rule.disable_cache = raw.disable_cache
       }
