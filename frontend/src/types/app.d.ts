@@ -18,6 +18,7 @@ declare namespace App {
     basePath: string
     dataDir: string
     args: string[]
+    launchArgs: string[]
     appPath: string
     os: OS
     arch: string

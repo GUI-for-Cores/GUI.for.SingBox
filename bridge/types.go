@@ -28,6 +28,7 @@ type EnvResult struct {
 	IsPrivileged bool   `json:"isPrivileged"`
 
 	Args             []string                 `json:"args"`
+	LaunchArgs       []string                 `json:"launchArgs"`
 	WindowStartState options.WindowStartState `json:"-"`
 }
 

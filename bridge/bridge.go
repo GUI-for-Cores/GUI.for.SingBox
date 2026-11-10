@@ -120,6 +120,7 @@ func (a *App) GetEnv(key string) any {
 		BasePath:     Env.BasePath,
 		DataDir:      Env.DataDir,
 		Args:         Env.Args,
+		LaunchArgs:   Env.LaunchArgs,
 		OS:           Env.OS,
 		ARCH:         Env.ARCH,
 		IsPrivileged: Env.IsPrivileged,
@@ -179,6 +180,7 @@ func initDataDir(dir string, portable bool) {
 }
 
 func parseArgs(args []string) (dataDir string, portable bool, restartFrom int) {
+	Env.LaunchArgs = slices.Clone(args)
 	fs := flag.NewFlagSet(Env.AppName, flag.ContinueOnError)
 	fs.SetOutput(io.Discard)
 	fs.StringVar(&dataDir, "data-dir", "", "data directory")
@@ -210,7 +212,7 @@ func parseArgs(args []string) (dataDir string, portable bool, restartFrom int) {
 	// Kept for restart and autostart
 	Env.Args = []string{}
 	fs.Visit(func(f *flag.Flag) {
-		if f.Name != "window-start-state" && f.Name != "restart-from" {
+		if f.Name == "data-dir" || f.Name == "portable" {
 			Env.Args = append(Env.Args, "--"+f.Name+"="+f.Value.String())
 		}
 	})

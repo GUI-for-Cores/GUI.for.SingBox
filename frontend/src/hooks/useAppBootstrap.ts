@@ -4,6 +4,8 @@ import { IsStartup } from '@/bridge'
 import * as Stores from '@/stores'
 import { message, sleep } from '@/utils'
 
+import { handleLaunchApp } from './useAppLifecycle'
+
 const MIN_SPLASH_DURATION = 1000
 
 export const useAppBootstrap = () => {
@@ -36,6 +38,8 @@ export const useAppBootstrap = () => {
       pluginsStore.setupPlugins(),
       scheduledTasksStore.setupScheduledTasks(),
     ])
+
+    await handleLaunchApp(envStore.env.launchArgs).catch(showError)
 
     const startTime = performance.now()
     percent.value = 20
