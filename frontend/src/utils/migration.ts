@@ -85,6 +85,16 @@ export const migrateAppSettings = async (
       settings.windowStartState === 2 ? WindowStartState.Minimised : WindowStartState.Normal
     needSync = true
   }
+  for (const core of [settings.kernel.main, settings.kernel.alpha]) {
+    const legacy = JSON.stringify(core)
+    const migrated = legacy
+      .replaceAll('$APP_BASE_PATH/$CORE_BASE_PATH', '$APP_DATA_PATH/sing-box')
+      .replaceAll('$APP_BASE_PATH/data/', '$APP_DATA_PATH/')
+    if (migrated !== legacy) {
+      Object.assign(core, JSON.parse(migrated))
+      needSync = true
+    }
+  }
 
   if (needSync) await save()
 }

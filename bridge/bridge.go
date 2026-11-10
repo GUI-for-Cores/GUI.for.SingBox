@@ -30,7 +30,7 @@ var Env = &EnvResult{
 	WebviewPath:  "",
 	AppId:        "GUI.for.SingBox",
 	AppName:      "",
-	AppVersion:   "v1.28.1",
+	AppVersion:   "v1.29.0",
 	BasePath:     "",
 	DataDir:      "",
 	OS:           sysruntime.GOOS,
