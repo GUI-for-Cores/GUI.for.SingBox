@@ -3,10 +3,14 @@
 package bridge
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"os/exec"
+	"slices"
+	"strings"
 	"syscall"
 	"unicode/utf16"
 	"unicode/utf8"
@@ -129,4 +133,43 @@ func IsPrivileged() (bool, error) {
 	}
 
 	return isMember != 0, nil
+}
+
+func startApp(path string, args []string, admin bool) error {
+	cmd := exec.Command(path, args...)
+	SetCmdWindowHidden(cmd)
+	if !admin && Env.IsPrivileged {
+		// Start as a child of the shell to get its unelevated token, without the
+		// __COMPAT_LAYER=RunAsAdmin we inherited from being started as administrator
+		cmd.Env = slices.DeleteFunc(os.Environ(), func(e string) bool {
+			return strings.HasPrefix(strings.ToUpper(e), "__COMPAT_LAYER=")
+		})
+		var pid uint32
+		windows.GetWindowThreadProcessId(windows.GetShellWindow(), &pid)
+		shell, err := windows.OpenProcess(windows.PROCESS_CREATE_PROCESS|windows.PROCESS_DUP_HANDLE, false, pid)
+		if err == nil {
+			defer windows.CloseHandle(shell)
+			cmd.SysProcAttr.ParentProcess = syscall.Handle(shell)
+			err = cmd.Start()
+		}
+		log.Printf("Restart unelevated under shell process %d: %v", pid, err)
+		return err
+	}
+	if !admin || Env.IsPrivileged {
+		// ERROR_ELEVATION_REQUIRED: the exe is set to run as administrator
+		if err := cmd.Start(); !errors.Is(err, windows.ERROR_ELEVATION_REQUIRED) {
+			return err
+		}
+	}
+	return windows.ShellExecute(0, windows.StringToUTF16Ptr("runas"), windows.StringToUTF16Ptr(path),
+		windows.StringToUTF16Ptr(windows.ComposeCommandLine(args)), nil, windows.SW_SHOWNORMAL)
+}
+
+func waitForExit(pid int) {
+	h, err := windows.OpenProcess(windows.SYNCHRONIZE, false, uint32(pid))
+	if err != nil {
+		return
+	}
+	defer windows.CloseHandle(h)
+	windows.WaitForSingleObject(h, 10_000)
 }

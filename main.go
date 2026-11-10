@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"embed"
+	"encoding/hex"
 	"guiforcores/bridge"
 	"time"
 
@@ -44,8 +46,8 @@ func main() {
 		Frameless:        bridge.Env.OS != "darwin" && !bridge.Config.SystemTitleBar,
 		Width:            bridge.Config.Width,
 		Height:           bridge.Config.Height,
-		StartHidden:      bridge.Config.StartHidden,
-		WindowStartState: options.WindowStartState(bridge.Config.WindowStartState),
+		StartHidden:      bridge.Env.WindowStartState == options.Minimised,
+		WindowStartState: bridge.Env.WindowStartState,
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		Windows: &windows.Options{
 			WebviewIsTransparent: true,
@@ -81,7 +83,8 @@ func main() {
 				if bridge.Config.MultipleInstance {
 					return time.Now().String()
 				}
-				return bridge.Env.AppName
+				sum := sha256.Sum256([]byte(bridge.Env.DataDir))
+				return bridge.Env.AppId + "-" + hex.EncodeToString(sum[:8])
 			}(),
 			OnSecondInstanceLaunch: func(data options.SecondInstanceData) {
 				runtime.Show(app.Ctx)

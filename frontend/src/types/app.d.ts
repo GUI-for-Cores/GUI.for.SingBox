@@ -3,9 +3,7 @@ declare namespace App {
   type Theme = 'auto' | 'light' | 'dark'
   type Color = 'default' | 'green' | 'purple' | 'custom'
   type View = 'grid' | 'list'
-  type WindowStartState =
-    | 0 // Normal
-    | 2 // Minimised
+  type WindowStartState = 'normal' | 'minimised'
   type WebviewGpuPolicy =
     | 0 // Always
     | 1 // OnDemand
@@ -14,9 +12,13 @@ declare namespace App {
   type RequestMethod = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'HEAD' | 'PATCH'
 
   interface AppEnv {
+    appId: string
     appName: string
     appVersion: string
     basePath: string
+    dataDir: string
+    args: string[]
+    launchArgs: string[]
     appPath: string
     os: OS
     arch: string

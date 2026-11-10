@@ -22,10 +22,15 @@ type requestTransportKey struct {
 var requestTransportCache sync.Map
 
 func resolvePath(path string) string {
-	if !filepath.IsAbs(path) {
+	path = filepath.ToSlash(filepath.Clean(path))
+	switch {
+	case filepath.IsAbs(path):
+	case path == "data" || strings.HasPrefix(path, "data/"):
+		path = filepath.Join(Env.DataDir, strings.TrimPrefix(path, "data"))
+	default:
 		path = filepath.Join(Env.BasePath, path)
 	}
-	return filepath.ToSlash(filepath.Clean(path))
+	return filepath.ToSlash(path)
 }
 
 func requestProxy(proxyAddr string) func(*http.Request) (*url.URL, error) {

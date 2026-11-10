@@ -40,7 +40,14 @@ import {
 } from '@/enums/app'
 import i18n, { loadLocale } from '@/lang'
 import { useAppStore, useEnvStore } from '@/stores'
-import { debounce, updateTrayAndMenus, ignoredError, deepClone, message } from '@/utils'
+import {
+  debounce,
+  updateTrayAndMenus,
+  ignoredError,
+  deepClone,
+  message,
+  migrateAppSettings,
+} from '@/utils'
 
 export const useAppSettingsStore = defineStore('app-settings', () => {
   const appStore = useAppStore()
@@ -131,6 +138,9 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
       settings = parse(data)
     } else {
       settings = deepClone(app.value)
+      if (envStore.env.os === 'darwin') {
+        settings.systemProxyServices = ['Ethernet', 'Wi-Fi']
+      }
     }
 
     await appStore.loadLocales(false, false)
@@ -142,71 +152,8 @@ export const useAppSettingsStore = defineStore('app-settings', () => {
     if (!settings.proxyBypassList) {
       settings.proxyBypassList = (await ignoredError(GetSystemProxyBypass)) || ''
     }
-    if ('darwinSystemProxyServices' in settings) {
-      settings.systemProxyServices = settings.darwinSystemProxyServices as string[]
-      delete settings.darwinSystemProxyServices
-    }
-    const defaultSystemProxyServices = envStore.env.os === 'darwin' ? ['Ethernet', 'Wi-Fi'] : []
-    if (!data) {
-      settings.systemProxyServices = defaultSystemProxyServices
-    } else if (!settings.systemProxyServices) {
-      settings.systemProxyServices = defaultSystemProxyServices
-    } else if (
-      envStore.env.os === 'linux' &&
-      settings.systemProxyServices.join(',') === 'Ethernet,Wi-Fi'
-    ) {
-      settings.systemProxyServices = defaultSystemProxyServices
-    }
-    if (settings.autoSetSystemDNS === undefined) {
-      settings.autoSetSystemDNS = false
-    }
-    if (settings.systemProxyDNS === undefined) {
-      settings.systemProxyDNS = ''
-    }
-    if (settings.systemDefaultDNS === undefined) {
-      settings.systemDefaultDNS = ''
-    }
-    if (!settings.requestProxyMode) {
-      settings.requestProxyMode = RequestProxyMode.System
-    }
-    if (settings.customProxy === undefined) {
-      settings.customProxy = ''
-    }
-    if (settings.githubDownloadAcceleration === undefined) {
-      settings.githubDownloadAcceleration = false
-    }
-    if (settings.githubDownloadMirror === undefined) {
-      settings.githubDownloadMirror = ''
-    }
-    if (!settings.plugins) {
-      settings.plugins = {
-        sources: DefaultPluginHubSources(),
-      }
-    }
-    let pluginSourcesMigrated = false
-    for (const source of settings.plugins.sources) {
-      const name = ['generic', 'gfc', 'gfs'].find(
-        (name) =>
-          source.url ===
-          `https://raw.githubusercontent.com/GUI-for-Cores/Plugin-Hub/main/plugins/${name}.json`,
-      )
-      if (name) {
-        source.url = `https://api.github.com/repos/GUI-for-Cores/Plugin-Hub/contents/plugins/${name}.json?ref=main`
-        pluginSourcesMigrated = true
-      }
-    }
-    if (settings.debugUsePointer === undefined) {
-      settings.debugUsePointer = false
-    }
-    if (settings.debugModalSideBySide === undefined) {
-      settings.debugModalSideBySide = false
-    }
 
-    settings.systemTitleBar ??= false
-
-    if (pluginSourcesMigrated) {
-      await WriteFile(UserFilePath, stringify(settings))
-    }
+    await migrateAppSettings(settings, () => WriteFile(UserFilePath, stringify(settings)))
 
     app.value = settings
     systemTitleBarOnStartup.value = settings.systemTitleBar

@@ -11,9 +11,13 @@ export const useEnvStore = defineStore('env', () => {
   const kernelApiStore = useKernelApiStore()
 
   const env = ref<App.AppEnv>({
+    appId: '',
     appName: '',
     appVersion: '',
     basePath: '',
+    dataDir: '',
+    args: [],
+    launchArgs: [],
     appPath: '',
     os: '' as App.OS,
     arch: '',

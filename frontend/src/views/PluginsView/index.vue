@@ -2,10 +2,10 @@
 import { computed } from 'vue'
 import { useI18n, I18nT } from 'vue-i18n'
 
-import { OpenURI } from '@/bridge'
+import { AbsolutePath, OpenURI } from '@/bridge'
 import { DraggableOptions, ViewOptions } from '@/constant/app'
 import { PluginTriggerEvent, PluginTrigger, View } from '@/enums/app'
-import { usePluginsStore, useAppSettingsStore, useEnvStore } from '@/stores'
+import { usePluginsStore, useAppSettingsStore } from '@/stores'
 import { alert, debounce, message, deepClone, modal } from '@/utils'
 
 import Button from '@/components/Button/index.vue'
@@ -34,14 +34,13 @@ const menuList: App.Menu[] = [
     label: 'common.openFile',
     handler: async (id: string) => {
       const plugin = pluginsStore.getPluginById(id)
-      await OpenURI(envStore.env.basePath + '/' + plugin!.path)
+      await OpenURI(await AbsolutePath(plugin!.path))
     },
   },
 ]
 
 const { t } = useI18n()
 
-const envStore = useEnvStore()
 const pluginsStore = usePluginsStore()
 const appSettingsStore = useAppSettingsStore()
 

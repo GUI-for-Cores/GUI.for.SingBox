@@ -58,7 +58,7 @@ export function RemoveFile(arg1:string):Promise<bridge.FlagResult>;
 
 export function Requests(arg1:string,arg2:string,arg3:Record<string, string>,arg4:string,arg5:bridge.RequestOptions):Promise<bridge.HTTPResult>;
 
-export function RestartApp():Promise<bridge.FlagResult>;
+export function RestartApp(arg1:boolean):Promise<bridge.FlagResult>;
 
 export function SetSystemDNS(arg1:string,arg2:Array<string>):Promise<bridge.FlagResult>;
 

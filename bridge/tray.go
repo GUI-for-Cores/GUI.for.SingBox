@@ -29,7 +29,7 @@ func CreateTray(a *App, icon []byte) (trayStart, trayEnd func()) {
 
 		// Ensure the tray is still available if rolling-release fails
 		addClickMenuItem("Show", "Show", func() { a.ShowMainWindow() })
-		addClickMenuItem("Restart", "Restart", func() { a.RestartApp() })
+		addClickMenuItem("Restart", "Restart", func() { a.RestartApp(Env.IsPrivileged) })
 		addClickMenuItem("Exit", "Exit", func() { a.ExitApp() })
 	}, nil)
 }

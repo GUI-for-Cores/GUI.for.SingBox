@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import { ExitApp } from '@/bridge'
+import { RestartApp } from '@/bridge'
 import { WebviewGpuPolicyOptions, WindowStateOptions } from '@/constant/app'
 import { OS } from '@/enums/app'
 import { useAppSettingsStore, useEnvStore } from '@/stores'
@@ -10,7 +10,6 @@ import {
   message,
   CheckPermissions,
   SwitchPermissions,
-  RunWithPowerShell,
   IsAutoStartEnabled,
   EnableAutoStart,
   DisableAutoStart,
@@ -22,21 +21,12 @@ const envStore = useEnvStore()
 const isAdmin = ref(false)
 const isAutoStart = ref(false)
 
-const restartApp = async (admin = false) => {
-  if (admin) {
-    await RunWithPowerShell(envStore.env.appPath, [], { admin, wait: false })
-  } else {
-    await RunWithPowerShell('explorer', [envStore.env.appPath], { wait: false })
-  }
-  await ExitApp()
-}
-
 const onPermChange = async (v: boolean) => {
   try {
     await SwitchPermissions(v)
     if (v !== envStore.env.isPrivileged) {
       const ok = await confirm('Notice', 'Restart the application now?').catch(() => 0)
-      ok && (await restartApp(v))
+      ok && (await RestartApp(v))
     }
   } catch (error: any) {
     message.error(error)
@@ -48,7 +38,7 @@ const onTaskSchChange = async (v: boolean) => {
   isAutoStart.value = !v
 
   try {
-    await (v ? EnableAutoStart(appSettings.app.startupDelay) : DisableAutoStart())
+    await (v ? EnableAutoStart() : DisableAutoStart())
     isAutoStart.value = v
   } catch (error: any) {
     console.error(error)
@@ -56,15 +46,19 @@ const onTaskSchChange = async (v: boolean) => {
   }
 }
 
-const onStartupDelayChange = async (delay: number) => {
-  if (appSettings.app.startupDelay !== delay) {
-    try {
-      await EnableAutoStart(delay)
-      appSettings.app.startupDelay = delay
-    } catch (error: any) {
-      console.error(error)
-      message.error(error)
-    }
+const onAutoStartOptionChange = async <K extends 'startupDelay' | 'windowStartState'>(
+  key: K,
+  value: App.AppSettings[K],
+) => {
+  const old = appSettings.app[key]
+  if (old === value) return
+  appSettings.app[key] = value
+  try {
+    await EnableAutoStart()
+  } catch (error: any) {
+    appSettings.app[key] = old
+    console.error(error)
+    message.error(error)
   }
 }
 
@@ -95,7 +89,7 @@ if (envStore.env.os === OS.Windows) {
           type="primary"
           icon="refresh"
           size="small"
-          @click="() => restartApp(isAdmin)"
+          @click="RestartApp(isAdmin)"
         />
         <Switch v-model="isAdmin" @change="onPermChange" />
       </div>
@@ -107,9 +101,9 @@ if (envStore.env.os === OS.Windows) {
       <div class="flex items-center">
         <Radio
           v-if="isAutoStart"
-          v-model="appSettings.app.windowStartState"
+          :model-value="appSettings.app.windowStartState"
           :options="WindowStateOptions"
-          type="number"
+          @change="(v: App.WindowStartState) => onAutoStartOptionChange('windowStartState', v)"
         />
         <Switch v-model="isAutoStart" class="ml-16" @change="onTaskSchChange" />
       </div>
@@ -128,7 +122,7 @@ if (envStore.env.os === OS.Windows) {
         :max="180"
         editable
         type="number"
-        @submit="onStartupDelayChange"
+        @submit="(v) => onAutoStartOptionChange('startupDelay', v)"
       >
         <template #suffix="{ showInput }">
           <span class="ml-4" @click="showInput">{{ $t('settings.startup.delay') }}</span>
