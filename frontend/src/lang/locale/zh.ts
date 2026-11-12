@@ -581,6 +581,7 @@ export default {
     url: '远程地址',
     path: '保存路径',
     type: '类型',
+    tags: '标签',
     menus: '菜单',
     hasUI: '是否具有用户界面',
     context: '上下文',
