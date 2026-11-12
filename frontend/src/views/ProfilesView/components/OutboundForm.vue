@@ -23,7 +23,10 @@ const outboundGroups = [
     id: 'Built-in',
     name: 'kernel.outbounds.builtIn',
     proxies: [
-      ...BuiltInOutbound.map((v) => ({ id: v, tag: v, type: 'Built-In' })),
+      // Legacy built-ins, shown only when an old profile still references them
+      ...BuiltInOutbound.filter((v) => outbound.value.outbounds.some((item) => item.id === v)).map(
+        (v) => ({ id: v, tag: v, type: 'Built-In' }),
+      ),
       ...props.outbounds.map(({ id, tag, type }) => ({ id, tag, type: type as string })),
     ],
   },

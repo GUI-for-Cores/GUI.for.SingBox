@@ -1,3 +1,4 @@
+import { BuiltInOutbound } from '@/constant/kernel'
 import * as Defaults from '@/constant/profile'
 import {
   Inbound,
@@ -209,9 +210,27 @@ const restoreOutbounds = (
   const proxyToSubMap = new Map<string, { sub: string; id: string }>()
   const originalOutboundMap = new Map<string, App.Outbound>()
 
-  const groupTags = new Set(
+  // Built-in refs of the profile being edited stay built-in
+  const builtInTags = new Set(
+    originalOutbounds.flatMap((o) =>
+      o.outbounds
+        .filter(
+          (v) =>
+            v.type === 'Built-in' &&
+            BuiltInOutbound.includes(v.id as Outbound) &&
+            originalOutbounds.every((o) => o.tag !== v.id),
+        )
+        .map((v) => v.id),
+    ),
+  )
+
+  const localTags = new Set(
     outbounds
-      .filter((o: Recordable) => [Outbound.Selector, Outbound.Urltest].includes(o.type))
+      .filter(
+        (o: Recordable) =>
+          [Outbound.Selector, Outbound.Urltest, Outbound.Direct, Outbound.Block].includes(o.type) &&
+          !builtInTags.has(o.tag),
+      )
       .map((o: Recordable) => o.tag),
   )
 
@@ -230,7 +249,7 @@ const restoreOutbounds = (
   })
 
   return outbounds.flatMap((raw) => {
-    if (![Outbound.Selector, Outbound.Urltest].includes(raw.type)) {
+    if (!localTags.has(raw.tag)) {
       return []
     }
     const outbound = Defaults.DefaultOutbound()
@@ -238,13 +257,16 @@ const restoreOutbounds = (
     outbound.tag = raw.tag
     outbound.type = raw.type
 
+    if ([Outbound.Direct, Outbound.Block].includes(raw.type)) {
+      return outbound
+    }
+
     let newOutbounds: App.Proxy[] = []
 
     raw.outbounds?.forEach((tag: string) => {
-      const isBuiltIn = [Outbound.Direct, Outbound.Block].includes(tag as Outbound)
-      if (isBuiltIn) {
+      if (builtInTags.has(tag)) {
         newOutbounds.push({ id: tag, type: 'Built-in', tag })
-      } else if (groupTags.has(tag)) {
+      } else if (localTags.has(tag)) {
         const id = OutboundsIds[tag]
         if (id) {
           newOutbounds.push({ id, type: 'Built-in', tag })

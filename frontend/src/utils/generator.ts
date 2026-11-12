@@ -197,7 +197,11 @@ const generateOutbounds = async (outbounds: App.Outbound[]) => {
   }
 
   result.push(...proxiesSet)
-  result.push(...Array.from(builtInProxiesSet).map((v) => ({ type: v, tag: v })))
+  result.push(
+    ...Array.from(builtInProxiesSet)
+      .filter((v) => outbounds.every((outbound) => outbound.tag !== v))
+      .map((v) => ({ type: v, tag: v })),
+  )
 
   return result
 }
