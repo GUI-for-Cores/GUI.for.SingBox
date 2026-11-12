@@ -62,7 +62,6 @@ const handleDownloadLocale = async (locale: string) => {
       `${LocalesFilePath}/${locale}.json`,
     )
     await appStore.loadLocales()
-    message.success('common.success')
   } catch (error) {
     message.error(error)
   }
@@ -76,7 +75,6 @@ const handleDeleteLocale = async (locale: string) => {
       appSettings.app.lang = Lang.EN
     }
     await appStore.loadLocales()
-    message.success('common.success')
   } catch (error) {
     message.error(error)
   }

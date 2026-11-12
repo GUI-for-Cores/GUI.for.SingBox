@@ -39,7 +39,7 @@ const updatePosition = () => {
   const totalSpaceBelow = window.innerHeight - triggerRect.bottom
   const totalSpaceAbove = triggerRect.top
 
-  const minPreferredSpace = 80
+  const minPreferredSpace = 120
   let finalPlacement: 'top' | 'bottom' = props.placement
 
   if (props.placement === 'bottom') {
