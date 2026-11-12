@@ -1,0 +1,18 @@
+polkit.addRule(function (action, subject) {
+  if (!subject.local || !subject.active) {
+    return
+  }
+
+  if (!subject.isInGroup('gui-for-singbox')) {
+    return
+  }
+
+  switch (action.id) {
+    case 'org.freedesktop.resolve1.set-domains':
+    case 'org.freedesktop.resolve1.set-default-route':
+    case 'org.freedesktop.resolve1.set-dns-servers':
+    case 'org.freedesktop.resolve1.flush-caches':
+    case 'org.freedesktop.resolve1.revert':
+      return polkit.Result.YES
+  }
+})

@@ -1,0 +1,102 @@
+# This is an example nfpm configuration file.
+# Make sure to check the documentation at https://nfpm.goreleaser.com
+#
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+name: "gui-for-singbox"
+arch: ${ARCH}
+platform: linux
+version: ${VERSION}
+section: default
+priority: optional
+
+maintainer: ${PACKAGER}
+
+vendor: GUI.for.Cores
+homepage: "https://github.com/GUI-for-Cores/GUI.for.SingBox"
+license: GPL-3.0-or-later
+description: |
+  ${DESCRIPTION}
+
+provides:
+  - gui.for.singbox
+  - gui-for-singbox
+
+conflicts:
+  - gui-for-singbox-bin
+
+contents:
+  - src: ./build/bin/GUI.for.SingBox
+    dst: /usr/bin/gui-for-singbox
+    file_info:
+      mode: 0755
+  - src: ./packaging/linux/gui-for-singbox.desktop
+    dst: /usr/share/applications/gui-for-singbox.desktop
+    file_info:
+      mode: 0644
+  - src: ./packaging/linux/gui-for-singbox.rules
+    dst: /usr/share/polkit-1/rules.d/99-gui-for-singbox.rules
+    file_info:
+      mode: 0644
+  - src: ./build/appicon.png
+    dst: /usr/share/icons/hicolor/256x256/apps/gui-for-singbox.png
+    file_info:
+      mode: 0644
+  - src: ./LICENSE
+    dst: /usr/share/licenses/gui-for-singbox/LICENSE
+    file_info:
+      mode: 0644
+
+scripts:
+  postinstall: ./packaging/linux/scripts/postinstall.sh
+  postremove: ./packaging/linux/scripts/postremove.sh
+
+overrides:
+  archlinux:
+    depends:
+      - gtk3
+      - webkit2gtk-4.1
+      - polkit
+      - libcap
+    suggests:
+      - "kconfig: Configure KDE system proxy"
+      - "glib2: Configure GNOME system proxy"
+      - "networkmanager: Automatically configure system DNS"
+
+  deb:
+    depends:
+      - libgtk-3-0
+      - libwebkit2gtk-4.1-0
+      - pkexec
+      - libcap2-bin
+    suggests:
+      - libkf6config-bin
+      - libglib2.0-bin
+      - network-manager
+
+  rpm:
+    depends:
+      - gtk3
+      - webkit2gtk4.1
+      - polkit
+      - libcap
+    suggests:
+      - kf6-kconfig
+      - glib2
+      - NetworkManager
+
+deb:
+  compression: zstd
+  fields:
+    Bugs: "https://github.com/GUI-for-Cores/GUI.for.SingBox/issues"
+
+archlinux:
+  packager: "GUI.for.Cores <GUI.for.Cores@github.com>"
+  scripts:
+    postupgrade: ./packaging/linux/scripts/postinstall.sh
+
+rpm:
+  compression: zstd

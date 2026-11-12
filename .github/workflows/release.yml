@@ -131,6 +131,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       APP_NAME: GUI.for.SingBox
+      APP_VERSION: ${{ github.ref_name }}
+      ARCH: ${{ matrix.arch }}
+      PACKAGER: "${{ github.repository_owner }} <${{ github.repository_owner }}@github.com>"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
@@ -145,6 +148,9 @@ jobs:
       - run: |
           sudo apt-get update
           sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Install nFPM
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
 
       - name: Build & Pack Linux
         run: |
@@ -163,10 +169,23 @@ jobs:
 
           build_and_pack ${{ matrix.arch }}
 
-      - uses: actions/upload-artifact@v6
+      - name: Packaging DEB
+        run: bash scripts/package-linux.sh deb
+
+      - name: Packaging RPM
+        run: bash scripts/package-linux.sh rpm
+
+      - name: Packaging Pacman
+        run: bash scripts/package-linux.sh pacman
+
+      - name: Prepare Artifacts
+        run: cp -f build/bin/*.zip dist/
+
+      - name: Upload Linux Binary & Packages
+        uses: actions/upload-artifact@v6
         with:
           name: linux-build-${{ matrix.arch }}
-          path: build/bin/*.zip
+          path: dist/*
 
   Release:
     needs: [Build-Windows, Build-macOS, Build-Linux]
@@ -175,12 +194,17 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           path: release-assets
+          merge-multiple: true
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          files: release-assets/**/*.zip
+          files: |
+            release-assets/*.zip
+            release-assets/*.deb
+            release-assets/*.rpm
+            release-assets/*.pkg.tar.zst
           draft: false
           prerelease: ${{ contains(github.ref_name, 'dev') }}
           body: |

@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=GUI for SingBox
+GenericName=Network Debugging Tools
+GenericName[zh_CN]=网络调试工具
+Comment=A GUI client for sing-box
+Comment[zh_CN]=适用于 sing-box 的图形客户端
+Exec=gui-for-singbox %u
+Icon=gui-for-singbox
+Terminal=false
+StartupNotify=true
+StartupWMClass=gui-for-singbox
+Categories=Network;Utility;
+MimeType=x-scheme-handler/sing-box;
+Keywords=gfs;gui;sb;singbox;
+SingleMainWindow=true
