@@ -2,9 +2,10 @@
 import { MakeDir, OpenDir } from '@/bridge'
 import { RollingReleaseDirectory } from '@/constant/app'
 import { OS } from '@/enums/app'
-import { useAppSettingsStore } from '@/stores'
+import { useAppSettingsStore, useEnvStore } from '@/stores'
 
 const appSettings = useAppSettingsStore()
+const envStore = useEnvStore()
 
 const handleOpenFolder = async () => {
   await OpenDir('data')
@@ -21,7 +22,10 @@ const handleOpenRollingReleaseFolder = async () => {
 
   <Card>
     <div class="px-8 py-12 flex items-center justify-between">
-      <div class="text-16 font-bold">{{ $t('settings.appFolder.name') }}</div>
+      <div class="text-16 font-bold">
+        {{ $t('settings.appFolder.name') }}
+        <span class="font-normal text-12">({{ envStore.env.dataDir }})</span>
+      </div>
       <Button type="primary" icon="folder" @click="handleOpenFolder">
         <span class="ml-8">{{ $t('settings.appFolder.open') }}</span>
       </Button>
